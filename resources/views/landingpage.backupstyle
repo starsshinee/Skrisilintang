@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMBAN - BPMP Gorontalo</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { jakarta: ['Plus Jakarta Sans', 'sans-serif'] },
+      colors: {
+        navy: { 50:'#eff4ff',100:'#dae5ff',200:'#bed4ff',300:'#91b8ff',400:'#5d92fc',500:'#366cf9',600:'#1a4bee',700:'#1339db',800:'#0f2fb1',900:'#0c2a8c',950:'#091b55' },
+      }
+    }
+  }
+}
+</script>
+  <style>
+html,body{height:100%;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box}
+.app-root{height:100%;width:100%;overflow:auto;scroll-behavior:smooth}
+.fade-in{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.slide-in{animation:slideIn .4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.card-hover{transition:all .3s ease}
+.card-hover:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(9,27,85,.12)}
+.carousel-track{display:flex;transition:transform .5s ease}
+.nav-link{position:relative}
+.nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:#1a4bee;transition:width .3s}
+.nav-link:hover::after{width:100%}
+.btn-primary{background:linear-gradient(135deg,#1a4bee,#0c2a8c);transition:all .3s}
+.btn-primary:hover{background:linear-gradient(135deg,#366cf9,#1339db);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,75,238,.35)}
+.sidebar-item{transition:all .2s}
+.sidebar-item:hover,.sidebar-item.active{background:rgba(26,75,238,.1);color:#1a4bee}
+.stat-card{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:16px;padding:24px}
+.toast{position:fixed;top:20px;right:20px;z-index:9999;padding:14px 24px;border-radius:12px;color:#fff;font-weight:600;animation:fadeIn .3s;max-width:360px}
+.toast-success{background:#059669}
+.toast-error{background:#dc2626}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:16px;padding:32px;max-width:480px;width:90%;animation:fadeIn .3s}
+input:focus,select:focus,textarea:focus{outline:none;ring:2px;border-color:#1a4bee;box-shadow:0 0 0 3px rgba(26,75,238,.15)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#f1f5f9}::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:3px}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div class="app-root bg-white" id="app"><!-- ==================== LANDING PAGE ==================== -->
+   <div id="page-landing"><!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur border-b border-navy-100 transition-all">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center"><span class="text-white font-extrabold text-sm">SB</span>
+       </div>
+       <div>
+        <div id="nav-title" class="font-bold text-navy-900 text-sm leading-tight">
+         SIMBAN
+        </div>
+        <div class="text-[10px] text-navy-500 leading-tight">
+         BPMP Gorontalo
+        </div>
+       </div>
+      </div>
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-navy-700"><a href="#hero" class="nav-link" onclick="scrollToSection('hero')">Beranda</a> <a href="#fitur" class="nav-link" onclick="scrollToSection('fitur')">Fitur</a> <a href="#statistik" class="nav-link" onclick="scrollToSection('statistik')">Statistik</a> <a href="#fasilitas" class="nav-link" onclick="scrollToSection('fasilitas')">Fasilitas</a> <a href="#kontak" class="nav-link" onclick="scrollToSection('kontak')">Kontak</a>
+      </div>
+      <div class="flex items-center gap-2"><button onclick="showPage('login')" class="px-4 py-2 text-sm font-semibold text-navy-700 hover:text-navy-900 rounded-lg hover:bg-navy-50 transition">Masuk</button> <button onclick="showPage('register')" class="btn-primary px-4 py-2 text-sm font-semibold text-white rounded-lg">Daftar</button> <button class="md:hidden p-2 text-navy-700" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
+     </div><!-- Mobile menu -->
+     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-navy-100 px-4 pb-4">
+      <div class="flex flex-col gap-2 pt-2 text-sm font-medium text-navy-700"><a href="#hero" onclick="scrollToSection('hero');toggleMobileMenu()" class="py-2 px-3 rounded-lg hover:bg-navy-50">Beranda</a> <a href="#fitur" onclick="scrollToSection('fitur');toggleMobileMenu()" class="py-2 px-3 rounded-lg hover:bg-navy-50">Fitur</a> <a href="#statistik" onclick="scrollToSection('statistik');toggleMobileMenu()" class="py-2 px-3 rounded-lg hover:bg-navy-50">Statistik</a> <a href="#fasilitas" onclick="scrollToSection('fasilitas');toggleMobileMenu()" class="py-2 px-3 rounded-lg hover:bg-navy-50">Fasilitas</a> <a href="#kontak" onclick="scrollToSection('kontak');toggleMobileMenu()" class="py-2 px-3 rounded-lg hover:bg-navy-50">Kontak</a>
+      </div>
+     </div>
+    </nav><!-- Hero Section -->
+    <section id="hero" class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-navy-50 via-white to-blue-50 relative overflow-hidden">
+     <div class="absolute top-0 right-0 w-96 h-96 bg-navy-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+     <div class="absolute bottom-0 left-0 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+     <div class="max-w-7xl mx-auto relative">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+       <div class="fade-in">
+        <div class="inline-flex items-center gap-2 bg-navy-100 text-navy-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Sistem Terintegrasi
+        </div>
+        <h1 id="hero-title" class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-navy-950 leading-tight mb-6">Sistem Informasi<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-navy-600 to-blue-500">Manajemen BMN</span></h1>
+        <p id="hero-subtitle" class="text-lg text-navy-600 mb-8 max-w-lg leading-relaxed">Platform digital pencatatan dan monitoring Barang Milik Negara pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara transparan, akuntabel, dan real-time.</p>
+        <div class="flex flex-wrap gap-3"><button onclick="showPage('register')" class="btn-primary px-6 py-3 text-white font-semibold rounded-xl flex items-center gap-2"> Mulai Sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i> </button> <button onclick="scrollToSection('fitur')" class="px-6 py-3 bg-white border-2 border-navy-200 text-navy-700 font-semibold rounded-xl hover:bg-navy-50 transition flex items-center gap-2"> <i data-lucide="play-circle" class="w-4 h-4"></i> Pelajari Fitur </button>
+        </div>
+        <div class="flex items-center gap-6 mt-10 text-sm text-navy-500">
+         <div class="flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>Gratis
+         </div>
+         <div class="flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>Aman
+         </div>
+         <div class="flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>Real-time
+         </div>
+        </div>
+       </div>
+       <div class="fade-in hidden lg:block">
+        <div class="relative">
+         <div class="bg-white rounded-2xl shadow-xl p-6 border border-navy-100">
+          <div class="flex items-center gap-2 mb-4">
+           <div class="w-3 h-3 rounded-full bg-red-400"></div>
+           <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+           <div class="w-3 h-3 rounded-full bg-green-400"></div><span class="text-xs text-navy-400 ml-2">Dashboard SIMBAN</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+           <div class="bg-gradient-to-br from-navy-500 to-navy-700 rounded-xl p-3 text-white text-center">
+            <div class="text-2xl font-bold">
+             1,248
+            </div>
+            <div class="text-[10px] opacity-80">
+             Total Aset
+            </div>
+           </div>
+           <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-3 text-white text-center">
+            <div class="text-2xl font-bold">
+             856
+            </div>
+            <div class="text-[10px] opacity-80">
+             Persediaan
+            </div>
+           </div>
+           <div class="bg-gradient-to-br from-sky-500 to-sky-700 rounded-xl p-3 text-white text-center">
+            <div class="text-2xl font-bold">
+             392
+            </div>
+            <div class="text-[10px] opacity-80">
+             Sarana
+            </div>
+           </div>
+          </div>
+          <div class="space-y-2">
+           <div class="flex items-center justify-between bg-navy-50 rounded-lg p-2.5 text-xs">
+            <div class="flex items-center gap-2">
+             <div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-navy-700 font-medium">Laptop Lenovo ThinkPad</span>
+            </div><span class="text-navy-500">Baik</span>
+           </div>
+           <div class="flex items-center justify-between bg-navy-50 rounded-lg p-2.5 text-xs">
+            <div class="flex items-center gap-2">
+             <div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-navy-700 font-medium">Proyektor Epson EB-X51</span>
+            </div><span class="text-navy-500">Baik</span>
+           </div>
+           <div class="flex items-center justify-between bg-navy-50 rounded-lg p-2.5 text-xs">
+            <div class="flex items-center gap-2">
+             <div class="w-2 h-2 rounded-full bg-yellow-500"></div><span class="text-navy-700 font-medium">AC Daikin 2 PK</span>
+            </div><span class="text-navy-500">Pemeliharaan</span>
+           </div>
+          </div>
+         </div>
+         <div class="absolute -bottom-4 -right-4 bg-green-500 text-white rounded-xl px-4 py-2 text-xs font-bold shadow-lg flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4"></i> +12% Efisiensi
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Fitur Section -->
+    <section id="fitur" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+     <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+       <div class="inline-flex items-center gap-2 bg-navy-100 text-navy-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4"><i data-lucide="zap" class="w-3.5 h-3.5"></i> Fitur Unggulan
+       </div>
+       <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-950 mb-4">Kelola BMN dengan Mudah</h2>
+       <p class="text-navy-500 max-w-2xl mx-auto">Fitur lengkap untuk pencatatan, monitoring, dan pelaporan Barang Milik Negara di lingkungan BPMP Gorontalo.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-navy-100 flex items-center justify-center mb-4 group-hover:bg-navy-600 transition">
+         <i data-lucide="package" class="w-6 h-6 text-navy-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Manajemen Persediaan</h3>
+        <p class="text-sm text-navy-500">Pencatatan stok barang habis pakai, ATK, dan bahan operasional dengan tracking real-time.</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-600 transition">
+         <i data-lucide="building" class="w-6 h-6 text-blue-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Sarana &amp; Prasarana</h3>
+        <p class="text-sm text-navy-500">Monitoring kondisi gedung, ruangan, dan fasilitas pendukung kegiatan operasional.</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center mb-4 group-hover:bg-sky-600 transition">
+         <i data-lucide="landmark" class="w-6 h-6 text-sky-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Aset Tetap</h3>
+        <p class="text-sm text-navy-500">Pengelolaan aset tetap meliputi tanah, gedung, kendaraan, dan peralatan mesin.</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4 group-hover:bg-emerald-600 transition">
+         <i data-lucide="file-bar-chart" class="w-6 h-6 text-emerald-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Laporan Otomatis</h3>
+        <p class="text-sm text-navy-500">Generate laporan BMN semesteran dan tahunan sesuai format Kementerian Keuangan.</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4 group-hover:bg-amber-600 transition">
+         <i data-lucide="scan-line" class="w-6 h-6 text-amber-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Peminjaman Aset</h3>
+        <p class="text-sm text-navy-500">Sistem peminjaman dan pengembalian barang dengan approval workflow bertingkat.</p>
+       </div>
+       <div class="card-hover bg-white rounded-2xl p-6 border border-navy-100 group">
+        <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center mb-4 group-hover:bg-rose-600 transition">
+         <i data-lucide="shield" class="w-6 h-6 text-rose-600 group-hover:text-white transition"></i>
+        </div>
+        <h3 class="font-bold text-navy-900 mb-2">Multi-Role Access</h3>
+        <p class="text-sm text-navy-500">Kontrol akses berbasis peran: Superadmin, Kepala BPMP, Kasubag, Admin, dan Pegawai.</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Statistik Section -->
+    <section id="statistik" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-950 relative overflow-hidden">
+     <div class="absolute inset-0 opacity-10" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><circle cx=%2230%22 cy=%2230%22 r=%221.5%22 fill=%22white%22/></svg>');background-size:60px 60px"></div>
+     <div class="max-w-7xl mx-auto relative">
+      <div class="text-center mb-14">
+       <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Statistik BMN BPMP Gorontalo</h2>
+       <p class="text-navy-300 max-w-2xl mx-auto">Data pengelolaan Barang Milik Negara yang dikelola secara transparan dan akuntabel.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+       <div class="stat-card" style="--c1:#1a4bee;--c2:#0c2a8c">
+        <div class="flex items-center justify-between mb-3"><i data-lucide="box" class="w-8 h-8 opacity-80"></i> <span class="text-xs bg-white/20 rounded-full px-2 py-0.5">+8%</span>
+        </div>
+        <div class="text-3xl font-extrabold">
+         1,248
+        </div>
+        <div class="text-sm opacity-80 mt-1">
+         Total Aset BMN
+        </div>
+       </div>
+       <div class="stat-card" style="--c1:#0284c7;--c2:#0369a1">
+        <div class="flex items-center justify-between mb-3"><i data-lucide="package" class="w-8 h-8 opacity-80"></i> <span class="text-xs bg-white/20 rounded-full px-2 py-0.5">+15%</span>
+        </div>
+        <div class="text-3xl font-extrabold">
+         856
+        </div>
+        <div class="text-sm opacity-80 mt-1">
+         Persediaan
+        </div>
+       </div>
+       <div class="stat-card" style="--c1:#059669;--c2:#047857">
+        <div class="flex items-center justify-between mb-3"><i data-lucide="building-2" class="w-8 h-8 opacity-80"></i> <span class="text-xs bg-white/20 rounded-full px-2 py-0.5">+5%</span>
+        </div>
+        <div class="text-3xl font-extrabold">
+         Rp 24.5M
+        </div>
+        <div class="text-sm opacity-80 mt-1">
+         Nilai Aset Tetap
+        </div>
+       </div>
+       <div class="stat-card" style="--c1:#7c3aed;--c2:#6d28d9">
+        <div class="flex items-center justify-between mb-3"><i data-lucide="users" class="w-8 h-8 opacity-80"></i> <span class="text-xs bg-white/20 rounded-full px-2 py-0.5">Active</span>
+        </div>
+        <div class="text-3xl font-extrabold">
+         47
+        </div>
+        <div class="text-sm opacity-80 mt-1">
+         Pengguna Aktif
+        </div>
+       </div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-6 mt-6">
+       <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-center border border-white/10">
+        <div class="text-2xl font-bold text-white">
+         392
+        </div>
+        <div class="text-sm text-navy-300 mt-1">
+         Sarana Prasarana
+        </div>
+        <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+         <div class="h-full bg-blue-400 rounded-full" style="width:78%"></div>
+        </div>
+        <div class="text-xs text-navy-400 mt-1">
+         78% Kondisi Baik
+        </div>
+       </div>
+       <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-center border border-white/10">
+        <div class="text-2xl font-bold text-white">
+         156
+        </div>
+        <div class="text-sm text-navy-300 mt-1">
+         Peminjaman Aktif
+        </div>
+        <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+         <div class="h-full bg-green-400 rounded-full" style="width:92%"></div>
+        </div>
+        <div class="text-xs text-navy-400 mt-1">
+         92% Tepat Waktu
+        </div>
+       </div>
+       <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-center border border-white/10">
+        <div class="text-2xl font-bold text-white">
+         24
+        </div>
+        <div class="text-sm text-navy-300 mt-1">
+         Laporan Dibuat
+        </div>
+        <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+         <div class="h-full bg-amber-400 rounded-full" style="width:100%"></div>
+        </div>
+        <div class="text-xs text-navy-400 mt-1">
+         100% Selesai
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Fasilitas Carousel Section -->
+    <section id="fasilitas" class="py-20 px-4 sm:px-6 lg:px-8 bg-navy-50">
+     <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+       <div class="inline-flex items-center gap-2 bg-navy-100 text-navy-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4"><i data-lucide="image" class="w-3.5 h-3.5"></i> Fasilitas
+       </div>
+       <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-950 mb-4">Fasilitas BPMP Gorontalo</h2>
+       <p class="text-navy-500 max-w-2xl mx-auto">Fasilitas yang tersedia untuk disewakan bagi keperluan kegiatan pendidikan dan pelatihan.</p>
+      </div>
+      <div class="relative">
+       <div class="overflow-hidden rounded-2xl">
+        <div class="carousel-track" id="carousel-track"><!-- Slide 1 -->
+         <div class="min-w-full flex flex-col lg:flex-row gap-6 px-1">
+          <div class="lg:w-1/2 bg-gradient-to-br from-navy-600 to-navy-800 rounded-2xl p-8 flex flex-col justify-center items-center min-h-[320px]"><i data-lucide="presentation" class="w-20 h-20 text-white/80 mb-4"></i> <span class="text-white/60 text-sm">Aula Utama BPMP Gorontalo</span>
+          </div>
+          <div class="lg:w-1/2 bg-white rounded-2xl p-8 border border-navy-100">
+           <div class="flex items-center gap-2 mb-3"><span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Tersedia</span> <span class="bg-navy-100 text-navy-600 text-xs font-bold px-2.5 py-1 rounded-full">Kapasitas 200 Orang</span>
+           </div>
+           <h3 class="text-2xl font-bold text-navy-900 mb-3">Aula Utama</h3>
+           <p class="text-navy-500 text-sm mb-4 leading-relaxed">Aula serbaguna berkapasitas 200 orang dilengkapi sound system, proyektor, AC sentral, panggung, dan area parkir luas. Cocok untuk seminar, workshop, dan acara resmi.</p>
+           <div class="bg-navy-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-navy-500 mb-1">
+             Tarif Sewa
+            </div>
+            <div class="text-2xl font-extrabold text-navy-900">
+             Rp 3.500.000 <span class="text-sm font-normal text-navy-400">/ hari</span>
+            </div>
+           </div>
+           <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="wifi" class="w-4 h-4 text-navy-400"></i>WiFi
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="monitor" class="w-4 h-4 text-navy-400"></i>Proyektor
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="mic" class="w-4 h-4 text-navy-400"></i>Sound System
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="thermometer" class="w-4 h-4 text-navy-400"></i>AC Sentral
+            </div>
+           </div>
+          </div>
+         </div><!-- Slide 2 -->
+         <div class="min-w-full flex flex-col lg:flex-row gap-6 px-1">
+          <div class="lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-8 flex flex-col justify-center items-center min-h-[320px]"><i data-lucide="monitor" class="w-20 h-20 text-white/80 mb-4"></i> <span class="text-white/60 text-sm">Ruang Rapat VIP BPMP</span>
+          </div>
+          <div class="lg:w-1/2 bg-white rounded-2xl p-8 border border-navy-100">
+           <div class="flex items-center gap-2 mb-3"><span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Tersedia</span> <span class="bg-navy-100 text-navy-600 text-xs font-bold px-2.5 py-1 rounded-full">Kapasitas 30 Orang</span>
+           </div>
+           <h3 class="text-2xl font-bold text-navy-900 mb-3">Ruang Rapat VIP</h3>
+           <p class="text-navy-500 text-sm mb-4 leading-relaxed">Ruang rapat eksekutif dengan meja oval, kursi ergonomis, video conference system, smart TV 75 inch, dan mini pantry untuk kebutuhan rapat penting.</p>
+           <div class="bg-navy-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-navy-500 mb-1">
+             Tarif Sewa
+            </div>
+            <div class="text-2xl font-extrabold text-navy-900">
+             Rp 1.500.000 <span class="text-sm font-normal text-navy-400">/ hari</span>
+            </div>
+           </div>
+           <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="video" class="w-4 h-4 text-navy-400"></i>Video Conf
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="tv" class="w-4 h-4 text-navy-400"></i>Smart TV 75"
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="coffee" class="w-4 h-4 text-navy-400"></i>Mini Pantry
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="wifi" class="w-4 h-4 text-navy-400"></i>WiFi
+            </div>
+           </div>
+          </div>
+         </div><!-- Slide 3 -->
+         <div class="min-w-full flex flex-col lg:flex-row gap-6 px-1">
+          <div class="lg:w-1/2 bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl p-8 flex flex-col justify-center items-center min-h-[320px]"><i data-lucide="laptop" class="w-20 h-20 text-white/80 mb-4"></i> <span class="text-white/60 text-sm">Lab Komputer BPMP</span>
+          </div>
+          <div class="lg:w-1/2 bg-white rounded-2xl p-8 border border-navy-100">
+           <div class="flex items-center gap-2 mb-3"><span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">Terbatas</span> <span class="bg-navy-100 text-navy-600 text-xs font-bold px-2.5 py-1 rounded-full">Kapasitas 40 Orang</span>
+           </div>
+           <h3 class="text-2xl font-bold text-navy-900 mb-3">Laboratorium Komputer</h3>
+           <p class="text-navy-500 text-sm mb-4 leading-relaxed">Lab komputer berisi 40 unit PC terbaru dengan koneksi internet dedicated, cocok untuk pelatihan IT, ujian berbasis komputer, dan workshop digital.</p>
+           <div class="bg-navy-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-navy-500 mb-1">
+             Tarif Sewa
+            </div>
+            <div class="text-2xl font-extrabold text-navy-900">
+             Rp 2.000.000 <span class="text-sm font-normal text-navy-400">/ hari</span>
+            </div>
+           </div>
+           <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="monitor" class="w-4 h-4 text-navy-400"></i>40 PC
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="wifi" class="w-4 h-4 text-navy-400"></i>Dedicated Net
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="printer" class="w-4 h-4 text-navy-400"></i>Printer
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="thermometer" class="w-4 h-4 text-navy-400"></i>AC
+            </div>
+           </div>
+          </div>
+         </div><!-- Slide 4 -->
+         <div class="min-w-full flex flex-col lg:flex-row gap-6 px-1">
+          <div class="lg:w-1/2 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-8 flex flex-col justify-center items-center min-h-[320px]"><i data-lucide="car" class="w-20 h-20 text-white/80 mb-4"></i> <span class="text-white/60 text-sm">Kendaraan Operasional BPMP</span>
+          </div>
+          <div class="lg:w-1/2 bg-white rounded-2xl p-8 border border-navy-100">
+           <div class="flex items-center gap-2 mb-3"><span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Tersedia</span> <span class="bg-navy-100 text-navy-600 text-xs font-bold px-2.5 py-1 rounded-full">3 Unit</span>
+           </div>
+           <h3 class="text-2xl font-bold text-navy-900 mb-3">Kendaraan Operasional</h3>
+           <p class="text-navy-500 text-sm mb-4 leading-relaxed">Kendaraan dinas untuk keperluan monitoring sekolah, kegiatan lapangan, dan transportasi resmi. Tersedia minibus dan sedan.</p>
+           <div class="bg-navy-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-navy-500 mb-1">
+             Tarif Sewa
+            </div>
+            <div class="text-2xl font-extrabold text-navy-900">
+             Rp 750.000 <span class="text-sm font-normal text-navy-400">/ hari</span>
+            </div>
+           </div>
+           <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="fuel" class="w-4 h-4 text-navy-400"></i>BBM Ditanggung
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="user" class="w-4 h-4 text-navy-400"></i>Dengan Sopir
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="shield" class="w-4 h-4 text-navy-400"></i>Asuransi
+            </div>
+            <div class="flex items-center gap-2 text-navy-600">
+             <i data-lucide="clock" class="w-4 h-4 text-navy-400"></i>Max 12 Jam
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="flex items-center justify-center gap-3 mt-6"><button onclick="moveCarousel(-1)" class="w-10 h-10 rounded-full bg-white border border-navy-200 flex items-center justify-center hover:bg-navy-100 transition"><i data-lucide="chevron-left" class="w-5 h-5 text-navy-600"></i></button>
+        <div class="flex gap-2" id="carousel-dots"></div><button onclick="moveCarousel(1)" class="w-10 h-10 rounded-full bg-white border border-navy-200 flex items-center justify-center hover:bg-navy-100 transition"><i data-lucide="chevron-right" class="w-5 h-5 text-navy-600"></i></button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Kontak / Alamat -->
+    <section id="kontak" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+     <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12">
+       <div>
+        <div class="inline-flex items-center gap-2 bg-navy-100 text-navy-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Lokasi
+        </div>
+        <h2 class="text-3xl font-extrabold text-navy-950 mb-6">Hubungi Kami</h2>
+        <div class="space-y-4">
+         <div class="flex items-start gap-4 bg-navy-50 rounded-xl p-4">
+          <div class="w-10 h-10 rounded-lg bg-navy-100 flex items-center justify-center flex-shrink-0">
+           <i data-lucide="map-pin" class="w-5 h-5 text-navy-600"></i>
+          </div>
+          <div>
+           <h4 class="font-semibold text-navy-900 text-sm">Alamat Kantor</h4>
+           <p class="text-sm text-navy-500 mt-0.5">Jl. Pangeran Hidayat No. 79, Kota Gorontalo, Provinsi Gorontalo, 96128</p>
+          </div>
+         </div>
+         <div class="flex items-start gap-4 bg-navy-50 rounded-xl p-4">
+          <div class="w-10 h-10 rounded-lg bg-navy-100 flex items-center justify-center flex-shrink-0">
+           <i data-lucide="phone" class="w-5 h-5 text-navy-600"></i>
+          </div>
+          <div>
+           <h4 class="font-semibold text-navy-900 text-sm">Telepon</h4>
+           <p class="text-sm text-navy-500 mt-0.5">(0435) 821-190</p>
+          </div>
+         </div>
+         <div class="flex items-start gap-4 bg-navy-50 rounded-xl p-4">
+          <div class="w-10 h-10 rounded-lg bg-navy-100 flex items-center justify-center flex-shrink-0">
+           <i data-lucide="mail" class="w-5 h-5 text-navy-600"></i>
+          </div>
+          <div>
+           <h4 class="font-semibold text-navy-900 text-sm">Email</h4>
+           <p class="text-sm text-navy-500 mt-0.5">bpmp.gorontalo@kemdikbud.go.id</p>
+          </div>
+         </div>
+         <div class="flex items-start gap-4 bg-navy-50 rounded-xl p-4">
+          <div class="w-10 h-10 rounded-lg bg-navy-100 flex items-center justify-center flex-shrink-0">
+           <i data-lucide="clock" class="w-5 h-5 text-navy-600"></i>
+          </div>
+          <div>
+           <h4 class="font-semibold text-navy-900 text-sm">Jam Operasional</h4>
+           <p class="text-sm text-navy-500 mt-0.5">Senin - Jumat: 08.00 - 16.00 WITA</p>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-br from-navy-800 to-navy-950 rounded-2xl p-8 flex flex-col justify-center items-center text-center">
+        <div class="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6">
+         <i data-lucide="map" class="w-10 h-10 text-white/70"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">BPMP Provinsi Gorontalo</h3>
+        <p class="text-navy-300 text-sm mb-6">Badan Penjaminan Mutu Pendidikan<br>
+         Kementerian Pendidikan, Kebudayaan,<br>
+         Riset, dan Teknologi</p>
+        <div class="grid grid-cols-3 gap-4 w-full max-w-xs">
+         <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div class="text-lg font-bold text-white">
+           15
+          </div>
+          <div class="text-[10px] text-navy-400">
+           Tahun
+          </div>
+         </div>
+         <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div class="text-lg font-bold text-white">
+           6
+          </div>
+          <div class="text-[10px] text-navy-400">
+           Kab/Kota
+          </div>
+         </div>
+         <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div class="text-lg font-bold text-white">
+           850+
+          </div>
+          <div class="text-[10px] text-navy-400">
+           Sekolah
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Footer -->
+    <footer class="bg-navy-950 text-white py-12 px-4 sm:px-6 lg:px-8">
+     <div class="max-w-7xl mx-auto">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+       <div>
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-500 to-navy-700 flex items-center justify-center">
+          <span class="text-white font-extrabold text-sm">SB</span>
+         </div>
+         <div>
+          <div class="font-bold text-sm">
+           SIMBAN
+          </div>
+          <div class="text-[10px] text-navy-400">
+           BPMP Gorontalo
+          </div>
+         </div>
+        </div>
+        <p class="text-sm text-navy-400 leading-relaxed">Sistem Informasi Manajemen Barang Milik Negara untuk pengelolaan aset yang transparan dan akuntabel.</p>
+       </div>
+       <div>
+        <h4 class="font-semibold mb-4 text-sm">Tautan</h4>
+        <div class="space-y-2 text-sm text-navy-400"><a href="#hero" class="block hover:text-white transition">Beranda</a> <a href="#fitur" class="block hover:text-white transition">Fitur</a> <a href="#statistik" class="block hover:text-white transition">Statistik</a> <a href="#fasilitas" class="block hover:text-white transition">Fasilitas</a>
+        </div>
+       </div>
+       <div>
+        <h4 class="font-semibold mb-4 text-sm">Layanan</h4>
+        <div class="space-y-2 text-sm text-navy-400">
+         <div>
+          Manajemen Persediaan
+         </div>
+         <div>
+          Sarana &amp; Prasarana
+         </div>
+         <div>
+          Aset Tetap
+         </div>
+         <div>
+          Peminjaman
+         </div>
+        </div>
+       </div>
+       <div>
+        <h4 class="font-semibold mb-4 text-sm">Kontak</h4>
+        <div class="space-y-2 text-sm text-navy-400">
+         <div>
+          Jl. Pangeran Hidayat No. 79
+         </div>
+         <div>
+          Kota Gorontalo, 96128
+         </div>
+         <div>
+          (0435) 821-190
+         </div>
+         <div>
+          bpmp.gorontalo@kemdikbud.go.id
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="border-t border-navy-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-navy-500">
+       <div>
+        © 2025 SIMBAN BPMP Gorontalo. All rights reserved.
+       </div>
+       <div class="flex items-center gap-4"><span>Kementerian Pendidikan dan Kebudayaan</span>
+       </div>
+      </div>
+     </div>
+    </footer>
+   </div><!-- END LANDING PAGE --> <!-- ==================== LOGIN PAGE ==================== -->
+   <div id="page-login" class="hidden">
+    <div class="min-h-full bg-gradient-to-br from-navy-50 via-white to-blue-50 flex items-center justify-center px-4 py-12" style="min-height:100%">
+     <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+       <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center mx-auto mb-4">
+        <span class="text-white font-extrabold text-lg">SB</span>
+       </div>
+       <h1 class="text-2xl font-extrabold text-navy-950">Masuk ke SIMBAN</h1>
+       <p class="text-sm text-navy-500 mt-1">Sistem Informasi Manajemen BMN</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-xl p-8 border border-navy-100">
+       <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="mb-4"><label for="login-username" class="block text-sm font-semibold text-navy-700 mb-1.5">Username / NIP</label>
+         <div class="relative"><i data-lucide="user" class="w-4 h-4 text-navy-400 absolute left-3 top-1/2 -translate-y-1/2"></i> <input type="text" id="login-username" required class="w-full pl-10 pr-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm focus:border-navy-600" placeholder="Masukkan username">
+         </div>
+        </div>
+        <div class="mb-6"><label for="login-password" class="block text-sm font-semibold text-navy-700 mb-1.5">Password</label>
+         <div class="relative"><i data-lucide="lock" class="w-4 h-4 text-navy-400 absolute left-3 top-1/2 -translate-y-1/2"></i> <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm focus:border-navy-600" placeholder="Masukkan password">
+         </div>
+        </div>
+        <div id="login-error" class="hidden mb-4 bg-red-50 text-red-600 text-sm rounded-xl p-3 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span></span>
+        </div><button type="submit" id="login-btn" class="btn-primary w-full py-3 text-white font-semibold rounded-xl flex items-center justify-center gap-2"> <span>Masuk</span> </button>
+       </form>
+       <div class="mt-6 text-center text-sm text-navy-500">
+        Belum punya akun? <button onclick="showPage('register')" class="text-navy-700 font-semibold hover:underline">Daftar Sekarang</button>
+       </div><!-- Demo accounts -->
+       <div class="mt-6 border-t border-navy-100 pt-5">
+        <p class="text-xs text-navy-400 text-center mb-3">Demo Login (klik untuk masuk otomatis)</p>
+        <div class="grid grid-cols-2 gap-2"><button onclick="demoLogin('superadmin')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">👑 Super Admin</button> <button onclick="demoLogin('kepala')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">🏛️ Kepala BPMP</button> <button onclick="demoLogin('kasubag')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">📋 Kasubag</button> <button onclick="demoLogin('admin_persediaan')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">📦 Admin Persediaan</button> <button onclick="demoLogin('admin_sarpras')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">🏢 Admin Sarpras</button> <button onclick="demoLogin('admin_aset')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition">🏗️ Admin Aset Tetap</button> <button onclick="demoLogin('pegawai')" class="text-xs bg-navy-50 hover:bg-navy-100 text-navy-700 font-medium rounded-lg py-2 px-2 transition col-span-2">👤 Pegawai</button>
+        </div>
+       </div>
+      </div><button onclick="showPage('landing')" class="mt-6 flex items-center gap-2 text-sm text-navy-500 hover:text-navy-700 mx-auto transition"> <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Beranda </button>
+     </div>
+    </div>
+   </div><!-- ==================== REGISTER PAGE ==================== -->
+   <div id="page-register" class="hidden">
+    <div class="min-h-full bg-gradient-to-br from-navy-50 via-white to-blue-50 flex items-center justify-center px-4 py-12" style="min-height:100%">
+     <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+       <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center mx-auto mb-4">
+        <span class="text-white font-extrabold text-lg">SB</span>
+       </div>
+       <h1 class="text-2xl font-extrabold text-navy-950">Daftar Akun SIMBAN</h1>
+       <p class="text-sm text-navy-500 mt-1">Isi data diri untuk membuat akun</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-xl p-8 border border-navy-100">
+       <form id="register-form" onsubmit="handleRegister(event)">
+        <div class="mb-4"><label for="reg-fullname" class="block text-sm font-semibold text-navy-700 mb-1.5">Nama Lengkap</label> <input type="text" id="reg-fullname" required class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm" placeholder="Nama lengkap">
+        </div>
+        <div class="mb-4"><label for="reg-nip" class="block text-sm font-semibold text-navy-700 mb-1.5">NIP</label> <input type="text" id="reg-nip" required class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm" placeholder="Nomor Induk Pegawai">
+        </div>
+        <div class="mb-4"><label for="reg-email" class="block text-sm font-semibold text-navy-700 mb-1.5">Email</label> <input type="email" id="reg-email" required class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm" placeholder="email@kemdikbud.go.id">
+        </div>
+        <div class="mb-4"><label for="reg-role" class="block text-sm font-semibold text-navy-700 mb-1.5">Jabatan / Role</label> <select id="reg-role" required class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm"> <option value="">Pilih jabatan</option> <option value="pegawai">Pegawai</option> <option value="admin_persediaan">Admin Persediaan</option> <option value="admin_sarpras">Admin Sarana Prasarana</option> <option value="admin_aset">Admin Aset Tetap</option> <option value="kasubag">Kasubag</option> <option value="kepala">Kepala BPMP</option> </select>
+        </div>
+        <div class="mb-4"><label for="reg-username" class="block text-sm font-semibold text-navy-700 mb-1.5">Username</label> <input type="text" id="reg-username" required class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm" placeholder="Buat username">
+        </div>
+        <div class="mb-6"><label for="reg-password" class="block text-sm font-semibold text-navy-700 mb-1.5">Password</label> <input type="password" id="reg-password" required minlength="6" class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm" placeholder="Minimal 6 karakter">
+        </div>
+        <div id="register-error" class="hidden mb-4 bg-red-50 text-red-600 text-sm rounded-xl p-3 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span></span>
+        </div>
+        <div id="register-success" class="hidden mb-4 bg-green-50 text-green-600 text-sm rounded-xl p-3 flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i><span></span>
+        </div><button type="submit" id="register-btn" class="btn-primary w-full py-3 text-white font-semibold rounded-xl flex items-center justify-center gap-2"> <span>Daftar</span> </button>
+       </form>
+       <div class="mt-6 text-center text-sm text-navy-500">
+        Sudah punya akun? <button onclick="showPage('login')" class="text-navy-700 font-semibold hover:underline">Masuk</button>
+       </div>
+      </div><button onclick="showPage('landing')" class="mt-6 flex items-center gap-2 text-sm text-navy-500 hover:text-navy-700 mx-auto transition"> <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Beranda </button>
+     </div>
+    </div>
+   </div><!-- ==================== DASHBOARD (all roles) ==================== -->
+   <div id="page-dashboard" class="hidden">
+    <div class="flex" style="height:100%"><!-- Sidebar -->
+     <aside id="sidebar" class="w-64 bg-white border-r border-navy-100 flex-shrink-0 flex flex-col overflow-auto hidden lg:flex">
+      <div class="p-5 border-b border-navy-100">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
+         <span class="text-white font-extrabold text-sm">SB</span>
+        </div>
+        <div>
+         <div class="font-bold text-navy-900 text-sm">
+          SIMBAN
+         </div>
+         <div class="text-[10px] text-navy-500">
+          BPMP Gorontalo
+         </div>
+        </div>
+       </div>
+      </div>
+      <nav class="flex-1 p-3 space-y-1" id="sidebar-nav"></nav>
+      <div class="p-4 border-t border-navy-100"><button onclick="handleLogout()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+      </div>
+     </aside><!-- Main -->
+     <div class="flex-1 flex flex-col overflow-auto bg-navy-50/50"><!-- Top bar -->
+      <header class="bg-white border-b border-navy-100 px-4 sm:px-6 py-3 flex items-center justify-between flex-shrink-0">
+       <div class="flex items-center gap-3"><button onclick="toggleSidebar()" class="lg:hidden p-2 text-navy-700 hover:bg-navy-100 rounded-lg"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        <div>
+         <h2 class="font-bold text-navy-900 text-sm" id="topbar-title">Dashboard</h2>
+         <p class="text-xs text-navy-500" id="topbar-role">-</p>
+        </div>
+       </div>
+       <div class="flex items-center gap-3"><button class="relative p-2 text-navy-500 hover:bg-navy-100 rounded-lg"> <i data-lucide="bell" class="w-5 h-5"></i> <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span> </button>
+        <div class="flex items-center gap-2">
+         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-navy-500 to-navy-700 flex items-center justify-center text-white text-xs font-bold" id="user-avatar">
+          U
+         </div><span class="text-sm font-medium text-navy-700 hidden sm:block" id="user-display-name">User</span>
+        </div>
+       </div>
+      </header><!-- Content -->
+      <main class="flex-1 p-4 sm:p-6 overflow-auto" id="main-content"></main>
+     </div>
+    </div><!-- Mobile sidebar overlay -->
+    <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/40 z-40 lg:hidden" onclick="toggleSidebar()"></div>
+    <div id="sidebar-mobile" class="hidden fixed left-0 top-0 bottom-0 w-64 bg-white z-50 flex flex-col overflow-auto lg:hidden shadow-xl">
+     <div class="p-5 border-b border-navy-100 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
+        <span class="text-white font-extrabold text-sm">SB</span>
+       </div>
+       <div>
+        <div class="font-bold text-navy-900 text-sm">
+         SIMBAN
+        </div>
+       </div>
+      </div><button onclick="toggleSidebar()" class="p-1 text-navy-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+     </div>
+     <nav class="flex-1 p-3 space-y-1" id="sidebar-nav-mobile"></nav>
+     <div class="p-4 border-t border-navy-100"><button onclick="handleLogout()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+     </div>
+    </div>
+   </div><!-- Toast container -->
+   <div id="toast-container"></div>
+  </div><!-- end app -->
+  <script>
+// ====================== STATE ======================
+let currentPage = 'landing';
+let currentUser = null;
+let currentDashSection = 'overview';
+let registeredUsers = [];
+let carouselIndex = 0;
+const carouselTotal = 4;
+
+// Role labels
+const roleLabels = {
+  superadmin: 'Super Admin',
+  kepala: 'Kepala BPMP',
+  kasubag: 'Kasubag',
+  admin_persediaan: 'Admin Persediaan',
+  admin_sarpras: 'Admin Sarana Prasarana',
+  admin_aset: 'Admin Aset Tetap',
+  pegawai: 'Pegawai'
+};
+
+// Demo accounts
+const demoAccounts = {
+  superadmin:{ username:'superadmin', fullname:'Dr. Ahmad Rizal, M.Pd', role:'superadmin', nip:'198501012010011001' },
+  kepala:{ username:'kepala', fullname:'Prof. Nurdin Ismail, Ph.D', role:'kepala', nip:'197201012000011001' },
+  kasubag:{ username:'kasubag', fullname:'Siti Rahmawati, S.E', role:'kasubag', nip:'198003012005012001' },
+  admin_persediaan:{ username:'admin_persediaan', fullname:'Irwan Daud, S.Kom', role:'admin_persediaan', nip:'199001012015011001' },
+  admin_sarpras:{ username:'admin_sarpras', fullname:'Fadel Mohamad, S.T', role:'admin_sarpras', nip:'199105012016011001' },
+  admin_aset:{ username:'admin_aset', fullname:'Rina Gobel, S.E', role:'admin_aset', nip:'198807012014012001' },
+  pegawai:{ username:'pegawai', fullname:'Hendra Poluakan, S.Pd', role:'pegawai', nip:'199201012018011001' }
+};
+
+// ====================== NAVIGATION ======================
+function showPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById('page-' + page);
+  if (target) { target.classList.remove('hidden'); }
+  currentPage = page;
+  if (page === 'landing') {
+    document.getElementById('navbar').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  } else {
+    document.getElementById('navbar').classList.add('hidden');
+  }
+  if (page === 'dashboard') renderDashboard();
+  lucide.createIcons();
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+}
+
+// ====================== CAROUSEL ======================
+function initCarousel() {
+  const dotsC = document.getElementById('carousel-dots');
+  dotsC.innerHTML = '';
+  for (let i = 0; i < carouselTotal; i++) {
+    const d = document.createElement('button');
+    d.className = `w-2.5 h-2.5 rounded-full transition ${i === 0 ? 'bg-navy-600 w-6' : 'bg-navy-300'}`;
+    d.onclick = () => { carouselIndex = i; updateCarousel(); };
+    dotsC.appendChild(d);
+  }
+}
+function moveCarousel(dir) {
+  carouselIndex = (carouselIndex + dir + carouselTotal) % carouselTotal;
+  updateCarousel();
+}
+function updateCarousel() {
+  const track = document.getElementById('carousel-track');
+  track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+  const dots = document.getElementById('carousel-dots').children;
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].className = `h-2.5 rounded-full transition ${i === carouselIndex ? 'bg-navy-600 w-6' : 'bg-navy-300 w-2.5'}`;
+  }
+}
+setInterval(() => { moveCarousel(1); }, 5000);
+
+// ====================== AUTH ======================
+function handleLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+
+  // Check demo accounts (password: demo123)
+  const demoKey = Object.keys(demoAccounts).find(k => demoAccounts[k].username === u);
+  if (demoKey && p === 'demo123') {
+    currentUser = { ...demoAccounts[demoKey] };
+    showPage('dashboard');
+    showToast('Selamat datang, ' + currentUser.fullname + '!', 'success');
+    return;
+  }
+
+  // Check registered users
+  const found = registeredUsers.find(r => r.username === u);
+  if (found && found.password === p) {
+    currentUser = { ...found };
+    showPage('dashboard');
+    showToast('Selamat datang, ' + currentUser.fullname + '!', 'success');
+    return;
+  }
+
+  errEl.classList.remove('hidden');
+  errEl.querySelector('span').textContent = 'Username atau password salah. Gunakan demo123 untuk akun demo.';
+}
+
+function demoLogin(roleKey) {
+  currentUser = { ...demoAccounts[roleKey] };
+  showPage('dashboard');
+  showToast('Demo login sebagai ' + roleLabels[roleKey], 'success');
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('register-error');
+  const sucEl = document.getElementById('register-success');
+  errEl.classList.add('hidden');
+  sucEl.classList.add('hidden');
+
+  const data = {
+    type: 'user',
+    fullname: document.getElementById('reg-fullname').value.trim(),
+    nip: document.getElementById('reg-nip').value.trim(),
+    email: document.getElementById('reg-email').value.trim(),
+    role: document.getElementById('reg-role').value,
+    username: document.getElementById('reg-username').value.trim(),
+    password: document.getElementById('reg-password').value,
+    created_at: new Date().toISOString()
+  };
+
+  if (!data.role) {
+    errEl.classList.remove('hidden');
+    errEl.querySelector('span').textContent = 'Pilih jabatan terlebih dahulu.';
+    return;
+  }
+
+  // Check duplicate
+  if (registeredUsers.some(u => u.username === data.username) || Object.values(demoAccounts).some(d => d.username === data.username)) {
+    errEl.classList.remove('hidden');
+    errEl.querySelector('span').textContent = 'Username sudah digunakan.';
+    return;
+  }
+
+  const btn = document.getElementById('register-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span> Mendaftar...';
+
+  if (registeredUsers.length >= 999) {
+    errEl.classList.remove('hidden');
+    errEl.querySelector('span').textContent = 'Batas maksimum pengguna telah tercapai.';
+    btn.disabled = false;
+    btn.innerHTML = '<span>Daftar</span>';
+    return;
+  }
+
+  const result = await window.dataSdk.create(data);
+  btn.disabled = false;
+  btn.innerHTML = '<span>Daftar</span>';
+
+  if (result.isOk) {
+    registeredUsers.push({ ...data });
+    sucEl.classList.remove('hidden');
+    sucEl.querySelector('span').textContent = 'Registrasi berhasil! Silakan login.';
+    document.getElementById('register-form').reset();
+    setTimeout(() => showPage('login'), 2000);
+  } else {
+    errEl.classList.remove('hidden');
+    errEl.querySelector('span').textContent = 'Gagal mendaftar. Coba lagi.';
+  }
+}
+
+function handleLogout() {
+  currentUser = null;
+  showPage('landing');
+  showToast('Berhasil keluar dari sistem.', 'success');
+}
+
+// ====================== TOAST ======================
+function showToast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ====================== SIDEBAR ======================
+function toggleSidebar() {
+  document.getElementById('sidebar-overlay').classList.toggle('hidden');
+  document.getElementById('sidebar-mobile').classList.toggle('hidden');
+}
+
+function getSidebarItems(role) {
+  const common = [{ id:'overview', icon:'layout-dashboard', label:'Dashboard' }];
+  const items = {
+    superadmin: [...common,
+      { id:'users', icon:'users', label:'Manajemen Pengguna' },
+      { id:'persediaan', icon:'package', label:'Persediaan' },
+      { id:'sarpras', icon:'building', label:'Sarana Prasarana' },
+      { id:'aset', icon:'landmark', label:'Aset Tetap' },
+      { id:'peminjaman', icon:'scan-line', label:'Peminjaman' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan' },
+      { id:'settings', icon:'settings', label:'Pengaturan' }
+    ],
+    kepala: [...common,
+      { id:'persediaan', icon:'package', label:'Persediaan' },
+      { id:'sarpras', icon:'building', label:'Sarana Prasarana' },
+      { id:'aset', icon:'landmark', label:'Aset Tetap' },
+      { id:'peminjaman', icon:'scan-line', label:'Persetujuan' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan' }
+    ],
+    kasubag: [...common,
+      { id:'persediaan', icon:'package', label:'Persediaan' },
+      { id:'sarpras', icon:'building', label:'Sarana Prasarana' },
+      { id:'aset', icon:'landmark', label:'Aset Tetap' },
+      { id:'peminjaman', icon:'scan-line', label:'Persetujuan' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan' }
+    ],
+    admin_persediaan: [...common,
+      { id:'persediaan', icon:'package', label:'Kelola Persediaan' },
+      { id:'peminjaman', icon:'scan-line', label:'Peminjaman' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan Persediaan' }
+    ],
+    admin_sarpras: [...common,
+      { id:'sarpras', icon:'building', label:'Kelola Sarpras' },
+      { id:'peminjaman', icon:'scan-line', label:'Peminjaman' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan Sarpras' }
+    ],
+    admin_aset: [...common,
+      { id:'aset', icon:'landmark', label:'Kelola Aset Tetap' },
+      { id:'peminjaman', icon:'scan-line', label:'Peminjaman' },
+      { id:'laporan', icon:'file-bar-chart', label:'Laporan Aset' }
+    ],
+    pegawai: [...common,
+      { id:'peminjaman', icon:'scan-line', label:'Peminjaman Barang' },
+      { id:'riwayat', icon:'history', label:'Riwayat' }
+    ]
+  };
+  return items[role] || common;
+}
+
+function renderSidebar() {
+  if (!currentUser) return;
+  const items = getSidebarItems(currentUser.role);
+  const html = items.map(it => `
+    <button class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-navy-600 ${currentDashSection === it.id ? 'active bg-navy-100 text-navy-800' : ''}" onclick="navigateDash('${it.id}')">
+      <i data-lucide="${it.icon}" class="w-4 h-4"></i> ${it.label}
+    </button>
+  `).join('');
+  document.getElementById('sidebar-nav').innerHTML = html;
+  document.getElementById('sidebar-nav-mobile').innerHTML = html;
+}
+
+function navigateDash(section) {
+  currentDashSection = section;
+  renderDashboard();
+  // Close mobile sidebar
+  document.getElementById('sidebar-overlay').classList.add('hidden');
+  document.getElementById('sidebar-mobile').classList.add('hidden');
+}
+
+// ====================== DASHBOARD RENDERING ======================
+function renderDashboard() {
+  if (!currentUser) return;
+  renderSidebar();
+  document.getElementById('topbar-role').textContent = roleLabels[currentUser.role];
+  document.getElementById('user-display-name').textContent = currentUser.fullname;
+  document.getElementById('user-avatar').textContent = currentUser.fullname.charAt(0).toUpperCase();
+
+  const main = document.getElementById('main-content');
+  const label = roleLabels[currentUser.role];
+  document.getElementById('topbar-title').textContent = getSidebarItems(currentUser.role).find(i => i.id === currentDashSection)?.label || 'Dashboard';
+
+  switch (currentDashSection) {
+    case 'overview': main.innerHTML = renderOverview(); break;
+    case 'users': main.innerHTML = renderUsersPage(); break;
+    case 'persediaan': main.innerHTML = renderPersediaanPage(); break;
+    case 'sarpras': main.innerHTML = renderSarprasPage(); break;
+    case 'aset': main.innerHTML = renderAsetPage(); break;
+    case 'peminjaman': main.innerHTML = renderPeminjamanPage(); break;
+    case 'laporan': main.innerHTML = renderLaporanPage(); break;
+    case 'riwayat': main.innerHTML = renderRiwayatPage(); break;
+    case 'settings': main.innerHTML = renderSettingsPage(); break;
+    default: main.innerHTML = renderOverview();
+  }
+  lucide.createIcons();
+}
+
+function renderOverview() {
+  const role = currentUser.role;
+  const isAdmin = ['superadmin','kepala','kasubag'].includes(role);
+  const greeting = getGreeting();
+
+  let statsCards = '';
+  if (role === 'superadmin' || role === 'kepala' || role === 'kasubag') {
+    statsCards = `
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        ${statCard('Total Aset BMN','1,248','box','from-navy-500 to-navy-700','+8% dari semester lalu')}
+        ${statCard('Persediaan','856','package','from-blue-500 to-blue-700','Stok tersedia')}
+        ${statCard('Sarana Prasarana','392','building-2','from-sky-500 to-sky-700','78% kondisi baik')}
+        ${statCard('Peminjaman Aktif','156','scan-line','from-emerald-500 to-emerald-700','12 pending')}
+      </div>`;
+  } else if (role === 'admin_persediaan') {
+    statsCards = `
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        ${statCard('Total Persediaan','856','package','from-navy-500 to-navy-700','Dikelola')}
+        ${statCard('Stok Rendah','23','alert-triangle','from-amber-500 to-amber-700','Perlu restock')}
+        ${statCard('Pengeluaran Bulan Ini','45','trending-down','from-red-500 to-red-700','Unit keluar')}
+      </div>`;
+  } else if (role === 'admin_sarpras') {
+    statsCards = `
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        ${statCard('Total Sarpras','392','building','from-navy-500 to-navy-700','Terdaftar')}
+        ${statCard('Kondisi Baik','306','check-circle','from-green-500 to-green-700','78%')}
+        ${statCard('Perlu Perbaikan','42','wrench','from-amber-500 to-amber-700','Prioritas')}
+      </div>`;
+  } else if (role === 'admin_aset') {
+    statsCards = `
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        ${statCard('Total Aset Tetap','186','landmark','from-navy-500 to-navy-700','Tercatat')}
+        ${statCard('Nilai Aset','Rp 24.5M','trending-up','from-green-500 to-green-700','Total nilai')}
+        ${statCard('Penyusutan','Rp 3.2M','trending-down','from-red-500 to-red-700','Tahun ini')}
+      </div>`;
+  } else {
+    statsCards = `
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        ${statCard('Peminjaman Saya','3','scan-line','from-navy-500 to-navy-700','Aktif')}
+        ${statCard('Menunggu Approval','1','clock','from-amber-500 to-amber-700','Pending')}
+        ${statCard('Total Riwayat','18','history','from-green-500 to-green-700','Selesai')}
+      </div>`;
+  }
+
+  return `
+    <div class="fade-in">
+      <div class="bg-gradient-to-r from-navy-700 to-navy-900 rounded-2xl p-6 mb-6 text-white">
+        <h2 class="text-xl font-bold mb-1">${greeting}, ${currentUser.fullname.split(' ')[0]}! 👋</h2>
+        <p class="text-navy-200 text-sm">Login sebagai <span class="font-semibold text-white">${roleLabels[currentUser.role]}</span> • ${new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
+      </div>
+      ${statsCards}
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl border border-navy-100 p-5">
+          <h3 class="font-bold text-navy-900 text-sm mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Aktivitas Terkini</h3>
+          <div class="space-y-3">
+            ${activityItem('Laptop Lenovo ThinkPad ditambahkan','2 jam lalu','plus-circle','green')}
+            ${activityItem('Peminjaman Proyektor disetujui','4 jam lalu','check-circle','blue')}
+            ${activityItem('Stok ATK diperbarui (-15 rim)','6 jam lalu','refresh-cw','amber')}
+            ${activityItem('Laporan Semester I digenerate','1 hari lalu','file-text','navy')}
+            ${activityItem('AC Ruang 3 dijadwalkan perbaikan','2 hari lalu','wrench','red')}
+          </div>
+        </div>
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-2xl border border-navy-100 p-5">
+          <h3 class="font-bold text-navy-900 text-sm mb-4 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Aksi Cepat</h3>
+          <div class="grid grid-cols-2 gap-3">
+            ${quickAction('Tambah Barang','plus','navy')}
+            ${quickAction('Pinjam Barang','scan-line','blue')}
+            ${quickAction('Buat Laporan','file-bar-chart','green')}
+            ${quickAction('Cek Stok','search','amber')}
+          </div>
+          <div class="mt-5 bg-navy-50 rounded-xl p-4">
+            <h4 class="font-semibold text-navy-800 text-xs mb-2">Pengumuman</h4>
+            <p class="text-xs text-navy-500">Inventarisasi BMN Semester II dijadwalkan tanggal 15-20 Desember 2025. Mohon pastikan semua data aset sudah diperbarui.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function statCard(label, value, icon, gradient, sub) {
+  return `<div class="bg-gradient-to-br ${gradient} rounded-2xl p-5 text-white">
+    <div class="flex items-center justify-between mb-2"><i data-lucide="${icon}" class="w-6 h-6 opacity-80"></i></div>
+    <div class="text-2xl font-extrabold">${value}</div>
+    <div class="text-xs opacity-80 mt-1">${label}</div>
+    <div class="text-[10px] opacity-60 mt-0.5">${sub}</div>
+  </div>`;
+}
+
+function activityItem(text, time, icon, color) {
+  return `<div class="flex items-start gap-3 py-2 border-b border-navy-50 last:border-0">
+    <div class="w-8 h-8 rounded-lg bg-${color}-100 flex items-center justify-center flex-shrink-0"><i data-lucide="${icon}" class="w-4 h-4 text-${color}-600"></i></div>
+    <div><div class="text-sm text-navy-700">${text}</div><div class="text-xs text-navy-400">${time}</div></div>
+  </div>`;
+}
+
+function quickAction(label, icon, color) {
+  return `<button class="flex flex-col items-center gap-2 p-4 bg-${color}-50 hover:bg-${color}-100 rounded-xl transition">
+    <div class="w-10 h-10 rounded-xl bg-${color}-100 flex items-center justify-center"><i data-lucide="${icon}" class="w-5 h-5 text-${color}-600"></i></div>
+    <span class="text-xs font-semibold text-${color}-700">${label}</span>
+  </button>`;
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Selamat Pagi';
+  if (h < 15) return 'Selamat Siang';
+  if (h < 18) return 'Selamat Sore';
+  return 'Selamat Malam';
+}
+
+// ====================== SUB PAGES ======================
+function dataTable(title, headers, rows) {
+  return `
+    <div class="bg-white rounded-2xl border border-navy-100 overflow-hidden">
+      <div class="p-5 border-b border-navy-100 flex items-center justify-between flex-wrap gap-3">
+        <h3 class="font-bold text-navy-900">${title}</h3>
+        <div class="flex items-center gap-2">
+          <div class="relative"><i data-lucide="search" class="w-4 h-4 text-navy-400 absolute left-3 top-1/2 -translate-y-1/2"></i><input type="text" placeholder="Cari..." class="pl-9 pr-4 py-2 bg-navy-50 border border-navy-200 rounded-lg text-sm w-48"></div>
+          <button class="btn-primary px-3 py-2 text-white text-sm rounded-lg flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> Tambah</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-navy-50 text-navy-600"><tr>${headers.map(h=>`<th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider">${h}</th>`).join('')}<th class="px-4 py-3 text-left font-semibold text-xs uppercase">Aksi</th></tr></thead>
+          <tbody class="divide-y divide-navy-50">${rows.map(r => `<tr class="hover:bg-navy-50/50">${r.map(c => `<td class="px-4 py-3 text-navy-700">${c}</td>`).join('')}<td class="px-4 py-3"><div class="flex gap-1"><button class="p-1.5 text-navy-500 hover:bg-navy-100 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button><button class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div></td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+      <div class="p-4 border-t border-navy-100 flex items-center justify-between text-xs text-navy-500">
+        <span>Menampilkan 1-5 dari ${rows.length} data</span>
+        <div class="flex gap-1">
+          <button class="px-3 py-1 rounded bg-navy-100 text-navy-600 font-medium">1</button>
+          <button class="px-3 py-1 rounded hover:bg-navy-50">2</button>
+          <button class="px-3 py-1 rounded hover:bg-navy-50">3</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function badge(text, color) { return `<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-${color}-100 text-${color}-700">${text}</span>`; }
+
+function renderPersediaanPage() {
+  return `<div class="fade-in">${dataTable('Data Persediaan',
+    ['No','Kode','Nama Barang','Kategori','Stok','Satuan','Kondisi'],
+    [
+      ['1','PSD-001','Kertas HVS A4 70gr','ATK','350','Rim',badge('Tersedia','green')],
+      ['2','PSD-002','Tinta Printer HP 680','ATK','25','Botol',badge('Stok Rendah','amber')],
+      ['3','PSD-003','Map Ordner','ATK','120','Buah',badge('Tersedia','green')],
+      ['4','PSD-004','Baterai AA Alkaline','Elektronik','48','Pack',badge('Tersedia','green')],
+      ['5','PSD-005','Hand Sanitizer 500ml','Kebersihan','15','Botol',badge('Stok Rendah','amber')]
+    ]
+  )}</div>`;
+}
+
+function renderSarprasPage() {
+  return `<div class="fade-in">${dataTable('Data Sarana & Prasarana',
+    ['No','Kode','Nama','Lokasi','Kondisi','Tahun','Nilai'],
+    [
+      ['1','SRP-001','Gedung Utama','Lantai 1-2',badge('Baik','green'),'2015','Rp 8.5M'],
+      ['2','SRP-002','Aula Serbaguna','Lantai 1',badge('Baik','green'),'2016','Rp 3.2M'],
+      ['3','SRP-003','Ruang Server','Lantai 2',badge('Pemeliharaan','amber'),'2018','Rp 1.8M'],
+      ['4','SRP-004','Mushola','Lantai 1',badge('Baik','green'),'2015','Rp 450Jt'],
+      ['5','SRP-005','Area Parkir','Halaman',badge('Perbaikan','red'),'2015','Rp 350Jt']
+    ]
+  )}</div>`;
+}
+
+function renderAsetPage() {
+  return `<div class="fade-in">${dataTable('Data Aset Tetap',
+    ['No','Kode','Nama Aset','Jenis','Tahun','Nilai Perolehan','Kondisi'],
+    [
+      ['1','AST-001','Tanah Kantor BPMP','Tanah','2005','Rp 5.2M',badge('Baik','green')],
+      ['2','AST-002','Gedung Kantor','Bangunan','2015','Rp 8.5M',badge('Baik','green')],
+      ['3','AST-003','Toyota Innova BA 1234 GO','Kendaraan','2020','Rp 380Jt',badge('Baik','green')],
+      ['4','AST-004','Server Dell PowerEdge','Peralatan','2021','Rp 250Jt',badge('Baik','green')],
+      ['5','AST-005','AC Daikin 2PK (12 unit)','Peralatan','2019','Rp 180Jt',badge('Pemeliharaan','amber')]
+    ]
+  )}</div>`;
+}
+
+function renderPeminjamanPage() {
+  const isApprover = ['kepala','kasubag','superadmin'].includes(currentUser.role);
+  const title = isApprover ? 'Persetujuan Peminjaman' : 'Peminjaman Barang';
+  return `<div class="fade-in">${dataTable(title,
+    ['No','Pemohon','Barang','Tgl Pinjam','Tgl Kembali','Keperluan','Status'],
+    [
+      ['1','Hendra Poluakan','Proyektor Epson','01/12/2025','03/12/2025','Presentasi',badge('Pending','amber')],
+      ['2','Siti Aminah','Laptop Lenovo','28/11/2025','05/12/2025','Pelatihan',badge('Disetujui','green')],
+      ['3','Ahmad Yani','Speaker Portable','02/12/2025','02/12/2025','Upacara',badge('Pending','amber')],
+      ['4','Dewi Lestari','Kamera DSLR','25/11/2025','27/11/2025','Dokumentasi',badge('Dikembalikan','blue')],
+      ['5','Fadel Mohamad','Minibus','05/12/2025','05/12/2025','Monitoring',badge('Pending','amber')]
+    ]
+  )}</div>`;
+}
+
+function renderLaporanPage() {
+  return `<div class="fade-in">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      ${['Laporan Persediaan Semester II','Laporan Aset Tetap Tahunan','Laporan Sarpras Q4','Laporan Peminjaman Bulanan','Rekap Penyusutan Aset','LBMN Konsolidasi'].map((t,i) => `
+        <div class="bg-white rounded-2xl border border-navy-100 p-5 card-hover">
+          <div class="w-10 h-10 rounded-xl bg-navy-100 flex items-center justify-center mb-3"><i data-lucide="file-text" class="w-5 h-5 text-navy-600"></i></div>
+          <h4 class="font-bold text-navy-900 text-sm mb-1">${t}</h4>
+          <p class="text-xs text-navy-500 mb-3">Periode ${i<3?'2025':'Desember 2025'}</p>
+          <div class="flex gap-2">
+            <button class="text-xs bg-navy-100 hover:bg-navy-200 text-navy-700 font-medium rounded-lg px-3 py-1.5 transition flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> Lihat</button>
+            <button class="text-xs bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-lg px-3 py-1.5 transition flex items-center gap-1"><i data-lucide="download" class="w-3 h-3"></i> Unduh</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+function renderUsersPage() {
+  const allUsers = Object.values(demoAccounts).map((u,i) => [String(i+1), u.fullname, u.nip, roleLabels[u.role], badge('Aktif','green')]);
+  return `<div class="fade-in">${dataTable('Manajemen Pengguna',
+    ['No','Nama','NIP','Jabatan','Status'],
+    allUsers
+  )}</div>`;
+}
+
+function renderRiwayatPage() {
+  return `<div class="fade-in">${dataTable('Riwayat Peminjaman',
+    ['No','Barang','Tgl Pinjam','Tgl Kembali','Status'],
+    [
+      ['1','Proyektor Epson','15/11/2025','17/11/2025',badge('Dikembalikan','green')],
+      ['2','Laptop Lenovo','01/11/2025','05/11/2025',badge('Dikembalikan','green')],
+      ['3','Kamera DSLR','20/10/2025','22/10/2025',badge('Dikembalikan','green')]
+    ]
+  )}</div>`;
+}
+
+function renderSettingsPage() {
+  return `<div class="fade-in">
+    <div class="bg-white rounded-2xl border border-navy-100 p-6 max-w-2xl">
+      <h3 class="font-bold text-navy-900 mb-6">Pengaturan Sistem</h3>
+      <div class="space-y-4">
+        <div><label class="block text-sm font-semibold text-navy-700 mb-1">Nama Instansi</label><input type="text" value="BPMP Provinsi Gorontalo" class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm"></div>
+        <div><label class="block text-sm font-semibold text-navy-700 mb-1">Email Notifikasi</label><input type="email" value="bpmp.gorontalo@kemdikbud.go.id" class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm"></div>
+        <div><label class="block text-sm font-semibold text-navy-700 mb-1">Batas Peminjaman (hari)</label><input type="number" value="7" class="w-full px-4 py-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm"></div>
+        <button class="btn-primary px-6 py-2.5 text-white font-semibold rounded-xl text-sm">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ====================== DATA SDK ======================
+const dataHandler = {
+  onDataChanged(data) {
+    registeredUsers = data.filter(d => d.type === 'user').map(d => ({
+      username: d.username,
+      password: d.password,
+      fullname: d.fullname,
+      nip: d.nip,
+      role: d.role,
+      email: d.email
+    }));
+  }
+};
+
+// ====================== ELEMENT SDK ======================
+const defaultConfig = {
+  site_title: 'SIMBAN',
+  hero_subtitle: 'Platform digital pencatatan dan monitoring Barang Milik Negara pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara transparan, akuntabel, dan real-time.',
+  background_color: '#ffffff',
+  surface_color: '#eff4ff',
+  text_color: '#091b55',
+  primary_action_color: '#1a4bee',
+  secondary_action_color: '#0c2a8c',
+  font_family: 'Plus Jakarta Sans',
+  font_size: 16
+};
+
+function applyConfig(config) {
+  const title = config.site_title || defaultConfig.site_title;
+  const subtitle = config.hero_subtitle || defaultConfig.hero_subtitle;
+  const bg = config.background_color || defaultConfig.background_color;
+  const surface = config.surface_color || defaultConfig.surface_color;
+  const text = config.text_color || defaultConfig.text_color;
+  const primary = config.primary_action_color || defaultConfig.primary_action_color;
+  const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+  const font = config.font_family || defaultConfig.font_family;
+  const size = config.font_size || defaultConfig.font_size;
+
+  const nt = document.getElementById('nav-title');
+  if (nt) nt.textContent = title;
+
+  const hs = document.getElementById('hero-subtitle');
+  if (hs) hs.textContent = subtitle;
+
+  document.body.style.fontFamily = `${font}, Plus Jakarta Sans, sans-serif`;
+  document.body.style.fontSize = `${size}px`;
+}
+
+window.elementSdk.init({
+  defaultConfig,
+  async onConfigChange(config) { applyConfig(config); },
+  mapToCapabilities(config) {
+    return {
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }},
+        { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }},
+        { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }},
+        { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: v => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }},
+        { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: v => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }}
+      ],
+      borderables: [],
+      fontEditable: {
+        get: () => config.font_family || defaultConfig.font_family,
+        set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+      },
+      fontSizeable: {
+        get: () => config.font_size || defaultConfig.font_size,
+        set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+      }
+    };
+  },
+  mapToEditPanelValues(config) {
+    return new Map([
+      ['site_title', config.site_title || defaultConfig.site_title],
+      ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle]
+    ]);
+  }
+});
+
+// Init Data SDK
+(async () => {
+  const r = await window.dataSdk.init(dataHandler);
+  if (!r.isOk) console.error('Data SDK init failed');
+})();
+
+// ====================== INIT ======================
+initCarousel();
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e7c53e2061487f0',t:'MTc3NTQzMTY5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
