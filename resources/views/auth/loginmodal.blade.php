@@ -1,4 +1,5 @@
-
+<!DOCTYPE html>
+<html lang="id">
 <!-- =============================================
      PAGE: LOGIN
      ============================================= -->
@@ -205,3 +206,48 @@
     </div>
   </div>
 </div><!-- END page-login -->
+
+<! -- AUTH: LOGIN -->
+
+function quickFill(u, p) {
+  const uEl = document.getElementById('loginUsername');
+  const pEl = document.getElementById('loginPassword');
+  if (uEl && pEl) { uEl.value = u; pEl.value = p; }
+}
+function handleLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value.trim();
+  const errEl = document.getElementById('loginError');
+  const errText = document.getElementById('loginErrorText');
+  errEl.classList.add('hidden');
+  if (!u || !p) {
+    errText.textContent = 'Username dan password wajib diisi.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  const found = registeredUsers.find(a => a.username === u && a.password === p);
+  if (found) {
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Memuat...';
+    btn.disabled = true;
+    showToast('Login berhasil! Selamat datang, ' + found.label, 'success');
+    setTimeout(() => {
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg> Masuk Sekarang';
+      btn.disabled = false;
+      // In a real app, redirect to dashboard. Here we go back to landing as placeholder.
+      goToPage('landing');
+    }, 1500);
+  } else {
+    errText.textContent = 'Username atau password tidak sesuai. Coba akun demo di bawah.';
+    errEl.classList.remove('hidden');
+    document.getElementById('loginUsername').classList.add('border-red-300');
+    document.getElementById('loginPassword').classList.add('border-red-300');
+    setTimeout(() => {
+      document.getElementById('loginUsername').classList.remove('border-red-300');
+      document.getElementById('loginPassword').classList.remove('border-red-300');
+    }, 2000);
+  }
+}
+
+</html>

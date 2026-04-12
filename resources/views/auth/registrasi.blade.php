@@ -213,3 +213,101 @@
     </div>
   </div>
 </div><!-- END page-register -->
+
+// ── AUTH: REGISTER ──
+
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const nip = document.getElementById('regNIP').value.trim();
+  const user = document.getElementById('regUsername').value.trim();
+  const pass = document.getElementById('regPassword').value.trim();
+  const role = document.getElementById('regRole').value;
+  const errEl = document.getElementById('regError');
+  const errText = document.getElementById('regErrorText');
+  const sucEl = document.getElementById('regSuccess');
+  errEl.classList.add('hidden');
+  sucEl.classList.add('hidden');
+
+  if (!name || !nip || !user || !pass) {
+    errText.textContent = 'Semua field wajib diisi.';
+    errEl.classList.remove('hidden'); return;
+  }
+  if (pass.length < 6) {
+    errText.textContent = 'Password minimal 6 karakter.';
+    errEl.classList.remove('hidden'); return;
+  }
+  if (registeredUsers.find(a => a.username === user)) {
+    errText.textContent = 'Username sudah digunakan, coba yang lain.';
+    errEl.classList.remove('hidden'); return;
+  }
+  const roleMap = { pegawai:'Pegawai', admin_persediaan:'Admin Persediaan', admin_sarpras:'Admin Sarana Prasarana', admin_aset:'Admin Aset Tetap', kasubag:'Kasubag TU', kepala_bpmp:'Kepala BPMP', superadmin:'Super Admin', tamu:'Tamu' };
+  registeredUsers.push({ username: user, password: pass, label: roleMap[role] || role, color:'from-navy-600 to-navy-400', icon:'user', desc: roleMap[role] });
+  sucEl.classList.remove('hidden');
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  showToast('Registrasi berhasil! Silakan login.', 'success');
+  setTimeout(() => {
+    sucEl.classList.add('hidden');
+    btn.disabled = false;
+    document.getElementById('regName').value = '';
+    document.getElementById('regNIP').value = '';
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('regRole').value = 'pegawai';
+    resetStrength();
+    quickFill(user, pass);
+    goToPage('login');
+  }, 1800);
+}
+
+// ── PASSWORD TOGGLE ──
+function togglePass(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  const icon = document.getElementById(iconId);
+  icon.innerHTML = isText
+    ? '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'
+    : '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>';
+}
+
+// ── PASSWORD STRENGTH ──
+function checkPasswordStrength(val) {
+  const bars = document.querySelectorAll('#strengthBars .strength-bar');
+  const text = document.getElementById('strengthText');
+  if (!val) { resetStrength(); return; }
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
+  const labels = ['Sangat Lemah', 'Lemah', 'Cukup Kuat', 'Kuat'];
+  const textColors = ['text-red-500', 'text-orange-500', 'text-yellow-600', 'text-green-600'];
+  bars.forEach((b, i) => {
+    b.className = 'strength-bar flex-1 ' + (i < score ? colors[score - 1] : 'bg-slate-200');
+  });
+  text.className = 'text-xs mt-1 ' + textColors[score - 1];
+  text.textContent = labels[score - 1] || 'Masukkan password';
+}
+function resetStrength() {
+  document.querySelectorAll('#strengthBars .strength-bar').forEach(b => b.className = 'strength-bar flex-1 bg-slate-200');
+  const t = document.getElementById('strengthText');
+  t.className = 'text-xs text-slate-400 mt-1';
+  t.textContent = 'Masukkan password untuk melihat kekuatan';
+}
+
+// ── TOAST ──
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const colors = { success:'bg-green-500', error:'bg-red-500', info:'bg-navy-600', warning:'bg-amber-500' };
+  const icons = { success:'check-circle', error:'x-circle', info:'info', warning:'alert-triangle' };
+  const toast = document.createElement('div');
+  toast.className = `pointer-events-auto flex items-center gap-3 ${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm`;
+  toast.style.animation = 'fadeUp 0.4s ease forwards';
+  toast.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 flex-shrink-0"></i><span>${msg}</span>`;
+  container.appendChild(toast);
+  lucide.createIcons();
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
