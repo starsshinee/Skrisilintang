@@ -49,7 +49,8 @@ Route::middleware('auth')->group(function () {
         ->name('superadmin.')
         ->middleware('role:superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('superadmin.dashbord'))->name('dashboard');
+            Route::get('/dashboard',      fn () => view('superadmin.dashbord'))->name('dashboard');
+            Route::get('/manajemen-user', fn () => view('superadmin.manajemen_user'))->name('manajemen-user');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -120,6 +121,9 @@ Route::middleware('auth')->group(function () {
         ->name('tamu.')
         ->middleware('role:tamu,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('tamu.dashbord'))->name('dashboard');
+            Route::get('/dashboard',        fn () => view('tamu.dashbord'))->name('dashboard');
+            Route::get('/peminjaman-aset',  fn () => view('tamu.peminjaman_aset'))->name('peminjaman-aset');
+            Route::get('/pengaturan-akun',  fn () => view('tamu.pengaturan_akun'))->name('pengaturan-akun');
+            Route::get('/info-fasilitas',   fn () => view('tamu.info_fasilitas'))->name('info-fasilitas');
         });
 });

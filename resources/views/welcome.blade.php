@@ -383,8 +383,8 @@
         </div>
       </div>
       <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-blue-200/50 text-sm">© 2025 SIBMN BPMP Provinsi Gorontalo. Hak Cipta Dilindungi.</p>
-        <span class="text-blue-200/50 text-xs">Dibangun dengan ❤️ untuk Pendidikan Indonesia</span>
+        <p class="text-blue-200/50 text-sm">© 2026 SIPANDU BPMP Provinsi Gorontalo. Hak Cipta Dilindungi.</p>
+        <span class="text-blue-200/50 text-xs">Dibangun dengan ❤️ Dari Lintang Cahyani Putri</span>
       </div>
     </div>
   </footer>

@@ -10,21 +10,7 @@
 </head>
 <body class="h-full">
 <div class="flex h-full min-h-screen">
-  <aside class="sidebar w-64 flex-shrink-0 flex flex-col p-5 gap-3">
-    <div class="flex items-center gap-3 mb-6 px-2">
-      <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#8eaeff"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#8eaeff"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#5a82ff"/></svg></div>
-      <div><p class="text-white font-extrabold text-sm leading-none">SIBMN</p><p class="text-blue-300 text-xs mt-0.5">BPMP Gorontalo</p></div>
-    </div>
-    <nav class="flex-1 space-y-1">
-      <a href="{{ route('adminpersediaan.dashboard') }}" class="flex items-center gap-3 text-white bg-white/15 rounded-xl px-3 py-2.5 text-sm font-semibold"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-      <a href="#" class="flex items-center gap-3 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl px-3 py-2.5 text-sm font-medium transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Barang Persediaan</a>
-      <a href="#" class="flex items-center gap-3 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl px-3 py-2.5 text-sm font-medium transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Barang</a>
-      <a href="#" class="flex items-center gap-3 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl px-3 py-2.5 text-sm font-medium transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Laporan Persediaan</a>
-    </nav>
-    <form method="POST" action="{{ route('logout') }}">@csrf
-      <button type="submit" class="w-full flex items-center gap-3 text-blue-200 hover:text-red-300 hover:bg-red-500/10 rounded-xl px-3 py-2.5 text-sm font-medium transition"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Keluar</button>
-    </form>
-  </aside>
+  @include('partials.sidebar')
   <main class="flex-1 overflow-auto p-8">
     <div class="flex items-center justify-between mb-8 anim">
       <div><h1 class="text-2xl font-extrabold text-navy-900">Dashboard Admin Persediaan</h1><p class="text-slate-500 text-sm mt-1">Selamat datang, <span class="font-semibold text-navy-700">{{ auth()->user()->name }}</span></p></div>
