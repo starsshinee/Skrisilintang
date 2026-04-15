@@ -20,6 +20,14 @@
   ];
   
   $config = $roleConfig[$currentRole];
+
+  $peminjamanData = [
+    ['peminjam' => 'Dr. Budi Santoso', 'gedung' => 'Aula Utama', 'tanggal' => '2025-07-15', 'status' => 'Menunggu'],
+    ['peminjam' => 'HMTI', 'gedung' => 'Gedung B Lt.2', 'tanggal' => '2025-07-18', 'status' => 'Disetujui'],
+    ['peminjam' => 'Fak. Teknik', 'gedung' => 'Lab Komputer A', 'tanggal' => '2025-07-20', 'status' => 'Disetujui'],
+    ['peminjam' => 'BEM Universitas', 'gedung' => 'Auditorium', 'tanggal' => '2025-07-22', 'status' => 'Menunggu'],
+    ['peminjam' => 'Prodi Manajemen', 'gedung' => 'Ruang Serbaguna C', 'tanggal' => '2025-07-10', 'status' => 'Ditolak'],
+  ];
 @endphp
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -256,91 +264,44 @@
 
   .page-header {
     margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .page-title {
+  .page-header-left h1 {
     font-size: 28px;
     font-weight: 700;
     color: #1f2937;
     margin: 0 0 8px;
   }
 
-  .page-subtitle {
+  .page-header-left p {
     font-size: 14px;
     color: #6b7280;
     margin: 0;
   }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-
-  .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
-
-  .stat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-    background: #f3f4f6;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-  }
-
-  .stat-icon.cyan {
-    background: #cffafe;
-    color: #0891b2;
-  }
-
-  .stat-badge {
-    font-size: 12px;
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #f3f4f6;
-    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .stat-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 8px;
+  .btn-primary {
+    background: #06b6d4;
+    color: white;
   }
 
-  .stat-label {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 16px;
+  .btn-primary:hover {
+    background: #0891b2;
   }
 
   .card {
@@ -351,59 +312,118 @@
     margin-bottom: 20px;
   }
 
-  .list-item {
-    padding: 16px;
-    border-radius: 8px;
-    background: #f9fafb;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s ease;
-  }
-
-  .list-item:hover {
-    background: #f3f4f6;
-  }
-
-  .list-item-left {
-    display: flex;
-    gap: 12px;
-    flex: 1;
-  }
-
-  .list-item-icon {
-    width: 40px;
-    height: 40px;
-    background: #e0f2fe;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0891b2;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  .list-item-content {
-    flex: 1;
-  }
-
-  .list-item-title {
-    font-weight: 600;
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
     color: #1f2937;
-    margin-bottom: 4px;
-    font-size: 14px;
+    margin: 0 0 20px;
   }
 
-  .list-item-subtitle {
+  .chart-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    height: 200px;
+  }
+
+  .chart-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-label {
     font-size: 12px;
     color: #6b7280;
   }
 
-  .list-item-action {
+  .chart-bar {
+    width: 100%;
+    background: #f3f4f6;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .chart-bar:hover {
+    opacity: 0.8;
+  }
+
+  .chart-value {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 14px;
+  }
+
+  .bar-monthly {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+
+  .bar-facility {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  }
+
+  .legend {
     display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
     gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+  }
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  thead th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+  }
+
+  tbody tr:hover {
+    background: #f9fafb;
   }
 
   .badge {
@@ -414,14 +434,14 @@
     font-weight: 600;
   }
 
-  .badge-success {
-    background: #dcfce7;
-    color: #16a34a;
-  }
-
   .badge-warning {
     background: #fef3c7;
     color: #d97706;
+  }
+
+  .badge-success {
+    background: #dcfce7;
+    color: #16a34a;
   }
 
   .badge-danger {
@@ -429,34 +449,22 @@
     color: #dc2626;
   }
 
-  .icon-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 14px;
+  .two-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
   }
 
-  .icon-btn:hover {
-    background: #f3f4f6;
-  }
+  @media (max-width: 1024px) {
+    .two-grid {
+      grid-template-columns: 1fr;
+    }
 
-  .icon-btn.edit {
-    color: #0891b2;
-  }
-
-  .icon-btn.delete {
-    color: #dc2626;
-  }
-
-  .icon-btn.delete:hover {
-    background: #fee2e2;
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 </style>
 
@@ -512,130 +520,141 @@
 <div class="main-wrapper">
   <div class="main-content">
     <div class="page-header">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Ringkasan data sarana prasarana</p>
+      <div class="page-header-left">
+        <h1>Laporan</h1>
+        <p>Statistik dan riwayat peminjaman gedung</p>
+      </div>
+      <button class="btn btn-primary">
+        <i class="fas fa-download"></i>
+        Export CSV
+      </button>
     </div>
 
-    <!-- Statistics Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-building"></i>
+    <!-- Charts Section -->
+    <div class="two-grid">
+      <!-- Statistik Peminjaman Bulanan -->
+      <div class="card">
+        <h3 class="card-title">Statistik Peminjaman Bulanan</h3>
+        <div class="chart-container">
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 60%;">
+              <div class="chart-value">12</div>
+            </div>
+            <div class="chart-label">Jan</div>
           </div>
-          <span class="stat-badge">+2</span>
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 90%;">
+              <div class="chart-value">18</div>
+            </div>
+            <div class="chart-label">Feb</div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 40%;">
+              <div class="chart-value">8</div>
+            </div>
+            <div class="chart-label">Mar</div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 110%;">
+              <div class="chart-value">22</div>
+            </div>
+            <div class="chart-label">Apr</div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 75%;">
+              <div class="chart-value">15</div>
+            </div>
+            <div class="chart-label">Mei</div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar bar-monthly" style="height: 140%;">
+              <div class="chart-value">28</div>
+            </div>
+            <div class="chart-label">Jun</div>
+          </div>
         </div>
-        <div class="stat-value">12</div>
-        <p class="stat-label">Total Gedung</p>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-check-circle"></i>
+      <!-- Gedung Terpopuler -->
+      <div class="card">
+        <h3 class="card-title">Gedung Terpopuler</h3>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Aula Utama</span>
+            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
+              <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
+            </div>
+            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">45</span>
           </div>
-          <span class="stat-badge">75%</span>
-        </div>
-        <div class="stat-value">9</div>
-        <p class="stat-label">Gedung Tersedia</p>
-      </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar"></i>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Auditorium</span>
+            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
+              <div style="width: 85%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
+            </div>
+            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">38</span>
           </div>
-          <span class="stat-badge">Aktif</span>
-        </div>
-        <div class="stat-value">5</div>
-        <p class="stat-label">Peminjaman Aktif</p>
-      </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar-check"></i>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Gedung B Lt.2</span>
+            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
+              <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
+            </div>
+            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">27</span>
           </div>
-          <span class="stat-badge">Bulan ini</span>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Lab Komputer A</span>
+            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
+              <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
+            </div>
+            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">20</span>
+          </div>
         </div>
-        <div class="stat-value">28</div>
-        <p class="stat-label">Total Peminjaman</p>
       </div>
     </div>
 
-    <!-- Two Column Layout -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-      <!-- Peminjaman Terbaru -->
-      <div class="card">
-        <h3 class="section-title">Peminjaman Terbaru</h3>
-        
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Aula Utama</div>
-              <div class="list-item-subtitle">Dr. Budi - Seminar Nasional</div>
-            </div>
-          </div>
-          <span class="badge badge-warning">Menunggu</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Gedung B Lt.2</div>
-              <div class="list-item-subtitle">HMTI - Workshop IoT</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Lab Komputer A</div>
-              <div class="list-item-subtitle">Fak. Teknik - Ujian Praktikum</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
-        </div>
+    <!-- Riwayat Peminjaman -->
+    <div class="card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h3 class="card-title" style="margin: 0;">Riwayat Peminjaman</h3>
+        <button class="btn btn-primary">
+          <i class="fas fa-download"></i>
+          Export CSV
+        </button>
       </div>
 
-      <!-- Status Gedung -->
-      <div class="card">
-        <h3 class="section-title">Status Gedung</h3>
-        
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Tersedia</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 75%; height: 100%; background: #0891b2; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">9</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Dipinjam</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 17%; height: 100%; background: #f59e0b; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">2</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
-          <span style="font-size: 14px; color: #6b7280;">Maintenance</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 8%; height: 100%; background: #ef4444; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">1</span>
-        </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width: 150px;">PEMINJAM</th>
+              <th style="min-width: 150px;">GEDUNG</th>
+              <th style="width: 120px;">TANGGAL</th>
+              <th style="width: 100px;">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($peminjamanData as $peminjaman)
+            <tr>
+              <td>
+                <strong style="color: #1f2937;">{{ $peminjaman['peminjam'] }}</strong>
+              </td>
+              <td>{{ $peminjaman['gedung'] }}</td>
+              <td>{{ $peminjaman['tanggal'] }}</td>
+              <td>
+                @if($peminjaman['status'] === 'Menunggu')
+                  <span class="badge badge-warning">{{ $peminjaman['status'] }}</span>
+                @elseif($peminjaman['status'] === 'Disetujui')
+                  <span class="badge badge-success">{{ $peminjaman['status'] }}</span>
+                @else
+                  <span class="badge badge-danger">{{ $peminjaman['status'] }}</span>
+                @endif
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

@@ -63,8 +63,8 @@
       'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
       'navItems' => [
         ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
-        ['href' => '#', 'label' => 'Data Sarpras', 'icon' => 'fas fa-tools', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Peminjaman Kendaraan', 'icon' => 'fas fa-car', 'route' => 'NONE'],
+        ['href' => '#', 'label' => 'Data Gedung', 'icon' => 'fas fa-tools', 'route' => 'NONE'],
+        ['href' => '#', 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-car', 'route' => 'NONE'],
         ['href' => '#', 'label' => 'Laporan Sarpras', 'icon' => 'fas fa-file-alt', 'route' => 'NONE'],
       ]
     ],

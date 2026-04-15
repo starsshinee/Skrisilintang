@@ -92,6 +92,9 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:adminsarpras,kasubag,superadmin')
         ->group(function () {
             Route::get('/dashboard', fn () => view('adminsarpras.dashbord'))->name('dashboard');
+            Route::get('/data-gedung', 'AdminSarprasController@dataGedung')->name('adminsarpras.data-gedung');
+            Route::get('/daftar-peminjaman', 'AdminSarprasController@daftarPeminjaman')->name('adminsarpras.daftar-peminjaman');
+            Route::get('/laporan', 'AdminSarprasController@laporan')->name('adminsarpras.laporan');
         });
 
     // ──────────────────────────────────────────────────────────────────

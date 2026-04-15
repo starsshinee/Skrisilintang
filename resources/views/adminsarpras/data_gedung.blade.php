@@ -20,6 +20,14 @@
   ];
   
   $config = $roleConfig[$currentRole];
+
+  $gedungData = [
+    ['id' => 1, 'nama' => 'Aula Utama', 'luas' => '1200 m²', 'kapasitas' => '500 orang', 'status' => 'Tersedia', 'gambar' => ['img1', 'img2']],
+    ['id' => 2, 'nama' => 'Gedung B Lt.2', 'luas' => '800 m²', 'kapasitas' => '200 orang', 'status' => 'Tersedia', 'gambar' => ['img1', 'img2']],
+    ['id' => 3, 'nama' => 'Lab Komputer A', 'luas' => '400 m²', 'kapasitas' => '60 orang', 'status' => 'Tidak Tersedia', 'gambar' => ['img1', 'img2']],
+    ['id' => 4, 'nama' => 'Ruang Serbaguna C', 'luas' => '600 m²', 'kapasitas' => '150 orang', 'status' => 'Tersedia', 'gambar' => ['img1']],
+    ['id' => 5, 'nama' => 'Auditorium', 'luas' => '2000 m²', 'kapasitas' => '800 orang', 'status' => 'Tersedia', 'gambar' => ['img1', 'img2']],
+  ];
 @endphp
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -271,139 +279,130 @@
     margin: 0;
   }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
+  .toolbar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
   }
 
-  .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  .search-box {
+    flex: 1;
+    max-width: 300px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 10px 16px;
+    padding-left: 36px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
     transition: all 0.2s ease;
   }
 
-  .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+  .search-box input:focus {
+    border-color: #06b6d4;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
   }
 
-  .stat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
+  .search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
   }
 
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-    background: #f3f4f6;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-  }
-
-  .stat-icon.cyan {
-    background: #cffafe;
-    color: #0891b2;
-  }
-
-  .stat-badge {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #f3f4f6;
-    color: #6b7280;
-  }
-
-  .stat-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 8px;
-  }
-
-  .stat-label {
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
     font-size: 14px;
-    color: #6b7280;
-    margin: 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 16px;
+  .btn-primary {
+    background: #06b6d4;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #0891b2;
   }
 
   .card {
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    overflow: hidden;
   }
 
-  .list-item {
-    padding: 16px;
-    border-radius: 8px;
-    background: #f9fafb;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s ease;
+  .table-responsive {
+    overflow-x: auto;
   }
 
-  .list-item:hover {
-    background: #f3f4f6;
-  }
-
-  .list-item-left {
-    display: flex;
-    gap: 12px;
-    flex: 1;
-  }
-
-  .list-item-icon {
-    width: 40px;
-    height: 40px;
-    background: #e0f2fe;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0891b2;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  .list-item-content {
-    flex: 1;
-  }
-
-  .list-item-title {
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
+  table {
+    width: 100%;
+    border-collapse: collapse;
     font-size: 14px;
   }
 
-  .list-item-subtitle {
+  thead {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  thead th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
     font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
     color: #6b7280;
   }
 
-  .list-item-action {
+  tbody tr:hover {
+    background: #f9fafb;
+  }
+
+  .image-thumbnails {
     display: flex;
     gap: 8px;
+  }
+
+  .image-thumb {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .image-thumb:hover {
+    transform: scale(1.05);
   }
 
   .badge {
@@ -419,14 +418,14 @@
     color: #16a34a;
   }
 
-  .badge-warning {
-    background: #fef3c7;
-    color: #d97706;
-  }
-
   .badge-danger {
     background: #fee2e2;
     color: #dc2626;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 8px;
   }
 
   .icon-btn {
@@ -512,130 +511,74 @@
 <div class="main-wrapper">
   <div class="main-content">
     <div class="page-header">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Ringkasan data sarana prasarana</p>
+      <h1 class="page-title">Data Gedung</h1>
+      <p class="page-subtitle">Kelola data gedung dan fasilitas</p>
     </div>
 
-    <!-- Statistics Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-building"></i>
-          </div>
-          <span class="stat-badge">+2</span>
-        </div>
-        <div class="stat-value">12</div>
-        <p class="stat-label">Total Gedung</p>
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Cari gedung...">
       </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <span class="stat-badge">75%</span>
-        </div>
-        <div class="stat-value">9</div>
-        <p class="stat-label">Gedung Tersedia</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar"></i>
-          </div>
-          <span class="stat-badge">Aktif</span>
-        </div>
-        <div class="stat-value">5</div>
-        <p class="stat-label">Peminjaman Aktif</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar-check"></i>
-          </div>
-          <span class="stat-badge">Bulan ini</span>
-        </div>
-        <div class="stat-value">28</div>
-        <p class="stat-label">Total Peminjaman</p>
-      </div>
+      <button class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Tambah Gedung
+      </button>
     </div>
 
-    <!-- Two Column Layout -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-      <!-- Peminjaman Terbaru -->
-      <div class="card">
-        <h3 class="section-title">Peminjaman Terbaru</h3>
-        
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Aula Utama</div>
-              <div class="list-item-subtitle">Dr. Budi - Seminar Nasional</div>
-            </div>
-          </div>
-          <span class="badge badge-warning">Menunggu</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Gedung B Lt.2</div>
-              <div class="list-item-subtitle">HMTI - Workshop IoT</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Lab Komputer A</div>
-              <div class="list-item-subtitle">Fak. Teknik - Ujian Praktikum</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
-        </div>
-      </div>
-
-      <!-- Status Gedung -->
-      <div class="card">
-        <h3 class="section-title">Status Gedung</h3>
-        
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Tersedia</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 75%; height: 100%; background: #0891b2; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">9</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Dipinjam</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 17%; height: 100%; background: #f59e0b; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">2</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
-          <span style="font-size: 14px; color: #6b7280;">Maintenance</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 8%; height: 100%; background: #ef4444; border-radius: 4px;"></div>
-          </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">1</span>
-        </div>
+    <div class="card">
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">NO</th>
+              <th style="min-width: 120px;">GAMBAR</th>
+              <th style="min-width: 150px;">NAMA GEDUNG</th>
+              <th style="width: 120px;">LUAS</th>
+              <th style="width: 120px;">KAPASITAS</th>
+              <th style="width: 100px;">STATUS</th>
+              <th style="width: 120px;">AKSI</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($gedungData as $index => $gedung)
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>
+                <div class="image-thumbnails">
+                  @foreach($gedung['gambar'] as $img)
+                    <div class="image-thumb">
+                      <i class="fas fa-image"></i>
+                    </div>
+                  @endforeach
+                </div>
+              </td>
+              <td>
+                <strong style="color: #1f2937;">{{ $gedung['nama'] }}</strong>
+              </td>
+              <td>{{ $gedung['luas'] }}</td>
+              <td>{{ $gedung['kapasitas'] }}</td>
+              <td>
+                @if($gedung['status'] === 'Tersedia')
+                  <span class="badge badge-success">{{ $gedung['status'] }}</span>
+                @else
+                  <span class="badge badge-danger">{{ $gedung['status'] }}</span>
+                @endif
+              </td>
+              <td>
+                <div class="action-btns">
+                  <button class="icon-btn edit" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="icon-btn delete" title="Hapus">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
