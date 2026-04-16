@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AdminSarprasController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KasubagController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TamuController;
 use Illuminate\Support\Facades\Route;
+use Termwind\Components\Raw;
 
 // ──────────────────────────────────────────────────────────────────────
 // Halaman Publik
@@ -72,7 +74,12 @@ Route::middleware('auth')->group(function () {
         ->name('kasubag.')
         ->middleware('role:kasubag,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('kasubag.dashbord'))->name('dashboard');
+            Route::get('/dashboard', [KasubagController::class, 'dashboard'])->name('dashboard');
+            Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung');
+            Route::get('/persetujuan-peminjaman-barang', [KasubagController::class, 'persetujuanPeminjamanBarang'])->name('persetujuan-peminjaman-barang');
+            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');
+            Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
+            Route::get('/pengaturan-akun', [KasubagController::class, 'pengaturanAkun'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────

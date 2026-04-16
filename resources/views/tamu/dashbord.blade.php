@@ -413,7 +413,7 @@
     <div class="hero-blob2"></div>
     <div class="hero-left">
       <div class="hero-greeting">👋 Selamat datang kembali!</div>
-      <div class="hero-title">Halo, Admin!</div>
+      <div class="hero-title">Halo!</div>
       <div class="hero-sub">Sebagai Tamu, Anda dapat mengajukan permintaan peminjaman aset dan fasilitas BPMP Provinsi Gorontalo.</div>
     </div>
     <div class="hero-right">
