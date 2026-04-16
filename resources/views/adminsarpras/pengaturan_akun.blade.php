@@ -360,7 +360,6 @@
       <div class="tabs-nav animate d1">
         <button class="tab-btn active" onclick="switchTab(this,'profil')"><i class="fas fa-user"></i> Informasi Profil</button>
         <button class="tab-btn" onclick="switchTab(this,'keamanan')"><i class="fas fa-shield-halved"></i> Keamanan</button>
-        <button class="tab-btn" onclick="switchTab(this,'ttd')"><i class="fas fa-signature"></i> Tanda Tangan</button>
       </div>
 
       <!-- TAB: PROFIL -->
@@ -476,6 +475,7 @@
             </div>
           </div>
         </div>
+      </div>
 
         <!-- Session Info -->
         <div class="section-card animate d3">
@@ -501,87 +501,7 @@
           </div>
         </div>
       </div>
-
-      <!-- TAB: TANDA TANGAN -->
-      <div class="tab-panel" id="tab-ttd">
-        <div class="section-card animate d2">
-          <div class="section-header">
-            <div>
-              <div class="section-title"><i class="fas fa-signature"></i> Tanda Tangan Digital</div>
-              <div class="section-sub">Tanda tangan akan digunakan pada surat peminjaman gedung</div>
-            </div>
-          </div>
-          <div class="section-body">
-            <!-- Current Signature -->
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
-              <div class="signature-zone" id="sigZone">
-                <div class="sig-icon"><i class="fas fa-pen-fancy"></i></div>
-                <div class="sig-text">Belum ada tanda tangan</div>
-                <div class="sig-sub">Upload file tanda tangan Anda di bawah</div>
-              </div>
-            </div>
-
-            <!-- Upload -->
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-upload"></i> Upload Tanda Tangan Baru</div>
-              <div style="
-                border: 1.5px dashed var(--border);
-                border-radius: 11px;
-                padding: 22px;
-                text-align: center;
-                cursor: pointer;
-                transition: all .2s;
-                background: #fafbff;
-              " onmouseover="this.style.borderColor='#2563eb';this.style.background='#f0f4ff'"
-                 onmouseout="this.style.borderColor='var(--border)';this.style.background='#fafbff'"
-                 onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:#dde5f9;margin-bottom:8px;display:block"></i>
-                <div style="font-size:13px;font-weight:600;color:var(--text-secondary)">Klik untuk upload atau drag & drop</div>
-                <div class="sig-formats" style="margin-top:8px">
-                  <span class="sig-fmt">JPG</span>
-                  <span class="sig-fmt">PNG</span>
-                  <span class="sig-fmt">GIF</span>
-                  <span class="sig-fmt">Maks. 2MB</span>
-                </div>
-              </div>
-              <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.gif" style="display:none" onchange="previewSig(this)">
-            </div>
-
-            <!-- Canvas Signature -->
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-pen-to-square"></i> Atau Gambar Tanda Tangan</div>
-              <canvas id="sigCanvas" width="600" height="160" style="
-                border: 1.5px solid var(--border);
-                border-radius: 11px;
-                background: #fff;
-                cursor: crosshair;
-                display: block;
-                width: 100%;
-                max-width: 100%;
-                touch-action: none;
-              "></canvas>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <button onclick="clearCanvas()" style="
-                  padding:7px 14px;border-radius:7px;border:1.5px solid var(--border);
-                  background:transparent;font-size:12px;font-weight:600;cursor:pointer;
-                  color:var(--text-secondary);font-family:'Plus Jakarta Sans',sans-serif;
-                  display:flex;align-items:center;gap:6px;transition:all .2s;
-                " onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
-                   onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
-                  <i class="fas fa-eraser"></i> Hapus
-                </button>
-              </div>
-            </div>
-
-            <div class="btn-row">
-              <button class="cancel-btn">Batal</button>
-              <button class="save-btn" onclick="showToast('Tanda tangan berhasil disimpan!')"><i class="fas fa-floppy-disk"></i> Simpan Tanda Tangan</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    
 
     <!-- RIGHT: INFO CARDS -->
     <div>
@@ -637,7 +557,6 @@
             <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#10b981"><i class="fas fa-check-circle"></i> Instansi</div>
             <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#10b981"><i class="fas fa-check-circle"></i> NIP</div>
             <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8"><i class="fas fa-circle-xmark"></i> Email</div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8"><i class="fas fa-circle-xmark"></i> Tanda Tangan</div>
           </div>
         </div>
       </div>

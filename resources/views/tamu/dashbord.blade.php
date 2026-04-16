@@ -459,7 +459,7 @@
     <div class="section-card animate d5">
       <div class="section-header">
         <div class="section-title"><i class="fas fa-building"></i> Tarif Sewa Fasilitas</div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="see-all">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="see-all">Lihat Semua <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="facility-list">
         <div class="facility-item">
@@ -505,7 +505,7 @@
           <div class="section-title"><i class="fas fa-bolt"></i> Aksi Cepat</div>
         </div>
         <div class="quick-actions">
-          <a href="{{ route('tamu.peminjaman-aset') }}" class="qa-btn primary">
+          <a href="{{ route('tamu.peminjaman-gedung') }}" class="qa-btn primary">
             <i class="fas fa-plus-circle"></i> Ajukan Peminjaman
           </a>
           <a href="#" class="qa-btn outline">
@@ -530,7 +530,7 @@
           <div class="req-empty">
             <div class="req-empty-icon"><i class="fas fa-inbox"></i></div>
             <div class="req-empty-text">Belum ada permintaan</div>
-            <div class="req-empty-sub">Ajukan peminjaman aset untuk memulai</div>
+            <div class="req-empty-sub">Ajukan peminjaman gedung untuk memulai</div>
           </div>
         </div>
       </div>

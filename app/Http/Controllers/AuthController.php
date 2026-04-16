@@ -20,14 +20,11 @@ class AuthController extends Controller
     /**
      * Tampilkan halaman login.
      */
-    public function showLogin(): View|RedirectResponse
+    public function showLogin(): View
     {
-        // Jika sudah login, arahkan ke dashboard sesuai peran
-        if (Auth::check()) {
-            return $this->redirectByRole(Auth::user());
-        }
-
-        return view('auth.login');
+        return view('auth.login', [
+            'alreadyLoggedIn' => Auth::check(),
+        ]);
     }
 
     // ────────────────────────────────────────────────────────────────────

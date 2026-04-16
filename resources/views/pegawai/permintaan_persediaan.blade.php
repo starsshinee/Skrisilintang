@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPANDU - Peminjaman Aset</title>
+<title>SIPANDU - Permintaan Persediaan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -347,108 +347,14 @@
   <div class="topbar">
     <div class="topbar-left">
       <div>
-        <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Peminjaman Aset</span></div>
-        <div class="topbar-title">Peminjaman Aset</div>
+        <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Permintaan Persediaan</span></div>
+        <div class="topbar-title">Permintaan Persediaan</div>
       </div>
     </div>
     <div class="topbar-right">
       <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>
-
-  {{-- <!-- FASILITAS AVAILABLE -->
-  <div class="fac-section animate d1">
-    <div class="fac-section-header">
-      <div class="fac-section-title"><i class="fas fa-building"></i> Fasilitas Tersedia</div>
-      <div style="font-size:12px;color:var(--text-secondary)">Pilih fasilitas untuk dipinjam</div>
-    </div>
-    <div class="fac-grid">
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#1e3a8a,#2563eb)">
-          <i class="fas fa-chalkboard-user"></i>
-          <div class="fac-card-name">Aula Utama BPMP</div>
-          <div class="fac-card-desc">Aula berkapasitas 200 orang dengan AC sentral & sound system</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 2.500.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-users" style="font-size:10px;color:var(--primary)"></i> 200 Orang</div>
-          <button class="fac-card-select" onclick="selectFacility('Aula Utama BPMP','200 Orang','Rp 2.500.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6)">
-          <i class="fas fa-people-group"></i>
-          <div class="fac-card-name">Ruang Rapat VIP</div>
-          <div class="fac-card-desc">Ruangan eksklusif video conference & whiteboard digital</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 1.000.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-users" style="font-size:10px;color:#8b5cf6"></i> 20 Orang</div>
-          <button class="fac-card-select" style="background:#8b5cf6" onclick="selectFacility('Ruang Rapat VIP','20 Orang','Rp 1.000.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#0e7490,#06b6d4)">
-          <i class="fas fa-desktop"></i>
-          <div class="fac-card-name">Lab Komputer</div>
-          <div class="fac-card-desc">30 unit komputer terbaru, internet cepat, ideal pelatihan IT</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 1.500.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-computer" style="font-size:10px;color:#06b6d4"></i> 30 Unit PC</div>
-          <button class="fac-card-select" style="background:#0891b2" onclick="selectFacility('Lab Komputer','30 Unit PC','Rp 1.500.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#065f46,#10b981)">
-          <i class="fas fa-book-open"></i>
-          <div class="fac-card-name">Ruang Pelatihan A</div>
-          <div class="fac-card-desc">Ruang kelas modern, kursi ergonomis, AC & multimedia</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 800.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-users" style="font-size:10px;color:#10b981"></i> 40 Orang</div>
-          <button class="fac-card-select" style="background:#059669" onclick="selectFacility('Ruang Pelatihan A','40 Orang','Rp 800.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#92400e,#f59e0b)">
-          <i class="fas fa-van-shuttle"></i>
-          <div class="fac-card-name">Kendaraan Dinas - Minibus</div>
-          <div class="fac-card-desc">Toyota HiAce, kegiatan dinas dan lapangan</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 750.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-person-seat" style="font-size:10px;color:#f59e0b"></i> 16 Penumpang</div>
-          <button class="fac-card-select" style="background:#d97706" onclick="selectFacility('Kendaraan Dinas - Minibus','16 Penumpang','Rp 750.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-      <div class="fac-card">
-        <div class="fac-card-top" style="background:linear-gradient(135deg,#9f1239,#f43f5e)">
-          <i class="fas fa-house"></i>
-          <div class="fac-card-name">Gedung Serbaguna</div>
-          <div class="fac-card-desc">Area 500m² untuk pameran, bazar, kegiatan outdoor</div>
-        </div>
-        <div class="fac-card-bottom">
-          <div class="fac-card-price">Rp 3.000.000/hari</div>
-          <div class="fac-card-cap"><i class="fas fa-users" style="font-size:10px;color:#f43f5e"></i> 300 Orang</div>
-          <button class="fac-card-select" style="background:#e11d48" onclick="selectFacility('Gedung Serbaguna','300 Orang','Rp 3.000.000/hari')">
-            <i class="fas fa-plus-circle"></i> Pilih Fasilitas
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> --}}
 
   <!-- FORM + RIWAYAT -->
   <div class="content-grid">
@@ -460,35 +366,17 @@
         <div class="form-header-sub">Isi formulir peminjaman aset di bawah ini</div>
       </div>
       <div class="form-body">
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap <span class="req">*</span></div>
+         <div class="form-group">
+          <div class="form-label"><i class="fas fa-user"></i> *Nama Lengkap <span class="req">*</span></div>
           <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda" id="namaInput">
         </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-building"></i> Instansi / Lembaga <span class="req">*</span></div>
+          <div class="form-label"><i class="fas fa-building"></i> Nama Barang <span class="req">*</span></div>
           <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
         </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-warehouse"></i> Fasilitas <span class="req">*</span></div>
-          <select class="form-select" id="fasilitasSelect" onchange="onFasilitasChange()">
-            <option value="">-- Pilih Fasilitas --</option>
-            <option value="aula">Aula Utama BPMP (200 Orang)</option>
-            <option value="vip">Ruang Rapat VIP (20 Orang)</option>
-            <option value="lab">Lab Komputer (30 Unit PC)</option>
-            <option value="pelatihan">Ruang Pelatihan A (40 Orang)</option>
-            <option value="minibus">Kendaraan Dinas - Minibus (16 Penumpang)</option>
-            <option value="gedung">Gedung Serbaguna (300 Orang)</option>
-          </select>
-          <div class="facility-preview" id="facilityPreview">
-            <div class="fp-icon"><i class="fas fa-building" id="fpIcon"></i></div>
-            <div>
-              <div class="fp-name" id="fpName">Aula Utama BPMP</div>
-              <div class="fp-details">
-                <span class="fp-tag" id="fpCap">200 Orang</span>
-                <span class="fp-tag" id="fpPrice">Rp 2.500.000/hari</span>
-              </div>
-            </div>
-          </div>
+          <div class="form-label"><i class="fas fa-envelope"></i> Jumlah barang yang dipinjam<span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Masukkan jumlah barang yang dipinjam" id="jumlahBarangInput">
         </div>
         <div class="input-row">
           <div class="form-group">
@@ -504,12 +392,9 @@
           <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span class="req">*</span></div>
           <textarea class="form-textarea" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..."></textarea>
         </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-phone"></i> Nomor Kontak <span class="req">*</span></div>
-          <input type="tel" class="form-input" placeholder="Contoh: 0812-3456-7890">
-        </div>
+    
         <button class="submit-btn" onclick="submitForm()">
-          <i class="fas fa-paper-plane"></i> Kirim Permintaan
+          <i class="fas fa-paper-plane"></i> Kirim Permintaan Persediaan
         </button>
       </div>
     </div>

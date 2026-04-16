@@ -128,6 +128,12 @@
             <p class="text-slate-400 text-sm">Masukkan kredensial akun Anda</p>
           </div>
 
+          @if (!empty($alreadyLoggedIn))
+            <div class="mb-5 rounded-3xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 text-sm">
+              Anda sudah masuk. Logout terlebih dahulu jika ingin login dengan akun lain.
+            </div>
+          @endif
+
           <form method="POST" action="{{ route('login.post') }}" id="loginForm">
             @csrf
 

@@ -290,7 +290,7 @@
         <div class="hero-stat-num">6</div>
         <div class="hero-stat-label">Jenis Fasilitas</div>
       </div>
-      <a href="{{ route('tamu.peminjaman-aset') }}" class="hero-btn">
+      <a href="{{ route('tamu.peminjaman-gedung') }}" class="hero-btn">
         <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
       </a>
     </div>
@@ -342,7 +342,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>
@@ -374,7 +374,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6);box-shadow:0 3px 10px rgba(139,92,246,0.3)">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6);box-shadow:0 3px 10px rgba(139,92,246,0.3)">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>
@@ -406,7 +406,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#0e7490,#06b6d4);box-shadow:0 3px 10px rgba(6,182,212,0.3)">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#0e7490,#06b6d4);box-shadow:0 3px 10px rgba(6,182,212,0.3)">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>
@@ -438,7 +438,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 3px 10px rgba(16,185,129,0.3)">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 3px 10px rgba(16,185,129,0.3)">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>
@@ -470,7 +470,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 3px 10px rgba(245,158,11,0.3)">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 3px 10px rgba(245,158,11,0.3)">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>
@@ -502,7 +502,7 @@
             <div class="fac-price-sub">per hari</div>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-aset') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#9f1239,#e11d48);box-shadow:0 3px 10px rgba(244,63,94,0.3)">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#9f1239,#e11d48);box-shadow:0 3px 10px rgba(244,63,94,0.3)">
           <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
         </a>
       </div>

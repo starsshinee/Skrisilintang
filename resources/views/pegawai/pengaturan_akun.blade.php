@@ -342,13 +342,13 @@
 
 <!-- MAIN -->
 <main class="main">
-  <div class="topbar">
+  <div class=opbar">
     <div class="topbar-left">
       <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
       <div class="topbar-title">Pengaturan Akun</div>
     </div>
     <div class="topbar-right">
-      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Tamu</div>
+      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Pegawai</div>
       <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>

@@ -1,565 +1,374 @@
-@extends('layouts.app')
-
-@section('content')
-@php
-  $user = auth()->user();
-  $currentRole = 'admin_sarpras';
-  
-  $roleConfig = [
-    'admin_sarpras' => [
-      'bgGradient' => 'from-cyan-900 to-cyan-800',
-      'badgeText' => 'Admin Sarpras',
-      'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
-      'navItems' => [
-        ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
-        ['href' => route('adminsarpras.data-gedung'), 'label' => 'Data Gedung', 'icon' => 'fas fa-building', 'route' => 'adminsarpras.data-gedung'],
-        ['href' => route('adminsarpras.daftar-peminjaman'), 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-list', 'route' => 'adminsarpras.daftar-peminjaman'],
-        ['href' => route('adminsarpras.laporan'), 'label' => 'Laporan Sarpras', 'icon' => 'fas fa-file-alt', 'route' => 'adminsarpras.laporan'],
-      ]
-    ],
-  ];
-  
-  $config = $roleConfig[$currentRole];
-
-  $peminjamanData = [
-    ['id' => 1, 'peminjam' => 'Dr. Budi Santoso', 'gedung' => 'Aula Utama', 'tanggal' => '2025-07-15', 'keterangan' => 'Seminar Nasional', 'status' => 'Menunggu', 'aksi' => ['check', 'delete']],
-    ['id' => 2, 'peminjam' => 'HMTI', 'gedung' => 'Gedung B Lt.2', 'tanggal' => '2025-07-18', 'keterangan' => 'Workshop IoT', 'status' => 'Disetujui', 'aksi' => ['-', 'pdf']],
-    ['id' => 3, 'peminjam' => 'Fak. Teknik', 'gedung' => 'Lab Komputer A', 'tanggal' => '2025-07-20', 'keterangan' => 'Ujian Praktikum', 'status' => 'Disetujui', 'aksi' => ['-', 'pdf']],
-    ['id' => 4, 'peminjam' => 'BEM Universitas', 'gedung' => 'Auditorium', 'tanggal' => '2025-07-22', 'keterangan' => 'Dies Natalis', 'status' => 'Menunggu', 'aksi' => ['check', 'delete']],
-    ['id' => 5, 'peminjam' => 'Prodi Manajemen', 'gedung' => 'Ruang Serbaguna C', 'tanggal' => '2025-07-10', 'keterangan' => 'Kuliah Tamu', 'status' => 'Ditolak', 'aksi' => ['-', 'pdf']],
-  ];
-@endphp
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Peminjaman - Admin Sarana Prasarana</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sidebar-width: 260px;
+    --primary: #4361ee;
+    --primary-light: #eef0fd;
+    --success: #2ec4b6;
+    --success-light: #e8faf9;
+    --warning: #f4a261;
+    --warning-light: #fff4ec;
+    --danger: #e63946;
+    --danger-light: #fdecea;
+    --sidebar-bg: #fff;
+    --body-bg: #f0f2f9;
+    --text-primary: #1a1f36;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --card-bg: #fff;
+    --sidebar-width: 240px;
   }
-  
-  * {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f9fafb;
+  .sidebar {
+    width: var(--sidebar-width); background: var(--sidebar-bg);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
   }
-
-  .main-wrapper {
-    margin-left: var(--sidebar-width);
-  }
-
-  .sidebar-wrapper {
-    width: var(--sidebar-width);
-    background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(31, 41, 55) 100%);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 100;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
-  }
-
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .sidebar-logo {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 18px;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-  }
-
   .sidebar-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
   }
-
-  .sidebar-brand-name {
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.2;
+  .brand-icon {
+    width: 44px; height: 44px; background: var(--primary);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
   }
-
-  .sidebar-brand-sub {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 11px;
-    line-height: 1;
-  }
-
-  .sidebar-user {
-    margin: 16px 16px 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-name {
-    color: white;
-    font-weight: 600;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .user-role {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 12px 8px;
-  }
-
-  .nav-group {
-    margin-bottom: 8px;
-  }
-
-  .nav-group-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(148, 163, 184, 0.5);
-    padding: 12px 14px 6px;
-    font-weight: 700;
-  }
-
+  .brand-text strong { font-size: 13px; font-weight: 700; display: block; }
+  .brand-text span { font-size: 11px; color: var(--text-secondary); }
+  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
   .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    margin-bottom: 3px;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; transition: all .2s; text-decoration: none;
   }
-
-  .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
+  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px; border-top: 1px solid var(--border);
   }
-
-  .nav-item.active {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(0, 212, 255, 0.3));
-    color: white;
-    border-left: 3px solid #06b6d4;
-    padding-left: 11px;
+  .user-avatar {
+    width: 36px; height: 36px; background: var(--primary);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
   }
+  .user-info strong { font-size: 13px; font-weight: 700; display: block; }
+  .user-info span { font-size: 11px; color: var(--text-secondary); }
 
-  .nav-icon {
-    width: 18px;
-    text-align: center;
-    font-size: 14px;
-    flex-shrink: 0;
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+  .topbar {
+    background: var(--card-bg); border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    position: sticky; top: 0; z-index: 50;
   }
-
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  .notif-btn {
+    position: relative; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--body-bg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border);
   }
-
-  .logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba(239, 68, 68, 0.08);
-    border: none;
-    color: #ef4444;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
+  .notif-badge {
+    position: absolute; top: 4px; right: 4px;
+    width: 8px; height: 8px; background: var(--danger);
+    border-radius: 50%; border: 2px solid #fff;
   }
+  .content { padding: 24px 28px; flex: 1; }
 
-  .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ff6b6b;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Main Content Styling */
-  .main-content {
-    padding: 32px;
-    background: #f9fafb;
-    min-height: 100vh;
-  }
-
-  .page-header {
-    margin-bottom: 24px;
-  }
-
-  .page-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 8px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
+  /* Tabs */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); }
   .tab {
-    padding: 12px 16px;
-    border: none;
-    background: none;
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    padding: 10px 20px; font-size: 14px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all .2s;
   }
-
-  .tab.active {
-    color: #06b6d4;
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .tab:hover:not(.active) { color: var(--text-primary); }
+  .btn-primary {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px; background: var(--primary); color: #fff;
+    border: none; border-radius: 10px; font-family: inherit;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s;
   }
+  .btn-primary:hover { background: #3251d4; }
 
-  .tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #06b6d4;
-    border-radius: 2px 2px 0 0;
+  /* Table */
+  .table-card {
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border); overflow: hidden;
   }
-
-  .card {
-    background: white;
-    border-radius: 12px;
-    padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-
-  .table-responsive {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  thead {
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
+  table { width: 100%; border-collapse: collapse; }
   thead th {
-    padding: 16px;
-    text-align: left;
-    font-weight: 700;
-    color: #374151;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .05em; background: #fafbff;
   }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
 
-  tbody td {
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    color: #6b7280;
+  .status-badge {
+    display: inline-flex; padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
   }
+  .badge-approved { background: var(--success-light); color: var(--success); }
+  .badge-pending { background: var(--warning-light); color: var(--warning); }
+  .badge-rejected { background: var(--danger-light); color: var(--danger); }
 
-  tbody tr:hover {
-    background: #f9fafb;
+  .peminjam-name { font-weight: 600; color: var(--primary); }
+
+  .action-btns { display: flex; gap: 6px; align-items: center; }
+  .act-btn {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none; transition: all .2s;
   }
+  .act-approve { background: var(--success-light); color: var(--success); }
+  .act-approve:hover { background: var(--success); color: #fff; }
+  .act-reject { background: var(--danger-light); color: var(--danger); }
+  .act-reject:hover { background: var(--danger); color: #fff; }
+  .act-dash { color: var(--text-secondary); font-size: 18px; line-height: 1; }
 
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.4);
+    display: none; align-items: center; justify-content: center; z-index: 200;
   }
-
-  .badge-warning {
-    background: #fef3c7;
-    color: #d97706;
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 28px;
+    width: 520px; max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
   }
-
-  .badge-success {
-    background: #dcfce7;
-    color: #16a34a;
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+    border-radius: 10px; font-family: inherit; font-size: 13px; outline: none;
+    transition: border .2s;
   }
-
-  .badge-danger {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-
-  .action-btns {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .icon-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 14px;
-  }
-
-  .icon-btn:hover {
-    background: #f3f4f6;
-  }
-
-  .icon-btn.check {
-    color: #16a34a;
-  }
-
-  .icon-btn.check:hover {
-    background: #dcfce7;
-  }
-
-  .icon-btn.delete {
-    color: #dc2626;
-  }
-
-  .icon-btn.delete:hover {
-    background: #fee2e2;
-  }
-
-  .icon-btn.pdf {
-    color: #06b6d4;
-  }
-
-  .icon-btn.pdf:hover {
-    background: #cffafe;
-  }
-
-  .action-text {
-    color: #9ca3af;
-    font-size: 12px;
+  .form-input:focus { border-color: var(--primary); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+  .btn-cancel {
+    padding: 10px 18px; border: 1px solid var(--border); border-radius: 10px;
+    font-family: inherit; font-size: 14px; cursor: pointer; background: #fff;
+    font-weight: 500; color: var(--text-secondary);
   }
 </style>
+</head>
+<body>
 
-<aside class="sidebar-wrapper bg-gradient-to-b {{ $config['bgGradient'] }}">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <i class="fas fa-cube"></i>
-    </div>
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-name">SIBMN</div>
-      <div class="sidebar-brand-sub">BPMP Gorontalo</div>
-    </div>
-  </div>
+@include('partials.sidebar')
 
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
-    </div>
-    <div class="user-info">
-      <div class="user-name">{{ $user->name ?? 'User' }}</div>
-      <div class="user-role">{{ $config['badgeText'] }}</div>
+<main class="main">
+  <div class="topbar">
+    <div class="notif-btn">
+      <svg width="18" height="18" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <div class="notif-badge"></div>
     </div>
   </div>
-
-  <nav class="sidebar-nav">
-    <div class="nav-group">
-      @foreach($config['navItems'] as $item)
-        <a href="{{ $item['href'] }}" 
-           class="nav-item {{ request()->routeIs($item['route'] ?? 'NEVER_MATCH') ? 'active' : '' }}"
-           title="{{ $item['label'] }}">
-          <span class="nav-icon">
-            <i class="{{ $item['icon'] }}"></i>
-          </span>
-          <span>{{ $item['label'] }}</span>
-        </a>
-      @endforeach
-    </div>
-  </nav>
-
-  <div class="sidebar-footer">
-    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-      @csrf
-      <button type="submit" class="logout-btn">
-        <span class="nav-icon">
-          <i class="fas fa-sign-out-alt"></i>
-        </span>
-        <span>Keluar</span>
-      </button>
-    </form>
-  </div>
-</aside>
-
-<div class="main-wrapper">
-  <div class="main-content">
-    <div class="page-header">
-      <h1 class="page-title">Daftar Peminjaman</h1>
-      <p class="page-subtitle">Kelola permintaan peminjaman gedung</p>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active">Semua</button>
-      <button class="tab">Menunggu</button>
-      <button class="tab">Disetujui</button>
-      <button class="tab">Ditolak</button>
-    </div>
-
-    <div class="card">
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 50px;">NO</th>
-              <th style="min-width: 150px;">PEMINJAM</th>
-              <th style="min-width: 150px;">GEDUNG</th>
-              <th style="width: 120px;">TANGGAL</th>
-              <th style="min-width: 150px;">KETERANGAN</th>
-              <th style="width: 100px;">STATUS</th>
-              <th style="width: 120px;">AKSI</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($peminjamanData as $index => $peminjaman)
-            <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>
-                <strong style="color: #1f2937;">{{ $peminjaman['peminjam'] }}</strong>
-              </td>
-              <td>{{ $peminjaman['gedung'] }}</td>
-              <td>{{ $peminjaman['tanggal'] }}</td>
-              <td>{{ $peminjaman['keterangan'] }}</td>
-              <td>
-                @if($peminjaman['status'] === 'Menunggu')
-                  <span class="badge badge-warning">{{ $peminjaman['status'] }}</span>
-                @elseif($peminjaman['status'] === 'Disetujui')
-                  <span class="badge badge-success">{{ $peminjaman['status'] }}</span>
-                @else
-                  <span class="badge badge-danger">{{ $peminjaman['status'] }}</span>
-                @endif
-              </td>
-              <td>
-                <div class="action-btns">
-                  @if($peminjaman['aksi'][0] === 'check')
-                    <button class="icon-btn check" title="Terima" onclick="alert('Peminjaman diterima')">
-                      <i class="fas fa-check"></i>
-                    </button>
-                    <button class="icon-btn delete" title="Tolak" onclick="alert('Peminjaman ditolak')">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  @else
-                    <span class="action-text">—</span>
-                  @endif
-                  
-                  @if($peminjaman['aksi'][1] === 'pdf')
-                    <button class="icon-btn pdf" title="Lihat Detail" onclick="alert('Membuka detail peminjaman')">
-                      <i class="fas fa-file-pdf"></i>
-                    </button>
-                  @elseif($peminjaman['aksi'][1] === 'delete')
-                    <button class="icon-btn delete" title="Hapus" onclick="alert('Menghapus peminjaman')">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  @endif
-                </div>
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
+  <div class="content">
+    <div class="top-bar">
+      <div class="tabs">
+        <div class="tab active" onclick="filterTab('semua', this)">Semua</div>
+        <div class="tab" onclick="filterTab('disetujui', this)">Disetujui</div>
+        <div class="tab" onclick="filterTab('menunggu', this)">Menunggu</div>
+        <div class="tab" onclick="filterTab('ditolak', this)">Ditolak</div>
       </div>
+      <button class="btn-primary" onclick="openModal()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
+        Peminjaman Baru
+      </button>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Peminjam</th>
+            <th>Ruangan</th>
+            <th>Gedung</th>
+            <th>Tanggal</th>
+            <th>Keperluan</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="pinjamTable">
+          <tr data-status="disetujui">
+            <td>1</td><td class="peminjam-name">Dr. Ahmad Fauzi</td><td>Aula Utama</td><td>Gedung A</td><td>15 Jun 2025</td><td>Seminar Nasional</td>
+            <td><span class="status-badge badge-approved">Disetujui</span></td>
+            <td><div class="act-dash">—</div></td>
+          </tr>
+          <tr data-status="disetujui">
+            <td>2</td><td class="peminjam-name">Siti Nurhaliza</td><td>Lab Komputer 1</td><td>Gedung B</td><td>16 Jun 2025</td><td>Workshop Python</td>
+            <td><span class="status-badge badge-approved">Disetujui</span></td>
+            <td><div class="act-dash">—</div></td>
+          </tr>
+          <tr data-status="menunggu">
+            <td>3</td><td class="peminjam-name">Budi Santoso</td><td>R. Rapat 201</td><td>Gedung C</td><td>17 Jun 2025</td><td>Rapat BEM</td>
+            <td><span class="status-badge badge-pending">Menunggu</span></td>
+            <td><div class="action-btns">
+              <button class="act-btn act-approve" onclick="approveRow(this)" title="Setujui">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <button class="act-btn act-reject" onclick="rejectRow(this)" title="Tolak">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div></td>
+          </tr>
+          <tr data-status="disetujui">
+            <td>4</td><td class="peminjam-name">Maya Putri</td><td>Auditorium</td><td>Gedung D</td><td>18 Jun 2025</td><td>Wisuda</td>
+            <td><span class="status-badge badge-approved">Disetujui</span></td>
+            <td><div class="act-dash">—</div></td>
+          </tr>
+          <tr data-status="ditolak">
+            <td>5</td><td class="peminjam-name">Rizky Ramadhan</td><td>Lab Fisika</td><td>Gedung E</td><td>19 Jun 2025</td><td>Praktikum</td>
+            <td><span class="status-badge badge-rejected">Ditolak</span></td>
+            <td><div class="act-dash">—</div></td>
+          </tr>
+          <tr data-status="menunggu">
+            <td>6</td><td class="peminjam-name">Dewi Lestari</td><td>Co-working Space</td><td>Gedung F</td><td>20 Jun 2025</td><td>Hackathon</td>
+            <td><span class="status-badge badge-pending">Menunggu</span></td>
+            <td><div class="action-btns">
+              <button class="act-btn act-approve" onclick="approveRow(this)" title="Setujui">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <button class="act-btn act-reject" onclick="rejectRow(this)" title="Tolak">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div></td>
+          </tr>
+          <tr data-status="disetujui">
+            <td>7</td><td class="peminjam-name">Hendra Wijaya</td><td>R. Rapat 101</td><td>Gedung A</td><td>21 Jun 2025</td><td>Interview Kerja</td>
+            <td><span class="status-badge badge-approved">Disetujui</span></td>
+            <td><div class="act-dash">—</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">Tambah Peminjaman Baru</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nama Peminjam</label>
+        <input class="form-input" type="text" placeholder="Nama lengkap" id="namaPeminjam">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ruangan</label>
+        <input class="form-input" type="text" placeholder="Nama ruangan" id="namaRuangan">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Gedung</label>
+        <select class="form-input" id="gedung">
+          <option>Gedung A</option>
+          <option>Gedung B</option>
+          <option>Gedung C</option>
+          <option>Gedung D</option>
+          <option>Gedung E</option>
+          <option>Gedung F</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal</label>
+        <input class="form-input" type="date" id="tanggal">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Keperluan</label>
+      <input class="form-input" type="text" placeholder="Keterangan keperluan" id="keperluan">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-primary" onclick="addPeminjaman()">Simpan</button>
     </div>
   </div>
 </div>
 
-@endsection
+<script>
+  function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+  function approveRow(btn) {
+    const tr = btn.closest('tr');
+    tr.setAttribute('data-status', 'disetujui');
+    tr.querySelector('.status-badge').className = 'status-badge badge-approved';
+    tr.querySelector('.status-badge').textContent = 'Disetujui';
+    tr.cells[7].innerHTML = '<div class="act-dash">—</div>';
+  }
+
+  function rejectRow(btn) {
+    const tr = btn.closest('tr');
+    tr.setAttribute('data-status', 'ditolak');
+    tr.querySelector('.status-badge').className = 'status-badge badge-rejected';
+    tr.querySelector('.status-badge').textContent = 'Ditolak';
+    tr.cells[7].innerHTML = '<div class="act-dash">—</div>';
+  }
+
+  function filterTab(filter, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('#pinjamTable tr').forEach(tr => {
+      const status = tr.getAttribute('data-status');
+      tr.style.display = (filter === 'semua' || status === filter) ? '' : 'none';
+    });
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+  }
+
+  function addPeminjaman() {
+    const nama = document.getElementById('namaPeminjam').value;
+    const ruangan = document.getElementById('namaRuangan').value;
+    const gedung = document.getElementById('gedung').value;
+    const tanggal = document.getElementById('tanggal').value;
+    const keperluan = document.getElementById('keperluan').value;
+    if (!nama || !ruangan || !tanggal || !keperluan) { alert('Harap isi semua field!'); return; }
+    const tbody = document.getElementById('pinjamTable');
+    const rowCount = tbody.querySelectorAll('tr').length + 1;
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-status', 'menunggu');
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td class="peminjam-name">${nama}</td>
+      <td>${ruangan}</td><td>${gedung}</td>
+      <td>${formatDate(tanggal)}</td><td>${keperluan}</td>
+      <td><span class="status-badge badge-pending">Menunggu</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn act-approve" onclick="approveRow(this)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="act-btn act-reject" onclick="rejectRow(this)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div></td>
+    `;
+    tbody.appendChild(tr);
+    closeModal();
+    ['namaPeminjam','namaRuangan','tanggal','keperluan'].forEach(id => document.getElementById(id).value = '');
+  }
+</script>
+</body>
+</html>

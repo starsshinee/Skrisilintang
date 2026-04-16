@@ -11,7 +11,6 @@
       'navItems' => [
         ['href' => route('superadmin.dashboard'),       'label' => 'Dashboard',        'icon' => 'fas fa-chart-line', 'route' => 'superadmin.dashboard'],
         ['href' => route('superadmin.manajemen-user'),  'label' => 'Kelola Pengguna',  'icon' => 'fas fa-users',      'route' => 'superadmin.manajemen-user'],
-        ['href' => '#',                                  'label' => 'Laporan Semua BMN','icon' => 'fas fa-cube',       'route' => 'NONE'],
       ]
     ],
     'pegawai' => [
@@ -20,8 +19,10 @@
       'badgeColor' => 'bg-blue-500/20 text-blue-300',
       'navItems' => [
         ['href' => route('pegawai.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-home', 'route' => 'pegawai.dashboard'],
-        ['href' => '#', 'label' => 'Ajukan Peminjaman', 'icon' => 'fas fa-hand-paper', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Riwayat Pengajuan', 'icon' => 'fas fa-history', 'route' => 'NONE'],
+        ['href' => route('pegawai.peminjaman-barang'), 'label' => 'Peminjaman Barang', 'icon' => 'fas fa-box', 'route' => 'pegawai.peminjaman-barang'],
+        ['href' => route('pegawai.peminjaman-kendaraan'), 'label' => 'Peminjaman Kendaraan', 'icon' => 'fas fa-car', 'route' => 'pegawai.peminjaman-kendaraan'],
+        ['href' => route('pegawai.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'icon' => 'fas fa-boxes', 'route' => 'pegawai.permintaan-persediaan'],
+        ['href' => route('pegawai.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'pegawai.pengaturan-akun'],
       ]
     ],
     'tamu' => [
@@ -30,7 +31,7 @@
       'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
       'navItems' => [
         ['href' => route('tamu.dashboard'),        'label' => 'Dashboard',            'icon' => 'fas fa-door-open',   'route' => 'tamu.dashboard'],
-        ['href' => route('tamu.peminjaman-aset'),  'label' => 'Peminjaman Aset',      'icon' => 'fas fa-box-archive', 'route' => 'tamu.peminjaman-aset'],
+        ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-box-archive', 'route' => 'tamu.peminjaman-gedung'],
         ['href' => route('tamu.info-fasilitas'),   'label' => 'Informasi Fasilitas',  'icon' => 'fas fa-info-circle', 'route' => 'tamu.info-fasilitas'],
         ['href' => route('tamu.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'tamu.pengaturan-akun'],
       ]
@@ -51,21 +52,22 @@
       'badgeText' => 'Admin Persediaan',
       'badgeColor' => 'bg-green-500/20 text-green-300',
       'navItems' => [
-        ['href' => route('adminpersediian.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminpersediian.dashboard'],
+        ['href' => route('adminpersediaan.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminpersediaan.dashboard'],
         ['href' => '#', 'label' => 'Barang Persediaan', 'icon' => 'fas fa-boxes', 'route' => 'NONE'],
         ['href' => '#', 'label' => 'Tambah Barang', 'icon' => 'fas fa-plus-circle', 'route' => 'NONE'],
         ['href' => '#', 'label' => 'Laporan Persediaan', 'icon' => 'fas fa-file-alt', 'route' => 'NONE'],
       ]
     ],
-    'admin_sarpras' => [
+    'adminsarpras' => [
       'bgGradient' => 'from-cyan-900 to-cyan-800',
       'badgeText' => 'Admin Sarpras',
       'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
       'navItems' => [
         ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
-        ['href' => '#', 'label' => 'Data Gedung', 'icon' => 'fas fa-tools', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-car', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Laporan Sarpras', 'icon' => 'fas fa-file-alt', 'route' => 'NONE'],
+        ['href' => route('adminsarpras.data-gedung'), 'label' => 'Data Gedung', 'icon' => 'fas fa-building', 'route' => 'adminsarpras.data-gedung'],
+        ['href' => route('adminsarpras.daftar-peminjaman'), 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-door-open', 'route' => 'adminsarpras.daftar-peminjaman'],
+        ['href' => route('adminsarpras.laporan-peminjaman-gedung'), 'label' => 'Laporan Peminjaman Gedung', 'icon' => 'fas fa-file-alt', 'route' => 'adminsarpras.laporan-peminjaman-gedung'],
+        ['href' => route('adminsarpras.pengaturan-akun'), 'label' => 'Pengaturan Akun', 'icon' => 'fas fa-gear', 'route' => 'adminsarpras.pengaturan-akun'],
       ]
     ],
     'kasubag' => [
@@ -100,13 +102,13 @@
 
 <style>
   :root {
-    --sidebar-width: 260px;
+    --sidebar-width: 240px;
   }
-  
-  /* Sidebar Styling */
+
   .sidebar-wrapper {
     width: var(--sidebar-width);
-    background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(31, 41, 55) 100%);
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -114,202 +116,170 @@
     top: 0;
     bottom: 0;
     z-index: 100;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
     overflow-y: auto;
   }
 
+  /* ── HEADER ── */
   .sidebar-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 10px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e5e7eb; /* FIX: ganti dari rgba transparan */
   }
 
   .sidebar-logo {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
-    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    background: #1e3a5f;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 15px;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   }
 
+  /* FIX: pisah brand-name dan brand-sub, hapus comment */
   .sidebar-brand {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
   }
 
   .sidebar-brand-name {
-    color: white;
+    color: #111827;
     font-weight: 700;
     font-size: 14px;
     line-height: 1.2;
   }
 
   .sidebar-brand-sub {
-    color: rgba(255, 255, 255, 0.5);
+    color: #9ca3af;
     font-size: 11px;
-    line-height: 1;
+    line-height: 1.2;
   }
 
-  .sidebar-user {
-    margin: 16px 16px 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-name {
-    color: white;
-    font-weight: 600;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .user-role {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
+  /* ── NAV ── */
   .sidebar-nav {
     flex: 1;
-    padding: 12px 8px;
-  }
-
-  .nav-group {
-    margin-bottom: 8px;
-  }
-
-  .nav-group-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(148, 163, 184, 0.5);
-    padding: 12px 14px 6px;
-    font-weight: 700;
+    padding: 12px 10px;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 10px 14px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     border-radius: 8px;
-    color: rgba(255, 255, 255, 0.6);
+    color: #6b7280;
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
+    border-left: 3px solid transparent; /* FIX: siapkan slot border agar tidak geser */
   }
 
   .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
+    background: #f3f4f6;
+    color: #374151;
   }
 
   .nav-item.active {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(14, 165, 233, 0.3));
-    color: white;
+    background: #eff6ff;
+    color: #1d4ed8;
     border-left: 3px solid #3b82f6;
-    padding-left: 11px;
+    font-weight: 600;
   }
 
   .nav-icon {
-    width: 18px;
+    width: 16px;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     flex-shrink: 0;
   }
 
+  /* ── FOOTER ── */
   .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 20px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    background: #dbeafe;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1d4ed8;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* FIX: user-info butuh flex column agar nama & role tersusun vertikal */
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .user-name {
+    color: #111827;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-role {
+    color: #9ca3af;
+    font-size: 11px;
   }
 
   .logout-btn {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba(239, 68, 68, 0.08);
+    padding: 8px 2px;
+    background: none;
     border: none;
     color: #ef4444;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s;
     text-decoration: none;
+    font-family: inherit;
   }
 
   .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ff6b6b;
+    color: #dc2626;
   }
 
-  /* Scrollbar styling */
-  .sidebar-wrapper::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
+  /* Scrollbar */
+  .sidebar-wrapper::-webkit-scrollbar { width: 4px; }
+  .sidebar-wrapper::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-wrapper::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
 </style>
 
-<aside class="sidebar-wrapper bg-gradient-to-b {{ $config['bgGradient'] }}">
+<aside class="sidebar-wrapper">
   <!-- Logo & Branding -->
   <div class="sidebar-header">
     <div class="sidebar-logo">
@@ -318,17 +288,6 @@
     <div class="sidebar-brand">
       <div class="sidebar-brand-name">SIBMN</div>
       <div class="sidebar-brand-sub">BPMP Gorontalo</div>
-    </div>
-  </div>
-
-  <!-- User Info -->
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
-    </div>
-    <div class="user-info">
-      <div class="user-name">{{ $user->name ?? 'User' }}</div>
-      <div class="user-role">{{ $config['badgeText'] }}</div>
     </div>
   </div>
 
@@ -348,8 +307,20 @@
     </div>
   </nav>
 
-  <!-- Logout Button -->
+  <!-- Footer: User Info + Logout -->
   <div class="sidebar-footer">
+    <!-- User Info -->
+    <div class="sidebar-user">
+      <div class="user-avatar">
+        {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+      </div>
+      <div class="user-info">
+        <div class="user-name">{{ $user->name ?? 'User' }}</div>
+        <div class="user-role">{{ $config['badgeText'] }}</div>
+      </div>
+    </div>
+
+    <!-- Logout -->
     <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
       @csrf
       <button type="submit" class="logout-btn">

@@ -1,644 +1,415 @@
-@extends('layouts.app')
-
-@section('content')
-@php
-  $user = auth()->user();
-  $currentRole = 'admin_sarpras';
-  
-  $roleConfig = [
-    'admin_sarpras' => [
-      'bgGradient' => 'from-cyan-900 to-cyan-800',
-      'badgeText' => 'Admin Sarpras',
-      'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
-      'navItems' => [
-        ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
-        ['href' => route('adminsarpras.data-gedung'), 'label' => 'Data Gedung', 'icon' => 'fas fa-building', 'route' => 'adminsarpras.data-gedung'],
-        ['href' => route('adminsarpras.daftar-peminjaman'), 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-list', 'route' => 'adminsarpras.daftar-peminjaman'],
-        ['href' => route('adminsarpras.laporan'), 'label' => 'Laporan Sarpras', 'icon' => 'fas fa-file-alt', 'route' => 'adminsarpras.laporan'],
-      ]
-    ],
-  ];
-  
-  $config = $roleConfig[$currentRole];
-@endphp
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Admin Sarana Prasarana</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sidebar-width: 260px;
+    --primary: #4361ee;
+    --primary-light: #eef0fd;
+    --success: #2ec4b6;
+    --success-light: #e8faf9;
+    --warning: #f4a261;
+    --warning-light: #fff4ec;
+    --danger: #e63946;
+    --danger-light: #fdecea;
+    --sidebar-bg: #fff;
+    --body-bg: #f0f2f9;
+    --text-primary: #1a1f36;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --card-bg: #fff;
+    --sidebar-width: 240px;
   }
-  
-  * {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f9fafb;
-  }
-
-  .main-wrapper {
-    margin-left: var(--sidebar-width);
-  }
-
-  .sidebar-wrapper {
+  /* Sidebar */
+  .sidebar {
     width: var(--sidebar-width);
-    background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(31, 41, 55) 100%);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    top: 0; left: 0; bottom: 0;
     z-index: 100;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
   }
-
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .sidebar-logo {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 18px;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-  }
-
   .sidebar-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
   }
-
-  .sidebar-brand-name {
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.2;
+  .brand-icon {
+    width: 44px; height: 44px; background: var(--primary);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
   }
-
-  .sidebar-brand-sub {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 11px;
-    line-height: 1;
-  }
-
-  .sidebar-user {
-    margin: 16px 16px 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-name {
-    color: white;
-    font-weight: 600;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .user-role {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 12px 8px;
-  }
-
-  .nav-group {
-    margin-bottom: 8px;
-  }
-
-  .nav-group-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(148, 163, 184, 0.5);
-    padding: 12px 14px 6px;
-    font-weight: 700;
-  }
-
+  .brand-icon svg { color: #fff; }
+  .brand-text { line-height: 1.2; }
+  .brand-text strong { font-size: 13px; font-weight: 700; color: var(--text-primary); display: block; }
+  .brand-text span { font-size: 11px; color: var(--text-secondary); }
+  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
   .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    margin-bottom: 3px;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; transition: all .2s; text-decoration: none;
   }
-
-  .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
+  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px; border-top: 1px solid var(--border);
   }
-
-  .nav-item.active {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(0, 212, 255, 0.3));
-    color: white;
-    border-left: 3px solid #06b6d4;
-    padding-left: 11px;
+  .user-avatar {
+    width: 36px; height: 36px; background: var(--primary);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
   }
+  .user-info strong { font-size: 13px; font-weight: 700; display: block; }
+  .user-info span { font-size: 11px; color: var(--text-secondary); }
 
-  .nav-icon {
-    width: 18px;
-    text-align: center;
-    font-size: 14px;
-    flex-shrink: 0;
+  /* Main */
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+  .topbar {
+    background: var(--card-bg); border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    position: sticky; top: 0; z-index: 50;
   }
-
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  .notif-btn {
+    position: relative; width: 38px; height: 38px;
+    border-radius: 50%; background: var(--body-bg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border);
   }
-
-  .logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba(239, 68, 68, 0.08);
-    border: none;
-    color: #ef4444;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
+  .notif-badge {
+    position: absolute; top: 4px; right: 4px;
+    width: 8px; height: 8px; background: var(--danger);
+    border-radius: 50%; border: 2px solid #fff;
   }
+  .content { padding: 24px 28px; flex: 1; }
 
-  .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ff6b6b;
+   /* ── MAIN CONTENT ── */
+  .main { margin-left: 260px; flex: 1; padding: 0 32px 32px; }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0 24px;
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
   }
-
-  .sidebar-wrapper::-webkit-scrollbar {
-    width: 6px;
+  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-date {
+    font-size: 13px; color: var(--text-secondary); font-weight: 500;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 10px;
+    display: flex; align-items: center; gap: 6px;
   }
-
-  .sidebar-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Main Content Styling */
-  .main-content {
-    padding: 32px;
-    background: #f9fafb;
-    min-height: 100vh;
-  }
-
-  .page-header {
-    margin-bottom: 32px;
-  }
-
-  .page-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 8px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-
-  .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
-
-  .stat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-    background: #f3f4f6;
+  .notif-btn {
+    width: 40px; height: 40px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    display: grid; place-items: center;
+    cursor: pointer; position: relative;
+    color: var(--text-secondary);
+    transition: all .2s;
+  }
+  .notif-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .notif-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 1.5px solid var(--card-bg);
   }
 
-  .stat-icon.cyan {
-    background: #cffafe;
-    color: #0891b2;
-  }
-
-  .stat-badge {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #f3f4f6;
-    color: #6b7280;
-  }
-
-  .stat-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 8px;
-  }
-
-  .stat-label {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 16px;
-  }
-
-  .card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-
-  .list-item {
-    padding: 16px;
-    border-radius: 8px;
-    background: #f9fafb;
-    margin-bottom: 12px;
+  /* HERO BANNER */
+  .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0891b2 100%);
+    border-radius: 20px;
+    padding: 32px 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.28);
   }
-
-  .list-item:hover {
-    background: #f3f4f6;
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
-
-  .list-item-left {
-    display: flex;
-    gap: 12px;
-    flex: 1;
+  .hero-blob {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    right: -60px; top: -80px;
+    pointer-events: none;
   }
-
-  .list-item-icon {
-    width: 40px;
-    height: 40px;
-    background: #e0f2fe;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0891b2;
-    font-size: 18px;
-    flex-shrink: 0;
+  .hero-blob2 {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    right: 120px; bottom: -60px;
+    pointer-events: none;
   }
-
-  .list-item-content {
-    flex: 1;
+  .hero-left { position: relative; z-index: 2; }
+  .hero-greeting { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 500; margin-bottom: 6px; letter-spacing: .5px; }
+  .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 380px; line-height: 1.6; }
+  .hero-right { position: relative; z-index: 2; text-align: right; }
+  .hero-inst { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+  .hero-nip { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 14px; }
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: #fff; font-size: 13px; font-weight: 600;
+    padding: 10px 20px; border-radius: 10px;
+    cursor: pointer; transition: all .2s;
+    text-decoration: none;
   }
+  .hero-btn:hover { background: rgba(255,255,255,0.28); }
 
-  .list-item-title {
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
-    font-size: 14px;
+  /* Stat Cards */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--card-bg); border-radius: 16px;
+    padding: 20px; border: 1px solid var(--border);
+    position: relative; overflow: hidden;
   }
-
-  .list-item-subtitle {
-    font-size: 12px;
-    color: #6b7280;
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
   }
-
-  .list-item-action {
-    display: flex;
-    gap: 8px;
+  .stat-card .badge {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 11px; font-weight: 700; padding: 2px 8px;
+    border-radius: 20px;
   }
+  .badge-blue { background: #e0e7ff; color: var(--primary); }
+  .badge-green { background: var(--success-light); color: var(--success); }
+  .stat-value { font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
 
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
+  /* Grid bottom */
+  .bottom-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 24px; }
+
+  /* Chart Card */
+  .card {
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border); padding: 24px;
   }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); }
 
-  .badge-success {
-    background: #dcfce7;
-    color: #16a34a;
-  }
-
-  .badge-warning {
-    background: #fef3c7;
-    color: #d97706;
-  }
-
-  .badge-danger {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-
-  .icon-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: white;
+  /* Bar Chart */
+  .chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 180px; }
+  .bar-group { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .bar {
+    width: 100%; border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #4361ee 0%, #3a0ca3 100%);
+    transition: opacity .2s;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 14px;
   }
+  .bar:hover { opacity: 0.8; }
+  .bar-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
 
-  .icon-btn:hover {
-    background: #f3f4f6;
-  }
+  /* Activity */
+  .activity-list { display: flex; flex-direction: column; gap: 12px; }
+  .activity-item { display: flex; align-items: flex-start; gap: 12px; }
+  .act-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .act-text { flex: 1; }
+  .act-text p { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .act-text span { font-size: 11px; color: var(--text-secondary); }
 
-  .icon-btn.edit {
-    color: #0891b2;
+  /* Table */
+  .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .see-all { font-size: 13px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .05em;
   }
-
-  .icon-btn.delete {
-    color: #dc2626;
+  tbody td { padding: 14px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  .status-badge {
+    display: inline-flex; padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
   }
-
-  .icon-btn.delete:hover {
-    background: #fee2e2;
-  }
+  .status-approved { background: var(--success-light); color: var(--success); }
+  .status-pending { background: var(--warning-light); color: var(--warning); }
+  .status-rejected { background: var(--danger-light); color: var(--danger); }
 </style>
+</head>
+<body>
 
-<aside class="sidebar-wrapper bg-gradient-to-b {{ $config['bgGradient'] }}">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <i class="fas fa-cube"></i>
-    </div>
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-name">SIBMN</div>
-      <div class="sidebar-brand-sub">BPMP Gorontalo</div>
+@include('partials.sidebar')
+
+<!-- MAIN -->
+<main class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">Dashboard Admin Sarpras</div>
+    <div class="topbar-right">
+      <div class="topbar-date">
+        <i class="fas fa-calendar" style="color:var(--primary)"></i>
+        Rabu, 15 April 2026
+      </div>
+      <div class="notif-btn">
+        <i class="fas fa-bell"></i>
+        <div class="notif-dot"></div>
+      </div>
     </div>
   </div>
 
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+  <!-- HERO BANNER -->
+  <div class="hero animate d1">
+    <div class="hero-blob"></div>
+    <div class="hero-blob2"></div>
+    <div class="hero-left">
+      <div class="hero-greeting">👋 Selamat datang kembali!</div>
+      <div class="hero-title">Halo, Admin Sarana dan Prasarana!</div>
+      <div class="hero-sub" font-weight="500">
+        Sebagai Admin Sarana dan Prasarana, Anda dapat mengelola data gedung, ruangan, dan peminjaman fasilitas di BPMP Provinsi Gorontalo.
+      </div>
     </div>
-    <div class="user-info">
-      <div class="user-name">{{ $user->name ?? 'User' }}</div>
-      <div class="user-role">{{ $config['badgeText'] }}</div>
+    <div class="hero-right">
+      <div class="hero-inst">Instansi: BPMP Provinsi Gorontalo</div>
+      <div class="hero-nip">NIP: 0983654321</div>
+      <a href="{{ route('adminsarpras.pengaturan-akun') }}" class="hero-btn">
+        <i class="fas fa-gear"></i> Pengaturan Akun
+      </a>
     </div>
   </div>
-
-  <nav class="sidebar-nav">
-    <div class="nav-group">
-      @foreach($config['navItems'] as $item)
-        <a href="{{ $item['href'] }}" 
-           class="nav-item {{ request()->routeIs($item['route'] ?? 'NEVER_MATCH') ? 'active' : '' }}"
-           title="{{ $item['label'] }}">
-          <span class="nav-icon">
-            <i class="{{ $item['icon'] }}"></i>
-          </span>
-          <span>{{ $item['label'] }}</span>
-        </a>
-      @endforeach
-    </div>
-  </nav>
-
-  <div class="sidebar-footer">
-    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-      @csrf
-      <button type="submit" class="logout-btn">
-        <span class="nav-icon">
-          <i class="fas fa-sign-out-alt"></i>
-        </span>
-        <span>Keluar</span>
-      </button>
-    </form>
-  </div>
-</aside>
-
-<div class="main-wrapper">
-  <div class="main-content">
-    <div class="page-header">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Ringkasan data sarana prasarana</p>
-    </div>
-
-    <!-- Statistics Grid -->
+    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-building"></i>
-          </div>
-          <span class="stat-badge">+2</span>
+        <div class="stat-icon" style="background:#eef0fd">
+          <svg width="22" height="22" fill="none" stroke="#4361ee" viewBox="0 0 24 24" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg>
+        </div>
+        <div class="badge badge-blue">+2</div>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Total Gedung</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fff4ec">
+          <svg width="22" height="22" fill="none" stroke="#f4a261" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <div class="badge badge-green">+5</div>
+        <div class="stat-value">148</div>
+        <div class="stat-label">Total Ruangan</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#e8faf9">
+          <svg width="22" height="22" fill="none" stroke="#2ec4b6" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div class="stat-value">67</div>
+        <div class="stat-label">Peminjaman Aktif</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fdecea">
+          <svg width="22" height="22" fill="none" stroke="#e63946" viewBox="0 0 24 24" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
         <div class="stat-value">12</div>
-        <p class="stat-label">Total Gedung</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <span class="stat-badge">75%</span>
-        </div>
-        <div class="stat-value">9</div>
-        <p class="stat-label">Gedung Tersedia</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar"></i>
-          </div>
-          <span class="stat-badge">Aktif</span>
-        </div>
-        <div class="stat-value">5</div>
-        <p class="stat-label">Peminjaman Aktif</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon cyan">
-            <i class="fas fa-calendar-check"></i>
-          </div>
-          <span class="stat-badge">Bulan ini</span>
-        </div>
-        <div class="stat-value">28</div>
-        <p class="stat-label">Total Peminjaman</p>
+        <div class="stat-label">Perlu Perbaikan</div>
       </div>
     </div>
 
-    <!-- Two Column Layout -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-      <!-- Peminjaman Terbaru -->
+    <!-- Chart + Activity -->
+    <div class="bottom-grid">
       <div class="card">
-        <h3 class="section-title">Peminjaman Terbaru</h3>
-        
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Aula Utama</div>
-              <div class="list-item-subtitle">Dr. Budi - Seminar Nasional</div>
-            </div>
-          </div>
-          <span class="badge badge-warning">Menunggu</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Gedung B Lt.2</div>
-              <div class="list-item-subtitle">HMTI - Workshop IoT</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
-        </div>
-
-        <div class="list-item">
-          <div class="list-item-left">
-            <div class="list-item-icon">
-              <i class="fas fa-door-open"></i>
-            </div>
-            <div class="list-item-content">
-              <div class="list-item-title">Lab Komputer A</div>
-              <div class="list-item-subtitle">Fak. Teknik - Ujian Praktikum</div>
-            </div>
-          </div>
-          <span class="badge badge-success">Disetujui</span>
+        <div class="card-title">Statistik Peminjaman Bulanan</div>
+        <div class="chart-wrap">
+          <div class="bar-group"><div class="bar" style="height:60%"></div><span class="bar-label">Jan</span></div>
+          <div class="bar-group"><div class="bar" style="height:45%"></div><span class="bar-label">Feb</span></div>
+          <div class="bar-group"><div class="bar" style="height:75%"></div><span class="bar-label">Mar</span></div>
+          <div class="bar-group"><div class="bar" style="height:65%"></div><span class="bar-label">Apr</span></div>
+          <div class="bar-group"><div class="bar" style="height:70%"></div><span class="bar-label">Mei</span></div>
+          <div class="bar-group"><div class="bar" style="height:85%"></div><span class="bar-label">Jun</span></div>
+          <div class="bar-group"><div class="bar" style="height:78%"></div><span class="bar-label">Jul</span></div>
+          <div class="bar-group"><div class="bar" style="height:80%"></div><span class="bar-label">Agu</span></div>
+          <div class="bar-group"><div class="bar" style="height:72%"></div><span class="bar-label">Sep</span></div>
+          <div class="bar-group"><div class="bar" style="height:95%"></div><span class="bar-label">Okt</span></div>
+          <div class="bar-group"><div class="bar" style="height:88%"></div><span class="bar-label">Nov</span></div>
+          <div class="bar-group"><div class="bar" style="height:55%"></div><span class="bar-label">Des</span></div>
         </div>
       </div>
 
-      <!-- Status Gedung -->
       <div class="card">
-        <h3 class="section-title">Status Gedung</h3>
-        
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Tersedia</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 75%; height: 100%; background: #0891b2; border-radius: 4px;"></div>
+        <div class="card-title">Aktivitas Terbaru</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="act-icon" style="background:#e8faf9">
+              <svg width="16" height="16" fill="none" stroke="#2ec4b6" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="act-text"><p>Peminjaman Aula disetujui</p><span>5 menit lalu</span></div>
           </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">9</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <span style="font-size: 14px; color: #6b7280;">Dipinjam</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 17%; height: 100%; background: #f59e0b; border-radius: 4px;"></div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#eef0fd">
+              <svg width="16" height="16" fill="none" stroke="#4361ee" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="act-text"><p>Gedung baru ditambahkan</p><span>1 jam lalu</span></div>
           </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">2</span>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
-          <span style="font-size: 14px; color: #6b7280;">Maintenance</span>
-          <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; margin: 0 12px;">
-            <div style="width: 8%; height: 100%; background: #ef4444; border-radius: 4px;"></div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#fff4ec">
+              <svg width="16" height="16" fill="none" stroke="#f4a261" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+            </div>
+            <div class="act-text"><p>Laporan kondisi Gedung E</p><span>2 jam lalu</span></div>
           </div>
-          <span style="font-weight: 600; color: #1f2937; min-width: 24px; text-align: right;">1</span>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#f3e8fd">
+              <svg width="16" height="16" fill="none" stroke="#9333ea" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            </div>
+            <div class="act-text"><p>Peminjaman baru oleh Maya</p><span>3 jam lalu</span></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#fdecea">
+              <svg width="16" height="16" fill="none" stroke="#e63946" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </div>
+            <div class="act-text"><p>Jadwal perbaikan Lab Kimia</p><span>5 jam lalu</span></div>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Recent Table -->
+    <div class="card">
+      <div class="table-header">
+        <span class="card-title" style="margin-bottom:0">Peminjaman Terbaru</span>
+        <a class="see-all" href="daftar-peminjaman.html">Lihat Semua →</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Peminjam</th>
+            <th>Ruangan</th>
+            <th>Tanggal</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dr. Ahmad Fauzi</td><td>Aula Utama</td><td>15 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
+          <tr><td>Siti Nurhaliza</td><td>Lab Komputer 1</td><td>16 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
+          <tr><td>Budi Santoso</td><td>R. Rapat 201</td><td>17 Jun 2025</td><td><span class="status-badge status-pending">Menunggu</span></td></tr>
+          <tr><td>Maya Putri</td><td>Auditorium</td><td>18 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
+          <tr><td>Rizky Ramadhan</td><td>Lab Fisika</td><td>19 Jun 2025</td><td><span class="status-badge status-rejected">Ditolak</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-</div>
-
-@endsection
+</main>
+</body>
+</html>

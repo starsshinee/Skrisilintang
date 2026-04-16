@@ -1,663 +1,362 @@
-@extends('layouts.app')
-
-@section('content')
-@php
-  $user = auth()->user();
-  $currentRole = 'admin_sarpras';
-  
-  $roleConfig = [
-    'admin_sarpras' => [
-      'bgGradient' => 'from-cyan-900 to-cyan-800',
-      'badgeText' => 'Admin Sarpras',
-      'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
-      'navItems' => [
-        ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
-        ['href' => route('adminsarpras.data-gedung'), 'label' => 'Data Gedung', 'icon' => 'fas fa-building', 'route' => 'adminsarpras.data-gedung'],
-        ['href' => route('adminsarpras.daftar-peminjaman'), 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-list', 'route' => 'adminsarpras.daftar-peminjaman'],
-        ['href' => route('adminsarpras.laporan'), 'label' => 'Laporan Sarpras', 'icon' => 'fas fa-file-alt', 'route' => 'adminsarpras.laporan'],
-      ]
-    ],
-  ];
-  
-  $config = $roleConfig[$currentRole];
-
-  $peminjamanData = [
-    ['peminjam' => 'Dr. Budi Santoso', 'gedung' => 'Aula Utama', 'tanggal' => '2025-07-15', 'status' => 'Menunggu'],
-    ['peminjam' => 'HMTI', 'gedung' => 'Gedung B Lt.2', 'tanggal' => '2025-07-18', 'status' => 'Disetujui'],
-    ['peminjam' => 'Fak. Teknik', 'gedung' => 'Lab Komputer A', 'tanggal' => '2025-07-20', 'status' => 'Disetujui'],
-    ['peminjam' => 'BEM Universitas', 'gedung' => 'Auditorium', 'tanggal' => '2025-07-22', 'status' => 'Menunggu'],
-    ['peminjam' => 'Prodi Manajemen', 'gedung' => 'Ruang Serbaguna C', 'tanggal' => '2025-07-10', 'status' => 'Ditolak'],
-  ];
-@endphp
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan - Admin Sarana Prasarana</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sidebar-width: 260px;
+    --primary: #4361ee;
+    --primary-light: #eef0fd;
+    --success: #2ec4b6;
+    --success-light: #e8faf9;
+    --warning: #f4a261;
+    --warning-light: #fff4ec;
+    --danger: #e63946;
+    --danger-light: #fdecea;
+    --sidebar-bg: #fff;
+    --body-bg: #f0f2f9;
+    --text-primary: #1a1f36;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --card-bg: #fff;
+    --sidebar-width: 240px;
   }
-  
-  * {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f9fafb;
+  .sidebar {
+    width: var(--sidebar-width); background: var(--sidebar-bg);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
   }
-
-  .main-wrapper {
-    margin-left: var(--sidebar-width);
-  }
-
-  .sidebar-wrapper {
-    width: var(--sidebar-width);
-    background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(31, 41, 55) 100%);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 100;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
-  }
-
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .sidebar-logo {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 18px;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-  }
-
   .sidebar-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
   }
-
-  .sidebar-brand-name {
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.2;
+  .brand-icon {
+    width: 44px; height: 44px; background: var(--primary);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
   }
-
-  .sidebar-brand-sub {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 11px;
-    line-height: 1;
-  }
-
-  .sidebar-user {
-    margin: 16px 16px 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, #06b6d4, #00d4ff);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-name {
-    color: white;
-    font-weight: 600;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .user-role {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 12px 8px;
-  }
-
-  .nav-group {
-    margin-bottom: 8px;
-  }
-
-  .nav-group-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(148, 163, 184, 0.5);
-    padding: 12px 14px 6px;
-    font-weight: 700;
-  }
-
+  .brand-text strong { font-size: 13px; font-weight: 700; display: block; }
+  .brand-text span { font-size: 11px; color: var(--text-secondary); }
+  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
   .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    margin-bottom: 3px;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; transition: all .2s; text-decoration: none;
   }
-
-  .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
+  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px; border-top: 1px solid var(--border);
   }
-
-  .nav-item.active {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(0, 212, 255, 0.3));
-    color: white;
-    border-left: 3px solid #06b6d4;
-    padding-left: 11px;
+  .user-avatar {
+    width: 36px; height: 36px; background: var(--primary);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
   }
+  .user-info strong { font-size: 13px; font-weight: 700; display: block; }
+  .user-info span { font-size: 11px; color: var(--text-secondary); }
 
-  .nav-icon {
-    width: 18px;
-    text-align: center;
-    font-size: 14px;
-    flex-shrink: 0;
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+  .topbar {
+    background: var(--card-bg); border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    position: sticky; top: 0; z-index: 50;
   }
-
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  .notif-btn {
+    position: relative; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--body-bg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border);
   }
-
-  .logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba(239, 68, 68, 0.08);
-    border: none;
-    color: #ef4444;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
+  .notif-badge {
+    position: absolute; top: 4px; right: 4px;
+    width: 8px; height: 8px; background: var(--danger);
+    border-radius: 50%; border: 2px solid #fff;
   }
+  .content { padding: 24px 28px; flex: 1; }
 
-  .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ff6b6b;
+  /* Report Type Cards */
+  .report-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .report-type-card {
+    background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
+    padding: 24px; cursor: pointer; transition: all .25s;
   }
-
-  .sidebar-wrapper::-webkit-scrollbar {
-    width: 6px;
+  .report-type-card:hover, .report-type-card.active {
+    border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light);
   }
-
-  .sidebar-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
+  .report-type-card.active { background: var(--primary-light); }
+  .rt-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
   }
+  .rt-icon.blue { background: var(--primary-light); }
+  .rt-icon.orange { background: var(--warning-light); }
+  .rt-icon.green { background: var(--success-light); }
+  .report-type-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .report-type-card p { font-size: 13px; color: var(--text-secondary); }
 
-  .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-
-  .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Main Content Styling */
-  .main-content {
-    padding: 32px;
-    background: #f9fafb;
-    min-height: 100vh;
-  }
-
-  .page-header {
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .page-header-left h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 8px;
-  }
-
-  .page-header-left p {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-primary {
-    background: #06b6d4;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background: #0891b2;
-  }
-
+  /* Main Report Card */
   .card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border); padding: 24px;
+  }
+  .card-header {
+    display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 20px;
   }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 20px;
+  .card-title { font-size: 16px; font-weight: 700; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .month-select {
+    padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px;
+    font-family: inherit; font-size: 13px; outline: none; cursor: pointer;
+    background: #fff;
   }
-
-  .chart-container {
-    display: flex;
-    align-items: flex-end;
-    gap: 16px;
-    height: 200px;
+  .btn-export {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 18px; background: var(--text-primary); color: #fff;
+    border: none; border-radius: 10px; font-family: inherit;
+    font-size: 14px; font-weight: 600; cursor: pointer;
   }
+  .btn-export:hover { background: #2c3247; }
 
-  .chart-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
+  /* Summary Stats */
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .summary-card { padding: 16px 20px; border-radius: 12px; }
+  .summary-card.total { background: #f0f4ff; }
+  .summary-card.approved { background: var(--success-light); }
+  .summary-card.pending { background: var(--warning-light); }
+  .summary-card.rejected { background: var(--danger-light); }
+  .summary-label { font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+  .summary-label.total { color: var(--primary); }
+  .summary-label.approved { color: var(--success); }
+  .summary-label.pending { color: var(--warning); }
+  .summary-label.rejected { color: var(--danger); }
+  .summary-value { font-size: 32px; font-weight: 800; }
+  .summary-value.total { color: var(--primary); }
+  .summary-value.approved { color: var(--success); }
+  .summary-value.pending { color: var(--warning); }
+  .summary-value.rejected { color: var(--danger); }
 
-  .chart-label {
-    font-size: 12px;
-    color: #6b7280;
-  }
-
-  .chart-bar {
-    width: 100%;
-    background: #f3f4f6;
-    border-radius: 6px 6px 0 0;
-    position: relative;
-    transition: all 0.3s ease;
-  }
-
-  .chart-bar:hover {
-    opacity: 0.8;
-  }
-
-  .chart-value {
-    position: absolute;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-weight: 600;
-    color: #1f2937;
-    font-size: 14px;
-  }
-
-  .bar-monthly {
-    background: linear-gradient(135deg, #10b981, #059669);
-  }
-
-  .bar-facility {
-    background: linear-gradient(135deg, #3b82f6, #06b6d4);
-  }
-
-  .legend {
-    display: flex;
-    gap: 24px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #6b7280;
-  }
-
-  .legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-  }
-
-  .table-responsive {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  thead {
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
+  /* Table */
+  table { width: 100%; border-collapse: collapse; }
   thead th {
-    padding: 16px;
-    text-align: left;
-    font-weight: 700;
-    color: #374151;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .05em;
   }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
 
-  tbody td {
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    color: #6b7280;
+  /* Progress Bar */
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-bar {
+    flex: 1; height: 8px; border-radius: 10px; background: #e5e7eb; overflow: hidden;
   }
-
-  tbody tr:hover {
-    background: #f9fafb;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .badge-warning {
-    background: #fef3c7;
-    color: #d97706;
-  }
-
-  .badge-success {
-    background: #dcfce7;
-    color: #16a34a;
-  }
-
-  .badge-danger {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-
-  .two-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-
-  @media (max-width: 1024px) {
-    .two-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .page-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
+  .progress-fill { height: 100%; border-radius: 10px; transition: width .6s; }
+  .fill-blue { background: var(--primary); }
+  .fill-orange { background: var(--warning); }
+  .fill-gray { background: #9ca3af; }
+  .progress-pct { font-size: 13px; font-weight: 700; color: var(--text-primary); min-width: 36px; text-align: right; }
 </style>
+</head>
+<body>
 
-<aside class="sidebar-wrapper bg-gradient-to-b {{ $config['bgGradient'] }}">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <i class="fas fa-cube"></i>
-    </div>
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-name">SIBMN</div>
-      <div class="sidebar-brand-sub">BPMP Gorontalo</div>
-    </div>
-  </div>
+@include('partials.sidebar')
 
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
-    </div>
-    <div class="user-info">
-      <div class="user-name">{{ $user->name ?? 'User' }}</div>
-      <div class="user-role">{{ $config['badgeText'] }}</div>
+<main class="main">
+  <div class="topbar">
+    <div class="notif-btn">
+      <svg width="18" height="18" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <div class="notif-badge"></div>
     </div>
   </div>
-
-  <nav class="sidebar-nav">
-    <div class="nav-group">
-      @foreach($config['navItems'] as $item)
-        <a href="{{ $item['href'] }}" 
-           class="nav-item {{ request()->routeIs($item['route'] ?? 'NEVER_MATCH') ? 'active' : '' }}"
-           title="{{ $item['label'] }}">
-          <span class="nav-icon">
-            <i class="{{ $item['icon'] }}"></i>
-          </span>
-          <span>{{ $item['label'] }}</span>
-        </a>
-      @endforeach
-    </div>
-  </nav>
-
-  <div class="sidebar-footer">
-    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-      @csrf
-      <button type="submit" class="logout-btn">
-        <span class="nav-icon">
-          <i class="fas fa-sign-out-alt"></i>
-        </span>
-        <span>Keluar</span>
-      </button>
-    </form>
-  </div>
-</aside>
-
-<div class="main-wrapper">
-  <div class="main-content">
-    <div class="page-header">
-      <div class="page-header-left">
-        <h1>Laporan</h1>
-        <p>Statistik dan riwayat peminjaman gedung</p>
+  <div class="content">
+    <!-- Report Type Selector -->
+    <div class="report-types">
+      <div class="report-type-card active" onclick="selectReport(this, 'peminjaman')">
+        <div class="rt-icon blue">
+          <svg width="26" height="26" fill="none" stroke="#4361ee" viewBox="0 0 24 24" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"/></svg>
+        </div>
+        <h3>Laporan Peminjaman</h3>
+        <p>Rekap semua peminjaman ruangan</p>
       </div>
-      <button class="btn btn-primary">
-        <i class="fas fa-download"></i>
-        Export CSV
-      </button>
+      <div class="report-type-card" onclick="selectReport(this, 'kondisi')">
+        <div class="rt-icon orange">
+          <svg width="26" height="26" fill="none" stroke="#f4a261" viewBox="0 0 24 24" stroke-width="1.8"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        </div>
+        <h3>Laporan Kondisi</h3>
+        <p>Status kondisi gedung & ruangan</p>
+      </div>
+      <div class="report-type-card" onclick="selectReport(this, 'inventaris')">
+        <div class="rt-icon green">
+          <svg width="26" height="26" fill="none" stroke="#2ec4b6" viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+        <h3>Laporan Inventaris</h3>
+        <p>Daftar aset dan inventaris</p>
+      </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="two-grid">
-      <!-- Statistik Peminjaman Bulanan -->
-      <div class="card">
-        <h3 class="card-title">Statistik Peminjaman Bulanan</h3>
-        <div class="chart-container">
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 60%;">
-              <div class="chart-value">12</div>
-            </div>
-            <div class="chart-label">Jan</div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 90%;">
-              <div class="chart-value">18</div>
-            </div>
-            <div class="chart-label">Feb</div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 40%;">
-              <div class="chart-value">8</div>
-            </div>
-            <div class="chart-label">Mar</div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 110%;">
-              <div class="chart-value">22</div>
-            </div>
-            <div class="chart-label">Apr</div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 75%;">
-              <div class="chart-value">15</div>
-            </div>
-            <div class="chart-label">Mei</div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar bar-monthly" style="height: 140%;">
-              <div class="chart-value">28</div>
-            </div>
-            <div class="chart-label">Jun</div>
-          </div>
+    <!-- Report Content -->
+    <div class="card" id="reportContent">
+      <div class="card-header">
+        <span class="card-title" id="reportTitle">Laporan Peminjaman</span>
+        <div class="header-right">
+          <select class="month-select" onchange="updateStats(this.value)">
+            <option>Juni 2025</option>
+            <option>Mei 2025</option>
+            <option>April 2025</option>
+            <option>Maret 2025</option>
+          </select>
+          <button class="btn-export" onclick="exportReport()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Export
+          </button>
         </div>
       </div>
 
-      <!-- Gedung Terpopuler -->
-      <div class="card">
-        <h3 class="card-title">Gedung Terpopuler</h3>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Aula Utama</span>
-            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
-              <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
-            </div>
-            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">45</span>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Auditorium</span>
-            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
-              <div style="width: 85%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
-            </div>
-            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">38</span>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Gedung B Lt.2</span>
-            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
-              <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
-            </div>
-            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">27</span>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 13px; color: #6b7280; min-width: 120px;">Lab Komputer A</span>
-            <div style="flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px;">
-              <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 4px;"></div>
-            </div>
-            <span style="font-weight: 600; color: #1f2937; min-width: 32px; text-align: right;">20</span>
-          </div>
+      <!-- Summary -->
+      <div class="summary-grid" id="summaryGrid">
+        <div class="summary-card total">
+          <div class="summary-label total">Total Peminjaman</div>
+          <div class="summary-value total">67</div>
+        </div>
+        <div class="summary-card approved">
+          <div class="summary-label approved">Disetujui</div>
+          <div class="summary-value approved">52</div>
+        </div>
+        <div class="summary-card pending">
+          <div class="summary-label pending">Menunggu</div>
+          <div class="summary-value pending">8</div>
+        </div>
+        <div class="summary-card rejected">
+          <div class="summary-label rejected">Ditolak</div>
+          <div class="summary-value rejected">7</div>
         </div>
       </div>
-    </div>
 
-    <!-- Riwayat Peminjaman -->
-    <div class="card">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-        <h3 class="card-title" style="margin: 0;">Riwayat Peminjaman</h3>
-        <button class="btn btn-primary">
-          <i class="fas fa-download"></i>
-          Export CSV
-        </button>
-      </div>
-
-      <div class="table-responsive">
+      <!-- Detail Table -->
+      <div id="peminjaman-table">
         <table>
           <thead>
             <tr>
-              <th style="min-width: 150px;">PEMINJAM</th>
-              <th style="min-width: 150px;">GEDUNG</th>
-              <th style="width: 120px;">TANGGAL</th>
-              <th style="width: 100px;">STATUS</th>
+              <th>No</th>
+              <th>Gedung</th>
+              <th>Ruangan</th>
+              <th>Jumlah Peminjaman</th>
+              <th>Tingkat Penggunaan</th>
             </tr>
           </thead>
           <tbody>
-            @foreach($peminjamanData as $peminjaman)
             <tr>
-              <td>
-                <strong style="color: #1f2937;">{{ $peminjaman['peminjam'] }}</strong>
-              </td>
-              <td>{{ $peminjaman['gedung'] }}</td>
-              <td>{{ $peminjaman['tanggal'] }}</td>
-              <td>
-                @if($peminjaman['status'] === 'Menunggu')
-                  <span class="badge badge-warning">{{ $peminjaman['status'] }}</span>
-                @elseif($peminjaman['status'] === 'Disetujui')
-                  <span class="badge badge-success">{{ $peminjaman['status'] }}</span>
-                @else
-                  <span class="badge badge-danger">{{ $peminjaman['status'] }}</span>
-                @endif
-              </td>
+              <td>1</td><td>Gedung A</td><td>Aula Utama</td><td>18 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-blue" style="width:85%"></div></div><span class="progress-pct">85%</span></div></td>
             </tr>
-            @endforeach
+            <tr>
+              <td>2</td><td>Gedung B</td><td>Lab Komputer 1</td><td>14 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-orange" style="width:72%"></div></div><span class="progress-pct">72%</span></div></td>
+            </tr>
+            <tr>
+              <td>3</td><td>Gedung D</td><td>Auditorium</td><td>12 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-blue" style="width:90%"></div></div><span class="progress-pct">90%</span></div></td>
+            </tr>
+            <tr>
+              <td>4</td><td>Gedung F</td><td>Co-working Space</td><td>10 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-orange" style="width:65%"></div></div><span class="progress-pct">65%</span></div></td>
+            </tr>
+            <tr>
+              <td>5</td><td>Gedung C</td><td>R. Baca Utama</td><td>8 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-orange" style="width:55%"></div></div><span class="progress-pct">55%</span></div></td>
+            </tr>
+            <tr>
+              <td>6</td><td>Gedung E</td><td>Lab Kimia</td><td>5 kali</td>
+              <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill fill-gray" style="width:40%"></div></div><span class="progress-pct">40%</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Kondisi Table (hidden) -->
+      <div id="kondisi-table" style="display:none">
+        <table>
+          <thead>
+            <tr><th>No</th><th>Gedung</th><th>Kondisi</th><th>Terakhir Diperiksa</th><th>Keterangan</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Gedung A - Rektorat</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>10 Jun 2025</td><td>Tidak ada kerusakan</td></tr>
+            <tr><td>2</td><td>Gedung B - Fak. Teknik</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>12 Jun 2025</td><td>Pemeliharaan rutin selesai</td></tr>
+            <tr><td>3</td><td>Gedung C - Perpustakaan</td><td><span style="color:#f4a261;font-weight:600">Renovasi</span></td><td>5 Jun 2025</td><td>Pengecatan ulang dinding</td></tr>
+            <tr><td>4</td><td>Gedung D - Auditorium</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>14 Jun 2025</td><td>AC baru dipasang</td></tr>
+            <tr><td>5</td><td>Gedung E - Laboratorium</td><td><span style="color:#e63946;font-weight:600">Perlu Perbaikan</span></td><td>3 Jun 2025</td><td>Atap bocor di lab kimia</td></tr>
+            <tr><td>6</td><td>Gedung F - Pusat Kegiatan</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>11 Jun 2025</td><td>Dalam kondisi baik</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Inventaris Table (hidden) -->
+      <div id="inventaris-table" style="display:none">
+        <table>
+          <thead>
+            <tr><th>No</th><th>Nama Aset</th><th>Gedung</th><th>Jumlah</th><th>Kondisi</th><th>Tahun Pengadaan</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Proyektor Epson</td><td>Gedung A</td><td>8 unit</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>2022</td></tr>
+            <tr><td>2</td><td>Komputer Desktop</td><td>Gedung B</td><td>40 unit</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>2021</td></tr>
+            <tr><td>3</td><td>AC Split</td><td>Gedung C</td><td>15 unit</td><td><span style="color:#f4a261;font-weight:600">Perlu Servis</span></td><td>2019</td></tr>
+            <tr><td>4</td><td>Kursi Lipat</td><td>Gedung D</td><td>200 unit</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>2020</td></tr>
+            <tr><td>5</td><td>Meja Lab</td><td>Gedung E</td><td>30 unit</td><td><span style="color:#e63946;font-weight:600">Rusak</span></td><td>2015</td></tr>
+            <tr><td>6</td><td>Sound System</td><td>Gedung F</td><td>4 set</td><td><span style="color:#2ec4b6;font-weight:600">Baik</span></td><td>2023</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</div>
+</main>
 
-@endsection
+<script>
+  const reportTitles = {
+    peminjaman: 'Laporan Peminjaman',
+    kondisi: 'Laporan Kondisi Gedung & Ruangan',
+    inventaris: 'Laporan Inventaris Aset'
+  };
+
+  function selectReport(el, type) {
+    document.querySelectorAll('.report-type-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('reportTitle').textContent = reportTitles[type];
+
+    // Show/hide summary
+    const summary = document.getElementById('summaryGrid');
+    summary.style.display = type === 'peminjaman' ? 'grid' : 'none';
+
+    // Show correct table
+    ['peminjaman','kondisi','inventaris'].forEach(t => {
+      document.getElementById(`${t}-table`).style.display = t === type ? 'block' : 'none';
+    });
+  }
+
+  function exportReport() {
+    alert('Export laporan berhasil! File akan diunduh dalam format Excel.');
+  }
+
+  function updateStats(month) {
+    // Simulate different stats per month
+    const stats = {
+      'Juni 2025': [67, 52, 8, 7],
+      'Mei 2025': [58, 44, 9, 5],
+      'April 2025': [50, 38, 7, 5],
+      'Maret 2025': [45, 35, 6, 4],
+    };
+    const data = stats[month] || [67, 52, 8, 7];
+    const values = document.querySelectorAll('.summary-value');
+    values.forEach((v, i) => { v.textContent = data[i]; });
+  }
+</script>
+</body>
+</html>

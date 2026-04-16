@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminSarprasController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TamuController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────────────────────────────
@@ -16,10 +18,10 @@ Route::get('/', function () {
 // Autentikasi – hanya untuk tamu (belum login)
 // ──────────────────────────────────────────────────────────────────────
 
+Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
+
 Route::middleware('guest')->group(function () {
 
-    // Login
-    Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
     // Registrasi
@@ -92,9 +94,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:adminsarpras,kasubag,superadmin')
         ->group(function () {
             Route::get('/dashboard', fn () => view('adminsarpras.dashbord'))->name('dashboard');
-            Route::get('/data-gedung', 'AdminSarprasController@dataGedung')->name('adminsarpras.data-gedung');
-            Route::get('/daftar-peminjaman', 'AdminSarprasController@daftarPeminjaman')->name('adminsarpras.daftar-peminjaman');
-            Route::get('/laporan', 'AdminSarprasController@laporan')->name('adminsarpras.laporan');
+            Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
+            Route::get('/daftar-peminjaman', [AdminSarprasController::class, 'daftarPeminjaman'])->name('daftar-peminjaman');
+            Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
+            Route::get('/pengaturan-akun', [AdminSarprasController::class, 'pengaturanAkun'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -115,6 +118,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:pegawai,superadmin')
         ->group(function () {
             Route::get('/dashboard', fn () => view('pegawai.dashbord'))->name('dashboard');
+            Route::get('/peminjaman-barang', fn () => view('pegawai.peminjaman_barang'))->name('peminjaman-barang');
+            Route::get('/peminjaman-kendaraan', fn () => view('pegawai.peminjaman_kendaraan'))->name('peminjaman-kendaraan');
+            Route::get('/permintaan-persediaan', fn () => view('pegawai.permintaan_persediaan'))->name('permintaan-persediaan');
+            Route::get('/pengaturan-akun', fn () => view('pegawai.pengaturan_akun'))->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -124,9 +131,9 @@ Route::middleware('auth')->group(function () {
         ->name('tamu.')
         ->middleware('role:tamu,superadmin')
         ->group(function () {
-            Route::get('/dashboard',        fn () => view('tamu.dashbord'))->name('dashboard');
-            Route::get('/peminjaman-aset',  fn () => view('tamu.peminjaman_aset'))->name('peminjaman-aset');
-            Route::get('/pengaturan-akun',  fn () => view('tamu.pengaturan_akun'))->name('pengaturan-akun');
-            Route::get('/info-fasilitas',   fn () => view('tamu.info_fasilitas'))->name('info-fasilitas');
+            Route::get('/dashboard', [TamuController::class, 'dashboard'])->name('dashboard');
+            Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
+            Route::get('/pengaturan-akun', [TamuController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+            Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });
 });
