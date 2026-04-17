@@ -10,7 +10,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --sidebar-w: 240px;
+      --sidebar-w: 256px;
       --primary: #3b5bdb;
       --primary-light: #eef2ff;
       --green: #2f9e44;
@@ -124,55 +124,96 @@
     }
     .logout-btn:hover { color: #ff6b6b; }
 
-    /* MAIN */
-    .main {
-      margin-left: 260px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
+     /* ── MAIN CONTENT ── */
+  .main { margin-left: 256px; flex: 1; padding: 0 32px 32px; }
 
-    .topbar {
-      background: #fff;
-      padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 50;
-    }
+  /* TOP BAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0 24px;
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+  }
+  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-date {
+    font-size: 13px; color: var(--text-secondary); font-weight: 500;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .notif-btn {
+    width: 40px; height: 40px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: grid; place-items: center;
+    cursor: pointer; position: relative;
+    color: var(--text-secondary);
+    transition: all .2s;
+  }
+  .notif-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .notif-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 1.5px solid var(--card-bg);
+  }
 
-    .page-title { font-size: 20px; font-weight: 700; }
-    .page-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-
-    .notif-btn {
-      width: 38px; height: 38px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; position: relative;
-      background: #fff;
-      color: var(--muted);
-    }
-    .notif-dot {
-      width: 8px; height: 8px;
-      background: #f03e3e;
-      border-radius: 50%;
-      position: absolute; top: 6px; right: 6px;
-      border: 2px solid #fff;
-    }
-
-    .avatar-top {
-      width: 38px; height: 38px;
-      background: var(--primary);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 14px;
-      cursor: pointer;
-    }
-
-    /* CONTENT */
-    .content { padding: 28px 32px; flex: 1; }
+  /* HERO BANNER */
+  .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0891b2 100%);
+    border-radius: 20px;
+    padding: 32px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.28);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-blob {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    right: -60px; top: -80px;
+    pointer-events: none;
+  }
+  .hero-blob2 {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    right: 120px; bottom: -60px;
+    pointer-events: none;
+  }
+  .hero-left { position: relative; z-index: 2; }
+  .hero-greeting { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 500; margin-bottom: 6px; letter-spacing: .5px; }
+  .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 380px; line-height: 1.6; }
+  .hero-right { position: relative; z-index: 2; text-align: right; }
+  .hero-inst { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+  .hero-nip { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 14px; }
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: #fff; font-size: 13px; font-weight: 600;
+    padding: 10px 20px; border-radius: 10px;
+    cursor: pointer; transition: all .2s;
+    text-decoration: none;
+  }
+  .hero-btn:hover { background: rgba(255,255,255,0.28); }
 
     /* STAT CARDS */
     .stats-grid {
@@ -305,18 +346,37 @@
 @include('partials.sidebar')
 
 <!-- MAIN -->
-<div class="main">
+<main class="main">
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div>
-      <div class="page-title">Dashboard</div>
-      <div class="page-sub">Super Admin — BPMP Gorontalo</div>
-    </div>
+    <div class="topbar-title">Dashboard Tamu</div>
     <div class="topbar-right">
+      <div class="topbar-date">
+        <i class="fas fa-calendar" style="color:var(--primary)"></i>
+        Rabu, 15 April 2026
+      </div>
       <div class="notif-btn">
         <i class="fas fa-bell"></i>
-        <span class="notif-dot"></span>
+        <div class="notif-dot"></div>
       </div>
-      <div class="avatar-top">DA</div>
+    </div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero animate d1">
+    <div class="hero-blob"></div>
+    <div class="hero-blob2"></div>
+    <div class="hero-left">
+      <div class="hero-greeting">👋 Selamat datang kembali!</div>
+      <div class="hero-title">Halo!</div>
+      <div class="hero-sub">Sebagai Tamu, Anda dapat mengajukan permintaan peminjaman aset dan fasilitas BPMP Provinsi Gorontalo.</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-inst">Instansi: BPMP Provinsi Gorontalo</div>
+      <div class="hero-nip">NIP: 0983654321</div>
+      <a href="{{ route('tamu.pengaturan-akun') }}" class="hero-btn">
+        <i class="fas fa-gear"></i> Pengaturan Akun
+      </a>
     </div>
   </div>
 

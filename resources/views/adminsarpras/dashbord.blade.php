@@ -93,7 +93,7 @@
   .content { padding: 24px 28px; flex: 1; }
 
    /* ── MAIN CONTENT ── */
-  .main { margin-left: 260px; flex: 1; padding: 0 32px 32px; }
+  .main { margin-left: 256px; flex: 1; padding: 0 32px 32px; }
 
   /* TOP BAR */
   .topbar {

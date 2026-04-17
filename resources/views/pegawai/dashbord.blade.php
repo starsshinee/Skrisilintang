@@ -4,159 +4,180 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SIPANDU - User Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; min-height: 100vh; }
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --accent: #06b6d4;
+      --accent2: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f0f4ff;
+      --sidebar-bg: #0f172a;
+      --sidebar-text: #94a3b8;
+      --sidebar-active: #2563eb;
+      --card-bg: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 24px rgba(37,99,235,0.08);
+      --shadow-lg: 0 8px 40px rgba(37,99,235,0.14);
+    }
 
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      width: 220px;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
       min-height: 100vh;
-      background: #1a237e;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 100;
+      overflow-x: hidden;
     }
-    .sidebar-logo {
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-    }
-    .logo-circle {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: white;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-circle span { color: #1a237e; font-weight: 700; font-size: 11px; }
-    .sidebar-logo-text { color: white; font-weight: 700; font-size: 16px; letter-spacing: 1px; }
-
-    .sidebar-user {
-      padding: 10px 20px;
-      background: rgba(255,255,255,0.1);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .user-icon {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .sidebar-user-label { color: white; font-size: 12px; font-weight: 500; }
-
-    .sidebar-nav { flex: 1; padding: 8px 0; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 20px;
-      color: rgba(255,255,255,0.75);
-      cursor: pointer;
-      font-size: 13px;
-      border-left: 3px solid transparent;
-      transition: background 0.15s;
-      text-decoration: none;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
-    .nav-item.active { background: rgba(255,255,255,0.15); color: white; border-left: 3px solid #7c9eff; }
-    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .sidebar-logout { padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.12); }
-    .logout-btn {
-      display: flex; align-items: center; gap: 10px;
-      color: rgba(255,255,255,0.65);
-      font-size: 13px; cursor: pointer; padding: 8px 0;
-      background: none; border: none; width: 100%;
-    }
-    .logout-btn:hover { color: white; }
 
     /* ===== MAIN ===== */
     .main {
-      margin-left: 220px;
+      margin-left: 256px;
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      padding: 0 32px 32px;
     }
+
+    /* TOP BAR */
     .topbar {
-      background: white;
-      padding: 14px 24px;
-      display: flex; align-items: center; gap: 14px;
-      border-bottom: 1px solid #e0e0e0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 24px;
       position: sticky; top: 0; z-index: 50;
+      background: var(--bg);
     }
-    .hamburger { cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 20px; height: 14px; }
-    .hamburger span { display: block; height: 2px; background: #555; border-radius: 2px; }
-    .topbar-title { font-size: 18px; font-weight: 600; color: #1a237e; }
+    .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-date {
+      font-size: 13px; color: var(--text-secondary); font-weight: 500;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 8px 14px; border-radius: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .notif-btn {
+      width: 40px; height: 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: grid; place-items: center;
+      cursor: pointer; position: relative;
+      color: var(--text-secondary);
+      transition: all .2s;
+    }
+    .notif-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .notif-dot {
+      position: absolute; top: 8px; right: 8px;
+      width: 7px; height: 7px;
+      background: var(--danger);
+      border-radius: 50%;
+      border: 1.5px solid var(--card-bg);
+    }
 
-    .content { padding: 20px 24px; flex: 1; }
-
-    /* ===== WELCOME CARD ===== */
-    .welcome-card {
-      background: linear-gradient(135deg, #1a237e 0%, #3949ab 60%, #7c9eff 100%);
-      border-radius: 12px;
-      padding: 20px 24px;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 20px;
-      position: relative; overflow: hidden;
+    /* HERO BANNER */
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0891b2 100%);
+      border-radius: 20px;
+      padding: 32px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(37,99,235,0.28);
     }
-    .welcome-card::before {
+    .hero::before {
       content: '';
-      position: absolute; right: -20px; top: -20px;
-      width: 140px; height: 140px; border-radius: 50%;
-      background: rgba(255,255,255,0.06);
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
-    .welcome-card::after {
-      content: '';
-      position: absolute; right: 60px; bottom: -30px;
-      width: 100px; height: 100px; border-radius: 50%;
+    .hero-blob {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      right: -60px; top: -80px;
+      pointer-events: none;
+    }
+    .hero-blob2 {
+      position: absolute;
+      width: 180px; height: 180px;
+      border-radius: 50%;
       background: rgba(255,255,255,0.04);
+      right: 120px; bottom: -60px;
+      pointer-events: none;
     }
-    .welcome-text h2 { color: white; font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-    .welcome-text p { color: rgba(255,255,255,0.78); font-size: 12px; max-width: 380px; line-height: 1.5; }
-    .welcome-right { text-align: right; flex-shrink: 0; }
-    .settings-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: white; padding: 6px 12px;
-      border-radius: 6px; font-size: 11px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 5px;
-      margin-bottom: 10px;
+    .hero-left { position: relative; z-index: 2; }
+    .hero-greeting { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 500; margin-bottom: 6px; letter-spacing: .5px; }
+    .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 380px; line-height: 1.6; }
+    .hero-right { position: relative; z-index: 2; text-align: right; }
+    .hero-inst { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+    .hero-nip { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 14px; }
+    .hero-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 13px; font-weight: 600;
+      padding: 10px 20px; border-radius: 10px;
+      cursor: pointer; transition: all .2s;
+      text-decoration: none;
     }
-    .settings-btn:hover { background: rgba(255,255,255,0.22); }
-    .day-label { color: rgba(255,255,255,0.65); font-size: 11px; }
-    .date-text { color: rgba(255,255,255,0.92); font-size: 13px; font-weight: 500; }
+    .hero-btn:hover { background: rgba(255,255,255,0.28); }
 
+    .content { padding: 0; }
     /* ===== STAT CARDS ===== */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 28px;
     }
     .stat-card {
-      background: white;
-      border-radius: 10px;
-      padding: 16px;
-      display: flex; align-items: center; gap: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
     }
     .stat-icon {
-      width: 44px; height: 44px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
       flex-shrink: 0;
     }
-    .stat-icon.blue  { background: #e8f0fe; }
-    .stat-icon.amber { background: #fff3e0; }
-    .stat-icon.green { background: #e8f5e9; }
-    .stat-icon.red   { background: #fce4ec; }
+    .stat-icon.blue { background: rgba(37,99,235,0.1); color: var(--primary); }
+    .stat-icon.amber { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .stat-icon.green { background: rgba(16,185,129,0.1); color: var(--success); }
     .stat-num { font-size: 28px; font-weight: 700; line-height: 1; }
-    .stat-num.blue  { color: #1a73e8; }
-    .stat-num.amber { color: #f57c00; }
-    .stat-num.green { color: #388e3c; }
-    .stat-num.red   { color: #c62828; }
-    .stat-label { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.4; }
+    .stat-num.blue  { color: var(--primary); }
+    .stat-num.amber { color: var(--warning); }
+    .stat-num.green { color: var(--success); }
+    .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-bottom: 4px; }
+    .stat-num { font-size: 28px; font-weight: 700; line-height: 1; }
+    .stat-num.blue  { color: var(--primary); }
+    .stat-num.amber { color: var(--warning); }
+    .stat-num.green { color: var(--success); }
+    .stat-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 
     /* ===== BOTTOM ROW ===== */
     .bottom-row {
@@ -241,16 +262,22 @@
     }
 
     /* ===== RESPONSIVE ===== */
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .bottom-row { grid-template-columns: 1fr; }
     }
-    @media (max-width: 640px) {
-      .sidebar { width: 180px; }
-      .main { margin-left: 180px; }
+    @media (max-width: 900px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .welcome-card { flex-direction: column; gap: 14px; }
-      .welcome-right { text-align: left; }
+      div[style*="grid-template-columns: repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 640px) {
+      .main { margin-left: 256px; padding: 0 16px 16px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .hero { padding: 20px 16px; flex-direction: column; gap: 16px; text-align: center; }
+      .hero-right { text-align: center; }
+      .topbar { padding: 12px 0 16px; }
+      .topbar-title { font-size: 18px; }
+      div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -260,32 +287,38 @@
 
 <!-- MAIN -->
 <div class="main">
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="hamburger">
-      <span></span><span></span><span></span>
+    <div class="topbar-title">Dashboard Pegawai</div>
+    <div class="topbar-right">
+      <div class="topbar-date">
+        <i class="fas fa-calendar" style="color:var(--primary)"></i>
+        <span id="current-date">Monday, 01 December 2025</span>
+      </div>
+      <button class="notif-btn">
+        <i class="fas fa-bell"></i>
+        <span class="notif-dot"></span>
+      </button>
     </div>
-    <span class="topbar-title">User Dashboard</span>
   </div>
 
   <div class="content">
-
-    <!-- WELCOME CARD -->
-    <div class="welcome-card">
-      <div class="welcome-text">
-        <h2>Selamat Datang, amelia eka safitri! 👋</h2>
-        <p>Kelola permintaan barang Anda dengan mudah melalui sistem inventaris BPMP Provinsi Gorontalo</p>
+    <!-- HERO BANNER -->
+    <div class="hero">
+      <div class="hero-blob"></div>
+      <div class="hero-blob2"></div>
+      <div class="hero-left">
+        <div class="hero-greeting">Selamat Datang 👋</div>
+        <div class="hero-title">{{ auth()->user()->name ?? 'Pegawai' }}</div>
+        <div class="hero-sub">Kelola permintaan barang Anda dengan mudah melalui sistem inventaris BPMP Provinsi Gorontalo</div>
       </div>
-      <div class="welcome-right">
-        <button class="settings-btn">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="3" stroke="white" stroke-width="2"/>
-            <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+      <div class="hero-right">
+        <div class="hero-inst">Sistem Inventaris</div>
+        <div class="hero-nip">BPMP Provinsi Gorontalo</div>
+        <a href="{{ route('pegawai.pengaturan-akun') }}" class="hero-btn">
+          <i class="fas fa-cog"></i>
           Pengaturan Akun
-        </button>
-        <div class="day-label">Hari ini</div>
-        <div class="date-text">Monday, 01 December</div>
-        <div class="date-text">2025</div>
+        </a>
       </div>
     </div>
 
@@ -293,160 +326,211 @@
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-icon blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#1a73e8" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
+          <i class="fas fa-box"></i>
         </div>
         <div>
-          <div class="stat-num blue">2</div>
-          <div class="stat-label">Total Permintaan<br>Semua waktu</div>
+          <div class="stat-label">Peminjaman Barang</div>
+          <div class="stat-num blue">5</div>
+          <div class="stat-sub">Total permintaan</div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-icon amber">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="#f57c00" stroke-width="1.8"/>
-            <path d="M12 7v5l3 3" stroke="#f57c00" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
+          <i class="fas fa-car"></i>
         </div>
         <div>
+          <div class="stat-label">Peminjaman Kendaraan</div>
           <div class="stat-num amber">2</div>
-          <div class="stat-label">Menunggu Review<br>Sedang diproses</div>
+          <div class="stat-sub">Total permintaan</div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-icon green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M20 6L9 17l-5-5" stroke="#388e3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <i class="fas fa-cubes"></i>
         </div>
         <div>
-          <div class="stat-num green">0</div>
-          <div class="stat-label">Diterima<br>Berhasil Diterima</div>
+          <div class="stat-label">Permintaan Persediaan</div>
+          <div class="stat-num green">3</div>
+          <div class="stat-sub">Total permintaan</div>
         </div>
       </div>
+    </div>
 
-      <div class="stat-card">
-        <div class="stat-icon red">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="#c62828" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="stat-num red">0</div>
-          <div class="stat-label">Ditolak<br>Telah perbaikan</div>
-        </div>
+    <!-- QUICK ACTIONS -->
+    <div style="margin-bottom: 28px;">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-lightning-bolt" style="color: var(--primary); font-size: 16px;"></i>
+        Aksi Cepat
+      </h2>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <a href="{{ route('pegawai.peminjaman-barang') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
+          <i class="fas fa-box"></i>
+          Peminjaman Barang
+        </a>
+        <a href="{{ route('pegawai.peminjaman-kendaraan') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--warning), #fbbf24); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
+          <i class="fas fa-car"></i>
+          Peminjaman Kendaraan
+        </a>
+        <a href="{{ route('pegawai.permintaan-persediaan') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--success), #34d399); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
+          <i class="fas fa-cubes"></i>
+          Permintaan Persediaan
+        </a>
       </div>
     </div>
 
     <!-- BOTTOM ROW -->
     <div class="bottom-row">
 
-      <!-- PERMINTAAN TERBARU -->
+      <!-- RIWAYAT PERMINTAAN TERBARU -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="#333" stroke-width="1.6" stroke-linecap="round"/>
-              <rect x="9" y="3" width="6" height="4" rx="1" stroke="#333" stroke-width="1.5"/>
-            </svg>
-            Permintaan Terbaru
+            <i class="fas fa-history" style="color: var(--primary); margin-right: 6px;"></i>
+            Riwayat Permintaan Terbaru
           </span>
-          <span class="badge-count">2 total permintaan</span>
+          <span class="badge-count">5 permintaan</span>
         </div>
 
-        <!-- Item 1 -->
+        <!-- Item 1 - Peminjaman Barang -->
         <div class="request-item">
           <div class="req-top">
-            <div class="req-name">Harum ut quae sunt</div>
+            <div class="req-name">Meminjam Laptop untuk Training</div>
             <span class="status-badge menunggu">
               <svg width="7" height="7" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#f57c00"/></svg>
-              Menunggu
+              Diproses
             </span>
           </div>
-          <div class="req-type-tag">elektronik &bull; Tidak Diketahui</div>
-          <div class="req-meta">Peminjaman Barang</div>
+          <div class="req-type-tag" style="background: #dbeafe; color: var(--primary); border-left: 2px solid var(--primary);">
+            <i class="fas fa-box" style="margin-right: 4px;"></i>Peminjaman Barang
+          </div>
           <div class="req-date">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="4" width="18" height="18" rx="2" stroke="#aaa" stroke-width="1.5"/>
               <path d="M16 2v4M8 2v4M3 10h18" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            27 November 2025
+            15 April 2026
             <span class="req-time">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="9" stroke="#aaa" stroke-width="1.5"/>
                 <path d="M12 7v5l3 2" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
-              10:10
+              14:30
             </span>
           </div>
           <div class="req-actions">
             <button class="btn-detail">Lihat Detail</button>
-            <button class="btn-surat">Surat Belum Tersedia</button>
           </div>
         </div>
 
-        <!-- Item 2 -->
+        <!-- Item 2 - Peminjaman Kendaraan -->
         <div class="request-item">
           <div class="req-top">
-            <div class="req-name">Permintaan Barang #002</div>
-            <span class="status-badge menunggu">
-              <svg width="7" height="7" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#f57c00"/></svg>
-              Menunggu
+            <div class="req-name">Penggunaan Kendaraan ke Lokasi Survey</div>
+            <span class="status-badge diterima">
+              <svg width="7" height="7" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#10b981"/></svg>
+              Disetujui
             </span>
           </div>
-          <div class="req-type-tag">alat tulis &bull; Tersedia</div>
-          <div class="req-meta">Permintaan Persediaan</div>
+          <div class="req-type-tag" style="background: #fff3e0; color: var(--warning); border-left: 2px solid var(--warning);">
+            <i class="fas fa-car" style="margin-right: 4px;"></i>Peminjaman Kendaraan
+          </div>
           <div class="req-date">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="4" width="18" height="18" rx="2" stroke="#aaa" stroke-width="1.5"/>
               <path d="M16 2v4M8 2v4M3 10h18" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            28 November 2025
+            14 April 2026
             <span class="req-time">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="9" stroke="#aaa" stroke-width="1.5"/>
                 <path d="M12 7v5l3 2" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
-              09:30
+              09:15
             </span>
           </div>
           <div class="req-actions">
             <button class="btn-detail">Lihat Detail</button>
-            <button class="btn-surat">Lihat Surat</button>
+          </div>
+        </div>
+
+        <!-- Item 3 - Permintaan Persediaan -->
+        <div class="request-item">
+          <div class="req-top">
+            <div class="req-name">Pensil 2B, Cat Air, dan Kertas HVS</div>
+            <span class="status-badge diterima">
+              <svg width="7" height="7" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#10b981"/></svg>
+              Diterima
+            </span>
+          </div>
+          <div class="req-type-tag" style="background: #e8f5e9; color: var(--success); border-left: 2px solid var(--success);">
+            <i class="fas fa-cubes" style="margin-right: 4px;"></i>Permintaan Persediaan
+          </div>
+          <div class="req-date">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="18" rx="2" stroke="#aaa" stroke-width="1.5"/>
+              <path d="M16 2v4M8 2v4M3 10h18" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            12 April 2026
+            <span class="req-time">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="#aaa" stroke-width="1.5"/>
+                <path d="M12 7v5l3 2" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              11:45
+            </span>
+          </div>
+          <div class="req-actions">
+            <button class="btn-detail">Lihat Detail</button>
           </div>
         </div>
       </div>
 
-      <!-- MENU UTAMA -->
+      <!-- STATUS RINGKAS -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <path d="M4 6h16M4 10h16M4 14h8" stroke="#333" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-            Menu Utama
+            <i class="fas fa-chart-pie" style="color: var(--primary); margin-right: 6px;"></i>
+            Status Ringkas
           </span>
         </div>
-        <div class="menu-panel">
-          <button class="menu-btn primary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
-            Buat Permintaan Barang
-          </button>
-          <button class="menu-btn danger">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M17 16l4-4m0 0l-4-4m4 4H7" stroke="white" stroke-width="2" stroke-linecap="round"/>
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Logout
-          </button>
-          <p class="menu-desc">
-            Gunakan menu di samping kiri untuk navigasi ke fitur lainnya seperti peminjaman barang, kendaraan, dan histori permintaan.
-          </p>
+        <div style="padding: 16px 0;">
+          <!-- Status Barang -->
+          <div style="padding: 14px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-box" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #dbeafe; color: var(--primary); border-radius: 8px; font-size: 12px;"></i>
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Peminjaman Barang</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">2 Menunggu, 2 Disetujui</div>
+              </div>
+            </div>
+            <span style="font-size: 14px; font-weight: 700; color: var(--primary);">5</span>
+          </div>
+
+          <!-- Status Kendaraan -->
+          <div style="padding: 14px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-car" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #fff3e0; color: var(--warning); border-radius: 8px; font-size: 12px;"></i>
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Peminjaman Kendaraan</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">1 Menunggu, 1 Disetujui</div>
+              </div>
+            </div>
+            <span style="font-size: 14px; font-weight: 700; color: var(--warning);">2</span>
+          </div>
+
+          <!-- Status Persediaan -->
+          <div style="padding: 14px 0; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-cubes" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #e8f5e9; color: var(--success); border-radius: 8px; font-size: 12px;"></i>
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Permintaan Persediaan</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">1 Menunggu, 2 Diterima</div>
+              </div>
+            </div>
+            <span style="font-size: 14px; font-weight: 700; color: var(--success);">3</span>
+          </div>
         </div>
       </div>
 

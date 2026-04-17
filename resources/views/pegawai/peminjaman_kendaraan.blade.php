@@ -94,6 +94,8 @@
     background: rgba(255,255,255,0.08);
   }
   .form-header-icon {
+    position: relative;
+    z-index: 1;
     width: 46px; height: 46px;
     background: rgba(255,255,255,0.2);
     border-radius: 13px;
@@ -362,9 +364,9 @@
     <!-- FORM -->
     <div class="form-card animate d2" id="formCard">
       <div class="form-header">
-        <div class="form-header-icon"><i class="fas fa-file-plus"></i></div>
+        <div class="form-header-icon"><i class="fas fa-car"></i></div>
         <div class="form-header-title">Buat Permintaan</div>
-        <div class="form-header-sub">Isi formulir peminjaman aset di bawah ini</div>
+        <div class="form-header-sub">Isi formulir peminjaman Kendaraan di bawah ini</div>
       </div>
       <div class="form-body">
          <div class="form-group">

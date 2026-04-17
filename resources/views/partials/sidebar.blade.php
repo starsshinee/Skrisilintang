@@ -31,31 +31,77 @@
       'badgeColor' => 'bg-cyan-500/20 text-cyan-300',
       'navItems' => [
         ['href' => route('tamu.dashboard'),        'label' => 'Dashboard',            'icon' => 'fas fa-door-open',   'route' => 'tamu.dashboard'],
-        ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-box-archive', 'route' => 'tamu.peminjaman-gedung'],
+        ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-building', 'route' => 'tamu.peminjaman-gedung'],
         ['href' => route('tamu.info-fasilitas'),   'label' => 'Informasi Fasilitas',  'icon' => 'fas fa-info-circle', 'route' => 'tamu.info-fasilitas'],
         ['href' => route('tamu.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'tamu.pengaturan-akun'],
       ]
     ],
-    'admin_aset_tetap' => [
+    'adminasettetap' => [
       'bgGradient' => 'from-orange-900 to-orange-800',
       'badgeText' => 'Admin Aset Tetap',
       'badgeColor' => 'bg-orange-500/20 text-orange-300',
       'navItems' => [
         ['href' => route('adminasettetap.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminasettetap.dashboard'],
-        ['href' => '#', 'label' => 'Aset Tetap', 'icon' => 'fas fa-cubes', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Kondisi Aset', 'icon' => 'fas fa-check-circle', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Laporan Aset', 'icon' => 'fas fa-file-alt', 'route' => 'NONE'],
+        ['href' => route('adminasettetap.data-aset'), 'label' => 'Data Aset Tetap', 'icon' => 'fas fa-database', 'route' => 'adminasettetap.data-aset'],
+        ['href' => route('adminasettetap.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-masuk'],
+        ['href' => route('adminasettetap.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-keluar'],
+        [
+          'label' => 'Manajemen Peminjaman',
+          'icon' => 'fas fa-exchange-alt',
+          'route' => 'NONE',
+          'children' => [
+            ['href' => route('adminasettetap.peminjaman-barang'), 'label' => 'Peminjaman Barang', 'route' => 'adminasettetap.peminjaman-barang'],
+            ['href' => route('adminasettetap.peminjaman-kendaraan'), 'label' => 'Peminjaman Kendaraan', 'route' => 'adminasettetap.peminjaman-kendaraan'],
+          ]
+        ],
+        [
+          'label' => 'Manajemen Pengembalian',
+          'icon' => 'fas fa-undo-alt',
+          'route' => 'NONE',
+          'children' => [
+            ['href' => route('adminasettetap.pengembalian-barang'), 'label' => 'Pengembalian Barang', 'route' => 'adminasettetap.pengembalian-barang'],
+            ['href' => route('adminasettetap.pengembalian-kendaraan'), 'label' => 'Pengembalian Kendaraan', 'route' => 'adminasettetap.pengembalian-kendaraan'],
+          ]
+        ],
+        [
+          'label' => 'Laporan & Statistik',
+          'icon' => 'fas fa-chart-bar',
+          'route' => 'NONE',
+          'children' => [
+            ['href' => route('adminasettetap.laporan-transaksi-masuk'), 'label' => ' Laporan Transaksi Masuk', 'route' => 'adminasettetap.laporan-transaksi-masuk'],
+            ['href' => route('adminasettetap.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminasettetap.laporan-transaksi-keluar'],
+            ['href' => route('adminasettetap.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminasettetap.laporan-mutasi-barang'],
+            ['href' => route('adminasettetap.laporan-peminjaman-pengembalian'), 'label' => 'Laporan Peminjaman & Pengembalian', 'route' => 'adminasettetap.laporan-peminjaman-pengembalian'],
+          ]
+        ],
+        
       ]
     ],
-    'admin_persediaan' => [
+    'adminpersediaan' => [
       'bgGradient' => 'from-green-900 to-green-800',
       'badgeText' => 'Admin Persediaan',
       'badgeColor' => 'bg-green-500/20 text-green-300',
       'navItems' => [
         ['href' => route('adminpersediaan.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminpersediaan.dashboard'],
-        ['href' => '#', 'label' => 'Barang Persediaan', 'icon' => 'fas fa-boxes', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Tambah Barang', 'icon' => 'fas fa-plus-circle', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Laporan Persediaan', 'icon' => 'fas fa-file-alt', 'route' => 'NONE'],
+            ['href' => route('adminpersediaan.data-persediaan'), 'label' => 'Data Persediaan', 'route' => 'adminpersediaan.data-persediaan'],
+            ['href' => route('adminpersediaan.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'route' => 'adminpersediaan.transaksi-masuk'],
+            ['href' => route('adminpersediaan.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'route' => 'adminpersediaan.transaksi-keluar'],
+            ['href' => route('adminpersediaan.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'route' => 'adminpersediaan.permintaan-persediaan'],
+            ['href' => route('adminpersediaan.mutasi-barang'), 'label' => 'Mutasi Barang', 'route' => 'adminpersediaan.mutasi-barang'],
+      
+        [
+          'label' => 'Laporan & Statistik',
+          'icon' => 'fas fa-chart-bar',
+          'route' => 'NONE',
+          'children' => [
+            
+            ['href' => route('adminpersediaan.laporan-peminjaman'), 'label' => 'Laporan Peminjaman', 'route' => 'adminpersediaan.laporan-peminjaman'],
+            ['href' => route('adminpersediaan.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminpersediaan.laporan-mutasi-barang'],
+            ['href' => route('adminpersediaan.laporan-transaksi-masuk'), 'label' => 'Laporan Stok', 'route' => 'adminpersediaan.laporan-transaksi-masuk'],
+            ['href' => route('adminpersediaan.laporan-transaksi-keluar'), 'label' => 'Laporan Persediaan', 'route' => 'adminpersediaan.laporan-transaksi-keluar']
+            
+          ]
+        ],
       ]
     ],
     'adminsarpras' => [
@@ -105,14 +151,14 @@
         ['href' => route('kasubag.pengaturan-akun'), 'label' => 'Pengaturan Akun', 'icon' => 'fas fa-gear', 'route' => 'kasubag.pengaturan-akun'],
       ]
     ],
-    'kepala_bpmp' => [
+    'kepalabpmp' => [
       'bgGradient' => 'from-purple-900 to-purple-800',
       'badgeText' => 'Kepala BPMP',
       'badgeColor' => 'bg-purple-500/20 text-purple-300',
       'navItems' => [
         ['href' => route('kepalabpmp.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'kepalabpmp.dashboard'],
-        ['href' => '#', 'label' => 'Laporan BMN', 'icon' => 'fas fa-file-pdf', 'route' => 'NONE'],
-        ['href' => '#', 'label' => 'Persetujuan', 'icon' => 'fas fa-check-square', 'route' => 'NONE'],
+        ['href' => route('kepalabpmp.laporan'), 'label' => 'Laporan BMN', 'icon' => 'fas fa-file-pdf', 'route' => 'kepalabpmp.laporan'],
+       
       ]
     ],
   ];
@@ -124,24 +170,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<script src="/_sdk/element_sdk.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+ 
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { jakarta: ['Plus Jakarta Sans', 'sans-serif'] }
+        }
+      }
+    }
+</script>
+
 <style>
   :root {
-    --sidebar-width: 240px;
-    --primary-color: #6366f1;
-    --primary-hover: #4f46e5;
-    --active-bg: #eef2ff;
-    --active-text: #4338ca;
+    --sidebar-width: 256px;
+    --primary-color: #2563eb;
+    --primary-light: #dbeafe;
+    --primary-dark: #1e40af;
     --border-color: #e5e7eb;
     --text-muted: #6b7280;
     --text-dark: #111827;
-    --kasubag-primary: #6366f1;
-    --kasubag-secondary: #a5b4fc;
-    --kasubag-accent: #c7d2fe;
+    --bg-light: #f9fafb;
   }
 
   .sidebar-wrapper {
     width: var(--sidebar-width);
-    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    background: #ffffff;
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -151,7 +209,15 @@
     bottom: 0;
     z-index: 100;
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    /* font-family: 'Plus Jakarta Sans', sans-serif; */
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .main {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
   }
 
   /* ── HEADER ── */
@@ -159,298 +225,250 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px 24px;
+    padding: 20px 16px;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-    color: white;
-    position: relative;
-  }
-
-  .sidebar-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   }
 
   .sidebar-logo {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--kasubag-primary);
-    font-size: 18px;
+    color: white;
+    font-size: 20px;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.2);
   }
 
   .sidebar-brand {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0;
   }
 
   .sidebar-brand-name {
-    color: white;
+    color: var(--text-dark);
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.2;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar-brand-sub {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 12px;
-    line-height: 1.2;
+    color: var(--text-muted);
+    font-size: 11px;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── ROLE BADGE SECTION ── */
+  .sidebar-role-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .sidebar-role-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .sidebar-role-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: var(--primary-dark);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #bfdbfe;
+    width: 100%;
+    text-align: center;
   }
 
   /* ── NAVIGATION ── */
   .sidebar-nav {
     flex: 1;
-    padding: 16px 12px;
+    padding: 8px 8px;
+    overflow-y: auto;
   }
 
   .nav-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 0;
   }
 
-  /* Parent Menu Item */
-  .nav-item-parent {
-    position: relative;
-    margin-bottom: 8px;
-  }
-
+  /* Menu Item */
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    margin-bottom: 2px;
-    border-radius: 12px;
+    gap: 10px;
+    padding: 10px 12px;
+    margin: 2px 0;
+    border-radius: 6px;
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-  }
-
-  .nav-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
-    transition: left 0.5s;
-  }
-
-  .nav-item:hover::before {
-    left: 100%;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
   }
 
   .nav-item:hover {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: var(--bg-light);
     color: var(--text-dark);
-    border-color: rgba(99, 102, 241, 0.2);
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   .nav-item.active {
-    background: linear-gradient(135deg, var(--active-bg) 0%, #e0e7ff 100%);
-    color: var(--active-text);
-    border-color: rgba(99, 102, 241, 0.3);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-left-color: var(--primary-color);
     font-weight: 600;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
-    transform: translateX(6px);
-  }
-
-  .nav-item.active::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60%;
-    background: linear-gradient(135deg, var(--kasubag-primary) 0%, var(--primary-hover) 100%);
-    border-radius: 0 2px 2px 0;
   }
 
   .nav-icon {
     width: 18px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
     flex-shrink: 0;
-    transition: transform 0.3s ease;
   }
 
-  .nav-item:hover .nav-icon {
-    transform: scale(1.1);
-  }
-
-  /* Dropdown Arrow */
-  .nav-arrow {
-    margin-left: auto;
-    font-size: 12px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Toggle Button */
+  .nav-item-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 10px 12px;
+    margin: 2px 0;
+    border-radius: 6px;
     color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
-  .nav-item.active .nav-arrow {
-    color: var(--active-text);
+  .nav-item-toggle:hover {
+    background: var(--bg-light);
+    color: var(--text-dark);
+  }
+
+  .nav-item-toggle.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-left-color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  .nav-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+    width: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-item-toggle.active .nav-arrow {
     transform: rotate(180deg);
   }
 
-  .nav-item-toggle {
-    cursor: pointer;
-    width: 100%;
-  }
-
-  .nav-item-toggle:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
-  }
-
-  /* Submenu Container */
+  /* Submenu */
   .nav-submenu {
-    margin-left: 44px;
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     max-height: 0;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: max-height 0.3s ease;
     opacity: 0;
-    transform: translateY(-10px);
   }
 
   .nav-submenu.expanded {
     max-height: 500px;
     opacity: 1;
-    transform: translateY(0);
   }
 
-  /* Submenu Items */
   .nav-subitem {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    margin-left: 8px;
-    border-radius: 8px;
+    display: block;
+    padding: 8px 12px 8px 40px;
+    margin: 0;
+    border-radius: 6px;
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     border-left: 2px solid transparent;
-    position: relative;
-  }
-
-  .nav-subitem::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    background: linear-gradient(135deg, var(--kasubag-primary) 0%, var(--primary-hover) 100%);
-    transition: width 0.3s ease;
-    border-radius: 0 4px 4px 0;
-  }
-
-  .nav-subitem:hover::before {
-    width: 3px;
   }
 
   .nav-subitem:hover {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: var(--bg-light);
     color: var(--text-dark);
-    transform: translateX(6px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   .nav-subitem.active {
-    background: linear-gradient(135deg, var(--active-bg) 0%, #e0e7ff 100%);
-    color: var(--active-text);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-left-color: var(--primary-color);
     font-weight: 600;
-    border-left-color: var(--kasubag-primary);
-    transform: translateX(8px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
-  }
-
-  .nav-subitem.active::before {
-    width: 3px;
   }
 
   /* ── FOOTER ── */
   .sidebar-footer {
-    padding: 16px 20px;
+    padding: 12px 8px;
     border-top: 1px solid var(--border-color);
-    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    background: var(--bg-light);
   }
 
   .sidebar-user {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 12px;
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 12px;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 6px;
     border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-  }
-
-  .sidebar-user:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   .user-avatar {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--kasubag-primary) 0%, var(--primary-hover) 100%);
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
   }
 
   .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
     flex: 1;
+    min-width: 0;
   }
 
   .user-name {
     color: var(--text-dark);
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -458,145 +476,102 @@
 
   .user-role {
     color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
+  /* Logout Button */
   .logout-btn {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
+    justify-content: center;
+    gap: 8px;
     padding: 10px 12px;
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border: 1px solid #fca5a5;
-    border-radius: 8px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    border-radius: 6px;
     color: #dc2626;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-family: inherit;
+    transition: all 0.2s ease;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   .logout-btn:hover {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+    background: #fee2e2;
+    border-color: #fca5a5;
   }
 
-  /* Scrollbar Styling */
-  .sidebar-wrapper::-webkit-scrollbar {
-    width: 6px;
+  /* Scrollbar */
+  .sidebar-nav::-webkit-scrollbar {
+    width: 4px;
   }
 
-  .sidebar-wrapper::-webkit-scrollbar-track {
+  .sidebar-nav::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
-    border-radius: 3px;
-    transition: background 0.3s ease;
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
   }
 
-  .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    :root {
-      --sidebar-width: 260px;
-    }
-
-    .sidebar-wrapper {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-    }
-
-    .sidebar-wrapper.open {
-      transform: translateX(0);
-    }
-  }
-
-  /* Loading Animation */
-  @keyframes shimmer {
-    0% { background-position: -200px 0; }
-    100% { background-position: calc(200px + 100%) 0; }
-  }
-
-  .nav-item.loading {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200px 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  /* Kasubag Specific Styling */
-  .kasubag-theme .nav-item.active {
-    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-    border-color: #a5b4fc;
-  }
-
-  .kasubag-theme .nav-subitem.active {
-    background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
-    border-left-color: #6366f1;
+  .sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
   }
 </style>
 
-<aside class="sidebar-wrapper {{ $currentRole === 'kasubag' ? 'kasubag-theme' : '' }}">
-  <!-- Logo & Branding -->
+<aside class="sidebar-wrapper">
+  <!-- Header -->
   <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <i class="fas fa-cube"></i>
-    </div>
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-name">SIBMN</div>
-      <div class="sidebar-brand-sub">BPMP Gorontalo</div>
-    </div>
+    <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="boxes" class="lucide lucide-boxes w-5 h-5 text-white"><path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path><path d="m7 16.5-4.74-2.85"></path><path d="m7 16.5 5-3"></path><path d="M7 16.5v5.17"></path><path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"></path><path d="m17 16.5-5-3"></path><path d="m17 16.5 4.74-2.85"></path><path d="M17 16.5v5.17"></path><path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"></path><path d="M12 8 7.26 5.15"></path><path d="m12 8 4.74-2.85"></path><path d="M12 13.5V8"></path></svg>
+          </div>
+          <div>
+            <h1 id="sidebar-title" class="text-slate-800 font-bold text-sm leading-tight">SIPANDU</h1>
+            <p class="text-slate-500 text-[10px] tracking-wider">BPMP Provinsi Gorontalo</p>
+          </div>
+        </div>
+  </div>
+   
+  <!-- Role Badge -->
+  <div class="sidebar-role-section">
+    <label class="sidebar-role-label">Peran Aktif</label>
+    <div class="sidebar-role-badge">{{ $config['badgeText'] }}</div>
   </div>
 
-  <!-- Navigation Menu -->
+  <!-- Navigation -->
   <nav class="sidebar-nav">
     <div class="nav-group">
       @foreach($config['navItems'] as $item)
-        {{-- MENU DENGAN CHILDREN --}}
         @if(isset($item['children']))
           @php
             $isParentActive = collect($item['children'])->contains(function ($child) {
               return request()->routeIs($child['route'] ?? '');
             });
           @endphp
-
           <div class="nav-item-parent">
-            <div class="nav-item nav-item-toggle {{ $isParentActive ? 'active' : '' }}" role="button" aria-expanded="{{ $isParentActive ? 'true' : 'false' }}">
-              <span class="nav-icon">
-                <i class="{{ $item['icon'] }}"></i>
+            <button class="nav-item-toggle {{ $isParentActive ? 'active' : '' }}" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('active');">
+              <span class="flex items-center gap-2.5" style="display: flex; align-items: center; gap: 10px;">
+                <i class="{{ $item['icon'] }} nav-icon"></i>
+                <span>{{ $item['label'] }}</span>
               </span>
-              <span>{{ $item['label'] }}</span>
-              <i class="fas fa-chevron-down nav-arrow {{ $isParentActive ? 'rotate-180' : '' }}"></i>
-            </div>
-
-            {{-- SUBMENU --}}
+              <i class="fas fa-chevron-down nav-arrow"></i>
+            </button>
             <div class="nav-submenu {{ $isParentActive ? 'expanded' : '' }}">
               @foreach($item['children'] as $child)
-                <a href="{{ $child['href'] }}"
-                   class="nav-subitem {{ request()->routeIs($child['route'] ?? '') ? 'active' : '' }}">
+                <a href="{{ $child['href'] }}" class="nav-subitem {{ request()->routeIs($child['route'] ?? '') ? 'active' : '' }}">
                   {{ $child['label'] }}
                 </a>
               @endforeach
             </div>
           </div>
-
-        {{-- MENU BIASA --}}
         @else
-          <a href="{{ $item['href'] }}"
-             class="nav-item {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}"
-             title="{{ $item['label'] }}">
-            <span class="nav-icon">
-              <i class="{{ $item['icon'] }}"></i>
-            </span>
+          <a href="{{ $item['href'] }}" class="nav-item {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}">
+            <i class="{{ $item['icon'] }} nav-icon"></i>
             <span>{{ $item['label'] }}</span>
           </a>
         @endif
@@ -604,50 +579,42 @@
     </div>
   </nav>
 
-  <!-- Footer: User Info + Logout -->
+  <!-- Footer -->
+  <!-- GANTI footer di sidebar Anda dengan ini -->
   <div class="sidebar-footer">
-    <!-- User Info -->
-    <div class="sidebar-user">
-      <div class="user-avatar">
-        {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+    <div class="flex items-center gap-3">
+       <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user" class="lucide lucide-user w-4 h-4 text-blue-600"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+       </div>
+      <div>
+        <p class="text-slate-800 text-xs font-semibold">{{ $user->name ?? 'Administrator' }}</p>
+        <p class="text-slate-500 text-[10px]">{{ $config['badgeText'] }}</p>
       </div>
+    </div>
+    <form method="POST" action="{{ route('logout') }}" class="mt-4">
+      @csrf
+      <button type="submit" class="w-full flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 logout-btn">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+        Keluar
+      </button>
+    </form>
+  </div>
+</aside>
+ 
+  {{-- {{-- <div class="sidebar-footer"> --}}
+    {{-- <div class="sidebar-user">
+      <div class="user-avatar">{{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}</div>
       <div class="user-info">
         <div class="user-name">{{ $user->name ?? 'User' }}</div>
         <div class="user-role">{{ $config['badgeText'] }}</div>
       </div>
     </div>
-
-    <!-- Logout -->
     <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
       @csrf
       <button type="submit" class="logout-btn">
-        <span class="nav-icon">
-          <i class="fas fa-sign-out-alt"></i>
-        </span>
+        <i class="fas fa-sign-out-alt"></i>
         <span>Keluar</span>
       </button>
     </form>
-  </div>
-</aside>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.nav-item-toggle').forEach(function (toggle) {
-      toggle.addEventListener('click', function () {
-        var parent = toggle.closest('.nav-item-parent');
-        if (!parent) return;
-
-        var submenu = parent.querySelector('.nav-submenu');
-        if (!submenu) return;
-
-        var expanded = submenu.classList.toggle('expanded');
-        toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-
-        var arrow = toggle.querySelector('.nav-arrow');
-        if (arrow) {
-          arrow.classList.toggle('rotate-180', expanded);
-        }
-      });
-    });
-  });
-</script>
+  </div> --}}
+{{-- </aside> --}}

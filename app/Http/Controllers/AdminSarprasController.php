@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 
 class AdminSarprasController extends Controller
 {
+    public function dashboard()
+    {
+        // Logika untuk dashboard admin sarpras
+        return view('adminsarpras.dashbord');
+    }
+
     public function dataGedung()
     {
         // Logika untuk menampilkan data gedung
