@@ -342,7 +342,7 @@
 
 <!-- MAIN -->
 <main class="main">
-  <div class=opbar">
+  <div class="topbar">
     <div class="topbar-left">
       <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
       <div class="topbar-title">Pengaturan Akun</div>
@@ -373,7 +373,7 @@
               <div class="avatar-edit"><i class="fas fa-pen"></i></div>
             </div>
             <div class="avatar-info">
-              <h3>Tamu</h3>
+              <h3>Pegawai</h3>
               <p>BPMP Provinsi Gorontalo • NIP: 0983654321</p>
               <button class="avatar-upload-btn"><i class="fas fa-camera"></i> Ubah Foto</button>
             </div>

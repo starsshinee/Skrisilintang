@@ -291,24 +291,24 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tanggal</th>
-            <th>Nama</th>
-            <th>Kategori</th>
-            <th>QTY</th>
-            <th>Nilai</th>
-            <th>Status</th>
+              <th>No</th>
+              <th>Nama Barang</th>
+              <th>Kategori</th>
+              <th>Jumlah</th>
+              <th>Deskripsi Peruntukan</th>
+              <th>Peminjam</th>
+              <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>TM-001</strong></td>
-            <td>2025-01-15</td>
+            <td><strong>01</strong></td>
             <td>Laptop Dell Latitude</td>
             <td>Elektronik</td>
             <td>10</td>
-            <td>Rp 150.000.000</td>
+            <td>Untuk keperluan presentasi</td>
+            <td>Lintang</td>
             <td><span class="status-badge status-diterima">Diterima</span></td>
             <td>
               <button class="action-btn">
@@ -316,16 +316,21 @@
               </button>
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>
           <tr>
-            <td><strong>TM-002</strong></td>
-            <td>2025-01-14</td>
+            <td><strong>002</strong></td>
             <td>Meja Kerja Executive</td>
             <td>Furnitur</td>
             <td>5</td>
-            <td>Rp 25.000.000</td>
+            <td>Untuk rapat penting</td>
+            <td>Elda</td>
             <td><span class="status-badge status-diterima">Diterima</span></td>
             <td>
               <button class="action-btn">
@@ -333,16 +338,21 @@
               </button>
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>
           <tr>
             <td><strong>TM-003</strong></td>
-            <td>2025-01-13</td>
-            <td>AC Split 2 PK</td>
+            <td>Laptop Asus ROG</td>
             <td>Elektronik</td>
             <td>3</td>
-            <td>Rp 27.000.000</td>
+            <td>Untuk keperluan operasional kantor</td>
+            <td>Rizky</td>
             <td><span class="status-badge status-pending">Pending</span></td>
             <td>
               <button class="action-btn">
@@ -350,6 +360,11 @@
               </button>
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>

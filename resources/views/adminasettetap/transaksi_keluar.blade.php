@@ -196,24 +196,26 @@
     font-size: 13.5px; color: var(--text);
     border-bottom: 1px solid var(--border);
   }
+  
   tr:last-child td { border-bottom: none; }
   tbody tr { transition: background .15s; }
   tbody tr:hover { background: #F8FAFF; }
 
-  .status-badge {
-    display: inline-block; padding: 4px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 700;
+  /* Pastikan tombol aksi berada dalam satu baris */
+  td:last-child {
+    white-space: nowrap; /* Cegah tombol aksi terpecah ke baris baru */
   }
-  .status-diterima { background: #DCFCE7; color: #16A34A; }
-  .status-pending { background: #FEF3C7; color: #D97706; }
-  .status-ditolak { background: #FEE2E2; color: #DC2626; }
 
+  /* Aksi tombol tetap inline-flex, beri jarak horizontal */
   .action-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .15s; margin-left: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0; /* gap tidak diperlukan karena margin digunakan */
+    margin-left: 6px; /* spasi antar tombol */
+    vertical-align: middle; /* sejajarkan vertikal */
   }
+
   .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
   .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
 
@@ -244,7 +246,7 @@
 
 <main class="main">
   <div class="topbar">
-    <span class="topbar-title">Transaksi Keluar</span>
+    <span class="topbar-title">Data Aset Tetap</span>
     <div class="topbar-right">
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -261,7 +263,7 @@
   <div class="content">
     <div class="page-top">
       <div>
-        <h1>Transaksi Keluar</h1>
+        <h1>Data Aset Tetap</h1>
         <p>3 data ditemukan</p>
       </div>
       <button class="btn-tambah">
@@ -291,65 +293,84 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tanggal</th>
-            <th>Nama</th>
+            <th>No</th>
+            <th>Tanggal Input</th>
             <th>Kategori</th>
-            <th>QTY</th>
-            <th>Nilai</th>
-            <th>Status</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Jumlah Keluar</th>
+            <th>Harga</th>
+            <th>Total</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>TM-001</strong></td>
-            <td>2025-01-15</td>
-            <td>Laptop Dell Latitude</td>
+            <td><strong>01</strong></td>
+            <td>18-04-2026</td>
             <td>Elektronik</td>
+            <td>001</td>
+            <td>Kulkas</td>
             <td>10</td>
-            <td>Rp 150.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>TM-002</strong></td>
-            <td>2025-01-14</td>
-            <td>Meja Kerja Executive</td>
-            <td>Furnitur</td>
-            <td>5</td>
             <td>Rp 25.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
+            <td>Rp 250.000.000</td>
             <td>
               <button class="action-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
               </button>
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>
           <tr>
-            <td><strong>TM-003</strong></td>
-            <td>2025-01-13</td>
-            <td>AC Split 2 PK</td>
-            <td>Elektronik</td>
-            <td>3</td>
-            <td>Rp 27.000.000</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
+            <td><strong>02</strong></td>
+            <td>18-04-2026</td>
+            <td>Furnitur</td>
+            <td>002</td>
+            <td>Meja Kerja</td>
+            <td>10</td>
+            <td>Rp 25.000.000</td>
+            <td>Rp 250.000.000</td>
             <td>
               <button class="action-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
               </button>
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>03</strong></td>
+            <td>18-04-2026</td>
+            <td>Elektronik</td>
+            <td>003</td>
+            <td>Televisi</td>
+            <td>10</td>
+            <td>Rp 25.000.000</td>  
+            <td>Rp 250.000.000</td>
+            <td>
+              <button class="action-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+              <button class="action-btn danger">  
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>
@@ -367,6 +388,5 @@
     </div>
   </div>
 </main>
-
 </body>
 </html>

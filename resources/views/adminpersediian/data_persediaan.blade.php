@@ -208,12 +208,21 @@
   .status-pending { background: #FEF3C7; color: #D97706; }
   .status-ditolak { background: #FEE2E2; color: #DC2626; }
 
-  .action-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .15s; margin-left: 4px;
+  /* Pastikan tombol aksi berada dalam satu baris */
+  td:last-child {
+    white-space: nowrap; /* Cegah tombol aksi terpecah ke baris baru */
   }
+
+  /* Aksi tombol tetap inline-flex, beri jarak horizontal */
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0; /* gap tidak diperlukan karena margin digunakan */
+    margin-left: 6px; /* spasi antar tombol */
+    vertical-align: middle; /* sejajarkan vertikal */
+  }
+
   .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
   .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
 
@@ -291,25 +300,27 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tanggal</th>
-            <th>Nama</th>
+            <th>No</th>
+            <th>Kode Kategori</th>
             <th>Kategori</th>
-            <th>QTY</th>
-            <th>Nilai</th>
-            <th>Status</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Harga</th>
+            <th>Tanggal Masuk</th>
+            <th>Jumlah</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>TM-001</strong></td>
-            <td>2025-01-15</td>
-            <td>Laptop Dell Latitude</td>
-            <td>Elektronik</td>
-            <td>10</td>
+            <td><strong>01</strong></td>
+            <td>A01</td>
+            <td>Alat Tulis Kantor</td>
+            <td>A001</td>
+            <td>Kertas HVS</td>
             <td>Rp 150.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
+            <td>2026-01-15</td>
+            <td>10</td>
             <td>
               <button class="action-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
@@ -317,16 +328,45 @@
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
+              </button>
             </td>
           </tr>
           <tr>
-            <td><strong>TM-002</strong></td>
-            <td>2025-01-14</td>
-            <td>Meja Kerja Executive</td>
-            <td>Furnitur</td>
-            <td>5</td>
+            <td><strong>02</strong></td>
+            <td>B01</td>
+            <td>Alat Tulis Kantor</td>
+            <td>B001</td>
+            <td>Pulpen</td>
+            <td>Rp 5.000.000</td>
+            <td>2026-01-15</td>
+            <td>50</td>
+            <td>
+              <button class="action-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+              <button class="action-btn danger">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>03</strong></td>
+            <td>C01</td>
+            <td>Alat Tulis Kantor</td>
+            <td>C001</td>
+            <td>Buku A4</td>
             <td>Rp 25.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
+            <td>2026-01-15</td>
+            <td>100</td>
             <td>
               <button class="action-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
@@ -334,22 +374,10 @@
               <button class="action-btn danger">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>TM-003</strong></td>
-            <td>2025-01-13</td>
-            <td>AC Split 2 PK</td>
-            <td>Elektronik</td>
-            <td>3</td>
-            <td>Rp 27.000.000</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
               </button>
             </td>
           </tr>

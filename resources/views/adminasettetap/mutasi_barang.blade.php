@@ -208,11 +208,19 @@
   .status-pending { background: #FEF3C7; color: #D97706; }
   .status-ditolak { background: #FEE2E2; color: #DC2626; }
 
+  /* Pastikan tombol aksi berada dalam satu baris */
+  td:last-child {
+    white-space: nowrap; /* Cegah tombol aksi terpecah ke baris baru */
+  }
+
+  /* Aksi tombol tetap inline-flex, beri jarak horizontal */
   .action-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .15s; margin-left: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0; /* gap tidak diperlukan karena margin digunakan */
+    margin-left: 6px; /* spasi antar tombol */
+    vertical-align: middle; /* sejajarkan vertikal */
   }
   .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
   .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
@@ -319,6 +327,11 @@
                             <button class="action-btn danger">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                             </button>
+                            <button class="action-btn edit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+                            </svg>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -336,6 +349,11 @@
                             <button class="action-btn danger">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                             </button>
+                            <button class="action-btn edit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+                            </svg>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -352,6 +370,11 @@
                             </button>
                             <button class="action-btn danger">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            </button>
+                            <button class="action-btn edit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+                            </svg>
                             </button>
                         </td>
                     </tr>

@@ -261,7 +261,7 @@
   <div class="content">
     <div class="page-top">
       <div>
-        <h1>TPengembalian Barang</h1>
+        <h1>Pengembalian Barang</h1>
         <p>3 data ditemukan</p>
       </div>
       <button class="btn-tambah">
