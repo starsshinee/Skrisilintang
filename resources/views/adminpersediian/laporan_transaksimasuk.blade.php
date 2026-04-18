@@ -16,6 +16,7 @@
     --bg: #F4F6FB;
     --surface: #FFFFFF;
     --text: #1E293B;
+    --text-muted: #64748B;
     --muted: #94A3B8;
     --border: #E8EDF5;
   }
@@ -30,7 +31,7 @@
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 50;
   }
-  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-title { font-size: 16px; font-weight: 700; color: var(--text); }
   .topbar-right { display: flex; align-items: center; gap: 16px; }
   .notif-btn {
     width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
@@ -38,16 +39,17 @@
     cursor: pointer; position: relative;
   }
   .notif-dot { width: 8px; height: 8px; background: #EF4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
-  .date-text { font-size: 13px; color: #64748B; font-weight: 500; }
+  .date-text { font-size: 13px; color: var(--text-muted); font-weight: 500; }
   .btn-keluar {
     display: flex; align-items: center; gap: 6px;
     padding: 7px 14px; border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--surface); color: #64748B;
+    background: var(--surface); color: var(--text-muted);
     font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s;
   }
+  .btn-keluar:hover { background: var(--bg); }
 
-  .content { padding: 28px; max-width: 1200px; margin: 0 auto; }
+  .content { padding: 28px; flex: 1; }
 
   /* PAGE HEADER */
   .page-top {
@@ -158,6 +160,8 @@
 </style>
 </head>
 <body>
+@include('partials.sidebar')
+<main class="main">
 
 <div class="topbar">
   <span class="topbar-title">Laporan Transaksi Masuk</span>
@@ -343,6 +347,6 @@
     </table>
   </div>
 </div>
-
+</main>
 </body>
 </html>

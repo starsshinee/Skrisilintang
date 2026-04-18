@@ -49,7 +49,7 @@
   }
   .btn-keluar:hover { background: var(--bg); }
 
-  .content { padding: 28px; max-width: 1200px; margin: 0 auto; }
+   .content { padding: 28px; flex: 1; }
 
   /* PAGE HEADER */
   .page-top {

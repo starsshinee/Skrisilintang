@@ -97,8 +97,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/mutasi-barang', fn () => view('adminpersediian.mutasi_barang'))->name('mutasi-barang');
             Route::get('/transaksi-masuk', fn () => view('adminpersediian.transaksi_masuk'))->name('transaksi-masuk');
             Route::get('/transaksi-keluar', fn () => view('adminpersediian.transaksi_keluar'))->name('transaksi-keluar');
-            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksi_masuk'))->name('laporan-transaksi-masuk');
-            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksi_keluar'))->name('laporan-transaksi-keluar');
+            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksimasuk'))->name('laporan-transaksi-masuk');
+            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksikeluar'))->name('laporan-transaksi-keluar');
             Route::get('/laporan-peminjaman', fn () => view('adminpersediian.laporan_peminjaman'))->name('laporan-peminjaman');
             Route::get('/laporan-mutasi-barang', fn () => view('adminpersediian.laporan_mutasibarang'))->name('laporan-mutasi-barang');
         });

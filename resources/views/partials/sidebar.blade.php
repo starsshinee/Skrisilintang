@@ -45,6 +45,7 @@
         ['href' => route('adminasettetap.data-aset'), 'label' => 'Data Aset Tetap', 'icon' => 'fas fa-database', 'route' => 'adminasettetap.data-aset'],
         ['href' => route('adminasettetap.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-masuk'],
         ['href' => route('adminasettetap.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-keluar'],
+        ['href' => route ('adminasettetap.mutasi-barang'), 'label' => 'Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'adminasettetap.mutasi-barang'],
         [
           'label' => 'Manajemen Peminjaman',
           'icon' => 'fas fa-exchange-alt',
@@ -83,23 +84,28 @@
       'badgeColor' => 'bg-green-500/20 text-green-300',
       'navItems' => [
         ['href' => route('adminpersediaan.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminpersediaan.dashboard'],
-            ['href' => route('adminpersediaan.data-persediaan'), 'label' => 'Data Persediaan', 'route' => 'adminpersediaan.data-persediaan'],
-            ['href' => route('adminpersediaan.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'route' => 'adminpersediaan.transaksi-masuk'],
-            ['href' => route('adminpersediaan.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'route' => 'adminpersediaan.transaksi-keluar'],
-            ['href' => route('adminpersediaan.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'route' => 'adminpersediaan.permintaan-persediaan'],
-            ['href' => route('adminpersediaan.mutasi-barang'), 'label' => 'Mutasi Barang', 'route' => 'adminpersediaan.mutasi-barang'],
-      
+            ['href' => route('adminpersediaan.data-persediaan'), 'label' => 'Data Persediaan', 'icon' => 'fas fa-database', 'route' => 'adminpersediaan.data-persediaan'],
+            ['href' => route('adminpersediaan.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes',  'route' => 'adminpersediaan.transaksi-masuk'],
+            ['href' => route('adminpersediaan.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes',  'route' => 'adminpersediaan.transaksi-keluar'],
+            ['href' => route('adminpersediaan.mutasi-barang'), 'label' => 'Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'adminpersediaan.mutasi-barang'],
+
+        [
+          'label' => 'Manajemen Peminjaman',
+          'icon' => 'fas fa-exchange-alt',
+          'route' => 'NONE',
+          'children' => [
+           ['href' => route('adminpersediaan.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'route' => 'adminpersediaan.permintaan-persediaan'],
+          ]
+        ],
         [
           'label' => 'Laporan & Statistik',
           'icon' => 'fas fa-chart-bar',
           'route' => 'NONE',
           'children' => [
-            
-            ['href' => route('adminpersediaan.laporan-peminjaman'), 'label' => 'Laporan Peminjaman', 'route' => 'adminpersediaan.laporan-peminjaman'],
+            ['href' => route('adminpersediaan.laporan-transaksi-masuk'), 'label' => 'Laporan Transaksi Masuk', 'route' => 'adminpersediaan.laporan-transaksi-masuk'],
+            ['href' => route('adminpersediaan.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminpersediaan.laporan-transaksi-keluar'],
             ['href' => route('adminpersediaan.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminpersediaan.laporan-mutasi-barang'],
-            ['href' => route('adminpersediaan.laporan-transaksi-masuk'), 'label' => 'Laporan Stok', 'route' => 'adminpersediaan.laporan-transaksi-masuk'],
-            ['href' => route('adminpersediaan.laporan-transaksi-keluar'), 'label' => 'Laporan Persediaan', 'route' => 'adminpersediaan.laporan-transaksi-keluar']
-            
+            ['href' => route('adminpersediaan.laporan-peminjaman'), 'label' => 'Laporan Peminjaman', 'route' => 'adminpersediaan.laporan-peminjaman'],
           ]
         ],
       ]
