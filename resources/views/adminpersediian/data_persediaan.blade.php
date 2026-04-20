@@ -305,7 +305,7 @@
             <th>Kategori</th>
             <th>Kode Barang</th>
             <th>Nama Barang</th>
-            <th>Harga</th>
+            <th>Harga Satuan</th>
             <th>Tanggal Masuk</th>
             <th>Jumlah</th>
             <th>Aksi</th>

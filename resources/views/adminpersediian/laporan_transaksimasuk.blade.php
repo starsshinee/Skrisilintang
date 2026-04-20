@@ -306,10 +306,10 @@
     <table>
       <thead>
         <tr>
-          <th>ID Transaksi</th>
-          <th>Tanggal</th>
-          <th>Nama Aset</th>
-          <th>Kategori</th>
+          <th>No</th>
+          <th>Kode Barang</th>
+          <th>Nama Barang</th>
+          <th>Harga satuan</th>
           <th>QTY</th>
           <th>Nilai</th>
           <th>Status</th>

@@ -292,8 +292,10 @@
         <thead>
           <tr>
               <th>No</th>
+              <th>Kode Barang</th>
+              <th>Nup</th>
               <th>Nama Barang</th>
-              <th>Kategori</th>
+              <th>Merek</th>
               <th>Jumlah</th>
               <th>Deskripsi Peruntukan</th>
               <th>Peminjam</th>
@@ -303,7 +305,7 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong>01</strong></td>
+            {{-- <td><strong>01</strong></td>
             <td>Laptop Dell Latitude</td>
             <td>Elektronik</td>
             <td>10</td>
@@ -366,7 +368,7 @@
                 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
               </svg>
               </button>
-            </td>
+            </td> --}}
           </tr>
         </tbody>
       </table>

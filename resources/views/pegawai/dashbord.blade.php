@@ -373,9 +373,13 @@
           <i class="fas fa-car"></i>
           Peminjaman Kendaraan
         </a>
-        <a href="{{ route('pegawai.permintaan-persediaan') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--success), #34d399); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
+        <a href="{{ route('pegawai.pengembalian-barang') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--success), #34d399); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
           <i class="fas fa-cubes"></i>
-          Permintaan Persediaan
+          Pengembalian Barang
+        </a>
+        <a href="{{ route('pegawai.pengembalian-kendaraan') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--success), #34d399); color: white; text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.2s; cursor: pointer;">
+          <i class="fas fa-cubes"></i>
+          Pengembalian Barang
         </a>
       </div>
     </div>

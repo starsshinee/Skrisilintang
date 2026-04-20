@@ -300,6 +300,7 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Tanggal Input </th>
             <th>Kode Barang</th>
             <th>Nup</th>
             <th>Nama Barang</th>

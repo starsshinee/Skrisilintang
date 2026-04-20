@@ -291,13 +291,16 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tanggal</th>
-            <th>Nama</th>
-            <th>Kategori</th>
-            <th>QTY</th>
-            <th>Nilai</th>
-            <th>Status</th>
+             <th>No</th>
+              <th>Kode Barang</th>
+              <th>Nup</th>
+              <th>Nama Barang</th>
+              <th>Merek</th>
+              <th>Jumlah</th>
+              <th>Kondisi</th>
+              <th>Tanggal Pengembalian</th>
+              <th>Peminjam</th>
+              <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>

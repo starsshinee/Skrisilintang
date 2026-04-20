@@ -149,7 +149,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', fn () => view('pegawai.dashbord'))->name('dashboard');
             Route::get('/peminjaman-barang', fn () => view('pegawai.peminjaman_barang'))->name('peminjaman-barang');
             Route::get('/peminjaman-kendaraan', fn () => view('pegawai.peminjaman_kendaraan'))->name('peminjaman-kendaraan');
-            Route::get('/permintaan-persediaan', fn () => view('pegawai.permintaan_persediaan'))->name('permintaan-persediaan');
+            Route::get('/pengembalian-barang', fn () => view('pegawai.pengembalian_barang')) -> name ('pengembalian-barang');
+            Route::get('/pengembalian-kendaraan', fn () => view('pegawai.pengembalian_kendaraan'))->name('pengembalian-kendaraan');
+
             Route::get('/pengaturan-akun', fn () => view('pegawai.pengaturan_akun'))->name('pengaturan-akun');
         });
 

@@ -294,18 +294,22 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Tanggal Input</th>
-            <th>Kategori</th>
+            <th>Tanggal Input </th>
             <th>Kode Barang</th>
-            <th>Nama Barang</th>
-            <th>Jumlah Keluar</th>
-            <th>Harga</th>
-            <th>Total</th>
+            <th>Nup</th>
+            <th>Nama Barang</th> 
+            <th>Merek</th> 
+            <th>Tanggal Perolehan</th> 
+            <th>Nilai Perolehan</th> 
+            <th>Lokasi</th> 
+            <th>Nomor SK</th>
+            <th>Tanggal SK</th>
+            <th>Keterangan</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          {{-- <tr>
             <td><strong>01</strong></td>
             <td>18-04-2026</td>
             <td>Elektronik</td>
@@ -373,7 +377,7 @@
               </svg>
               </button>
             </td>
-          </tr>
+          </tr> --}}
         </tbody>
       </table>
 

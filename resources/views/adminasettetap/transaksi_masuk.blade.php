@@ -300,13 +300,17 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Tanggal Input</th>
-            <th>Kategori</th>
+            <th>Tanggal Input </th>
             <th>Kode Barang</th>
+            <th>Nup</th>
             <th>Nama Barang</th>
-            <th>Jumlah Masuk</th>
-            <th>Harga</th>
-            <th>Total</th>
+            <th>Merek</th>
+            <th>Kategori</th>
+            <th>Tanggal Perolehan</th>
+            <th>Nilai Perolehan</th>
+            <th>Kondisi</th>
+            <th>Lokasi</th>
+            <th>Jumlah</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -314,9 +318,10 @@
           <tr>
             <td><strong>01</strong></td>
             <td>18-04-2026</td>
-            <td>Elektronik</td>
+            <td>A01</td>
             <td>001</td>
             <td>Kulkas</td>
+            <td>Elektronik</td>
             <td>10</td>
             <td>Rp 25.000.000</td>
             <td>Rp 250.000.000</td>
@@ -334,7 +339,7 @@
               </button>
             </td>
           </tr>
-          <tr>
+          {{-- <tr>
             <td><strong>02</strong></td>
             <td>18-04-2026</td>
             <td>Furnitur</td>
@@ -380,7 +385,7 @@
               </button>
             </td>
           </tr>
-        </tbody>
+        </tbody> --}}
       </table>
 
       <div class="table-footer">

@@ -467,12 +467,12 @@
           <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda" id="namaInput">
         </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-building"></i> *Instansi / Lembaga <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
-        </div>
-        <div class="form-group">
           <div class="form-label"><i class="fas fa-envelope"></i> *NIP/NIK <span class="req">*</span></div>
           <input type="text" class="form-input" placeholder="Masukkan NIP/NIK  Anda" id="NIPNIKInput">
+        </div>
+        <div class="form-group">
+          <div class="form-label"><i class="fas fa-building"></i> *Instansi / Lembaga <span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
         </div>
         <div class="form-group">
           <div class="form-label"><i class="fas fa-building"></i> *Kab/Kota <span class="req">*</span></div>

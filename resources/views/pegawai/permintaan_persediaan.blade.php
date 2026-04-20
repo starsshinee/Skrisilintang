@@ -377,7 +377,7 @@
           <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
         </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-envelope"></i> Jumlah barang yang dipinjam<span class="req">*</span></div>
+          <div class="form-label"><i class="fas fa-envelope"></i> Jumlah barang yang diminta<span class="req">*</span></div>
           <input type="text" class="form-input" placeholder="Masukkan jumlah barang yang dipinjam" id="jumlahBarangInput">
         </div>
         <div class="input-row">

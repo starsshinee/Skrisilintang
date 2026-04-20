@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPANDU - Peminjaman Kendaraan</title>
+<title>SIPANDU - Peminjaman Barang</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -350,7 +350,7 @@
     <div class="topbar-left">
       <div>
         <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Peminjaman Aset</span></div>
-        <div class="topbar-title">Peminjaman Kendaraan</div>
+        <div class="topbar-title">Peminjaman Barang</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -358,28 +358,35 @@
     </div>
   </div>
 
-  
   <!-- FORM + RIWAYAT -->
   <div class="content-grid">
     <!-- FORM -->
     <div class="form-card animate d2" id="formCard">
       <div class="form-header">
-        <div class="form-header-icon"><i class="fas fa-car"></i></div>
+        <div class="form-header-icon"><i class="fas fa-box"></i></div>
         <div class="form-header-title">Buat Permintaan</div>
-        <div class="form-header-sub">Isi formulir peminjaman Kendaraan di bawah ini</div>
+        <div class="form-header-sub">Isi formulir peminjaman aset di bawah ini</div>
       </div>
       <div class="form-body">
-         <div class="form-group">
-          <div class="form-label"><i class="fas fa-user"></i> *Nama Lengkap <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda" id="namaInput">
-        </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-building"></i> Nama kendaraan <span class="req">*</span></div>
+          <div class="form-label"><i class="fas fa-building"></i> Nama Barang <span class="req">*</span></div>
           <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
         </div>
         <div class="form-group">
-          <div class="form-label"><i class="fas fa-envelope"></i> Jumlah kendaraan yang dipinjam<span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Masukkan jumlah kendaraan yang dipinjam" id="jumlahBarangInput">
+          <div class="form-label"><i class="fas fa-building"></i> Kode Barang <span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
+        </div>
+        <div class="form-group">
+          <div class="form-label"><i class="fas fa-building"></i> Nup <span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
+        </div>
+        <div class="form-group">
+          <div class="form-label"><i class="fas fa-building"></i> Merek <span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
+        </div>
+        <div class="form-group">
+          <div class="form-label"><i class="fas fa-envelope"></i> Jumlah barang yang dipinjam<span class="req">*</span></div>
+          <input type="text" class="form-input" placeholder="Masukkan jumlah barang yang dipinjam" id="jumlahBarangInput">
         </div>
         <div class="input-row">
           <div class="form-group">
@@ -398,7 +405,7 @@
     
                 
         <button class="submit-btn" onclick="submitForm()">
-          <i class="fas fa-paper-plane"></i> Kirim Permintaan peminjaman keandaraan
+          <i class="fas fa-paper-plane"></i> Kirim Permintaan
         </button>
       </div>
     </div>

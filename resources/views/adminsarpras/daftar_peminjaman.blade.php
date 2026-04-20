@@ -184,10 +184,10 @@
         <div class="tab" onclick="filterTab('menunggu', this)">Menunggu</div>
         <div class="tab" onclick="filterTab('ditolak', this)">Ditolak</div>
       </div>
-      <button class="btn-primary" onclick="openModal()">
+      {{-- <button class="btn-primary" onclick="openModal()">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
         Peminjaman Baru
-      </button>
+      </button> --}}
     </div>
 
     <div class="table-card">
@@ -196,11 +196,13 @@
           <tr>
             <th>No</th>
             <th>Peminjam</th>
-            <th>Ruangan</th>
-            <th>Gedung</th>
+            <th>Gedung/Ruangan</th>
             <th>Tanggal</th>
             <th>Keperluan</th>
             <th>Status</th>
+            <th>Tarif Pembayaran (mengikuti lama peminjam)</th>
+            <th>Status Pembayaran (Lunas/belum lunas)</th>
+            <th>Cara Pembayaran (lunas/e-billing)</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -263,7 +265,7 @@
 <!-- Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
   <div class="modal">
-    <div class="modal-title">Tambah Peminjaman Baru</div>
+    {{-- <div class="modal-title">Tambah Peminjaman Baru</div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Nama Peminjam</label>
@@ -299,7 +301,7 @@
       <button class="btn-cancel" onclick="closeModal()">Batal</button>
       <button class="btn-primary" onclick="addPeminjaman()">Simpan</button>
     </div>
-  </div>
+  </div> 
 </div>
 
 <script>

@@ -301,18 +301,17 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>TANGGAL</th>
-                        <th>NAMA</th>
-                        <th>DARI</th>
-                        <th>KE</th>
-                        <th>QTY</th>
-                        <th>STATUS</th>
-                        <th>AKSI</th>
+                        <th>No</th>
+                        <th>Tanggal Input </th>
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Lokasi Awal</th>
+                        <th>Lokasi Akhir</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    {{-- <tr>
                         <td>MT-101</td>
                         <td>2025-01-15</td>
                         <td>Toner Printer</td>
@@ -377,7 +376,7 @@
                             </svg>
                             </button>
                         </td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
         </div>
