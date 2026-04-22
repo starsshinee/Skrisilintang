@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIBMN - BPMP Provinsi Gorontalo</title>
+  <title>SIPANDU - BPMP Provinsi Gorontalo</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -82,6 +82,136 @@
 
     .hero-bg { background: linear-gradient(135deg, #060d33 0%, #0f1f6e 40%, #1a2f9b 70%, #3355ff 100%); }
 
+    .carousel-modern {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+ 
+        .carousel-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+        }
+ 
+        .carousel-modern-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
+        }
+ 
+        .carousel-modern-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+ 
+        .carousel-modern-slide.active {
+            opacity: 1;
+        }
+ 
+        .carousel-modern-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: zoomIn 0.7s ease-out;
+        }
+ 
+        @keyframes zoomIn {
+            from { transform: scale(1.05); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+ 
+        .carousel-modern-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+ 
+        .carousel-modern-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+ 
+        .carousel-modern-dot.active {
+            background: #00d4ff;
+            box-shadow: 0 0 12px #00d4ff;
+            width: 30px;
+            border-radius: 5px;
+        }
+ 
+        .carousel-modern-dot:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.6);
+        }
+ 
+        .carousel-modern-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00d4ff;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            z-index: 15;
+            backdrop-filter: blur(10px);
+        }
+ 
+        .carousel-modern-arrow:hover {
+            background: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+ 
+    .carousel-modern-arrow.prev { left: 12px; }
+    .carousel-modern-arrow.next { right: 12px; }
+
+    #facilitiesCarouselScroll {
+    height: 100% !important;
+    align-items: center !important;
+    }
+
+    .facility-card {
+      height: 90% !important;  /* Hampir full height carousel */
+      min-height: 450px;
+    }
+
+    .facilities-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #bccfff transparent;
+    }
+
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #bccfff; border-radius: 3px; }
@@ -98,16 +228,21 @@
   <!-- NAVBAR -->
   <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300" style="background:rgba(6,13,51,0.95);backdrop-filter:blur(12px);box-shadow:rgba(0,0,0,0.15) 0px 4px 20px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 md:h-20">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#3355ff"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#3355ff"/></svg>
-          </div>
-          <div>
-            <span class="text-white font-bold text-lg tracking-tight">SIPANDU</span>
-            <span class="text-blue-200 text-xs block leading-none">BPMP Gorontalo</span>
+    <div class="flex items-center justify-between gap-2 h-16 md:h-20">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('storage/logo_kemendikdasmen.png') }}" 
+              alt="Logo Kemendikdasmen" 
+              class="w-12 h-12 object-contain">
+
+          <div class="leading-tight">
+            <h1 class="text-lg font-bold">
+              <span class="text-blue-400">Kemen</span><span class="text-yellow-400">dikdasmen</span>
+            </h1>
+            <p class="text-xs text-white">BPMP Gorontalo</p>
           </div>
         </div>
+
+        <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8">
           <a href="#hero"      class="text-blue-100 hover:text-white text-sm font-medium transition">Beranda</a>
           <a href="#fitur"     class="text-blue-100 hover:text-white text-sm font-medium transition">Fitur</a>
@@ -148,14 +283,14 @@
       <div class="flex-1 text-center lg:text-left">
         <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-1.5 mb-6 anim-fade-up delay-1">
           <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-          <span class="text-blue-200 text-xs font-medium">Sistem Aktif &amp; Terintegrasi</span>
+          <span class="text-blue-200 text-xs font-medium">SIPANDU</span>
         </div>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 anim-fade-up delay-2">
           Sistem Informasi<br>
           <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">BMN TERPADU</span>
         </h1>
         <p class="text-blue-200 text-lg md:text-xl max-w-xl mb-8 leading-relaxed anim-fade-up delay-3">
-          Kelola dan monitoring BMN pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
+          Kelola dan monitoring BMN (Barang Milik Negara) pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start anim-fade-up delay-4">
           <a href="{{ route('login') }}" class="btn-primary text-white font-semibold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 text-base">
@@ -175,35 +310,39 @@
           <div class="text-center"><div class="text-2xl font-bold text-white">12</div><div class="text-blue-300 text-xs">Fasilitas</div></div>
         </div>
       </div>
+
+      <!--beranda-->
       <div class="flex-1 hidden lg:flex justify-center anim-fade-up delay-5">
         <div class="relative">
           <div class="w-[400px] h-[300px] bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6">
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-3 h-3 rounded-full bg-red-400"></div>
-              <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-              <div class="w-3 h-3 rounded-full bg-green-400"></div>
-              <span class="text-white/50 text-xs ml-2">Dashboard BMN</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-              <div class="bg-white/10 rounded-lg p-3"><div class="text-cyan-300 text-xs">Aset Tetap</div><div class="text-white font-bold text-xl">856</div></div>
-              <div class="bg-white/10 rounded-lg p-3"><div class="text-green-300 text-xs">Persediaan</div><div class="text-white font-bold text-xl">391</div></div>
-            </div>
-            <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between">
-              <div><div class="text-yellow-300 text-xs">Sarana Prasarana</div><div class="text-white font-bold">127 Unit</div></div>
-              <div class="flex gap-1">
-                <div class="w-2 h-8 bg-blue-400/60 rounded"></div>
-                <div class="w-2 h-12 bg-blue-400/80 rounded"></div>
-                <div class="w-2 h-6 bg-blue-400/40 rounded"></div>
-                <div class="w-2 h-10 bg-blue-400/70 rounded"></div>
-                <div class="w-2 h-14 bg-blue-400 rounded"></div>
+             <div class="wrapper">
+              <div class="carousel-grid">
+                <div class="carousel-container">
+                  <div class="carousel-modern" id="carousel1">
+                      <div class="carousel-modern-inner">
+                          <div class="carousel-modern-slide active">
+                            <img src="{{ ('storage/fasilitas/kantor_utama.jpeg') }}" class="w-full h-full object-cover">
+                          </div>
+                          <div class="carousel-modern-slide">
+                              <img src="{{ ('storage/fasilitas/kantor_ponuwa.jpeg') }}" class="w-full h-full object-cover">
+                          </div>
+                          <div class="carousel-modern-slide">
+                              <img src="{{ ('storage/fasilitas/gedung_aula.jpeg') }}" class="w-full h-full object-cover">
+                          </div>
+                          <div class="carousel-modern-slide">
+                              <img src="{{ ('storage/fasilitas/tinelo_1.jpeg') }}" class="w-full h-full object-cover">
+                          </div>
+                          </div>
+                          <button class="carousel-modern-arrow prev" onclick="carouselPrev(this)">‹</button>
+                          <button class="carousel-modern-arrow next" onclick="carouselNext(this)">›</button>
+                          <div class="carousel-modern-nav" id="nav1"></div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="absolute -bottom-4 -right-4 w-32 h-20 bg-green-500/20 backdrop-blur rounded-xl border border-green-400/30 p-3 flex items-center gap-2">
-            <div class="w-8 h-8 bg-green-500/30 rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-            </div>
-            <div><div class="text-green-300 text-[10px]">Status</div><div class="text-white text-xs font-bold">98.5% Baik</div></div>
           </div>
         </div>
       </div>
@@ -266,9 +405,8 @@
   </section>
 
   <!-- FASILITAS -->
-  <section id="fasilitas" class="py-16 md:py-20 bg-slate-50">
+  <section id="fasilitas" class="h-screen flex items-center bg-slate-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="rounded-3xl overflow-hidden bg-white border border-slate-100 shadow-xl">
         <div class="px-5 pt-6 pb-4 md:px-8 md:pt-8 md:pb-5 border-b border-slate-100/80">
           <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5 mb-5">
             <div class="flex items-center gap-3 min-w-0">
@@ -276,24 +414,16 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
               </div>
               <div>
-                <h2 class="text-xl md:text-2xl font-bold text-navy-900 tracking-tight leading-tight">Fasilitas Unggulan</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-navy-900 tracking-tight leading-tight">Fasilitas</h2>
                 <p class="text-slate-500 text-sm mt-1">Klik gambar untuk melihat detail — BPMP Provinsi Gorontalo</p>
               </div>
             </div>
             <div class="flex items-center gap-2 lg:gap-3 flex-wrap lg:flex-nowrap lg:justify-end">
-              <span class="text-slate-600 text-sm font-medium whitespace-nowrap">Promo berakhir dalam</span>
-              <div class="flex items-center gap-1 font-mono">
-                <span id="cdH" class="inline-flex min-w-[2.25rem] justify-center rounded-lg bg-navy-100 px-2 py-1.5 text-sm font-bold shadow-sm tabular-nums text-navy-900 border border-navy-200/60">00</span>
-                <span class="font-bold text-slate-400">:</span>
-                <span id="cdM" class="inline-flex min-w-[2.25rem] justify-center rounded-lg bg-navy-100 px-2 py-1.5 text-sm font-bold shadow-sm tabular-nums text-navy-900 border border-navy-200/60">00</span>
-                <span class="font-bold text-slate-400">:</span>
-                <span id="cdS" class="inline-flex min-w-[2.25rem] justify-center rounded-lg bg-navy-100 px-2 py-1.5 text-sm font-bold shadow-sm tabular-nums text-navy-900 border border-navy-200/60">00</span>
-              </div>
             </div>
           </div>
           <div id="facilityChips" class="flex flex-wrap gap-2"></div>
         </div>
-        <div class="relative px-3 pb-6 md:px-6 md:pb-8 pt-4 bg-slate-50/70">
+        <div class="relative flex-1 px-3 pb-6 md:px-6 bg-slate-50/70 flex items-center">
           <button onclick="facilitiesScrollPrev()" class="absolute left-1 md:left-2 top-[42%] -translate-y-1/2 z-10 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg hidden sm:flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-navy-700 transition border border-white/80">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </button>
@@ -303,10 +433,6 @@
           </button>
         </div>
       </div>
-      <p class="text-center text-slate-500 text-sm mt-5 max-w-2xl mx-auto">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-1 text-navy-400"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        Harga dapat berubah sesuai kebijakan. Hubungi Tata Usaha BPMP untuk jadwal dan persyaratan resmi.
-      </p>
     </div>
   </section>
 
@@ -427,7 +553,7 @@
                 <div>
                   <div id="modalPriceOld" class="text-slate-400 text-xs line-through mb-0.5"></div>
                   <div id="modalPrice" class="text-xl font-extrabold text-navy-900"></div>
-                  <div class="text-slate-400 text-xs mt-0.5">Belum termasuk pajak &amp; biaya lain</div>
+                  <div class="text-slate-400 text-xs mt-0.5"></div>
                 </div>
                 <div class="flex gap-2">
                   <button onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition">Kembali</button>
@@ -448,22 +574,195 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-[300] space-y-2 pointer-events-none"></div>
 
 <script>
+
 const FACILITIES = [
-  { name:'Aula Utama BPMP', category:'ruang', price:'Rp 2.500.000/hari', priceOld:'Rp 3.000.000', availability:'Beberapa jadwal tersedia', availClass:'avail-beberapa', location:'Gedung Utama Lt.1, Wongkaditi Timur', rating:4.6, reviews:18, capacity:'200 Orang', luas:'420 m²', operasional:'Senin–Jumat 07.00–22.00 WITA', kontak:'(0435) 821-555 ext. 101', description:'Aula Utama BPMP adalah ruang multifungsi berkapasitas besar yang ideal untuk seminar nasional, workshop, pelantikan, rapat koordinasi, dan berbagai kegiatan resmi lainnya. Dilengkapi dengan sistem audio visual modern, AC sentral, dan panggung permanen.', features:['AC Sentral','Sound System Profesional','Proyektor + Layar 5m','Podium & Panggung','Kursi Ergonomis 200 unit','Meja Registrasi','Wi-Fi 100 Mbps','Toilet Dalam','Area Parkir Luas','CCTV 24 Jam'], rules:['Pemesanan minimal H-7','Tidak diperkenankan untuk kegiatan komersial non-pendidikan','Konsumsi disediakan sendiri oleh penyewa','Penyewa bertanggung jawab atas kebersihan dan kerusakan','Jam malam maksimal pukul 22.00 WITA'], images:['https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80','https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80','https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&q=80'] },
-  { name:'Ruang Rapat VIP', category:'ruang', price:'Rp 1.000.000/hari', priceOld:'Rp 1.250.000', availability:'2 slot minggu ini', availClass:'avail-terbatas', location:'Gedung Utama Lt.2, Kota Utara', rating:4.8, reviews:24, capacity:'20 Orang', luas:'60 m²', operasional:'Senin–Jumat 08.00–17.00 WITA', kontak:'(0435) 821-555 ext. 102', description:'Ruang Rapat VIP adalah ruangan eksklusif yang dirancang untuk rapat pimpinan, konsultasi, dan pertemuan terbatas. Dilengkapi sistem video conference terkini, whiteboard digital, dan pantry pribadi untuk kenyamanan maksimal.', features:['Video Conference 4K','Whiteboard Digital','AC Split Inverter','Meja Rapat Oval','Kursi Eksekutif','Mini Pantry','Smart TV 75"','Wi-Fi Dedicated','Brankas Dokumen','Akses Kartu'], rules:['Reservasi minimal H-3','Kapasitas maksimal 20 orang','Dilarang membawa makanan beraroma kuat','Peralatan video conference wajib dikembalikan dalam kondisi baik','Konsumsi ringan tersedia dengan biaya tambahan'], images:['https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80','https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80','https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&q=80'] },
-  { name:'Lab Komputer', category:'lab', price:'Rp 1.500.000/hari', priceOld:null, availability:'Tersedia', availClass:'avail-tersedia', location:'Gedung Teknologi Lt.1, Kompleks BPMP', rating:4.5, reviews:31, capacity:'30 Unit PC', luas:'80 m²', operasional:'Senin–Jumat 07.30–17.00 WITA', kontak:'(0435) 821-555 ext. 103', description:'Lab Komputer BPMP dilengkapi 30 unit komputer modern dengan spesifikasi terkini dan koneksi internet berkecepatan tinggi. Fasilitas ini ideal untuk pelatihan TI, ujian berbasis komputer (CBT), workshop digital, dan kegiatan literasi digital lainnya.', features:['30 Unit PC Intel Core i7','RAM 16 GB per unit','Internet Fiber 1 Gbps','Windows 11 Pro','MS Office 365','AC Sentral','Proyektor + Layar','Kamera CCTV','UPS per Unit','Headset Tersedia'], rules:['Dilarang menginstal software tanpa izin','Flash disk harus discan antivirus terlebih dahulu','Penyewa bertanggung jawab atas kerusakan hardware','Aktivitas download masif harus dikonfirmasi sebelumnya','Lab akan direset setelah setiap sesi'], images:['https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80','https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80','https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80'] },
-  { name:'Ruang Pelatihan B', category:'ruang', price:'Rp 700.000/hari', priceOld:null, availability:'Tersedia', availClass:'avail-tersedia', location:'Gedung Pelatihan Lt.2, BPMP', rating:4.3, reviews:8, capacity:'30 Orang', luas:'90 m²', operasional:'Senin–Sabtu 07.00–20.00 WITA', kontak:'(0435) 821-555 ext. 105', description:'Ruang Pelatihan B merupakan alternatif yang lebih terjangkau untuk kegiatan pelatihan, rapat, dan diskusi kelompok. Terletak di lantai 2 dengan pencahayaan alami yang baik dan suasana kondusif untuk belajar.', features:['AC 2 Unit','Proyektor BenQ','Layar 2.5m','Kursi Lipat 30 unit','Papan Tulis','Wi-Fi','Mic Kabel 1 unit','Colokan Listrik 6 titik','Whiteboard Kecil','Pencahayaan Alami'], rules:['Reservasi minimal H-3','Kapasitas tidak boleh melebihi 30 orang','Penyewa membawa perlengkapan presentasi sendiri jika diperlukan spek khusus','Dilarang merokok di dalam ruangan'], images:['https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80','https://images.unsplash.com/photo-1580582932707-520aed937d7b?w=800&q=80','https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80'] },
-  { name:'Kendaraan Dinas – Minibus', category:'kendaraan', price:'Rp 750.000/hari', priceOld:null, availability:'1 unit tersedia', availClass:'avail-terbatas', location:'Pool Kendaraan BPMP, Wongkaditi Timur', rating:4.7, reviews:9, capacity:'16 Penumpang', luas:'—', operasional:'Senin–Jumat 06.00–18.00 WITA', kontak:'(0435) 821-555 ext. 106', description:'Kendaraan dinas Toyota HiAce berkapasitas 16 penumpang tersedia untuk mendukung kegiatan dinas lapangan, kunjungan sekolah, dan transportasi resmi. Kendaraan dalam kondisi prima dan wajib disertai driver resmi BPMP.', features:['Toyota HiAce 2022','Kapasitas 16 Penumpang','AC Double Blower','Kondisi Terawat','Driver Resmi Tersedia','Asuransi Perjalanan','BBM Tanggungan Penyewa','Bagasi Luas'], rules:['Wajib menggunakan driver resmi BPMP','Peminjaman hanya untuk kegiatan resmi/dinas','Pemesanan minimal H-3 dan mendapat persetujuan Kasubag','BBM dan tol ditanggung oleh peminjam','Pengembalian kendaraan harus dalam kondisi bersih'], images:['https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80','https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=80','https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80'] },
-  { name:'Gedung Serbaguna', category:'outdoor', price:'Rp 3.000.000/hari', priceOld:'Rp 3.500.000', availability:'Booking awal bulan', availClass:'avail-booking', location:'Halaman BPMP Gorontalo, Area Selatan', rating:4.5, reviews:7, capacity:'300 Orang', luas:'500 m²', operasional:'Fleksibel — koordinasi TU', kontak:'(0435) 821-555 ext. 107', description:'Gedung Serbaguna adalah area multifungsi outdoor-indoor seluas 500m² yang dapat digunakan untuk pameran pendidikan, bazar, expo, pertunjukan seni, acara resepsi, dan kegiatan skala besar lainnya. Tersedia tenda permanen dan instalasi listrik memadai.', features:['Tenda Permanen 300 m²','Instalasi Listrik 3 Phase','Sound System Outdoor','Area Parkir 50 Kendaraan','Toilet Portabel','Penerangan Malam','Aksesibilitas Difabel','Area Hijau Pendukung','CCTV Perimeter','Keamanan 24 Jam'], rules:['Pemesanan minimal H-14 untuk acara besar','Penyewa menyediakan perlengkapan dekorasi sendiri','Kapasitas maksimal 300 orang','Kegiatan yang menghasilkan limbah wajib dibersihkan oleh penyewa','Kebisingan tidak boleh mengganggu kantor sekitar (batas jam 21.00 WITA)','Mendapat persetujuan tertulis dari Kepala BPMP'], images:['https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&q=80','https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80','https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&q=80'] },
-  { name:'Lapangan Olahraga', category:'outdoor', price:'Rp 300.000/hari', priceOld:null, availability:'Tersedia', availClass:'avail-tersedia', location:'Area Belakang BPMP Gorontalo', rating:4.2, reviews:5, capacity:'50 Orang', luas:'600 m²', operasional:'Senin–Sabtu 06.00–18.00 WITA', kontak:'(0435) 821-555 ext. 108', description:'Lapangan olahraga serbaguna yang dapat digunakan untuk futsal, voli, senam massal, dan aktivitas outdoor lainnya. Cocok untuk kegiatan pembinaan jasmani, outbound ringan, dan event olahraga instansi.', features:['Lapangan Futsal','Net Voli','Tiang Lampu 4 unit','Ruang Ganti','Area Penonton','Pompa Angin Tersedia'], rules:['Dilarang menggunakan alas kaki yang merusak lapangan','Kegiatan pertandingan formal wajib didampingi panitia','Kebersihan lapangan menjadi tanggung jawab penyewa','Tidak tersedia saat hari libur nasional tanpa reservasi khusus'], images:['https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80','https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=80','https://images.unsplash.com/photo-1540747913346-19212a4e5d05?w=800&q=80'] },
+  { 
+    name: 'Kantor BPMP Gorontalo', 
+    category: 'kantor', 
+    location: 'Gedung Utama, Wongkaditi Timur', 
+    capacity: '100 Staf', luas: '500 m²', 
+    operasional: 'Senin–Jumat 07.30–16.00 WITA', kontak: '(0435) 821-555', 
+    description: 'Pusat administrasi dan layanan penjaminan mutu pendidikan Provinsi Gorontalo yang melayani koordinasi antar instansi pendidikan.',
+    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Area Kerja Open Space', 'Ruang Tamu VVIP', 'Koneksi Internet High-Speed', 'CCTV & Keamanan 24 Jam'], 
+    rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
+    images: [
+      "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
+      "{{ asset('storage/fasilitas/kantor_ponuwa.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Pertemuan BPMP Gorontalo', 
+    category: 'ruang', 
+    location: 'Gedung Aula Utama, Wongkaditi Timur', 
+    capacity: '200 - 300 Orang', luas: '420 m²', 
+    operasional: 'Senin–Minggu (Sesuai Reservasi)', kontak: '(0435) 821-555 ext. 101', 
+    description: 'Aula serbaguna yang luas, ideal untuk seminar, lokakarya, dan pertemuan skala besar dengan fasilitas audio visual lengkap.',
+    features: ['AC Sentral', 'Sound System Profesional', 'Proyektor + Layar 5m', 'Podium & Panggung', 'Kursi Ergonomis 200 unit', 'Wi-Fi 100 Mbps', 'Toilet Bersih'], 
+    rules: ['Pemesanan minimal H-7', 'Dilarang membawa makanan berbau tajam ke dalam ruangan', 'Penyewa bertanggung jawab atas kebersihan', 'Jam operasional sesuai izin penggunaan'], 
+    images: [
+      "{{ asset('storage/fasilitas/gedung_aula.jpeg') }}",
+      "{{ asset('storage/fasilitas/aula2.jpeg') }}", 
+      "{{ asset('storage/fasilitas/gazebo_aula.jpeg') }}",
+      "{{ asset('storage/fasilitas/gedung_huyula.jpg') }}",
+      "{{ asset('storage/fasilitas/ruang_sidang.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'Gedung Diklat, Wongkaditi Timur', 
+    capacity: '40 Orang/Kelas', luas: '64 m²', 
+    operasional: 'Senin–Sabtu 07.30–17.00 WITA', kontak: '(0435) 821-555', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC Split', 'Smart TV / Proyektor', 'Papan Tulis Whiteboard', 'Stop', 'Pengaturan Kursi Fleksibel', 'Akses Wi-Fi'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Kapasitas maksimal tidak boleh dilampaui', 'Menjaga ketenangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/tinelo_1.jpeg') }}",
+      "{{ asset('storage/fasilitas/tinelo_3.jpeg') }}", 
+      "{{ asset('storage/fasilitas/tinelo_4.jpeg') }}",
+      "{{ asset('storage/fasilitas/tilango.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Mess BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Area Mess Bandayo, Wongkaditi Timur', 
+    capacity: '2-3 Orang/Kamar', luas: '24 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: 'Customer Service Mess', 
+    description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
+    features: ['Pendingin Ruangan (AC)', 'TV Satelit', 'Kamar Mandi Dalam', 'Water Heater', 'Lemari Pakaian', 'Layanan Kebersihan Harian'], 
+    rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
+    images: [
+      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Asrama BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Gedung Asrama Bele Daa, Wongkaditi Timur', 
+    capacity: '4 Orang/Kamar', luas: '32 m²', 
+    operasional: '24 Jam', kontak: 'Pengelola Asrama', 
+    description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
+    features: ['Tempat Tidur Tingkat/Single', 'Lemari Individu', 'Kamar Mandi Dalam', 'Meja Belajar Kecil', 'Area Jemuran', 'Ruang Berkumpul Bersama'], 
+    rules: ['Wajib menjaga kebersihan area bersama', 'Batas jam bertamu maksimal pukul 21.00 WITA', 'Dilarang memasak di dalam kamar asrama', 'Mengunci pintu saat bepergian'], 
+    images: [
+       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
+      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Makan BPMP Gorontalo', 
+    category: 'ruang',  
+    location: 'Gedung Olamita, Wongkaditi Timur', 
+    capacity: '150 Orang', luas: '200 m²', 
+    operasional: '06.00–20.00 WITA', kontak: 'Unit Rumah Tangga', 
+    description: 'Area makan bersih dan higienis yang melayani konsumsi peserta diklat maupun tamu umum dengan sistem prasmanan.',
+    features: ['Meja & Kursi Makan Panjang', 'Area Cuci Tangan (Wastafel)', 'Dispenser Air Minum', 'Ventilasi Udara Bagus', 'Gazebo Outdoor Olamita', 'Buffet Station'], 
+    rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
+    images: [
+      "{{ asset('storage/fasilitas/olamita1_depan.jpeg') }}",
+      "{{ asset('storage/fasilitas/olamita_1.jpeg') }}",
+      "{{ asset('storage/fasilitas/olamita_2.jpeg') }}",
+      "{{ asset('storage/fasilitas/gazebo_olamita1.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Olahraga BPMP Gorontalo', 
+    category: 'outdoor', 
+    location: 'Area Sport Center BPMP', 
+    capacity: 'Area Terbuka', luas: '800 m²', 
+    operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
+    description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
+    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Basket', 'Peralatan Olahraga Dasar', 'Area Terbuka Hijau', 'Penerangan Lapangan'], 
+    rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
+    images: [
+      "{{ asset('storage/fasilitas/lapangan_tenis.jpeg') }}",
+      "{{ asset('storage/fasilitas/lapangan_olahraga.jpeg') }}", 
+      "{{ asset('storage/fasilitas/jogging_treck.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Mushollah BPMP Gorontalo', 
+    category: 'sarana_ibadah',
+    location: 'Samping Gedung Utama', 
+    capacity: '50 Orang', luas: '100 m²', 
+    operasional: '24 Jam (Waktu Shalat)', kontak: '-', 
+    description: 'Sarana ibadah yang bersih dan tenang bagi pegawai maupun tamu untuk melaksanakan shalat lima waktu.',
+    features: ['Sajadah & Mukena Bersih', 'Tempat Wudhu Terpisah (Pria/Wanita)', 'Pendingin Ruangan (AC)', 'Sound System Adzan', 'Al-Quran & Buku Dzikir'], 
+    rules: ['Menjaga ketenangan dan kesucian tempat', 'Meletakkan alas kaki di rak yang tersedia', 'Matikan lampu dan AC setelah digunakan (jika tidak ada orang)', 'Dilarang tidur di dalam mushollah'], 
+    images: [
+      "{{ asset('storage/fasilitas/musolla_depan.jpg') }}"
+    ]
+  },
+  { 
+    name: 'Klinik BPMP Gorontalo', 
+    category: 'kesehatan', 
+    location: 'Gedung Layanan Kesehatan, Lantai 1', 
+    capacity: '5 Pasien', luas: '40 m²', 
+    operasional: 'Senin–Jumat 08.00–15.00 WITA', kontak: 'Unit Kesehatan', 
+    description: 'Fasilitas kesehatan dasar untuk penanganan pertama bagi pegawai atau peserta diklat yang mengalami gangguan kesehatan ringan.',
+    features: ['Tempat Tidur Pasien', 'Peralatan Medis Dasar', 'Kotak P3K Lengkap', 'Tenaga Medis/Perawat (Jam Kerja)', 'Obat-obatan Standar'], 
+    rules: ['Hanya untuk penanganan medis darurat/ringan', 'Wajib mengisi buku kunjungan pasien', 'Pasien dengan kondisi berat akan dirujuk ke RS terdekat'], 
+    images: [
+      "{{ asset('storage/fasilitas/klinik.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Lapangan Upacara BPMP Gorontalo', 
+    category: 'outdoor', 
+    location: 'Halaman Depan Gedung Utama', 
+    capacity: '500 Orang', luas: '1200 m²', 
+    operasional: 'Senin–Jumat 07.00–17.00 WITA', kontak: 'Satpam', 
+    description: 'Lapangan terbuka yang luas untuk pelaksanaan upacara bendera, apel pagi, serta kegiatan senam bersama setiap hari Jumat.',
+    features: ['Tiang Bendera', 'Lantai Paving Blok Rata', 'Sound System Luar Ruang', 'Podium Upacara', 'Akses Langsung ke Parkiran'], 
+    rules: ['Dilarang memarkir kendaraan di tengah lapangan saat jam upacara', 'Menjaga kebersihan area lapangan', 'Izin khusus untuk kegiatan tenda/panggung besar'], 
+    images: [
+      "{{ asset('storage/fasilitas/upacara.jpg') }}"
+    ]
+  },
+  { 
+    name: 'Gedung Arsip BPMP Gorontalo', 
+    category: 'gedung', 
+    location: 'Area Belakang, Wongkaditi Timur', 
+    capacity: 'Penyimpanan Dokumen', luas: '150 m²', 
+    operasional: 'Senin–Jumat 08.00–16.00 WITA', kontak: 'Unit Kearsipan', 
+    description: 'Fasilitas penyimpanan dokumen negara dan data penting lembaga yang dikelola secara sistematis dan aman.',
+    features: ['Lemari Roll O\'pack', 'Sistem Pengatur Kelembapan', 'Alat Pemadam Api (APAR)', 'Sistem Labeling Digital', 'Keamanan Terbatas'], 
+    rules: ['Hanya petugas berwenang yang boleh masuk', 'Dilarang membawa cairan atau benda mudah terbakar', 'Wajib mencatat pengambilan dokumen di buku log'], 
+    images: [
+      "{{ asset('storage/fasilitas/gedung_arsip.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Gedung Laboratorium BPMP Gorontalo', 
+    category: 'gedung', 
+    location: 'Gedung Teknolgi Informasi, Lt. 2', 
+    capacity: '30 Orang', luas: '120 m²', 
+    operasional: 'Sesuai Jadwal Pelatihan', kontak: 'Unit TIK', 
+    description: 'Laboratorium komputer dan multimedia untuk uji kompetensi, pelatihan IT, serta pengembangan media pembelajaran digital.',
+    features: ['Unit Komputer High-Spec', 'Server Lokal', 'Headset Multimedia', 'Jaringan LAN & Fiber Optic', 'Papan Tulis Interaktif', 'Full AC'], 
+    rules: ['Dilarang mengubah konfigurasi software/hardware', 'Dilarang membawa makanan/minuman ke meja komputer', 'Gunakan alas kaki khusus atau melepas alas kaki'], 
+    images: [
+      "{{ asset('storage/fasilitas/gedung_laboratorium.jpeg') }}"
+    ]
+  }
 ];
 
 const FACILITY_CHIPS = [
   { id:'semua', label:'Semua' },
   { id:'ruang', label:'Ruang & Aula' },
-  { id:'lab',   label:'Lab' },
-  { id:'kendaraan', label:'Kendaraan' },
+  { id:'gedung',   label:'Gedung' },
   { id:'outdoor',   label:'Outdoor' },
+  { id:'kantor',   label:'Kantor' },
+  { id:'kelas',   label:'Kelas' },
+  { id:'penginapan',   label:'Penginapan' },
+  { id:'kesehatan',   label:'Kesehatan' },
 ];
 
 const DEMO_ACCOUNTS = [
@@ -510,23 +809,40 @@ function buildCarousel() {
   if (!list.length) { scrollEl.innerHTML = '<p class="text-slate-500 text-sm py-8 px-4">Tidak ada fasilitas pada kategori ini.</p>'; return; }
   scrollEl.innerHTML = list.map(f => {
     const globalIdx = FACILITIES.indexOf(f);
-    const rs = String(f.rating).replace('.', ',');
-    const op = f.priceOld ? `<div class="text-slate-400 text-xs line-through mb-0.5">${f.priceOld}<span class="text-slate-300">/hari</span></div>` : '';
+    // const rs = String(f.rating).replace('.', ',');
+    // const op = f.priceOld ? `<div class="text-slate-400 text-xs line-through mb-0.5">${f.priceOld}<span class="text-slate-300">/hari</span></div>` : '';
     return `<article class="facility-card flex-shrink-0 w-[260px] sm:w-[280px] snap-start rounded-2xl bg-white shadow-md border border-slate-100/80 overflow-hidden card-hover flex flex-col" onclick="openModal(${globalIdx})" title="Klik untuk lihat detail">
       <div class="relative overflow-hidden" style="aspect-ratio:4/3;">
         <img src="${f.images[0]}" alt="${f.name}" class="card-img w-full h-full object-cover" loading="lazy">
         <div class="card-overlay absolute inset-0 flex flex-col justify-end p-3"><div class="view-detail-btn inline-flex items-center gap-1.5 bg-white/90 backdrop-blur text-navy-800 text-xs font-bold px-3 py-1.5 rounded-full self-start shadow"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Lihat Detail</div></div>
         ${f.images.length > 1 ? `<div class="absolute top-2 right-2 flex gap-0.5">${f.images.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full ${i===0?'bg-white':'bg-white/50'}"></div>`).join('')}</div>` : ''}
       </div>
-      <div class="p-3.5 flex flex-col flex-1">
-        <span class="text-xs font-bold px-2 py-0.5 rounded-full mb-2 self-start ${f.availClass}">${f.availability}</span>
-        <h3 class="font-bold text-navy-900 text-sm leading-snug mb-1 line-clamp-2">${f.name}</h3>
-        <div class="flex items-center gap-0.5 mb-1">${starRow(f.rating,'11px')}</div>
-        <p class="text-slate-500 text-xs mb-1">📍 ${f.location}</p>
-        <p class="text-slate-400 text-xs mb-2">👥 ${f.capacity}</p>
-        <div class="flex items-center gap-2 mb-3 mt-auto text-xs"><span class="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-1 rounded-md bg-violet-600 text-white font-bold text-[11px] shadow-sm">${rs}</span><span class="text-slate-600"><span class="font-semibold text-navy-800">${rs}/5</span> <span class="text-slate-400">(${f.reviews} ulasan)</span></span></div>
-        <div class="border-t border-slate-100 pt-2.5">${op}<div class="text-red-600 font-extrabold text-base leading-tight tracking-tight">${f.price}</div><p class="text-slate-400 text-[11px] mt-1">Belum termasuk pajak &amp; biaya lain</p></div>
+      <div class="p-3.5 flex flex-col flex-1 space-y-1.5">
+      <h3 class="font-bold text-navy-900 text-sm leading-snug line-clamp-2">${f.name}</h3>
+      
+      <p class="text-slate-500 text-xs flex items-center gap-1">
+        📍 <span class="truncate">${f.location}</span>
+      </p>
+
+      <div class="space-y-1 mb-3">
+        <p class="text-xs font-medium text-slate-700 mb-1">Fasilitas:</p>
+        <div class="flex flex-wrap gap-1">
+          ${f.features.slice(0,4).map(feat => `<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">${feat}</span>`).join('')}
+        
+        </div>
       </div>
+      
+      <!-- 3 Info Horizontal -->
+      <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
+        <span>📏 ${f.luas}</span>
+        <span>👥 ${f.capacity}</span>
+        <span>🕒 ${f.operasional.split(' ')[0]}</span>
+      </div>
+      <!-- Kontak -->
+      <p class="text-emerald-600 text-xs font-medium flex items-center gap-1 pt-1 border-t border-slate-200/50 mt-auto">
+        📞 ${f.kontak}
+      </p>
+    </div>
     </article>`;
   }).join('');
 }
@@ -541,11 +857,11 @@ function openModal(idx) {
   const mainImg = document.getElementById('modalMainImg');
   mainImg.src = f.images[0]; mainImg.alt = f.name;
   mainImg.className = 'modal-img w-full h-full object-cover';
-  const badge = document.getElementById('modalAvailBadge');
-  badge.textContent = f.availability; badge.className = `text-xs font-bold px-3 py-1.5 rounded-full ${f.availClass}`;
-  document.getElementById('modalRatingScore').textContent = String(f.rating).replace('.', ',');
-  document.getElementById('modalStars').innerHTML = starRow(f.rating, '12px');
-  document.getElementById('modalReviewCount').textContent = `(${f.reviews} ulasan)`;
+  // // const badge = document.getElementById('modalAvailBadge');
+  // // badge.textContent = f.availability; badge.className = `text-xs font-bold px-3 py-1.5 rounded-full ${f.availClass}`;
+  // document.getElementById('modalRatingScore').textContent = String(f.rating).replace('.', ',');
+  // document.getElementById('modalStars').innerHTML = starRow(f.rating, '12px');
+  // document.getElementById('modalReviewCount').textContent = `(${f.reviews} ulasan)`;
   document.getElementById('modalThumbs').innerHTML = f.images.map((img, i) => `<div class="thumb flex-shrink-0 ${i===0?'active':''}" onclick="switchModalImg(${i})" style="width:72px;height:52px;"><img src="${img}" alt="foto ${i+1}" class="w-full h-full object-cover"></div>`).join('');
   document.getElementById('modalName').textContent = f.name;
   document.getElementById('modalLocation').textContent = f.location;
@@ -607,6 +923,137 @@ function buildDemoAccounts() {
 buildCarousel();
 buildDemoAccounts();
 lucide.createIcons();
+
+<!--Corousel Beranda-->
+  document.addEventListener("DOMContentLoaded", function () {
+    // =========================
+    // INIT CAROUSEL
+    // =========================
+    function initCarousel(carouselId, navId) {
+        const carousel = document.getElementById(carouselId);
+        if (!carousel) return; // cegah error jika tidak ada
+
+        const slides = carousel.querySelectorAll('[class*="slide"]');
+        const navContainer = navId ? document.getElementById(navId) : null;
+
+        carousel.dataset.current = 0;
+        carousel.dataset.total = slides.length;
+
+        // Generate navigation dots
+        if (navContainer) {
+            const isModern = navContainer.classList.contains('carousel-modern-nav');
+            const isMinimal = navContainer.classList.contains('carousel-minimal-nav');
+
+            let dotClass = 'carousel-retro-dot';
+            if (isModern) dotClass = 'carousel-modern-dot';
+            if (isMinimal) dotClass = 'carousel-minimal-dot';
+
+            navContainer.innerHTML = ""; // reset isi
+
+            for (let i = 0; i < slides.length; i++) {
+                const dot = document.createElement('button');
+                dot.className = dotClass;
+                if (i === 0) dot.classList.add('active');
+
+                dot.addEventListener("click", function () {
+                    goToSlide(carousel, i);
+                });
+
+                navContainer.appendChild(dot);
+            }
+        }
+
+        updateCarousel(carousel);
+    }
+
+    // =========================
+    // UPDATE CAROUSEL
+    // =========================
+    function updateCarousel(carousel) {
+        if (!carousel) return;
+
+        const slides = carousel.querySelectorAll('[class*="slide"]');
+        const current = parseInt(carousel.dataset.current) || 0;
+
+        // Update slide aktif
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === current);
+        });
+
+        // Update dot navigasi
+        const navDots = carousel.querySelectorAll('[class*="dot"]');
+        navDots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === current);
+        });
+
+        // Update progress bar (jika ada)
+        const progress = carousel.querySelector('[class*="progress"]');
+        if (progress && slides.length > 0) {
+            progress.style.width = ((current + 1) / slides.length * 100) + '%';
+        }
+    }
+
+    // =========================
+    // NEXT SLIDE
+    // =========================
+    window.carouselNext = function (btn) {
+        const carousel = btn.closest('[class*="carousel-"]');
+        if (!carousel) return;
+
+        const current = parseInt(carousel.dataset.current) || 0;
+        const total = parseInt(carousel.dataset.total) || 0;
+
+        carousel.dataset.current = (current + 1) % total;
+        updateCarousel(carousel);
+    };
+
+    // =========================
+    // PREV SLIDE
+    // =========================
+    window.carouselPrev = function (btn) {
+        const carousel = btn.closest('[class*="carousel-"]');
+        if (!carousel) return;
+
+        const current = parseInt(carousel.dataset.current) || 0;
+        const total = parseInt(carousel.dataset.total) || 0;
+
+        carousel.dataset.current = (current - 1 + total) % total;
+        updateCarousel(carousel);
+    };
+
+    // =========================
+    // GO TO SLIDE
+    // =========================
+    function goToSlide(carousel, index) {
+        if (!carousel) return;
+
+        carousel.dataset.current = index;
+        updateCarousel(carousel);
+    }
+
+    // =========================
+    // INIT SEMUA CAROUSEL
+    // =========================
+    initCarousel('carousel1', 'nav1');
+    initCarousel('carousel2', 'nav2');
+    initCarousel('carousel3', 'nav3');
+
+    // =========================
+    // AUTOPLAY CAROUSEL 1
+    // =========================
+    setInterval(() => {
+        const carousel = document.getElementById('carousel1');
+        if (!carousel) return;
+
+        const current = parseInt(carousel.dataset.current) || 0;
+        const total = parseInt(carousel.dataset.total) || 0;
+
+        if (total === 0) return;
+
+        carousel.dataset.current = (current + 1) % total;
+        updateCarousel(carousel);
+    }, 5000);
+});
 </script>
 </body>
 </html>

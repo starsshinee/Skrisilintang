@@ -65,21 +65,32 @@
 
   .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
   .topbar {
-    background: var(--card-bg); border-bottom: 1px solid var(--border);
-    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 50;
   }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
   .notif-btn {
-    position: relative; width: 38px; height: 38px; border-radius: 50%;
-    background: var(--body-bg); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid var(--border);
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
   }
-  .notif-badge {
-    position: absolute; top: 4px; right: 4px;
-    width: 8px; height: 8px; background: var(--danger);
-    border-radius: 50%; border: 2px solid #fff;
+  .notif-dot { width: 8px; height: 8px; background: #EF4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
+  .date-text { font-size: 13px; color: #64748B; font-weight: 500; }
+  .btn-keluar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface); color: #64748B;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s;
   }
-  .content { padding: 24px 28px; flex: 1; }
+  .btn-keluar:hover { background: #FEF2F2; color: #EF4444; }
+
+  .content { padding: 28px; flex: 1; }
 
   /* Report Type Cards */
   .report-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
@@ -172,9 +183,17 @@
 
 <main class="main">
   <div class="topbar">
-    <div class="notif-btn">
-      <svg width="18" height="18" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <div class="notif-badge"></div>
+    <span class="topbar-title">Data Gedung</span>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <span class="date-text">Jumat, 17 April 2026</span>
+      <button class="btn-keluar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
+        Keluar
+      </button>
     </div>
   </div>
   <div class="content">

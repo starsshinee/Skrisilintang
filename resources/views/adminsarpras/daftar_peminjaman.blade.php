@@ -63,23 +63,33 @@
   .user-info strong { font-size: 13px; font-weight: 700; display: block; }
   .user-info span { font-size: 11px; color: var(--text-secondary); }
 
-  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
   .topbar {
-    background: var(--card-bg); border-bottom: 1px solid var(--border);
-    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 50;
   }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
   .notif-btn {
-    position: relative; width: 38px; height: 38px; border-radius: 50%;
-    background: var(--body-bg); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid var(--border);
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
   }
-  .notif-badge {
-    position: absolute; top: 4px; right: 4px;
-    width: 8px; height: 8px; background: var(--danger);
-    border-radius: 50%; border: 2px solid #fff;
+  .notif-dot { width: 8px; height: 8px; background: #EF4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
+  .date-text { font-size: 13px; color: #64748B; font-weight: 500; }
+  .btn-keluar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface); color: #64748B;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s;
   }
-  .content { padding: 24px 28px; flex: 1; }
+  .btn-keluar:hover { background: #FEF2F2; color: #EF4444; }
+
+  .content { padding: 28px; flex: 1; }
 
   /* Tabs */
   .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -171,9 +181,17 @@
 
 <main class="main">
   <div class="topbar">
-    <div class="notif-btn">
-      <svg width="18" height="18" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <div class="notif-badge"></div>
+    <span class="topbar-title">Daftar Peminjam</span>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <span class="date-text">Jumat, 17 April 2026</span>
+      <button class="btn-keluar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
+        Keluar
+      </button>
     </div>
   </div>
   <div class="content">
@@ -200,19 +218,37 @@
             <th>Tanggal</th>
             <th>Keperluan</th>
             <th>Status</th>
-            <th>Tarif Pembayaran (mengikuti lama peminjam)</th>
+            <th>Total Pembayaran</th>
             <th>Status Pembayaran (Lunas/belum lunas)</th>
-            <th>Cara Pembayaran (lunas/e-billing)</th>
+            <th>Cara Pembayaran (Tunai/e-billing)</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody id="pinjamTable">
           <tr data-status="disetujui">
-            <td>1</td><td class="peminjam-name">Dr. Ahmad Fauzi</td><td>Aula Utama</td><td>Gedung A</td><td>15 Jun 2025</td><td>Seminar Nasional</td>
+            <td>1</td><td class="peminjam-name">Dr. Ahmad Fauzi</td>
+            <td>Aula Utama</td>
+            <td>15 Jun 2025</td>
+            <td>Seminar Nasional</td>
             <td><span class="status-badge badge-approved">Disetujui</span></td>
-            <td><div class="act-dash">—</div></td>
+             <td>Rp. 2.500.000</td>
+            <td><div class="status-badge badge-approved">Lunas</div></td>
+            <td>Tunai</td>
+            <td><div class="action-btns">
+              <button class="action-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+              <button class="action-btn danger">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
+              </button>
+            </div></td>
           </tr>
-          <tr data-status="disetujui">
+          {{-- <tr data-status="disetujui">
             <td>2</td><td class="peminjam-name">Siti Nurhaliza</td><td>Lab Komputer 1</td><td>Gedung B</td><td>16 Jun 2025</td><td>Workshop Python</td>
             <td><span class="status-badge badge-approved">Disetujui</span></td>
             <td><div class="act-dash">—</div></td>
@@ -255,122 +291,11 @@
             <td>7</td><td class="peminjam-name">Hendra Wijaya</td><td>R. Rapat 101</td><td>Gedung A</td><td>21 Jun 2025</td><td>Interview Kerja</td>
             <td><span class="status-badge badge-approved">Disetujui</span></td>
             <td><div class="act-dash">—</div></td>
-          </tr>
+          </tr> --}}
         </tbody>
       </table>
     </div>
   </div>
 </main>
-
-<!-- Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    {{-- <div class="modal-title">Tambah Peminjaman Baru</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Nama Peminjam</label>
-        <input class="form-input" type="text" placeholder="Nama lengkap" id="namaPeminjam">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Ruangan</label>
-        <input class="form-input" type="text" placeholder="Nama ruangan" id="namaRuangan">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Gedung</label>
-        <select class="form-input" id="gedung">
-          <option>Gedung A</option>
-          <option>Gedung B</option>
-          <option>Gedung C</option>
-          <option>Gedung D</option>
-          <option>Gedung E</option>
-          <option>Gedung F</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tanggal</label>
-        <input class="form-input" type="date" id="tanggal">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Keperluan</label>
-      <input class="form-input" type="text" placeholder="Keterangan keperluan" id="keperluan">
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Batal</button>
-      <button class="btn-primary" onclick="addPeminjaman()">Simpan</button>
-    </div>
-  </div> 
-</div>
-
-<script>
-  function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
-  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-  function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-
-  function approveRow(btn) {
-    const tr = btn.closest('tr');
-    tr.setAttribute('data-status', 'disetujui');
-    tr.querySelector('.status-badge').className = 'status-badge badge-approved';
-    tr.querySelector('.status-badge').textContent = 'Disetujui';
-    tr.cells[7].innerHTML = '<div class="act-dash">—</div>';
-  }
-
-  function rejectRow(btn) {
-    const tr = btn.closest('tr');
-    tr.setAttribute('data-status', 'ditolak');
-    tr.querySelector('.status-badge').className = 'status-badge badge-rejected';
-    tr.querySelector('.status-badge').textContent = 'Ditolak';
-    tr.cells[7].innerHTML = '<div class="act-dash">—</div>';
-  }
-
-  function filterTab(filter, el) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    document.querySelectorAll('#pinjamTable tr').forEach(tr => {
-      const status = tr.getAttribute('data-status');
-      tr.style.display = (filter === 'semua' || status === filter) ? '' : 'none';
-    });
-  }
-
-  function formatDate(d) {
-    if (!d) return '';
-    const dt = new Date(d);
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    return `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
-  }
-
-  function addPeminjaman() {
-    const nama = document.getElementById('namaPeminjam').value;
-    const ruangan = document.getElementById('namaRuangan').value;
-    const gedung = document.getElementById('gedung').value;
-    const tanggal = document.getElementById('tanggal').value;
-    const keperluan = document.getElementById('keperluan').value;
-    if (!nama || !ruangan || !tanggal || !keperluan) { alert('Harap isi semua field!'); return; }
-    const tbody = document.getElementById('pinjamTable');
-    const rowCount = tbody.querySelectorAll('tr').length + 1;
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-status', 'menunggu');
-    tr.innerHTML = `
-      <td>${rowCount}</td>
-      <td class="peminjam-name">${nama}</td>
-      <td>${ruangan}</td><td>${gedung}</td>
-      <td>${formatDate(tanggal)}</td><td>${keperluan}</td>
-      <td><span class="status-badge badge-pending">Menunggu</span></td>
-      <td><div class="action-btns">
-        <button class="act-btn act-approve" onclick="approveRow(this)">
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        </button>
-        <button class="act-btn act-reject" onclick="rejectRow(this)">
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div></td>
-    `;
-    tbody.appendChild(tr);
-    closeModal();
-    ['namaPeminjam','namaRuangan','tanggal','keperluan'].forEach(id => document.getElementById(id).value = '');
-  }
-</script>
 </body>
 </html>

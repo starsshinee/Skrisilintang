@@ -4,542 +4,860 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIBMN - Informasi Fasilitas</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root {
-    --primary: #2563eb;
+    --primary: #1a56db;
     --primary-light: #3b82f6;
-    --primary-dark: #1d4ed8;
+    --primary-dark: #1240a8;
     --accent: #06b6d4;
-    --accent2: #8b5cf6;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --bg: #f0f4ff;
-    --sidebar-bg: #0f172a;
+    --accent2: #7c3aed;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --bg: #f1f5fb;
     --card-bg: #ffffff;
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --border: #e2e8f0;
-    --radius: 16px;
-    --shadow: 0 4px 24px rgba(37,99,235,0.08);
-    --shadow-lg: 0 8px 40px rgba(37,99,235,0.14);
+    --text-primary: #0d1526;
+    --text-secondary: #5b6f8f;
+    --border: #dce4f0;
+    --radius: 18px;
+    --shadow: 0 2px 16px rgba(26,86,219,0.07);
+    --shadow-lg: 0 10px 48px rgba(26,86,219,0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     background: var(--bg);
     color: var(--text-primary);
-    display: flex;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
-  /* ── MAIN CONTENT ── */
-  .main { margin-left: 260px; flex: 1; padding: 0 32px 40px; }
+  /* LAYOUT */
+  .page-wrap { margin-left: 256px; flex: 1; padding: 0 32px 32px; }
 
-  /* TOP BAR */
+  /* TOPBAR */
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 0 24px;
-    position: sticky; top: 0; z-index: 50;
-    background: var(--bg);
+    margin-bottom: 28px;
   }
-  .topbar-left {}
-  .breadcrumb { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-  .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+  .breadcrumb { font-size: 12.5px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+  .breadcrumb a { color: var(--text-secondary); text-decoration: none; transition: color .2s; }
   .breadcrumb a:hover { color: var(--primary); }
-  .breadcrumb span { color: var(--primary); font-weight: 600; }
-  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .notif-btn {
-    width: 40px; height: 40px;
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: 10px; display: grid; place-items: center;
-    cursor: pointer; position: relative; color: var(--text-secondary); transition: all .2s;
+  .breadcrumb .sep { opacity: 0.5; font-size: 10px; }
+  .breadcrumb .current { color: var(--primary); font-weight: 600; }
+  .page-title { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .icon-btn {
+    width: 42px; height: 42px;
+    background: var(--card-bg); border: 1.5px solid var(--border);
+    border-radius: 12px; display: grid; place-items: center;
+    cursor: pointer; color: var(--text-secondary); transition: all .2s;
+    position: relative; text-decoration: none;
   }
-  .notif-btn:hover { border-color: var(--primary); color: var(--primary); }
-  .notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: var(--danger); border-radius: 50%; border: 1.5px solid var(--card-bg); }
+  .icon-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+  .notif-dot { position: absolute; top: 9px; right: 9px; width: 7px; height: 7px; background: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); }
 
-  /* HERO BANNER */
+  /* HERO */
   .hero {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #0891b2 100%);
-    border-radius: 20px;
-    padding: 32px 36px;
-    display: flex; align-items: center; justify-content: space-between;
+    border-radius: 22px;
+    padding: 36px 40px;
+    background: linear-gradient(130deg, #0d1d4e 0%, #1a56db 50%, #0891b2 100%);
     position: relative; overflow: hidden;
     margin-bottom: 32px;
-    box-shadow: 0 8px 32px rgba(37,99,235,0.28);
+    box-shadow: 0 12px 48px rgba(26,86,219,0.32);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: radial-gradient(circle at 75% 50%, rgba(6,182,212,0.2) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0zM40 40h40v40H40z'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
   }
-  .hero-blob { position: absolute; width: 280px; height: 280px; border-radius: 50%; background: rgba(255,255,255,0.05); right: -50px; top: -70px; pointer-events: none; }
+  .hero-orb {
+    position: absolute; border-radius: 50%; pointer-events: none;
+  }
+  .hero-orb-1 { width: 300px; height: 300px; background: rgba(255,255,255,0.04); right: -80px; top: -100px; }
+  .hero-orb-2 { width: 180px; height: 180px; background: rgba(6,182,212,0.12); right: 120px; bottom: -60px; }
+
   .hero-left { position: relative; z-index: 2; }
-  .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; margin-bottom: 12px; }
-  .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 420px; line-height: 1.6; }
-  .hero-right { position: relative; z-index: 2; }
-  .hero-stat { text-align: center; }
-  .hero-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 800; color: #fff; line-height: 1; }
-  .hero-stat-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; }
-  .hero-btn {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
-    background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
-    border: 1.5px solid rgba(255,255,255,0.25);
-    color: #fff; font-size: 13px; font-weight: 600;
-    padding: 10px 20px; border-radius: 10px;
-    cursor: pointer; transition: all .2s; text-decoration: none;
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.12); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9);
+    font-size: 11.5px; font-weight: 600; padding: 5px 14px; border-radius: 30px;
+    margin-bottom: 14px; letter-spacing: 0.3px;
   }
-  .hero-btn:hover { background: rgba(255,255,255,0.28); }
+  .hero-title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: -0.5px; line-height: 1.2; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.72); max-width: 440px; line-height: 1.65; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    background: #fff; color: var(--primary);
+    font-size: 13px; font-weight: 700; padding: 10px 22px;
+    border-radius: 11px; text-decoration: none; transition: all .2s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
+
+  .hero-right { position: relative; z-index: 2; display: flex; gap: 20px; }
+  .hero-stat-card {
+    background: rgba(255,255,255,0.12); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.18); border-radius: 16px;
+    padding: 18px 24px; text-align: center; min-width: 100px;
+  }
+  .hero-stat-num { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 900; color: #fff; line-height: 1; }
+  .hero-stat-label { font-size: 11.5px; color: rgba(255,255,255,0.65); margin-top: 5px; font-weight: 500; }
 
   /* SEARCH & FILTER */
-  .search-bar {
-    display: flex; align-items: center; gap: 14px;
-    margin-bottom: 28px;
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px; flex-wrap: wrap;
   }
-  .search-input-wrap {
-    flex: 1; position: relative;
-  }
-  .search-input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 14px; }
+  .search-wrap { flex: 1; min-width: 220px; position: relative; }
+  .search-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 13px; }
   .search-input {
-    width: 100%; padding: 11px 14px 11px 42px;
-    border: 1.5px solid var(--border); border-radius: 11px;
-    font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif;
+    width: 100%; padding: 12px 14px 12px 44px;
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
     color: var(--text-primary); background: var(--card-bg);
     outline: none; transition: all .2s;
     box-shadow: var(--shadow);
   }
-  .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-  .filter-group { display: flex; gap: 8px; }
-  .filter-btn {
-    padding: 10px 16px; border-radius: 10px;
-    font-size: 12px; font-weight: 600;
+  .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(26,86,219,0.08); }
+  .filter-tabs { display: flex; gap: 6px; }
+  .ftab {
+    padding: 10px 18px; border-radius: 10px;
+    font-size: 12.5px; font-weight: 600;
     border: 1.5px solid var(--border); background: var(--card-bg);
     color: var(--text-secondary); cursor: pointer;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: all .2s; display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s; display: flex; align-items: center; gap: 7px;
     box-shadow: var(--shadow);
   }
-  .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .ftab:hover { border-color: var(--primary); color: var(--primary); }
+  .ftab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 14px rgba(26,86,219,0.3); }
 
-  /* SECTION TITLE */
-  .section-label {
-    font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700;
-    color: var(--text-primary); margin-bottom: 18px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-label i { color: var(--primary); font-size: 16px; }
-  .section-label .count { font-size: 12px; font-weight: 600; color: var(--primary); background: rgba(37,99,235,0.1); padding: 3px 10px; border-radius: 20px; }
+  /* SECTION HEADER */
+  .sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .sec-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
+  .sec-title i { color: var(--primary); font-size: 17px; }
+  .fac-count { font-size: 11.5px; font-weight: 700; color: var(--primary); background: rgba(26,86,219,0.1); padding: 4px 12px; border-radius: 20px; }
 
   /* FACILITY GRID */
-  .fac-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 36px; }
+  .fac-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: 40px; }
 
+  /* FACILITY CARD */
   .fac-card {
     background: var(--card-bg);
     border-radius: var(--radius);
     border: 1.5px solid var(--border);
     overflow: hidden;
-    transition: all .25s;
-    cursor: pointer;
+    transition: all .3s cubic-bezier(.34,1.2,.64,1);
+    cursor: default;
     box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
   }
-  .fac-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
+  .fac-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: rgba(26,86,219,0.2); }
 
-  .fac-card-top {
-    padding: 22px 20px 18px;
-    color: #fff; position: relative; overflow: hidden;
+  /* IMAGE SLIDER */
+  .slider-wrap { position: relative; height: 200px; overflow: hidden; flex-shrink: 0; }
+  .slider-track { display: flex; height: 100%; transition: transform .45s cubic-bezier(.4,0,.2,1); }
+  .slide-img {
+    min-width: 100%; height: 100%;
+    object-fit: cover; flex-shrink: 0;
+    background-size: cover; background-position: center;
   }
-  .fac-card-top::after {
-    content: '';
-    position: absolute; right: -18px; bottom: -18px;
-    width: 80px; height: 80px; border-radius: 50%;
-    background: rgba(255,255,255,0.1);
+  /* Gradient overlay for text on image */
+  .slider-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 50%, transparent 100%);
   }
-  .fac-card-icon { font-size: 28px; margin-bottom: 12px; display: block; position: relative; z-index: 1; }
-  .fac-card-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; position: relative; z-index: 1; margin-bottom: 4px; }
-  .fac-card-desc { font-size: 12px; opacity: .8; line-height: 1.5; position: relative; z-index: 1; }
-
-  .fac-card-body { padding: 16px 20px; }
-
-  .fac-detail-row {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
+  /* Slide controls */
+  .slide-prev, .slide-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,0.9); border: none;
+    display: grid; place-items: center; cursor: pointer;
+    font-size: 11px; color: var(--text-primary);
+    transition: all .2s; z-index: 5;
+    opacity: 0;
   }
-  .fac-detail-label { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
-  .fac-detail-label i { color: var(--primary); font-size: 10px; }
-  .fac-detail-val { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+  .fac-card:hover .slide-prev,
+  .fac-card:hover .slide-next { opacity: 1; }
+  .slide-prev { left: 10px; }
+  .slide-next { right: 10px; }
+  .slide-prev:hover, .slide-next:hover { background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.2); transform: translateY(-50%) scale(1.1); }
 
-  .fac-price-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    margin-top: 6px;
+  /* Dots */
+  .slide-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.55); transition: all .3s; cursor: pointer; }
+  .dot.active { background: #fff; width: 18px; border-radius: 4px; }
+
+  /* Status badge on image */
+  .slide-status {
+    position: absolute; top: 12px; right: 12px; z-index: 5;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+    backdrop-filter: blur(8px);
   }
-  .fac-price { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: var(--primary); }
-  .fac-price-sub { font-size: 10px; color: var(--text-secondary); }
+  .slide-status.available { background: rgba(5,150,105,0.85); color: #fff; }
+  .slide-status.booked { background: rgba(217,119,6,0.85); color: #fff; }
+  .slide-status i { font-size: 7px; }
 
-  .fac-action-btn {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    width: 100%; margin-top: 14px;
-    padding: 10px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: #fff; border: none; border-radius: 10px;
-    font-size: 12px; font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    cursor: pointer; transition: all .2s;
-    text-decoration: none;
-    box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+  /* Image counter */
+  .img-counter {
+    position: absolute; top: 12px; left: 12px; z-index: 5;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+    color: #fff; font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 6px;
   }
-  .fac-action-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(37,99,235,0.4); }
 
-  /* AVAILABILITY BADGE */
+  /* Card title on image */
+  .card-img-title { position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 12px 16px 14px; }
+  .card-img-name { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+  .card-img-cat { font-size: 11px; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 5px; }
+
+  /* Card Body */
+  .card-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+  /* Price + availability row */
+  .price-avail-row { display: flex; align-items: flex-start; justify-content: space-between; }
+  .price-block {}
+  .price-label { font-size: 10px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .price-value { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 900; color: var(--primary); letter-spacing: -0.5px; }
+  .price-unit { font-size: 11px; color: var(--text-secondary); font-weight: 400; }
+  .avail-block { text-align: right; }
+  .avail-label { font-size: 10px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
   .avail-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 6px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 7px;
   }
-  .avail-badge.available { background: rgba(16,185,129,0.1); color: var(--success); }
-  .avail-badge.booked { background: rgba(245,158,11,0.1); color: var(--warning); }
+  .avail-badge.available { background: rgba(5,150,105,0.1); color: var(--success); border: 1px solid rgba(5,150,105,0.2); }
+  .avail-badge.booked { background: rgba(217,119,6,0.1); color: var(--warning); border: 1px solid rgba(217,119,6,0.2); }
+  .avail-badge .pulse { width: 7px; height: 7px; border-radius: 50%; }
+  .avail-badge.available .pulse { background: var(--success); animation: blink 1.5s infinite; }
+  .avail-badge.booked .pulse { background: var(--warning); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* INFO SECTION */
+  /* Divider */
+  .card-divider { height: 1px; background: var(--border); }
+
+  /* Detail rows */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .detail-item { background: #f7f9fd; border-radius: 10px; padding: 9px 12px; border: 1px solid #eaf0fb; }
+  .detail-key { font-size: 10px; color: var(--text-secondary); font-weight: 500; margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+  .detail-key i { color: var(--primary); font-size: 9px; }
+  .detail-val { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+
+  /* Facilities tags */
+  .fac-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .fac-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 600; padding: 3px 9px;
+    border-radius: 6px; background: rgba(26,86,219,0.07); color: var(--primary);
+    border: 1px solid rgba(26,86,219,0.15);
+  }
+  .fac-tag i { font-size: 9px; }
+
+  /* Action button */
+  .action-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%; padding: 11px;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: #fff; border: none; border-radius: 11px;
+    font-size: 12.5px; font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: all .25s;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(26,86,219,0.28);
+    margin-top: auto;
+  }
+  .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,86,219,0.38); }
+  .action-btn.booked-btn { background: linear-gradient(135deg, #92400e, #d97706); box-shadow: 0 4px 14px rgba(217,119,6,0.3); }
+  .action-btn.booked-btn:hover { box-shadow: 0 8px 24px rgba(217,119,6,0.4); }
+
+  /* ── INFO SECTIONS ── */
   .info-section {
     background: var(--card-bg);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     box-shadow: var(--shadow);
     overflow: hidden;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
-  .info-section-header {
-    padding: 20px 28px 16px;
-    border-bottom: 1px solid var(--border);
+  .info-header {
+    padding: 18px 26px 16px;
+    border-bottom: 1.5px solid var(--border);
     display: flex; align-items: center; gap: 10px;
+    background: #fafcff;
   }
-  .info-section-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
-  .info-section-title i { color: var(--primary); }
-  .info-section-body { padding: 24px 28px; }
+  .info-header-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(26,86,219,0.1); color: var(--primary);
+    display: grid; place-items: center; font-size: 15px;
+  }
+  .info-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+  .info-body { padding: 26px; }
 
-  .step-list { display: flex; flex-direction: column; gap: 16px; }
-  .step-item { display: flex; align-items: flex-start; gap: 16px; }
+  /* Steps */
+  .step-list { display: flex; flex-direction: column; gap: 0; }
+  .step-item { display: flex; align-items: flex-start; gap: 18px; position: relative; padding-bottom: 24px; }
+  .step-item:last-child { padding-bottom: 0; }
+  .step-item::before {
+    content: ''; position: absolute;
+    left: 19px; top: 40px; bottom: 0; width: 2px;
+    background: linear-gradient(to bottom, rgba(26,86,219,0.3), transparent);
+  }
+  .step-item:last-child::before { display: none; }
   .step-num {
-    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: #fff; font-size: 13px; font-weight: 800;
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: #fff; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800;
     display: grid; place-items: center;
-    box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+    box-shadow: 0 4px 14px rgba(26,86,219,0.3); z-index: 1;
   }
-  .step-text { padding-top: 4px; }
-  .step-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
-  .step-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .step-content { padding-top: 7px; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .step-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
 
-  .syarat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .syarat-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    background: #f8faff; border-radius: 10px; padding: 12px 14px;
-    border: 1px solid #e8eeff;
+  /* Syarat grid */
+  .syarat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .syarat-card {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: #f7f9fd; border-radius: 12px; padding: 14px 16px;
+    border: 1.5px solid #eaf0fb; transition: all .2s;
   }
-  .syarat-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(37,99,235,0.1); color: var(--primary); display: grid; place-items: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-  .syarat-text { font-size: 12px; color: var(--text-primary); font-weight: 500; line-height: 1.4; }
+  .syarat-card:hover { border-color: rgba(26,86,219,0.25); background: #f0f5ff; }
+  .syarat-icon { width: 34px; height: 34px; border-radius: 9px; background: rgba(26,86,219,0.1); color: var(--primary); display: grid; place-items: center; font-size: 13px; flex-shrink: 0; }
+  .syarat-text { font-size: 12.5px; color: var(--text-primary); font-weight: 500; line-height: 1.5; padding-top: 3px; }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-  .animate { animation: fadeUp .5s ease both; }
-  .d1 { animation-delay: .05s; } .d2 { animation-delay: .1s; } .d3 { animation-delay: .15s; }
-  .d4 { animation-delay: .2s; } .d5 { animation-delay: .25s; } .d6 { animation-delay: .3s; }
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp .5s ease both; }
+  .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}
+  .d4{animation-delay:.2s}.d5{animation-delay:.25s}.d6{animation-delay:.3s}
+  .d7{animation-delay:.35s}.d8{animation-delay:.4s}
 
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#c8d5e8;border-radius:10px}
+
+  @media(max-width:900px){
+    .fac-grid{grid-template-columns:repeat(2,1fr)}
+    .hero-right{display:none}
+  }
+  @media(max-width:600px){
+    .fac-grid{grid-template-columns:1fr}
+    .syarat-grid{grid-template-columns:1fr}
+    .detail-grid{grid-template-columns:1fr}
+    .page-wrap{padding:20px 14px 40px}
+    .hero{padding:24px 20px}
+    .hero-title{font-size:20px}
+  }
 </style>
 </head>
 <body>
 
 @include('partials.sidebar')
 
-<!-- MAIN -->
-<main class="main">
+<div class="page-wrap">
   <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
+  <div class="topbar fade-up d1">
+    <div>
       <div class="breadcrumb">
-        <a href="{{ route('tamu.dashboard') }}">Dashboard</a>
-        <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        <span>Informasi Fasilitas</span>
+        <a href="#">Dashboard</a>
+        <span class="sep"><i class="fas fa-chevron-right"></i></span>
+        <span class="current">Informasi Fasilitas</span>
       </div>
-      <div class="topbar-title">Informasi Fasilitas</div>
+      <div class="page-title">Informasi Fasilitas</div>
     </div>
-    <div class="topbar-right">
-      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
-    </div>
-  </div>
-
-  <!-- HERO -->
-  <div class="hero animate d1">
-    <div class="hero-blob"></div>
-    <div class="hero-left">
-      <div class="hero-tag"><i class="fas fa-building"></i> BPMP Provinsi Gorontalo</div>
-      <div class="hero-title">Fasilitas Tersedia untuk Dipinjam</div>
-      <div class="hero-sub">Temukan fasilitas BPMP yang sesuai kebutuhan Anda. Ajukan permohonan peminjaman dengan mudah dan cepat.</div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-stat">
-        <div class="hero-stat-num">6</div>
-        <div class="hero-stat-label">Jenis Fasilitas</div>
-      </div>
-      <a href="{{ route('tamu.peminjaman-gedung') }}" class="hero-btn">
-        <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
+    <div class="topbar-actions">
+      <a href="#" class="icon-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></a>
+      <a href="#" class="icon-btn" style="width:auto;padding:0 16px;gap:8px;font-size:13px;font-weight:700;color:var(--primary)">
+        <i class="fas fa-calendar-plus"></i> Ajukan
       </a>
     </div>
   </div>
 
+  <!-- HERO -->
+  <div class="hero fade-up d2">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-left">
+      <div class="hero-tag"><i class="fas fa-building"></i> BPMP Provinsi Gorontalo</div>
+      <div class="hero-title">Fasilitas Tersedia<br>untuk Dipinjam</div>
+      <div class="hero-sub">Temukan fasilitas BPMP yang sesuai kebutuhan Anda. Ajukan permohonan peminjaman dengan mudah dan cepat.</div>
+      <a href="#" class="hero-cta"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman Sekarang</a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat-card">
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">Jenis Fasilitas</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hero-stat-num" style="color:#6ee7b7">5</div>
+        <div class="hero-stat-label">Tersedia Kini</div>
+      </div>
+    </div>
+  </div>
+
   <!-- SEARCH & FILTER -->
-  <div class="search-bar animate d2">
-    <div class="search-input-wrap">
+  <div class="toolbar fade-up d3">
+    <div class="search-wrap">
       <i class="fas fa-search"></i>
       <input type="text" class="search-input" id="searchInput" placeholder="Cari fasilitas..." oninput="filterFacilities()">
     </div>
-    <div class="filter-group">
-      <button class="filter-btn active" onclick="setFilter(this,'all')" id="filter-all"><i class="fas fa-border-all"></i> Semua</button>
-      <button class="filter-btn" onclick="setFilter(this,'ruang')" id="filter-ruang"><i class="fas fa-door-open"></i> Ruangan</button>
-      <button class="filter-btn" onclick="setFilter(this,'kendaraan')" id="filter-kendaraan"><i class="fas fa-car"></i> Kendaraan</button>
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="setFilter(this,'all')"><i class="fas fa-border-all"></i> Semua</button>
+      <button class="ftab" onclick="setFilter(this,'ruang')"><i class="fas fa-door-open"></i> Ruangan</button>
+      <button class="ftab" onclick="setFilter(this,'kendaraan')"><i class="fas fa-car"></i> Kendaraan</button>
     </div>
   </div>
 
-  <!-- FACILITY GRID -->
-  <div class="section-label animate d3">
-    <i class="fas fa-building"></i> Daftar Fasilitas
-    <span class="count" id="facilityCount">6 Fasilitas</span>
+  <!-- SECTION HEADER -->
+  <div class="sec-header fade-up d3">
+    <div class="sec-title"><i class="fas fa-building"></i> Daftar Fasilitas</div>
+    <div class="fac-count" id="facCount">6 Fasilitas</div>
   </div>
 
+  <!-- ===================== FACILITY GRID ===================== -->
   <div class="fac-grid" id="facGrid">
-    <!-- Aula -->
-    <div class="fac-card animate d3" data-category="ruang" data-name="aula utama bpmp">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#1e3a8a,#2563eb)">
-        <i class="fas fa-chalkboard-user fac-card-icon"></i>
-        <div class="fac-card-name">Aula Utama BPMP</div>
-        <div class="fac-card-desc">Aula berkapasitas besar, dilengkapi AC sentral & sound system profesional</div>
+
+    <!-- 1. AULA UTAMA -->
+    <div class="fac-card fade-up d3" data-category="ruang" data-name="aula utama bpmp">
+      <div class="slider-wrap" data-slider="0">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#1e3a8a,#2563eb); background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&q=80'), linear-gradient(135deg,#1e3a8a,#2563eb); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#1e40af,#3b82f6); background-image: url('https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=600&q=80'), linear-gradient(135deg,#1e40af,#3b82f6); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#1e3a8a,#1d4ed8); background-image: url('https://images.unsplash.com/photo-1571624436279-b272aff752b5?w=600&q=80'), linear-gradient(135deg,#1e3a8a,#1d4ed8); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-0">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(0,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(0,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-0">
+          <div class="dot active" onclick="goSlide(0,0)"></div>
+          <div class="dot" onclick="goSlide(0,1)"></div>
+          <div class="dot" onclick="goSlide(0,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Aula Utama BPMP</div>
+          <div class="card-img-cat"><i class="fas fa-door-open"></i> Ruangan Besar</div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-users"></i> Kapasitas</div>
-          <div class="fac-detail-val">200 Orang</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-wifi"></i> Fasilitas</div>
-          <div class="fac-detail-val">AC, Sound, Proyektor</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge available"><i class="fas fa-circle" style="font-size:6px"></i> Tersedia</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 2.500.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 2.500.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val">200 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">400 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
+            <div class="detail-val">Senin–Sabtu</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
+            <div class="detail-val">07.00–21.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC Sentral</span>
+            <span class="fac-tag"><i class="fas fa-volume-high"></i> Sound System</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
+            <span class="fac-tag"><i class="fas fa-toilet"></i> Toilet</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
-    <!-- Ruang Rapat VIP -->
-    <div class="fac-card animate d3" data-category="ruang" data-name="ruang rapat vip">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6)">
-        <i class="fas fa-people-group fac-card-icon"></i>
-        <div class="fac-card-name">Ruang Rapat VIP</div>
-        <div class="fac-card-desc">Ruangan eksklusif dengan fasilitas video conference & whiteboard digital</div>
+    <!-- 2. RUANG RAPAT VIP -->
+    <div class="fac-card fade-up d3" data-category="ruang" data-name="ruang rapat vip">
+      <div class="slider-wrap" data-slider="1">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#5b21b6,#7c3aed); background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80'), linear-gradient(135deg,#5b21b6,#7c3aed); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#6d28d9,#8b5cf6); background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=80'), linear-gradient(135deg,#6d28d9,#8b5cf6); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#4c1d95,#7c3aed); background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80'), linear-gradient(135deg,#4c1d95,#7c3aed); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-1">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(1,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(1,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-1">
+          <div class="dot active" onclick="goSlide(1,0)"></div>
+          <div class="dot" onclick="goSlide(1,1)"></div>
+          <div class="dot" onclick="goSlide(1,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Sidang</div>
+          <div class="card-img-cat"><i class="fas fa-door-open"></i> Ruang Eksklusif</div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-users"></i> Kapasitas</div>
-          <div class="fac-detail-val">20 Orang</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-wifi"></i> Fasilitas</div>
-          <div class="fac-detail-val">VC, Whiteboard, AC</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge available"><i class="fas fa-circle" style="font-size:6px"></i> Tersedia</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 1.000.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 1.000.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6);box-shadow:0 3px 10px rgba(139,92,246,0.3)">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val">20 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">60 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
+            <div class="detail-val">Senin–Jumat</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
+            <div class="detail-val">08.00–17.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-video"></i> Video Conf</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Whiteboard</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6);box-shadow:0 4px 14px rgba(139,92,246,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
-    <!-- Lab Komputer -->
-    <div class="fac-card animate d4" data-category="ruang" data-name="lab komputer">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#0e7490,#06b6d4)">
-        <i class="fas fa-desktop fac-card-icon"></i>
-        <div class="fac-card-name">Lab Komputer</div>
-        <div class="fac-card-desc">30 unit komputer terbaru dengan internet fiber, ideal untuk pelatihan IT</div>
+    <!-- 3. Ruang Kelas-->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="lab komputer">
+      <div class="slider-wrap" data-slider="2">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#06b6d4); background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80'), linear-gradient(135deg,#0e7490,#06b6d4); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0891b2,#22d3ee); background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80'), linear-gradient(135deg,#0891b2,#22d3ee); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#0891b2); background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80'), linear-gradient(135deg,#0e7490,#0891b2); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status booked"><i class="fas fa-circle"></i> Sedang Dipakai</span>
+        <div class="img-counter" id="counter-2">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(2,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(2,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-2">
+          <div class="dot active" onclick="goSlide(2,0)"></div>
+          <div class="dot" onclick="goSlide(2,1)"></div>
+          <div class="dot" onclick="goSlide(2,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Kelas</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 1-4 & Ruang Tilango</div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-computer"></i> Unit PC</div>
-          <div class="fac-detail-val">30 Unit</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-wifi"></i> Fasilitas</div>
-          <div class="fac-detail-val">Internet, AC, Proyektor</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge booked"><i class="fas fa-circle" style="font-size:6px"></i> Sedang Dipakai</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 1.500.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 1.500.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge booked"><div class="pulse"></div> Sedang Dipakai</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#0e7490,#06b6d4);box-shadow:0 3px 10px rgba(6,182,212,0.3)">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-computer"></i> Unit PC</div>
+            <div class="detail-val">30 Unit</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">80 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
+            <div class="detail-val">Senin–Sabtu</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
+            <div class="detail-val">08.00–17.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-ethernet"></i> Internet Fiber</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-print"></i> Printer</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
-    <!-- Ruang Pelatihan -->
-    <div class="fac-card animate d4" data-category="ruang" data-name="ruang pelatihan">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#065f46,#10b981)">
-        <i class="fas fa-book-open fac-card-icon"></i>
-        <div class="fac-card-name">Ruang Pelatihan A</div>
-        <div class="fac-card-desc">Ruang kelas modern dengan kursi ergonomis, AC, dan fasilitas multimedia</div>
+    <!-- 4. Mess -->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="ruang pelatihan">
+      <div class="slider-wrap" data-slider="3">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#059669); background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80'), linear-gradient(135deg,#065f46,#059669); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#047857,#10b981); background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80'), linear-gradient(135deg,#047857,#10b981); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#34d399); background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'), linear-gradient(135deg,#065f46,#34d399); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-3">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(3,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(3,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-3">
+          <div class="dot active" onclick="goSlide(3,0)"></div>
+          <div class="dot" onclick="goSlide(3,1)"></div>
+          <div class="dot" onclick="goSlide(3,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">RMess</div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo daa & Bandayo kiki</div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-users"></i> Kapasitas</div>
-          <div class="fac-detail-val">40 Orang</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-wifi"></i> Fasilitas</div>
-          <div class="fac-detail-val">Multimedia, AC, Papan</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge available"><i class="fas fa-circle" style="font-size:6px"></i> Tersedia</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 800.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 800.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 3px 10px rgba(16,185,129,0.3)">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val">40 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">100 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
+            <div class="detail-val">Senin–Sabtu</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
+            <div class="detail-val">07.30–17.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-photo-film"></i> Multimedia</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
-    <!-- Kendaraan Minibus -->
-    <div class="fac-card animate d5" data-category="kendaraan" data-name="kendaraan minibus">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#92400e,#f59e0b)">
-        <i class="fas fa-van-shuttle fac-card-icon"></i>
-        <div class="fac-card-name">Kendaraan Minibus</div>
-        <div class="fac-card-desc">Toyota HiAce untuk kegiatan dinas dan perjalanan lapangan</div>
+    <!-- 5. Asrama -->
+    <div class="fac-card fade-up d5" data-category="kendaraan" data-name="kendaraan minibus">
+      <div class="slider-wrap" data-slider="4">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#d97706); background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80'), linear-gradient(135deg,#78350f,#d97706); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#92400e,#f59e0b); background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80'), linear-gradient(135deg,#92400e,#f59e0b); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#fbbf24); background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80'), linear-gradient(135deg,#78350f,#fbbf24); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-4">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(4,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(4,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-4">
+          <div class="dot active" onclick="goSlide(4,0)"></div>
+          <div class="dot" onclick="goSlide(4,1)"></div>
+          <div class="dot" onclick="goSlide(4,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Asrama</div>
+          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 1-4 </div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-person-seat"></i> Penumpang</div>
-          <div class="fac-detail-val">16 Orang</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-gas-pump"></i> Bahan Bakar</div>
-          <div class="fac-detail-val">Sudah Termasuk</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge available"><i class="fas fa-circle" style="font-size:6px"></i> Tersedia</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 750.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 750.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 3px 10px rgba(245,158,11,0.3)">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-person-seat"></i> Penumpang</div>
+            <div class="detail-val">16 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-gas-pump"></i> Bahan Bakar</div>
+            <div class="detail-val">Termasuk</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-id-card-clip"></i> Pengemudi</div>
+            <div class="detail-val">Termasuk</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Operasional</div>
+            <div class="detail-val">07.00–20.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Kendaraan</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-music"></i> Audio</span>
+            <span class="fac-tag"><i class="fas fa-user-tie"></i> Sopir</span>
+            <span class="fac-tag"><i class="fas fa-gas-pump"></i> BBM</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 4px 14px rgba(217,119,6,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
-    <!-- Gedung Serbaguna -->
-    <div class="fac-card animate d5" data-category="ruang" data-name="gedung serbaguna">
-      <div class="fac-card-top" style="background:linear-gradient(135deg,#9f1239,#f43f5e)">
-        <i class="fas fa-house fac-card-icon"></i>
-        <div class="fac-card-name">Gedung Serbaguna</div>
-        <div class="fac-card-desc">Area 500m² untuk pameran, bazar, acara outdoor skala besar</div>
+    <!-- 6. Ruang Makan -->
+    <div class="fac-card fade-up d5" data-category="ruang" data-name="gedung serbaguna">
+      <div class="slider-wrap" data-slider="5">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#881337,#e11d48); background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80'), linear-gradient(135deg,#881337,#e11d48); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#9f1239,#f43f5e); background-image: url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80'), linear-gradient(135deg,#9f1239,#f43f5e); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#881337,#fb7185); background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&q=80'), linear-gradient(135deg,#881337,#fb7185); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-5">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(5,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(5,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-5">
+          <div class="dot active" onclick="goSlide(5,0)"></div>
+          <div class="dot" onclick="goSlide(5,1)"></div>
+          <div class="dot" onclick="goSlide(5,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Makan</div>
+          <div class="card-img-cat"><i class="fas fa-house"></i> Olamita 1&2 </div>
+        </div>
       </div>
-      <div class="fac-card-body">
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-users"></i> Kapasitas</div>
-          <div class="fac-detail-val">300 Orang</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-ruler-combined"></i> Luas Area</div>
-          <div class="fac-detail-val">500 m²</div>
-        </div>
-        <div class="fac-detail-row">
-          <div class="fac-detail-label"><i class="fas fa-circle-check"></i> Status</div>
-          <span class="avail-badge available"><i class="fas fa-circle" style="font-size:6px"></i> Tersedia</span>
-        </div>
-        <div class="fac-price-row">
-          <div>
-            <div class="fac-price">Rp 3.000.000</div>
-            <div class="fac-price-sub">per hari</div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 3.000.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
           </div>
         </div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="fac-action-btn" style="background:linear-gradient(135deg,#9f1239,#e11d48);box-shadow:0 3px 10px rgba(244,63,94,0.3)">
-          <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
-        </a>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val">300 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">500 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
+            <div class="detail-val">Setiap Hari</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
+            <div class="detail-val">07.00–22.00</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-volume-high"></i> Sound</span>
+            <span class="fac-tag"><i class="fas fa-parking"></i> Parkir Luas</span>
+            <span class="fac-tag"><i class="fas fa-toilet"></i> Toilet</span>
+            <span class="fac-tag"><i class="fas fa-utensils"></i> Catering Ready</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#9f1239,#e11d48);box-shadow:0 4px 14px rgba(244,63,94,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
-  </div>
+
+  </div><!-- end fac-grid -->
 
   <!-- PROSEDUR PEMINJAMAN -->
-  <div class="info-section animate d5">
-    <div class="info-section-header">
-      <div class="info-section-title"><i class="fas fa-list-ol"></i> Prosedur Peminjaman</div>
+  <div class="info-section fade-up d6">
+    <div class="info-header">
+      <div class="info-header-icon"><i class="fas fa-list-ol"></i></div>
+      <div class="info-title">Prosedur Peminjaman</div>
     </div>
-    <div class="info-section-body">
+    <div class="info-body">
       <div class="step-list">
         <div class="step-item">
           <div class="step-num">1</div>
-          <div class="step-text">
+          <div class="step-content">
             <div class="step-title">Pilih Fasilitas</div>
             <div class="step-desc">Pilih fasilitas yang ingin dipinjam dan periksa ketersediaannya sesuai tanggal yang diinginkan.</div>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">2</div>
-          <div class="step-text">
+          <div class="step-content">
             <div class="step-title">Isi Formulir Peminjaman</div>
             <div class="step-desc">Lengkapi data diri, instansi, tujuan penggunaan, dan rentang tanggal peminjaman.</div>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">3</div>
-          <div class="step-text">
+          <div class="step-content">
             <div class="step-title">Tunggu Persetujuan</div>
             <div class="step-desc">Permohonan akan ditinjau oleh admin BPMP. Notifikasi persetujuan dikirim dalam 1×24 jam kerja.</div>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">4</div>
-          <div class="step-text">
+          <div class="step-content">
             <div class="step-title">Gunakan Fasilitas</div>
             <div class="step-desc">Setelah disetujui, tunjukkan bukti persetujuan kepada petugas dan gunakan fasilitas sesuai waktu yang disepakati.</div>
           </div>
@@ -549,33 +867,34 @@
   </div>
 
   <!-- SYARAT & KETENTUAN -->
-  <div class="info-section animate d6">
-    <div class="info-section-header">
-      <div class="info-section-title"><i class="fas fa-shield-halved"></i> Syarat & Ketentuan</div>
+  <div class="info-section fade-up d7">
+    <div class="info-header">
+      <div class="info-header-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="info-title">Syarat &amp; Ketentuan</div>
     </div>
-    <div class="info-section-body">
-      <div class="syarat-list">
-        <div class="syarat-item">
+    <div class="info-body">
+      <div class="syarat-grid">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-id-card"></i></div>
           <div class="syarat-text">Peminjam wajib memiliki akun terdaftar dan terverifikasi di sistem SIBMN</div>
         </div>
-        <div class="syarat-item">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-file-signature"></i></div>
           <div class="syarat-text">Mengisi surat permohonan peminjaman dengan lengkap dan benar</div>
         </div>
-        <div class="syarat-item">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-calendar-days"></i></div>
           <div class="syarat-text">Pengajuan dilakukan minimal 3 hari kerja sebelum tanggal penggunaan</div>
         </div>
-        <div class="syarat-item">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-hand-holding"></i></div>
           <div class="syarat-text">Bertanggung jawab penuh atas fasilitas selama masa peminjaman</div>
         </div>
-        <div class="syarat-item">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-ban"></i></div>
           <div class="syarat-text">Dilarang memindahtangankan fasilitas kepada pihak ketiga tanpa izin</div>
         </div>
-        <div class="syarat-item">
+        <div class="syarat-card">
           <div class="syarat-icon"><i class="fas fa-clock-rotate-left"></i></div>
           <div class="syarat-text">Fasilitas dikembalikan dalam kondisi baik dan tepat waktu sesuai perjanjian</div>
         </div>
@@ -583,37 +902,92 @@
     </div>
   </div>
 
-</main>
+</div><!-- end page-wrap -->
 
 <script>
+  // ── SLIDER STATE ──
+  const sliderState = {};
+
+  function initSliders() {
+    document.querySelectorAll('[data-slider]').forEach(wrap => {
+      const id = parseInt(wrap.dataset.slider);
+      sliderState[id] = { current: 0, total: wrap.querySelectorAll('.slide-img').length };
+    });
+  }
+
+  function goSlide(id, idx) {
+    const wrap = document.querySelector(`[data-slider="${id}"]`);
+    const track = wrap.querySelector('.slider-track');
+    const total = sliderState[id].total;
+    sliderState[id].current = (idx + total) % total;
+    const cur = sliderState[id].current;
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    // Update dots
+    const dots = document.querySelectorAll(`#dots-${id} .dot`);
+    dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+    // Update counter
+    document.getElementById(`counter-${id}`).textContent = `${cur + 1} / ${total}`;
+  }
+
+  function slideCard(id, dir) {
+    const cur = sliderState[id].current;
+    goSlide(id, cur + dir);
+  }
+
+  // Auto-slide every 4s
+  function startAutoSlide() {
+    setInterval(() => {
+      Object.keys(sliderState).forEach(id => {
+        const card = document.querySelector(`[data-slider="${id}"]`).closest('.fac-card');
+        if (card && !card.matches(':hover')) {
+          slideCard(parseInt(id), 1);
+        }
+      });
+    }, 4000);
+  }
+
+  // Touch/swipe support
+  function initSwipe() {
+    document.querySelectorAll('[data-slider]').forEach(wrap => {
+      const id = parseInt(wrap.dataset.slider);
+      let startX = 0;
+      wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, {passive:true});
+      wrap.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) slideCard(id, dx < 0 ? 1 : -1);
+      }, {passive:true});
+    });
+  }
+
+  // ── FILTER ──
   let currentFilter = 'all';
 
   function setFilter(el, filter) {
     currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     filterFacilities();
   }
 
   function filterFacilities() {
     const q = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.querySelectorAll('.fac-card');
     let visible = 0;
-    cards.forEach(card => {
+    document.querySelectorAll('.fac-card').forEach(card => {
       const cat = card.dataset.category;
       const name = card.dataset.name;
       const matchFilter = currentFilter === 'all' || cat === currentFilter;
       const matchSearch = name.includes(q);
-      if (matchFilter && matchSearch) {
-        card.style.display = '';
-        visible++;
-      } else {
-        card.style.display = 'none';
-      }
+      const show = matchFilter && matchSearch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
     });
-    document.getElementById('facilityCount').textContent = visible + ' Fasilitas';
+    document.getElementById('facCount').textContent = visible + ' Fasilitas';
   }
-</script>
 
+  // Init
+  initSliders();
+  startAutoSlide();
+  initSwipe();
+</script>
 </body>
 </html>

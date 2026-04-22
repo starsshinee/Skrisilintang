@@ -65,21 +65,33 @@
 
   .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
   .topbar {
-    background: var(--card-bg); border-bottom: 1px solid var(--border);
-    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 50;
   }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
   .notif-btn {
-    position: relative; width: 38px; height: 38px; border-radius: 50%;
-    background: var(--body-bg); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid var(--border);
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
   }
-  .notif-badge {
-    position: absolute; top: 4px; right: 4px;
-    width: 8px; height: 8px; background: var(--danger);
-    border-radius: 50%; border: 2px solid #fff;
+  .notif-dot { width: 8px; height: 8px; background: #EF4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
+  .date-text { font-size: 13px; color: #64748B; font-weight: 500; }
+  .btn-keluar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface); color: #64748B;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s;
   }
-  .content { padding: 24px 28px; flex: 1; }
+  .btn-keluar:hover { background: #FEF2F2; color: #EF4444; }
+
+  .content { padding: 28px; flex: 1; }
+  
 
   /* Toolbar */
   .toolbar {
@@ -180,9 +192,17 @@
 
 <main class="main">
   <div class="topbar">
-    <div class="notif-btn">
-      <svg width="18" height="18" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <div class="notif-badge"></div>
+    <span class="topbar-title">Data Gedung</span>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <span class="date-text">Jumat, 17 April 2026</span>
+      <button class="btn-keluar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
+        Keluar
+      </button>
     </div>
   </div>
   <div class="content">
@@ -203,80 +223,34 @@
           <tr>
             <th>No</th>
             <th>Nama Gedung</th>
-            <th>Lantai</th>
-            <th>Ruangan</th>
+            <th>Gambar</th>
+            <th>Tarif Sewa</th>
+            <th>kapasitas</th>
             <th>Ketersediaan</th>
-            <th>Tahun Bangun</th>
-            <th>Kondisi</th>
-            <th>Foto</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody id="tableBody">
           <tr>
-            <td>1</td><td>Gedung A - Rektorat</td><td>4</td><td>18</td>
-            <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2015</td>
-            <td><span class="status-badge badge-baik">Baik</span></td>
+            <td>1</td>
+            <td>Gedung Aula Utama</td>
             <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
-            <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>\
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
-            </div></td>
-          </tr>
-          <tr>
-            <td>2</td><td>Gedung B - Fakultas Teknik</td><td>3</td><td>24</td>
+            <td>Rp 3.000.000</td>
+            <td>200</td>
             <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2018</td>
-            <td><span class="status-badge badge-baik">Baik</span></td>
-            <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
+            
             <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
-            </div></td>
-          </tr>
-          <tr>
-            <td>3</td><td>Gedung C - Perpustakaan</td><td>3</td><td>12</td>
-            <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2010</td>
-            <td><span class="status-badge badge-renovasi">Renovasi</span></td>
-            <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
-            <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
-            </div></td>
-          </tr>
-          <tr>
-            <td>4</td><td>Gedung D - Auditorium</td><td>2</td><td>8</td>
-            <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2020</td>
-            <td><span class="status-badge badge-baik">Baik</span></td>
-            <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
-            <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
-            </div></td>
-          </tr>
-          <tr>
-            <td>5</td><td>Gedung E - Laboratorium</td><td>3</td><td>20</td>
-            <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2008</td>
-            <td><span class="status-badge badge-perlu">Perlu Perbaikan</span></td>
-            <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
-            <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
-            </div></td>
-          </tr>
-          <tr>
-            <td>6</td><td>Gedung F - Pusat Kegiatan</td><td>2</td><td>14</td>
-            <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
-            <td>2019</td>
-            <td><span class="status-badge badge-baik">Baik</span></td>
-            <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
-            <td><div class="action-btns">
-              <div class="act-btn view"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="act-btn del" onclick="deleteRow(this)"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg></div>
+              <button class="action-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+              <button class="action-btn danger">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="action-btn edit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+              </svg>
+              </button>
             </div></td>
           </tr>
         </tbody>
@@ -295,25 +269,24 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Jumlah Lantai</label>
-        <input class="form-input" type="number" placeholder="4" id="lantai">
+        <label class="form-label">Gambar</label>
+        <input class="form-input" type="text" placeholder="URL Gambar" id="gambar">
       </div>
       <div class="form-group">
-        <label class="form-label">Jumlah Ruangan</label>
-        <input class="form-input" type="number" placeholder="20" id="ruangan">
+        <label class="form-label">Tarif Sewa</label>
+        <input class="form-input" type="number" placeholder="3000000" id="tarif">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Tahun Bangun</label>
-        <input class="form-input" type="number" placeholder="2024" id="tahun">
+        <label class="form-label">Kapasitas</label>
+        <input class="form-input" type="number" placeholder="20" id="orang">
       </div>
       <div class="form-group">
-        <label class="form-label">Kondisi</label>
-        <select class="form-input" id="kondisi">
-          <option>Baik</option>
-          <option>Renovasi</option>
-          <option>Perlu Perbaikan</option>
+        <label class="form-label">Ketersediaan</label>
+        <select class="form-input" id="ketersediaan">
+          <option>Tersedia</option>
+          <option>Sedang Dipakai</option>
         </select>
       </div>
     </div>

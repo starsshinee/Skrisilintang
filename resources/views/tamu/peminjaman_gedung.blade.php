@@ -522,6 +522,12 @@
           <div class="form-label"><i class="fas fa-cloc"></i> *Jam Selesai <span class="req">*</span></div>
           <input type="time" class="form-input" id="jamSelesaiInput">
         </div>
+        <div class="form  group">
+          <div class="form-label"><i class="fas fa-sack-dollar"></i> Total Pembayaran <span class="req">*</span></div>
+          <div class="form-input-group">
+          <input type="text" class="form-input" placeholder="0" id="totalPembayaran" oninput="formatRupiah(this)">
+        </div>
+        </div>
         <div class="form-group">
           <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span class="req">*</span></div>
           <textarea class="form-textarea" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..."></textarea>
