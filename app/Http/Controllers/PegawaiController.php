@@ -17,6 +17,12 @@ class PegawaiController extends Controller
         // Logika untuk peminjaman barang
         return view('pegawai.peminjaman_barang');
     }
+    
+    public function pengembalianBarang()
+    {
+        // Logika untuk pengembalian barang
+        return view('pegawai.pengembalian_barang');
+    }
 
     public function permintaanPersediaan()
     {
@@ -28,6 +34,18 @@ class PegawaiController extends Controller
     {
         // Logika untuk riwayat permintaan
         return view('pegawai.riwayat_permintaan');
+    }
+
+    public function peminjamanKendaraan()
+    {
+        // Logika untuk peminjaman kendaraan
+        return view('pegawai.peminjaman_kendaraan');
+    }
+
+    public function pengembalianKendaraan()
+    {
+        // Logika untuk pengembalian kendaraan
+        return view('pegawai.pengembalian_kendaraan');
     }
 
     public function pengaturanAkun()

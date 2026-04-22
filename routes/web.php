@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\AdminSarprasController;
+use App\Http\Controllers\AdminAsettetapController;
+use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\AdminPersediaanController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KepalaBPMPController;
 use App\Http\Controllers\KasubagController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TamuController;
 use Illuminate\Support\Facades\Route;
-use Termwind\Components\Raw;
+
 
 // ──────────────────────────────────────────────────────────────────────
 // Halaman Publik
@@ -64,8 +68,8 @@ Route::middleware('auth')->group(function () {
         ->name('kepalabpmp.')
         ->middleware('role:kepalabpmp,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('kepalabpmp.dashbord'))->name('dashboard');
-            Route::get('/laporan', fn () => view('kepalabpmp.laporan'))->name('laporan');
+            Route::get('/dashboard', [KepalaBPMPController::class, 'dashboard'])->name('dashboard');
+            Route::get('/laporan', [KepalaBPMPController::class, 'laporan'])->name('laporan');
 
         });
 
@@ -77,11 +81,11 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:kasubag,superadmin')
         ->group(function () {
             Route::get('/dashboard', [KasubagController::class, 'dashboard'])->name('dashboard');
-            Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung');
-            Route::get('/persetujuan-peminjaman-barang', [KasubagController::class, 'persetujuanPeminjamanBarang'])->name('persetujuan-peminjaman-barang');
-            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');
-            Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
             Route::get('/pengaturan-akun', [KasubagController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+            Route::get('/persetujuan-peminjaman-barang', [KasubagController::class, 'persetujuanPeminjamanBarang'])->name('persetujuan-peminjaman-barang');
+            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');                
+            Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
+            Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung'); 
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -93,14 +97,13 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', fn () => view('adminpersediian.dashbord'))->name('dashboard');
             Route::get('/data-persediaan', fn () => view('adminpersediian.data_persediaan'))->name('data-persediaan');
-            Route::get('/permintaan-persediaan', fn () => view('adminpersediian.permintaan_persediaan'))->name('permintaan-persediaan');
-            Route::get('/mutasi-barang', fn () => view('adminpersediian.mutasi_barang'))->name('mutasi-barang');
             Route::get('/transaksi-masuk', fn () => view('adminpersediian.transaksi_masuk'))->name('transaksi-masuk');
             Route::get('/transaksi-keluar', fn () => view('adminpersediian.transaksi_keluar'))->name('transaksi-keluar');
-            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksimasuk'))->name('laporan-transaksi-masuk');
-            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksikeluar'))->name('laporan-transaksi-keluar');
-            Route::get('/laporan-peminjaman', fn () => view('adminpersediian.laporan_peminjaman'))->name('laporan-peminjaman');
-            Route::get('/laporan-mutasi-barang', fn () => view('adminpersediian.laporan_mutasibarang'))->name('laporan-mutasi-barang');
+            Route::get('/permintaan-persediaan', fn () => view('adminpersediian.permintaan_persediaan'))->name('permintaan-persediaan');
+            Route::get('/laporan-permintaan-persediaan', fn () => view('adminpersediian.laporan_permintaan_persediaan'))->name('laporan-permintaan-persediaan');
+            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksi_masuk'))->name('laporan-transaksi-masuk');
+            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksi_keluar'))->name('laporan-transaksi-keluar');
+            // Catatan: folder view typo → "adminpersediian" (sesuai folder yang ada)
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -110,10 +113,10 @@ Route::middleware('auth')->group(function () {
         ->name('adminsarpras.')
         ->middleware('role:adminsarpras,kasubag,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('adminsarpras.dashbord'))->name('dashboard');
+            Route::get('/dashboard', [AdminSarprasController::class, 'dashboard']) ->name('dashboard');
             Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
             Route::get('/daftar-peminjaman', [AdminSarprasController::class, 'daftarPeminjaman'])->name('daftar-peminjaman');
-            Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
+            Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporan'])->name('laporan-peminjaman-gedung');
             Route::get('/pengaturan-akun', [AdminSarprasController::class, 'pengaturanAkun'])->name('pengaturan-akun');
         });
 
@@ -124,19 +127,20 @@ Route::middleware('auth')->group(function () {
         ->name('adminasettetap.')
         ->middleware('role:adminasettetap,kasubag,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('adminasettetap.dashbord'))->name('dashboard');
-            Route::get('/data-aset', fn () => view('adminasettetap.data_asettetap'))->name('data-aset');
-            Route::get('/transaksi-masuk', fn () => view('adminasettetap.transaksi_masuk'))->name('transaksi-masuk');
-            Route::get('/transaksi-keluar', fn () => view('adminasettetap.transaksi_keluar'))->name('transaksi-keluar');
-            Route::get('/mutasi-barang', fn () => view('adminasettetap.mutasi_barang'))->name('mutasi-barang');
-            Route::get('/peminjaman-barang', fn () => view('adminasettetap.peminjaman_barang'))->name('peminjaman-barang');
-            Route::get('/peminjaman-kendaraan', fn () => view('adminasettetap.peminjaman_kendaraan'))->name('peminjaman-kendaraan');
-            Route::get('/pengembalian-barang', fn () => view('adminasettetap.pengembalian_barang'))->name('pengembalian-barang');
-            Route::get('/pengembalian-kendaraan', fn () => view('adminasettetap.pengembalian_kendaraan'))->name('pengembalian-kendaraan');
-            Route::get('/laporan-transaksi-masuk', fn () => view('adminasettetap.laporan_transaksimasuk'))->name('laporan-transaksi-masuk');
-            Route::get('/laporan-transaksi-keluar', fn () => view('adminasettetap.laporan_transaksikeluar'))->name('laporan-transaksi-keluar');
-            Route::get('/laporan-mutasi-barang', fn () => view('adminasettetap.laporan_mutasibarang'))->name('laporan-mutasi-barang');
-            Route::get('/laporan-peminjaman-pengembalian', fn () => view('adminasettetap.laporan_peminjamanpengembalian'))->name('laporan-peminjaman-pengembalian');
+            Route::get('/dashboard', [AdminAsettetapController::class, 'dashboard'])->name('dashboard');
+            Route::get('/data-aset-tetap', [AdminAsettetapController::class, 'dataAsetTetap'])->name('data-aset-tetap');
+            Route::get('/transaksi-masuk', [AdminAsettetapController::class, 'TransaksiMasuk'])->name('transaksi-masuk');
+            Route::get('/transaksi-keluar', [AdminAsettetapController::class, 'TransaksiKeluar'])->name('transaksi-keluar');
+            Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
+            Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
+            Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
+            Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
+            Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');              
+            Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
+            Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
+            Route::get('/laporan-mutasi', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi');
+            Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembaliann');
+
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -146,13 +150,13 @@ Route::middleware('auth')->group(function () {
         ->name('pegawai.')
         ->middleware('role:pegawai,superadmin')
         ->group(function () {
-            Route::get('/dashboard', fn () => view('pegawai.dashbord'))->name('dashboard');
-            Route::get('/peminjaman-barang', fn () => view('pegawai.peminjaman_barang'))->name('peminjaman-barang');
-            Route::get('/peminjaman-kendaraan', fn () => view('pegawai.peminjaman_kendaraan'))->name('peminjaman-kendaraan');
-            Route::get('/pengembalian-barang', fn () => view('pegawai.pengembalian_barang')) -> name ('pengembalian-barang');
-            Route::get('/pengembalian-kendaraan', fn () => view('pegawai.pengembalian_kendaraan'))->name('pengembalian-kendaraan');
-
-            Route::get('/pengaturan-akun', fn () => view('pegawai.pengaturan_akun'))->name('pengaturan-akun');
+            Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
+            Route::get('/peminjaman-barang', [PegawaiController::class, 'peminjamanBarang'])->name('peminjaman-barang');
+            Route::get('/pengembalian-barang', [PegawaiController::class, 'pengembalianBarang'])->name('pengembalian-barang');
+            Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
+            Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
+            Route::get('/permintaan-persediaan', [PegawaiController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
+            Route::get('/pengaturan-akun', [PegawaiController::class, 'pengaturanAkun'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
