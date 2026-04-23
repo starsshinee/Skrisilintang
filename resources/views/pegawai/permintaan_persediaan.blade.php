@@ -382,11 +382,11 @@
         </div>
         <div class="input-row">
           <div class="form-group">
-            <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span class="req">*</span></div>
+            <div class="form-label"><i class="fas fa-calendar"></i> Tgl minta <span class="req">*</span></div>
             <input type="date" class="form-input">
           </div>
           <div class="form-group">
-            <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span class="req">*</span></div>
+            <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl dibutuhkan <span class="req">*</span></div>
             <input type="date" class="form-input">
           </div>
         </div>

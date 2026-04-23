@@ -292,7 +292,7 @@
         <thead>
           <tr>
               <th>No</th>
-              <th>Nama Barang</th>
+              <th>Nama Kendaraan</th>
               <th>Kategori</th>
               <th>Jumlah</th>
               <th>Deskripsi Peruntukan</th>

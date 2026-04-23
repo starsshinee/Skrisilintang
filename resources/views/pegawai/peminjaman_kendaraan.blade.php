@@ -395,8 +395,6 @@
           <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span class="req">*</span></div>
           <textarea class="form-textarea" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..."></textarea>
         </div>
-    
-                
         <button class="submit-btn" onclick="submitForm()">
           <i class="fas fa-paper-plane"></i> Kirim Permintaan peminjaman keandaraan
         </button>

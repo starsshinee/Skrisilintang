@@ -350,7 +350,7 @@
     <div class="topbar-left">
       <div>
         <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Peminjaman Aset</span></div>
-        <div class="topbar-title">Peminjaman Barang</div>
+        <div class="topbar-title">Pengembalian Barang</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -364,8 +364,8 @@
     <div class="form-card animate d2" id="formCard">
       <div class="form-header">
         <div class="form-header-icon"><i class="fas fa-box"></i></div>
-        <div class="form-header-title">Buat Permintaan</div>
-        <div class="form-header-sub">Isi formulir peminjaman aset di bawah ini</div>
+        <div class="form-header-title">Form Pengembalian</div>
+        <div class="form-header-sub">Isi formulir pengembalian aset di bawah ini</div>
       </div>
       <div class="form-body">
         <div class="form-group">

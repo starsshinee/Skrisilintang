@@ -10,15 +10,15 @@ return new class extends Migration
     {
         Schema::create('gedung', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_gedung')->unique();
             $table->string('nama_gedung');
+            $table->string('foto_gedung')->nullable();
             $table->text('deskripsi')->nullable();
             $table->string('lokasi');
             $table->decimal('luas_bangunan', 10, 2)->nullable();
-            $table->string('tipe_ruang')->nullable(); // aula, ruang meeting, studio, dll
             $table->integer('kapasitas')->nullable();
             $table->text('fasilitas')->nullable();
-            $table->string('status')->default('aktif'); // aktif, nonaktif, sedang diperbaiki
+            $table->decimal('tarif_sewa', 15, 2)->nullable();
+            $table->enum('ketersediaan', ['tersedia', 'tidak tersedia'])->default('tersedia'); // tersedia, tidak tersedia
             $table->timestamps();
         });
     }

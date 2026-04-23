@@ -10,16 +10,12 @@ return new class extends Migration
     {
         Schema::create('persediaan', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_persediaan')->unique();
-            $table->string('nama_barang');
-            $table->text('deskripsi')->nullable();
+            $table->string('kode_kategori');
             $table->string('kategori');
-            $table->string('satuan');
-            $table->integer('jumlah_stok')->default(0);
-            $table->integer('jumlah_minimum')->default(0);
+            $table->string('kode_barang')->unique();
+            $table->string('nama_barang');
             $table->decimal('harga_satuan', 15, 2)->nullable();
-            $table->string('lokasi_penyimpanan')->nullable();
-            $table->string('status')->default('aktif'); // aktif, nonaktif
+            $table->decimal('harga_total', 15, 2)->nullable();
             $table->timestamps();
         });
     }

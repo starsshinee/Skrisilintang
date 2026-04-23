@@ -374,11 +374,11 @@
         </div>
         <div class="form-group">
           <div class="form-label"><i class="fas fa-building"></i> Nup <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
+          <input type="text" class="form-input" placeholder="i03" id="nupInput">
         </div>
         <div class="form-group">
           <div class="form-label"><i class="fas fa-building"></i> Merek <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Nama instansi atau lembaga" id="instansiInput">
+          <input type="text" class="form-input" placeholder="Yamaha" id="merekInput">
         </div>
         <div class="form-group">
           <div class="form-label"><i class="fas fa-envelope"></i> Jumlah barang yang dipinjam<span class="req">*</span></div>

@@ -8,6 +8,7 @@ class AssetTetap extends Model
 {
     protected $table = 'aset_tetap';
     protected $guarded = [
+        'tanggal input',
         'kode_barang',
         'nup',
         'nama_barang',
@@ -17,9 +18,7 @@ class AssetTetap extends Model
         'kondisi',
         'lokasi',
         'jumlah',
-        'stok',
-        'kode_kategori',
-        'kategori'
+        'kondisi',
     ];
 
     protected $casts = [
@@ -30,12 +29,12 @@ class AssetTetap extends Model
 
     public function transaksiMasuk()
     {
-        return $this->hasMany(TransaksiMasukAssetTetap::class, 'aset_tetap_id');
+        return $this->hasMany(TransaksiMasukAsetTetap::class, 'aset_tetap_id');
     }
 
     public function transaksiKeluar()
     {
-        return $this->hasMany(TransaksiKeluarAssetTetap::class, 'aset_tetap_id');
+        return $this->hasMany(TransaksiKeluarAsetTetap::class, 'aset_tetap_id');
     }
 
     public function peminjamanKendaraan()

@@ -223,7 +223,7 @@
           <tr>
             <th>No</th>
             <th>Nama Gedung</th>
-            <th>Gambar</th>
+            <th>Foto</th>
             <th>Tarif Sewa</th>
             <th>kapasitas</th>
             <th>Ketersediaan</th>

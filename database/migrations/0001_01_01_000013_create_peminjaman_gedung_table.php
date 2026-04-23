@@ -10,14 +10,22 @@ return new class extends Migration
     {
         Schema::create('peminjaman_gedung', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_peminjaman')->unique();
-            $table->foreignId('gedung_id')->constrained('gedung')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->dateTime('tanggal_mulai');
-            $table->dateTime('tanggal_selesai');
-            $table->string('keperluan');
-            $table->text('keterangan')->nullable();
-            $table->string('status')->default('pending'); // pending, approved, rejected, selesai
+            $table->string('nama_gedung');
+            $table->string('foto_gedung')->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->string('lokasi');
+            $table->decimal('luas_bangunan', 10, 2);
+            $table->integer('kapasitas');
+            $table->json('fasilitas')->nullable();
+            $table->decimal('tarif_sewa', 12, 2);
+            $table->enum('ketersediaan', ['tersedia', 'tidak_tersedia'])->default('tersedia');
+            
+            // Workflow fields
+            $table->foreignId('reviewed_by_adminsarpras_id')->nullable()->constrained('users');
+            $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
+            $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');
+            
             $table->timestamps();
         });
     }

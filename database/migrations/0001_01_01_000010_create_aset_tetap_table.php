@@ -10,17 +10,14 @@ return new class extends Migration
     {
         Schema::create('aset_tetap', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_aset')->unique();
-            $table->string('nama_aset');
-            $table->text('deskripsi')->nullable();
-            $table->string('kategori');
-            $table->integer('jumlah')->default(0);
-            $table->string('lokasi')->nullable();
-            $table->decimal('nilai_awal', 15, 2)->nullable();
-            $table->decimal('nilai_sekarang', 15, 2)->nullable();
+            $table->date('tanggal_input');
+            $table->string('kode_barang')->unique();
+            $table->string('nup')->unique();
+            $table->string('nama_barang');
             $table->date('tanggal_perolehan')->nullable();
-            $table->string('status')->default('aktif'); // aktif, nonaktif, rusak
-            $table->string('kondisi')->nullable(); // baik, rusak, hilang
+            $table->integer('jumlah')->default(0);
+            $table->string('lokasi')->nullable(); // aktif, nonaktif, rusak
+            $table->enum('kondisi', ['baik', 'rusak ringan', 'rusak berat'])->nullable(); // baik, rusak, hilang
             $table->timestamps();
         });
     }

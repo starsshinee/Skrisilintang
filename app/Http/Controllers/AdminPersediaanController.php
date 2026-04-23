@@ -51,4 +51,5 @@ class AdminPersediaanController extends Controller
     {
         return view('adminpersediaan.laporan_transaksi_keluar');
     }
+    
 }
