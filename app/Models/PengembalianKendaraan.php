@@ -1,37 +1,39 @@
 <?php
+// app/Models/PengembalianKendaraan.php
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
 
 class PengembalianKendaraan extends Model
 {
+    use HasFactory;
+
+    protected $table = 'pengembalian_kendaraan'; // ✅ NAMA TABLE EXPLICIT
+
     protected $fillable = [
         'peminjaman_kendaraan_id',
         'tanggal_pengembalian_aktual',
-        'kilometer_awal',
-        'kilometer_akhir',
         'kondisi_kendaraan',
         'catatan',
         'foto_sebelum',
         'foto_sesudah',
         'status_pengembalian',
-        'biaya_denda'
+        'biaya_denda',
+        'user_id',
+        'verified_by_admin_id',
+        'komentar_admin',
+        'verified_at'
     ];
 
     protected $casts = [
         'tanggal_pengembalian_aktual' => 'datetime',
-        'kilometer_awal' => 'integer',
-        'kilometer_akhir' => 'integer',
         'biaya_denda' => 'decimal:2',
-        'status_pengembalian' => 'string'
     ];
 
-    // Relasi
-    public function peminjaman(): BelongsTo
+    public function peminjamanKendaraan(): BelongsTo
     {
         return $this->belongsTo(PeminjamanKendaraan::class, 'peminjaman_kendaraan_id');
     }
@@ -41,30 +43,8 @@ class PengembalianKendaraan extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Scope
-    public function scopeLengkap($query)
+    public function admin(): BelongsTo
     {
-        return $query->where('status_pengembalian', 'lengkap');
-    }
-
-    public function scopeTelat($query)
-    {
-        return $query->where('status_pengembalian', 'telat');
+        return $this->belongsTo(User::class, 'verified_by_adminasettetap_id');
     }
 }
-
-    // public function peminjamanKendaraan()
-    // {
-    //     return $this->belongsTo(PeminjamanKendaraan::class, 'peminjaman_kendaraan_id');
-    // }
-
-    // public function assetTetap()
-    // {
-    //     return $this->belongsTo(AssetTetap::class, 'aset_tetap_id');
-    // }
-
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
-// }

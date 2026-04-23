@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PengembalianBarang extends Model
 {
+    use HasFactory;
+
+    protected $table = 'pengembalian_barang';
+
     protected $fillable = [
         'peminjaman_barang_id',
         'user_id',
+        'verified_by_adminAsetTetap_id',
         'tanggal_pengembalian_aktual',
         'jumlah_dikembalikan',
         'kondisi_barang',
@@ -17,59 +22,47 @@ class PengembalianBarang extends Model
         'foto_sebelum',
         'foto_sesudah',
         'status_pengembalian',
-        // Workflow Admin
-        'verified_by_admin_id',
-        'verified_at',
+        'status_verifikasi',
         'komentar_admin',
-        'status_verifikasi'
     ];
 
     protected $casts = [
         'tanggal_pengembalian_aktual' => 'datetime',
-        'verified_at' => 'datetime',
-        'jumlah_dikembalikan' => 'integer',
     ];
 
-    // Relasi
-    public function peminjaman(): BelongsTo
+    // ✅ RELASI SESUAI STRUKTUR ANDA
+    public function peminjamanBarang()
     {
-        return $this->belongsTo(PeminjamanBarang::class, 'peminjaman_barang_id');
+        return $this->belongsTo(PeminjamanBarang::class);
     }
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // ✅ ADMIN YANG VERIFIKASI
-    public function verifiedBy(): BelongsTo
+    public function adminVerifier()
     {
-        return $this->belongsTo(User::class, 'verified_by_admin_id');
+        return $this->belongsTo(User::class, 'verified_by_adminAsetTetap_id');
     }
 
-    // Scopes
-    public function scopePendingVerifikasi($query)
+    // ✅ SCOPE UNTUK FILTER & SEARCH
+    public function scopePending($query)
     {
         return $query->where('status_verifikasi', 'pending');
     }
 
-    public function scopeDiterima($query)
+    public function scopeSearch($query, $search)
     {
-        return $query->where('status_verifikasi', 'diterima');
+        return $query->where('kondisi_barang', 'like', "%{$search}%")
+                    ->orWhereHas('peminjamanBarang', function($q) use ($search) {
+                        $q->whereHas('barang', fn($qb) => $qb->where('nama_barang', 'like', "%{$search}%"));
+                    })
+                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
     }
 
-    public function scopeDitolak($query)
+    public function scopeKondisi($query, $kondisi)
     {
-        return $query->where('status_verifikasi', 'ditolak');
-    }
-
-    // Status badge
-    public function getStatusVerifikasiBadgeAttribute(): array
-    {
-        return match($this->status_verifikasi) {
-            'diterima' => ['text' => 'Diterima', 'color' => 'success', 'icon' => 'fa-check-circle'],
-            'ditolak' => ['text' => 'Ditolak', 'color' => 'danger', 'icon' => 'fa-times-circle'],
-            default => ['text' => 'Pending', 'color' => 'warning', 'icon' => 'fa-clock']
-        };
+        return $query->where('status_pengembalian', $kondisi);
     }
 }

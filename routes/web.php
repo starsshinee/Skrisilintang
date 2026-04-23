@@ -101,8 +101,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/transaksi-keluar', fn () => view('adminpersediian.transaksi_keluar'))->name('transaksi-keluar');
             Route::get('/permintaan-persediaan', fn () => view('adminpersediian.permintaan_persediaan'))->name('permintaan-persediaan');
             Route::get('/laporan-permintaan-persediaan', fn () => view('adminpersediian.laporan_permintaan_persediaan'))->name('laporan-permintaan-persediaan');
-            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksi_masuk'))->name('laporan-transaksi-masuk');
-            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksi_keluar'))->name('laporan-transaksi-keluar');
+            Route::get('/laporan-transaksi-masuk', fn () => view('adminpersediian.laporan_transaksimasuk'))->name('laporan-transaksi-masuk');
+            Route::get('/laporan-transaksi-keluar', fn () => view('adminpersediian.laporan_transaksikeluar'))->name('laporan-transaksi-keluar');
             // Catatan: folder view typo → "adminpersediian" (sesuai folder yang ada)
         });
 
@@ -116,7 +116,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [AdminSarprasController::class, 'dashboard']) ->name('dashboard');
             Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
             Route::get('/daftar-peminjaman', [AdminSarprasController::class, 'daftarPeminjaman'])->name('daftar-peminjaman');
-            Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporan'])->name('laporan-peminjaman-gedung');
+            Route::get('/daftar-pengembalian', [AdminSarprasController::class, 'daftarPengembalian'])->name('daftar-pengembalian');
+            Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
             Route::get('/pengaturan-akun', [AdminSarprasController::class, 'pengaturanAkun'])->name('pengaturan-akun');
         });
 
@@ -138,8 +139,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');              
             Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
             Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
-            Route::get('/laporan-mutasi', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi');
-            Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembaliann');
+            Route::get('/laporan-mutasi-barang', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi-barang');
+            Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembalian');
 
         });
 
@@ -168,6 +169,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', [TamuController::class, 'dashboard'])->name('dashboard');
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
+            Route::get('/pengembalian-gedung', [TamuController::class, 'pengembaliangedung'])->name('pengembalian-gedung');
             Route::get('/pengaturan-akun', [TamuController::class, 'pengaturanAkun'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });

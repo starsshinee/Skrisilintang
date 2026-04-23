@@ -305,7 +305,7 @@
         </tr>
       </thead>
       <tbody>
-        @forelse($peminjamanBarang as $index => $item)
+        @forelse($peminjamanbarang as $index => $item)
           <tr>
             <td><strong>{{ $index + 1 }}</strong></td>
             <td>{{ $item->kode_barang }}</td>

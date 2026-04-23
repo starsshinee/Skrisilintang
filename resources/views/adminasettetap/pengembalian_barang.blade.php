@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPANDU - Pengembalian Barang</title>
+<title>SIPANDU - Pengembalian Kendaraan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
   :root {
     --blue: #4F6FFF;
@@ -207,6 +208,7 @@
   .status-diterima { background: #DCFCE7; color: #16A34A; }
   .status-pending { background: #FEF3C7; color: #D97706; }
   .status-ditolak { background: #FEE2E2; color: #DC2626; }
+  .status-verified { background: #DBEAFE; color: var(--blue); }
 
   .action-btn {
     width: 32px; height: 32px; border-radius: 8px;
@@ -216,6 +218,13 @@
   }
   .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
   .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
+
+  .photo-thumbnail {
+    width: 40px; height: 40px; border-radius: 8px;
+    object-fit: cover; border: 2px solid var(--border);
+    cursor: pointer; transition: all .15s;
+  }
+  .photo-thumbnail:hover { transform: scale(1.05); border-color: var(--blue); }
 
   /* PAGINATION */
   .table-footer {
@@ -236,6 +245,10 @@
     background: var(--blue); border-color: var(--blue);
     color: white; font-weight: 700;
   }
+
+  .kondisi-icon {
+    font-size: 10px; margin-right: 3px;
+  }
 </style>
 </head>
 <body>
@@ -247,12 +260,16 @@
     <span class="topbar-title">Pengembalian Barang</span>
     <div class="topbar-right">
       <div class="notif-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-        <span class="notif-dot"></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#94A3B8">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
+        <div class="notif-dot"></div>
       </div>
-      <span class="date-text">Jumat, 17 April 2026</span>
+      <span class="date-text">{{ date('d M Y, H:i') }}</span>
       <button class="btn-keluar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#64748B">
+          <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5a2 2 0 00-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"/>
+        </svg>
         Keluar
       </button>
     </div>
@@ -262,25 +279,23 @@
     <div class="page-top">
       <div>
         <h1>Pengembalian Barang</h1>
-        <p>3 data ditemukan</p>
+        <p>{{ $pengembalianbarang->count() ?? 0 }} data ditemukan</p>
       </div>
-      <button class="btn-tambah">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        Tambah Baru
-      </button>
     </div>
 
     <div class="table-card">
       <div class="table-toolbar">
         <div class="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" placeholder="Cari...">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S
+            7.01 5 9.5 5 14 7.01 14 9.5 14z"/></svg>
+          <input type="text" placeholder="Cari kode, nama barang, atau peminjam...">
         </div>
         <select class="filter-select">
           <option>Semua Status</option>
-          <option>Diterima</option>
-          <option>Pending</option>
-          <option>Ditolak</option>
+          <option>Baik</option>
+          <option>Rusak Ringan</option>
+          <option>Rusak Berat</option>
+          <option>Hilang</option>
         </select>
         <button class="btn-filter">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39A1 1 0 0018.95 4H5.04a1 1 0 00-.79 1.61z"/></svg>
@@ -291,85 +306,189 @@
       <table>
         <thead>
           <tr>
-             <th>No</th>
-              <th>Kode Barang</th>
-              <th>Nup</th>
-              <th>Nama Barang</th>
-              <th>Merek</th>
-              <th>Jumlah</th>
-              <th>Kondisi</th>
-              <th>Tanggal Pengembalian</th>
-              <th>Peminjam</th>
-              <th>Status</th>
+            <th>No</th>
+            <th>Kode Pengembalian</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Jumlah Dikembalikan</th>
+            <th>Kondisi</th>
+            <th>Tgl Pengembalian</th>
+            <th>Peminjam</th>
+            <th>Status Verifikasi</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>TM-001</strong></td>
-            <td>2025-01-15</td>
-            <td>Laptop Dell Latitude</td>
-            <td>Elektronik</td>
-            <td>10</td>
-            <td>Rp 150.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>TM-002</strong></td>
-            <td>2025-01-14</td>
-            <td>Meja Kerja Executive</td>
-            <td>Furnitur</td>
-            <td>5</td>
-            <td>Rp 25.000.000</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>TM-003</strong></td>
-            <td>2025-01-13</td>
-            <td>AC Split 2 PK</td>
-            <td>Elektronik</td>
-            <td>3</td>
-            <td>Rp 27.000.000</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-            </td>
-          </tr>
+          @forelse($pengembalianbarang as $index => $item)
+            <tr>
+              <td><strong>{{ $index + 1 + ($pengembalianbarang->firstItem() - 1) }}</strong></td>
+              <td><strong>{{ $item->kode_pengembalian ?? 'BRG-RET-' . $item->id }}</strong></td>
+              <td>{{ $item->peminjamanBarang->kode_barang ?? '-' }}</td>
+              <td>{{ $item->peminjamanBarang->nama_barang ?? '-' }}</td>
+              <td>
+                <strong style="color: var(--blue);">{{ $item->jumlah_dikembalikan ?? 0 }}</strong> 
+                @if($item->peminjamanBarang->jumlah > ($item->jumlah_dikembalikan ?? 0))
+                  <br><small style="color: #EF4444;">({{ ($item->peminjamanBarang->jumlah - ($item->jumlah_dikembalikan ?? 0)) }} hilang)</small>
+                @endif
+              </td>
+              <td>
+                @php 
+                  $kondisi = strtolower($item->kondisi ?? ''); 
+                  $kondisiIcon = [
+                    'baik' => 'fa-check-circle',
+                    'rusak-ringan' => 'fa-tools',
+                    'rusak-berat' => 'fa-wrench',
+                    'hilang' => 'fa-exclamation-triangle'
+                  ];
+                @endphp
+                @if($kondisi == 'baik')
+                  <span class="status-badge status-diterima">
+                    <i class="fas fa-check-circle" style="font-size:10px; margin-right:3px; color:#16A34A;"></i>
+                    Baik
+                  </span>
+                @elseif($kondisi == 'rusak-ringan')
+                  <span class="status-badge status-pending">
+                    <i class="fas fa-tools" style="font-size:10px; margin-right:3px; color:#D97706;"></i>
+                    Rusak Ringan
+                  </span>
+                @elseif($kondisi == 'rusak-berat')
+                  <span class="status-badge status-ditolak">
+                    <i class="fas fa-wrench" style="font-size:10px; margin-right:3px; color:#DC2626;"></i>
+                    Rusak Berat
+                  </span>
+                @elseif($kondisi == 'hilang')
+                  <span class="status-badge status-ditolak">
+                    <i class="fas fa-exclamation-triangle" style="font-size:10px; margin-right:3px; color:#DC2626;"></i>
+                    Hilang
+                  </span>
+                @else
+                  <span class="status-badge status-pending">{{ ucfirst($kondisi) }}</span>
+                @endif
+              </td>
+              <td>
+                {{ $item->tanggal_pengembalian ? \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y H:i') : '-' }}
+              </td>
+      
+                <div style="font-weight:600;">{{ $item->user->name ?? '-' }}</div>
+                <small style="color:#64748B;">{{ $item->user->instansi ?? '-' }}</small>
+              </td>
+              <td>
+                @if($item->denda > 0)
+                  <strong style="color: var(--blue);">Rp {{ number_format($item->denda, 0, ',', '.') }}</strong>
+                @else
+                  <span style="color:#16A34A;">Rp 0</span>
+                @endif
+              </td>
+              <td>
+                @php $verifikasi = strtolower($item->status_verifikasi ?? 'pending') @endphp
+                @switch($verifikasi)
+                  @case('verified')
+                    <span class="status-badge status-diterima">
+                      <i class="fas fa-check-double" style="font-size:10px; margin-right:3px;"></i>
+                      Terverifikasi
+                    </span>
+                    @break
+                  @case('partial')
+                    <span class="status-badge status-pending">
+                      <i class="fas fa-minus-circle" style="font-size:10px; margin-right:3px;"></i>
+                      Partial
+                    </span>
+                    @break
+                  @case('rejected')
+                    <span class="status-badge status-ditolak">
+                      <i class="fas fa-times-circle" style="font-size:10px; margin-right:3px;"></i>
+                      Ditolak
+                    </span>
+                    @break
+                  @default
+                    <span class="status-badge status-pending">
+                      <i class="fas fa-clock" style="font-size:10px; margin-right:3px;"></i>
+                      Menunggu
+                    </span>
+                @endswitch
+              </td>
+              <td>
+                <a href="{{ route('admin.pengembalian-barang.show', $item->id) }}" class="action-btn" title="Detail">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                    <circle cx="12" cy="12" r="3.25"/>
+                    <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                  </svg>
+                </a>
+                
+                @if($item->status_verifikasi == 'pending')
+                  <a href="{{ route('admin.pengembalian-barang.edit', $item->id) }}" class="action-btn" title="Verifikasi">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41z"/>
+                    </svg>
+                  </a>
+                @endif
+                
+                @if($item->status_verifikasi != 'verified')
+                  <button onclick="cetakLaporan({{ $item->id }})" class="action-btn" title="Cetak Laporan">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                      <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-3-5H6V3h12v4z"/>
+                    </svg>
+                  </button>
+                @endif
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="12" style="text-align:center; padding:60px; color:var(--muted);">
+                <i class="fas fa-box-open" style="font-size:56px; margin-bottom:16px; opacity:.4;"></i>
+                <div style="font-size:16px; font-weight:700; margin-bottom:6px;">Belum ada laporan pengembalian</div>
+                <div style="font-size:13px; max-width:300px; margin:0 auto;">Laporan pengembalian barang akan muncul di sini setelah pengguna melaporkan pengembalian</div>
+              </td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
 
       <div class="table-footer">
-        <span>Menampilkan 1–3 dari 3 data</span>
+        @if($pengembalianbarang->hasPages())
+          <span>Menampilkan {{ $pengembalianbarang->firstItem() }}–{{ $pengembalianbarang->lastItem() }} dari {{ $pengembalianbarang->total() }} data</span>
+        @else
+          <span>Menampilkan {{ $pengembalianbarang->count() ?? 0 }} data</span>
+        @endif
         <div class="pagination">
-          <button class="page-btn">Prev</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">Next</button>
+          @if($pengembalianbarang->onFirstPage())
+            <button class="page-btn" disabled>Prev</button>
+          @else
+            <a href="{{ $pengembalianbarang->previousPageUrl() }}" class="page-btn">Prev</a>
+          @endif
+
+          @foreach($pengembalianbarang->getUrlRange(1, $pengembalianbarang->lastPage()) as $page => $url)
+            @if($page == $pengembalianbarang->currentPage())
+              <button class="page-btn active">{{ $page }}</button>
+            @else
+              <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
+            @endif
+          @endforeach
+
+          @if($pengembalianbarang->hasMorePages())
+            <a href="{{ $pengembalianbarang->nextPageUrl() }}" class="page-btn">Next</a>
+          @else
+            <button class="page-btn" disabled>Next</button>
+          @endif
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<script>
+function cetakLaporan(id) {
+  // Buka window cetak laporan pengembalian
+  window.open('/admin/pengembalian-barang/' + id + '/cetak', '_blank');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto refresh setiap 30 detik untuk update status real-time
+  setInterval(function() {
+    location.reload();
+  }, 30000);
+});
+</script>
 
 </body>
 </html>

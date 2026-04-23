@@ -37,6 +37,7 @@
         ['href' => route('tamu.dashboard'),        'label' => 'Dashboard',            'icon' => 'fas fa-door-open',   'route' => 'tamu.dashboard'],
         ['href' => route('tamu.info-fasilitas'),   'label' => 'Informasi Fasilitas',  'icon' => 'fas fa-info-circle', 'route' => 'tamu.info-fasilitas'],
         ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-building', 'route' => 'tamu.peminjaman-gedung'],
+        ['href' => route('tamu.pengembalian-gedung'),  'label' => 'Pengembalian Gedung',      'icon' => 'fas fa-undo', 'route' => 'tamu.pengembalian-gedung'],
         ['href' => route('tamu.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'tamu.pengaturan-akun'],
       ]
     ],
@@ -46,7 +47,7 @@
       'badgeColor' => 'bg-orange-500/20 text-orange-300',
       'navItems' => [
         ['href' => route('adminasettetap.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminasettetap.dashboard'],
-        ['href' => route('adminasettetap.data-aset'), 'label' => 'Data Aset Tetap', 'icon' => 'fas fa-database', 'route' => 'adminasettetap.data-aset'],
+        ['href' => route('adminasettetap.data-aset-tetap'), 'label' => 'Data Aset Tetap', 'icon' => 'fas fa-database', 'route' => 'adminasettetap.data-aset-tetap'],
         ['href' => route('adminasettetap.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-masuk'],
         ['href' => route('adminasettetap.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-keluar'],
         ['href' => route ('adminasettetap.mutasi-barang'), 'label' => 'Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'adminasettetap.mutasi-barang'],
@@ -91,7 +92,7 @@
             ['href' => route('adminpersediaan.data-persediaan'), 'label' => 'Data Persediaan', 'icon' => 'fas fa-database', 'route' => 'adminpersediaan.data-persediaan'],
             ['href' => route('adminpersediaan.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes',  'route' => 'adminpersediaan.transaksi-masuk'],
             ['href' => route('adminpersediaan.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes',  'route' => 'adminpersediaan.transaksi-keluar'],
-            ['href' => route('adminpersediaan.mutasi-barang'), 'label' => 'Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'adminpersediaan.mutasi-barang'],
+            
 
         [
           'label' => 'Manajemen Peminjaman',
@@ -108,8 +109,7 @@
           'children' => [
             ['href' => route('adminpersediaan.laporan-transaksi-masuk'), 'label' => 'Laporan Transaksi Masuk', 'route' => 'adminpersediaan.laporan-transaksi-masuk'],
             ['href' => route('adminpersediaan.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminpersediaan.laporan-transaksi-keluar'],
-            ['href' => route('adminpersediaan.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminpersediaan.laporan-mutasi-barang'],
-            ['href' => route('adminpersediaan.laporan-peminjaman'), 'label' => 'Laporan Peminjaman', 'route' => 'adminpersediaan.laporan-peminjaman'],
+            ['href' => route('adminpersediaan.laporan-permintaan-persediaan'), 'label' => 'Laporan Permintaan Persediaan', 'route' => 'adminpersediaan.laporan-permintaan-persediaan'],
           ]
         ],
       ]
@@ -122,6 +122,7 @@
         ['href' => route('adminsarpras.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'adminsarpras.dashboard'],
         ['href' => route('adminsarpras.data-gedung'), 'label' => 'Data Gedung', 'icon' => 'fas fa-building', 'route' => 'adminsarpras.data-gedung'],
         ['href' => route('adminsarpras.daftar-peminjaman'), 'label' => 'Daftar Peminjaman', 'icon' => 'fas fa-door-open', 'route' => 'adminsarpras.daftar-peminjaman'],
+        ['href' => route('adminsarpras.daftar-pengembalian'), 'label' => 'Daftar Pengembalian', 'icon' => 'fas fa-undo', 'route' => 'adminsarpras.daftar-pengembalian'],
         ['href' => route('adminsarpras.laporan-peminjaman-gedung'), 'label' => 'Laporan Peminjaman Gedung', 'icon' => 'fas fa-file-alt', 'route' => 'adminsarpras.laporan-peminjaman-gedung'],
         ['href' => route('adminsarpras.pengaturan-akun'), 'label' => 'Pengaturan Akun', 'icon' => 'fas fa-gear', 'route' => 'adminsarpras.pengaturan-akun'],
       ]

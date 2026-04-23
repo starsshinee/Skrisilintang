@@ -29,4 +29,10 @@ class TamuController extends Controller
         // Logika untuk info fasilitas
         return view('tamu.info_fasilitas');
     }
+
+    public function pengembalianGedung()
+    {
+        // Logika untuk pengembalian gedung
+        return view('tamu.pengembalian_gedung');
+    }
 }
