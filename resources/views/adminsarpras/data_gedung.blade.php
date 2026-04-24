@@ -226,6 +226,7 @@
             <th>Foto</th>
             <th>Tarif Sewa</th>
             <th>kapasitas</th>
+            <th>Jadwal Pemakaian</th>
             <th>Ketersediaan</th>
             <th>Aksi</th>
           </tr>
@@ -237,6 +238,7 @@
             <td><div class="act-btn photo"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div></td>
             <td>Rp 3.000.000</td>
             <td>200</td>
+            <td>2026-04-17 - 2026-04-30</td>
             <td><span class="status-badge badge-tersedia">✓ Tersedia</span></td>
             
             <td><div class="action-btns">

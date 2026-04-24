@@ -248,6 +248,7 @@
           <a href="#fitur"     class="text-blue-100 hover:text-white text-sm font-medium transition">Fitur</a>
           <a href="#statistik" class="text-blue-100 hover:text-white text-sm font-medium transition">Statistik</a>
           <a href="#fasilitas" class="text-blue-100 hover:text-white text-sm font-medium transition">Fasilitas</a>
+          <a href="#pengaduan-survey" class="text-blue-100 hover:text-white text-sm font-medium transition">Pengaduan</a>
           <a href="#kontak"    class="text-blue-100 hover:text-white text-sm font-medium transition">Kontak</a>
         </div>
         <div class="flex items-center gap-3">
@@ -264,6 +265,7 @@
       <a href="#fitur"     class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Fitur</a>
       <a href="#statistik" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Statistik</a>
       <a href="#fasilitas" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Fasilitas</a>
+      <a href="#pengaduan-survey" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Pengaduan</a>
       <a href="#kontak"    class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Kontak</a>
       <div class="flex gap-2 mt-3 pt-3 border-t border-white/10">
         <a href="{{ route('login') }}"    class="flex-1 text-center text-white text-sm font-semibold py-2 rounded-lg border border-white/20 hover:bg-white/10 transition">Masuk</a>
@@ -285,11 +287,11 @@
           <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
           <span class="text-blue-200 text-xs font-medium">SIPANDU</span>
         </div>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 anim-fade-up delay-2">
-          Sistem Informasi<br>
-          <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">BMN TERPADU</span>
+        <h1 class="text-3xl font-extrabold text-white leading-tight mb-6 anim-fade-up delay-2">
+          Sistem Informasi BMN Terpadu (SIPANDU)<br>
+          <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">BPMP GORONTALO</span>
         </h1>
-        <p class="text-blue-200 text-lg md:text-xl max-w-xl mb-8 leading-relaxed anim-fade-up delay-3">
+        <p class="text-blue-200 text-base md:text-lg max-w-xl mb-8 leading-relaxed anim-fade-up delay-3">
           Kelola dan monitoring BMN (Barang Milik Negara) pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start anim-fade-up delay-4">
@@ -352,7 +354,7 @@
   <!-- TENTANG -->
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl mx-auto text-center">
+      <div class="max-w-2xl mx-auto text-center">
         <div class="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-1.5 mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
           <span class="text-navy-700 text-sm font-semibold">Tentang SIBMN</span>
@@ -436,18 +438,182 @@
     </div>
   </section>
 
-  <!-- AKUN DEMO -->
-  <section class="py-16 bg-slate-50">
+  <!-- PENGADUAN & SURVEY -->
+  <section id="pengaduan-survey" class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10">
-        <div class="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-1.5 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
-          <span class="text-navy-700 text-sm font-semibold">Akun Demo</span>
+      <div class="grid lg:grid-cols-2 gap-12 mb-16">
+        <!-- FORM PENGADUAN -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-navy-900">Formulir Pengaduan</h3>
+              <p class="text-slate-500 text-sm">Sampaikan keluhan atau masalah Anda</p>
+            </div>
+          </div>
+          <form class="space-y-4" onsubmit="handlePengaduanSubmit(event)">
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Nama Lengkap *</label>
+              <input type="text" placeholder="Masukkan nama lengkap Anda" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition" />
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-navy-900 mb-2">Email *</label>
+                <input type="email" placeholder="email@example.com" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition" />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-navy-900 mb-2">No. Telepon *</label>
+                <input type="tel" placeholder="08xxxxxxxxx" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Kategori Pengaduan *</label>
+              <select required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition bg-white">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="peminjaman">Masalah Peminjaman Barang</option>
+                <option value="pengembalian">Masalah Pengembalian Barang</option>
+                <option value="peminjaman">Masalah Peminjaman Kendaraan</option>
+                <option value="pengembalian">Masalah Pengembalian Kendaraan</option>
+                <option value="peminjaman">Masalah Peminjaman Gedung</option>
+                <option value="pengembalian">Masalah Pengembalian Gedung</option>
+                <option value="peminjaman">Masalah Permintaan Persediaan</option>
+                <option value="pengembalian">Masalah Pengembalian Barang</option>
+                <option value="sistem">Kendala Sistem/Aplikasi</option>
+                <option value="layanan">Kualitas Layanan</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Deskripsi Pengaduan *</label>
+              <textarea placeholder="Jelaskan secara detail masalah yang Anda alami..." rows="5" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition resize-none"></textarea>
+            </div>
+            <div>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" required class="w-4 h-4 accent-red-500 rounded cursor-pointer" />
+                <span class="text-sm text-slate-600">Saya setuju dengan kebijakan privasi dan penggunaan data</span>
+              </label>
+            </div>
+            <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-2.5 rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Kirim Pengaduan
+            </button>
+          </form>
         </div>
-        <h2 class="text-3xl font-bold text-navy-900 mb-3">Coba Demo Setiap Peran</h2>
-        <p class="text-slate-500">Gunakan akun demo berikut untuk mengeksplorasi fitur setiap role.</p>
+
+        <!-- SURVEY KEPUASAN -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-navy-900">Survey Kepuasan Layanan</h3>
+              <p class="text-slate-500 text-sm">Bantu kami meningkatkan kualitas</p>
+            </div>
+          </div>
+          <form class="space-y-4" onsubmit="handleSurveySubmit(event)">
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Nama/Identitas *</label>
+              <input type="text" placeholder="Nama atau NIP Anda" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Email *</label>
+              <input type="email" placeholder="email@example.com" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition" />
+            </div>
+            
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-navy-900">Kepuasan terhadap Layanan Peminjaman *</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="kepuasan" value="sangat_puas" required class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-500">★★★★★</span>
+                    <span class="text-sm font-medium text-slate-700 group-hover:text-navy-900">Sangat Puas</span>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="kepuasan" value="puas" required class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-500">★★★★</span>
+                    <span class="text-sm font-medium text-slate-700 group-hover:text-navy-900">Puas</span>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="kepuasan" value="cukup" required class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-500">★★★</span>
+                    <span class="text-sm font-medium text-slate-700 group-hover:text-navy-900">Cukup Puas</span>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="kepuasan" value="kurang_puas" required class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-500">★★</span>
+                    <span class="text-sm font-medium text-slate-700 group-hover:text-navy-900">Kurang Puas</span>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="kepuasan" value="tidak_puas" required class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-500">★</span>
+                    <span class="text-sm font-medium text-slate-700 group-hover:text-navy-900">Tidak Puas</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Aspek yang Paling Memuaskan</label>
+              <textarea placeholder="Sebutkan hal-hal yang Anda sukai dari layanan peminjaman..." rows="3" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Saran Perbaikan</label>
+              <textarea placeholder="Bagikan saran dan masukan untuk peningkatan layanan..." rows="3" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-semibold py-2.5 rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Kirim Survey
+            </button>
+          </form>
+        </div>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="demoAccountsGrid"></div>
+
+      <!-- INFO CARDS -->
+      <div class="grid md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-6 border border-red-100">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h4 class="font-bold text-navy-900">Pengaduan Ditangani Dengan Serius</h4>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">Setiap pengaduan yang masuk akan kami verifikasi dan tindaklanjuti oleh tim terkait dalam waktu maksimal 5 hari kerja.</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 border border-amber-100">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <h4 class="font-bold text-navy-900">Masukan Sangat Berharga</h4>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">Feedback dari survey membantu kami untuk terus melakukan evaluasi dan perbaikan berkelanjutan dalam pelayanan.</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h4 class="font-bold text-navy-900">Komunikasi Terbuka</h4>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">Kami terbuka untuk mendengar setiap masukan, kritik, dan saran yang bertujuan meningkatkan kualitas layanan SIPANDU.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -918,6 +1084,19 @@ function buildDemoAccounts() {
       </a>
     </div>`).join('');
   lucide.createIcons();
+}
+
+// Form Handlers
+function handlePengaduanSubmit(event) {
+  event.preventDefault();
+  alert('Terima kasih! Pengaduan Anda telah diterima. Kami akan menindaklanjuti dalam 5 hari kerja.');
+  event.target.reset();
+}
+
+function handleSurveySubmit(event) {
+  event.preventDefault();
+  alert('Terima kasih atas feedback Anda! Masukan Anda sangat membantu kami untuk meningkatkan layanan.');
+  event.target.reset();
 }
 
 buildCarousel();

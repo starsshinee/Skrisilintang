@@ -165,7 +165,7 @@
 
   <div class="content">
     <div class="page-header">
-      <h1>Selamat Datang di Sistem Manajemen Aset Tetap</h1>
+      <h1>Selamat Datang di Sistem Manajemen Persediaan</h1>
       <p>Ringkasan data aset tetap Anda hari ini</p>
     </div>
 

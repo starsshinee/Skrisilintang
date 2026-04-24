@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PeminjamanBarang extends Model
 {
@@ -69,9 +70,19 @@ class PeminjamanBarang extends Model
     }
 
     // Pengembalian barang
-    public function pengembalian(): HasMany
+    // ✅ RELASI PENGEMBALIAN (YANG HILANG!)
+    public function pengembalianBarang(): HasOne
     {
-        return $this->hasMany(PengembalianBarang::class, 'peminjaman_barang_id');
+        return $this->hasOne(PengembalianBarang::class, 'peminjaman_barang_id');
+    }
+
+    // ✅ SCOPE UNTUK PENGEMBALIAN
+    public function scopeBelumDikembalikan($query)
+    {
+        return $query->whereDoesntHave('pengembalianBarang')
+                     ->orWhereHas('pengembalianBarang', function($q) {
+                         $q->where('status', 'diproses');
+                     });
     }
 
     // ✅ SCOPE untuk workflow

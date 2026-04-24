@@ -115,6 +115,16 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', [AdminSarprasController::class, 'dashboard']) ->name('dashboard');
             Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
+            Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
+            Route::get('/tambah-kerusakan', [AdminSarprasController::class, 'createKerusakan'])->name('tambah-kerusakan');
+            Route::post('/tambah-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('store-kerusakan');
+            // // Data kerusakan
+            //     Route::middleware(['auth'])->group(function() {
+            //     Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
+            //     Route::get('/tambah-kerusakan', [AdminSarprasController::class, 'createKerusakan'])->name('tambah-kerusakan');
+            //     Route::post('/tambah-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('store-kerusakan');
+            // });
+            Route::post('/simpan-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('simpan-kerusakan');
             Route::get('/daftar-peminjaman', [AdminSarprasController::class, 'daftarPeminjaman'])->name('daftar-peminjaman');
             Route::get('/daftar-pengembalian', [AdminSarprasController::class, 'daftarPengembalian'])->name('daftar-pengembalian');
             Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');

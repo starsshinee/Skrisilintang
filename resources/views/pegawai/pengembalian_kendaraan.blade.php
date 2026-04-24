@@ -295,7 +295,7 @@
     <div class="topbar-left">
       <div>
         <div class="breadcrumb">
-          <a href="{{ route('dashboard') }}">Dashboard</a> 
+          <a href="{{ route('tamu.dashboard') }}">Dashboard</a> 
           <i class="fas fa-chevron-right" style="font-size:10px"></i> 
           <span>Pengembalian Kendaraan</span>
         </div>
@@ -324,7 +324,7 @@
         <div class="form-header-sub">Pilih peminjaman kendaraan dan laporkan kondisi pengembalian</div>
       </div>
       <div class="form-body">
-        <form action="{{ route('pengembalian.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('pegawai.pengembalian-kendaraan') }}" method="POST" enctype="multipart/form-data">
           @csrf
           
           <div class="form-group">
@@ -334,7 +334,7 @@
             </div>
             <select class="form-select" name="peminjaman_kendaraan_id"            id="peminjamanSelect" onchange="onPeminjamanChange()" required>
               <option value="">-- Pilih Peminjaman Kendaraan --</option>
-              @foreach($peminjamanAktif as $peminjaman)
+              @foreach($peminjamanKendaraan as $peminjaman)
                 <option value="{{ $peminjaman->id }}" 
                         data-nopol="{{ $peminjaman->kendaraan->nopol }}"
                         data-merek="{{ $peminjaman->kendaraan->merk }}"
@@ -374,7 +374,7 @@
             </select>
           </div>
 
-          <div class="input-row">
+          {{-- <div class="input-row">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-camera"></i> Foto Sebelum <span class="req">*</span></div>
               <input type="file" class="form-input" name="foto_sebelum" accept="image/*" required>
@@ -383,21 +383,12 @@
               <div class="form-label"><i class="fas fa-camera-retro"></i> Foto Sesudah <span class="req">*</span></div>
               <input type="file" class="form-input" name="foto_sesudah" accept="image/*" required>
             </div>
-          </div>
+          </div> --}}
 
           <div class="form-group">
             <div class="form-label"><i class="fas fa-clipboard"></i> Catatan Pengembalian</div>
             <textarea class="form-textarea" name="catatan" id="catatanPengembalian" 
                       placeholder="Deskripsikan kondisi kendaraan, kerusakan, kilometer, bahan bakar, atau catatan lainnya..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <div class="form-label"><i class="fas fa-exclamation-triangle"></i> Status Pengembalian <span class="req">*</span></div>
-            <select class="form-select" name="status_pengembalian" required>
-              <option value="diproses">Diproses</option>
-              <option value="diterima">Diterima</option>
-              <option value="ditolak">Ditolak</option>
-            </select>
           </div>
 
           <button type="submit" class="submit-btn" id="submitBtn" disabled>

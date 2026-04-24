@@ -76,11 +76,27 @@ class PeminjamanKendaraan extends Model
         return $this->belongsTo(User::class, 'approved_by_kasubag_id');
     }
 
-    //Pengembalian kendaraan
-    // public function pengembalian(): HasMany
-    // {
-    //     return $this->hasMany(PengembalianKendaraan::class, 'peminjaman_kendaraan_id');
-    // }
+    // Pengembalian kendaraan
+    public function pengembalian(): HasMany
+    {
+        return $this->hasMany(PengembalianKendaraan::class, 'peminjaman_kendaraan_id');
+    }
+
+    // ✅ ACCESSOR UNTUK HTML
+    public function getNopolAttribute()
+    {
+        return $this->assetTetap->nopol ?? $this->nama_kendaraan ?? 'N/A';
+    }
+
+    public function getMerkAttribute()
+    {
+        return $this->assetTetap->merk ?? $this->merek ?? 'Tidak diketahui';
+    }
+
+    public function getTipeAttribute()
+    {
+        return $this->assetTetap->tipe ?? $this->kategori ?? 'Umum';
+    }
 
     // ✅ SCOPE Workflow
     public function scopePending($query)

@@ -399,7 +399,6 @@
                 <div class="form-label"><i class="fas fa-id-card"></i> NIP</div>
                 <input type="text" class="form-input" value="0983654321">
               </div>
-            </div>
             <div class="form-grid-2">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-envelope"></i> Email</div>

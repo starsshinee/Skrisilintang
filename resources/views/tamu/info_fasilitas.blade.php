@@ -453,7 +453,7 @@
         <div class="price-avail-row">
           <div class="price-block">
             <div class="price-label">Tarif Sewa</div>
-            <div class="price-value">Rp 2.500.000 <span class="price-unit">/ hari</span></div>
+            <div class="price-value">Rp 2.589.000 <span class="price-unit">/ hari</span></div>
           </div>
           <div class="avail-block">
             <div class="avail-label">Ketersediaan</div>
@@ -468,25 +468,23 @@
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
-            <div class="detail-val">400 m²</div>
+            <div class="detail-val">815,38 m²</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
-            <div class="detail-val">Senin–Sabtu</div>
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val">nnti di isi tanggal yang terisi</div>
           </div>
-          <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
-            <div class="detail-val">07.00–21.00</div>
-          </div>
+
         </div>
         <div>
-          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas</div>
           <div class="fac-tags">
             <span class="fac-tag"><i class="fas fa-wind"></i> AC Sentral</span>
             <span class="fac-tag"><i class="fas fa-volume-high"></i> Sound System</span>
-            <span class="fac-tag"><i class="fas fa-projector"></i> Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-video"></i> Videotron</span>
             <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
-            <span class="fac-tag"><i class="fas fa-toilet"></i> Toilet</span>
+            <span class="fac-tag"><i class="fas fa-toilet"></i> Meja</span>
+            <span class="fac-tag"><i class="fas fa-toilet"></i> Kursi</span>
           </div>
         </div>
         <a href="#" class="action-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
@@ -531,26 +529,22 @@
         <div class="detail-grid">
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
-            <div class="detail-val">20 Orang</div>
+            <div class="detail-val">50 Orang</div>
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
-            <div class="detail-val">60 m²</div>
+            <div class="detail-val"> 161,5 m²</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
-            <div class="detail-val">Senin–Jumat</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
-            <div class="detail-val">08.00–17.00</div>
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val"> disesuaikan dengan jadwal</div>
           </div>
         </div>
         <div>
           <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
           <div class="fac-tags">
-            <span class="fac-tag"><i class="fas fa-video"></i> Video Conf</span>
-            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Whiteboard</span>
+            <span class="fac-tag"><i class="fas fa-video"></i> Videotron</span>
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
             <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
             <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
           </div>
@@ -578,15 +572,15 @@
           <div class="dot" onclick="goSlide(2,2)"></div>
         </div>
         <div class="card-img-title">
-          <div class="card-img-name">Ruang Kelas</div>
-          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 1-4 & Ruang Tilango</div>
+          <div class="card-img-name">Ruang Kelas Tinelo 1</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 1</div>
         </div>
       </div>
       <div class="card-body">
         <div class="price-avail-row">
           <div class="price-block">
             <div class="price-label">Tarif Sewa</div>
-            <div class="price-value">Rp 1.500.000 <span class="price-unit">/ hari</span></div>
+            <div class="price-value">Rp 645.000 <span class="price-unit">/ hari</span></div>
           </div>
           <div class="avail-block">
             <div class="avail-label">Ketersediaan</div>
@@ -601,7 +595,308 @@
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">68 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> LCD Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-volume-up"></i> Sound sistem Standar</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 3. Ruang Kelas-->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="lab komputer">
+      <div class="slider-wrap" data-slider="2">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#06b6d4); background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80'), linear-gradient(135deg,#0e7490,#06b6d4); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0891b2,#22d3ee); background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80'), linear-gradient(135deg,#0891b2,#22d3ee); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#0891b2); background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80'), linear-gradient(135deg,#0e7490,#0891b2); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status booked"><i class="fas fa-circle"></i> Sedang Dipakai</span>
+        <div class="img-counter" id="counter-2">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(2,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(2,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-2">
+          <div class="dot active" onclick="goSlide(2,0)"></div>
+          <div class="dot" onclick="goSlide(2,1)"></div>
+          <div class="dot" onclick="goSlide(2,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Kelas Tinelo 2</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 2</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 645.000  <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge booked"><div class="pulse"></div> Sedang Dipakai</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
             <div class="detail-val">80 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val">-</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> LCD Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-volume-up"></i> Sound sistem Standar</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 3. Ruang Kelas-->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="lab komputer">
+      <div class="slider-wrap" data-slider="2">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#06b6d4); background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80'), linear-gradient(135deg,#0e7490,#06b6d4); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0891b2,#22d3ee); background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80'), linear-gradient(135deg,#0891b2,#22d3ee); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#0891b2); background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80'), linear-gradient(135deg,#0e7490,#0891b2); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status booked"><i class="fas fa-circle"></i> Sedang Dipakai</span>
+        <div class="img-counter" id="counter-2">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(2,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(2,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-2">
+          <div class="dot active" onclick="goSlide(2,0)"></div>
+          <div class="dot" onclick="goSlide(2,1)"></div>
+          <div class="dot" onclick="goSlide(2,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Kelas Tinelo 3</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 3</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 645.000  <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge booked"><div class="pulse"></div> Sedang Dipakai</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">68 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> LCD Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-volume-up"></i> Sound sistem Standar</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 3. Ruang Kelas-->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="lab komputer">
+      <div class="slider-wrap" data-slider="2">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#06b6d4); background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80'), linear-gradient(135deg,#0e7490,#06b6d4); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0891b2,#22d3ee); background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80'), linear-gradient(135deg,#0891b2,#22d3ee); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#0891b2); background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80'), linear-gradient(135deg,#0e7490,#0891b2); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status booked"><i class="fas fa-circle"></i> Sedang Dipakai</span>
+        <div class="img-counter" id="counter-2">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(2,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(2,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-2">
+          <div class="dot active" onclick="goSlide(2,0)"></div>
+          <div class="dot" onclick="goSlide(2,1)"></div>
+          <div class="dot" onclick="goSlide(2,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Kelas Tinelo 4</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tinelo 4</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 645.000  <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge booked"><div class="pulse"></div> Sedang Dipakai</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">80 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> LCD Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-volume-up"></i> Sound sistem Standar</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 3. Ruang Kelas-->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="lab komputer">
+      <div class="slider-wrap" data-slider="2">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#06b6d4); background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80'), linear-gradient(135deg,#0e7490,#06b6d4); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0891b2,#22d3ee); background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80'), linear-gradient(135deg,#0891b2,#22d3ee); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#0e7490,#0891b2); background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80'), linear-gradient(135deg,#0e7490,#0891b2); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status booked"><i class="fas fa-circle"></i> Sedang Dipakai</span>
+        <div class="img-counter" id="counter-2">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(2,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(2,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-2">
+          <div class="dot active" onclick="goSlide(2,0)"></div>
+          <div class="dot" onclick="goSlide(2,1)"></div>
+          <div class="dot" onclick="goSlide(2,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Kelas Tilango</div>
+          <div class="card-img-cat"><i class="fas fa-desktop"></i> Tilango </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 308.000  <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge booked"><div class="pulse"></div> Sedang Dipakai</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">68 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> Jadwal Pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-chair"></i> Meja & kursi</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-projector"></i> LCD Proyektor</span>
+            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
+            <span class="fac-tag"><i class="fas fa-volume-up"></i> Sound sistem Standar</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+
+    <!-- 4. Mess -->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="ruang pelatihan">
+      <div class="slider-wrap" data-slider="3">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#059669); background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80'), linear-gradient(135deg,#065f46,#059669); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#047857,#10b981); background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80'), linear-gradient(135deg,#047857,#10b981); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#34d399); background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'), linear-gradient(135deg,#065f46,#34d399); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-3">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(3,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(3,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-3">
+          <div class="dot active" onclick="goSlide(3,0)"></div>
+          <div class="dot" onclick="goSlide(3,1)"></div>
+          <div class="dot" onclick="goSlide(3,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Mess Bandayo daa</div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo daa </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 734.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 12 orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 211 m²</div>
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
@@ -609,19 +904,21 @@
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
-            <div class="detail-val">08.00–17.00</div>
+            <div class="detail-val">07.30–17.00</div>
           </div>
         </div>
         <div>
           <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
           <div class="fac-tags">
-            <span class="fac-tag"><i class="fas fa-ethernet"></i> Internet Fiber</span>
+            <span class="fac-tag"><i class="fas fa-bed"></i> Springbad</span>
             <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
-            <span class="fac-tag"><i class="fas fa-projector"></i> Proyektor</span>
-            <span class="fac-tag"><i class="fas fa-print"></i> Printer</span>
+            <span class="fac-tag"><i class="fas fa-bath"></i> Kamar Mandi Dalam</span>
+            <span class="fac-tag"><i class=""></i> Ruang makan</span>
+            <span class="fac-tag"><i class=""></i> Ruang tamu</span>
+            <span class="fac-tag"><i class=""></i> 6 Kamar Tidur</span>
           </div>
         </div>
-        <a href="#" class="action-btn booked-btn"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
       </div>
     </div>
 
@@ -644,15 +941,15 @@
           <div class="dot" onclick="goSlide(3,2)"></div>
         </div>
         <div class="card-img-title">
-          <div class="card-img-name">RMess</div>
-          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo daa & Bandayo kiki</div>
+          <div class="card-img-name">Mess Bandayo kiki 1</div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo kiki 1 </div>
         </div>
       </div>
       <div class="card-body">
         <div class="price-avail-row">
           <div class="price-block">
             <div class="price-label">Tarif Sewa</div>
-            <div class="price-value">Rp 800.000 <span class="price-unit">/ hari</span></div>
+            <div class="price-value">Rp 424.000 <span class="price-unit">/ hari</span></div>
           </div>
           <div class="avail-block">
             <div class="avail-label">Ketersediaan</div>
@@ -663,28 +960,218 @@
         <div class="detail-grid">
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
-            <div class="detail-val">40 Orang</div>
+            <div class="detail-val"> 4 Orang</div>
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
-            <div class="detail-val">100 m²</div>
+            <div class="detail-val"> 120 m²</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
-            <div class="detail-val">Senin–Sabtu</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
-            <div class="detail-val">07.30–17.00</div>
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
           </div>
         </div>
         <div>
           <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
           <div class="fac-tags">
-            <span class="fac-tag"><i class="fas fa-photo-film"></i> Multimedia</span>
+            <span class="fac-tag"><i class="fas fa-bed"></i> Springbad</span>
             <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
-            <span class="fac-tag"><i class="fas fa-chalkboard"></i> Papan Tulis</span>
-            <span class="fac-tag"><i class="fas fa-wifi"></i> WiFi</span>
+            <span class="fac-tag"><i class="fas fa-bath"></i> Kamar Mandi Dalam</span>
+            <span class="fac-tag"><i class=""></i> Ruang makan</span>
+            <span class="fac-tag"><i class=""></i> Ruang tamu</span>
+            <span class="fac-tag"><i class=""></i> 2 Kamar Tidur</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 4. Mess -->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="ruang pelatihan">
+      <div class="slider-wrap" data-slider="3">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#059669); background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80'), linear-gradient(135deg,#065f46,#059669); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#047857,#10b981); background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80'), linear-gradient(135deg,#047857,#10b981); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#34d399); background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'), linear-gradient(135deg,#065f46,#34d399); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-3">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(3,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(3,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-3">
+          <div class="dot active" onclick="goSlide(3,0)"></div>
+          <div class="dot" onclick="goSlide(3,1)"></div>
+          <div class="dot" onclick="goSlide(3,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Mess Bandayo kiki 2</div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo kiki 2 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 424.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val">4 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">120 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-bed"></i> Springbad</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-bath"></i> Kamar Mandi Dalam</span>
+            <span class="fac-tag"><i class=""></i> Ruang makan</span>
+            <span class="fac-tag"><i class=""></i> Ruang tamu</span>
+            <span class="fac-tag"><i class=""></i> 6 Kamar Tidur</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 4. Mess -->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="ruang pelatihan">
+      <div class="slider-wrap" data-slider="3">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#059669); background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80'), linear-gradient(135deg,#065f46,#059669); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#047857,#10b981); background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80'), linear-gradient(135deg,#047857,#10b981); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#34d399); background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'), linear-gradient(135deg,#065f46,#34d399); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-3">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(3,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(3,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-3">
+          <div class="dot active" onclick="goSlide(3,0)"></div>
+          <div class="dot" onclick="goSlide(3,1)"></div>
+          <div class="dot" onclick="goSlide(3,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Mess Bandayo kiki 3 </div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo kiki 3 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 424.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 4 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 120 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-bed"></i> Springbad</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-bath"></i> Kamar Mandi Dalam</span>
+            <span class="fac-tag"><i class=""></i> Ruang makan</span>
+            <span class="fac-tag"><i class=""></i> Ruang tamu</span>
+            <span class="fac-tag"><i class=""></i> 2 Kamar Tidur</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 4. Mess -->
+    <div class="fac-card fade-up d4" data-category="ruang" data-name="ruang pelatihan">
+      <div class="slider-wrap" data-slider="3">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#059669); background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80'), linear-gradient(135deg,#065f46,#059669); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#047857,#10b981); background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80'), linear-gradient(135deg,#047857,#10b981); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#065f46,#34d399); background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'), linear-gradient(135deg,#065f46,#34d399); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-3">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(3,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(3,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-3">
+          <div class="dot active" onclick="goSlide(3,0)"></div>
+          <div class="dot" onclick="goSlide(3,1)"></div>
+          <div class="dot" onclick="goSlide(3,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Mess Bandayo kiki 4 </div>
+          <div class="card-img-cat"><i class="fas fa-book-open"></i> Mess bandayo kiki 4 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 424.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 4 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 120 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-bed"></i> Springbad</span>
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-bath"></i> Kamar Mandi Dalam</span>
+            <span class="fac-tag"><i class=""></i> Ruang makan</span>
+            <span class="fac-tag"><i class=""></i> Ruang tamu</span>
+            <span class="fac-tag"><i class=""></i> 2 Kamar Tidur</span>
           </div>
         </div>
         <a href="#" class="action-btn" style="background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 4px 14px rgba(16,185,129,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
@@ -710,15 +1197,16 @@
           <div class="dot" onclick="goSlide(4,2)"></div>
         </div>
         <div class="card-img-title">
-          <div class="card-img-name">Asrama</div>
-          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 1-4 </div>
+          <div class="card-img-name">Asrama Beledaa 1</div>
+          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 1 </div>
         </div>
       </div>
       <div class="card-body">
         <div class="price-avail-row">
           <div class="price-block">
             <div class="price-label">Tarif Sewa</div>
-            <div class="price-value">Rp 750.000 <span class="price-unit">/ hari</span></div>
+            <div class="price-value">Rp 807.000 <span class="price-unit">/ hari (satu mess)</span></div>
+            <div class="price-value">Rp 50.500 <span class="price-unit">/ kamar</span></div>
           </div>
           <div class="avail-block">
             <div class="avail-label">Ketersediaan</div>
@@ -728,20 +1216,205 @@
         <div class="card-divider"></div>
         <div class="detail-grid">
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-person-seat"></i> Penumpang</div>
-            <div class="detail-val">16 Orang</div>
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 32 Orang</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-gas-pump"></i> Bahan Bakar</div>
-            <div class="detail-val">Termasuk</div>
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 522 m²</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-id-card-clip"></i> Pengemudi</div>
-            <div class="detail-val">Termasuk</div>
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Kendaraan</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-music"></i> Audio</span>
+            <span class="fac-tag"><i class="fas fa-user-tie"></i> Sopir</span>
+            <span class="fac-tag"><i class="fas fa-gas-pump"></i> BBM</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 4px 14px rgba(217,119,6,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 5. Asrama -->
+    <div class="fac-card fade-up d5" data-category="kendaraan" data-name="kendaraan minibus">
+      <div class="slider-wrap" data-slider="4">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#d97706); background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80'), linear-gradient(135deg,#78350f,#d97706); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#92400e,#f59e0b); background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80'), linear-gradient(135deg,#92400e,#f59e0b); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#fbbf24); background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80'), linear-gradient(135deg,#78350f,#fbbf24); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-4">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(4,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(4,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-4">
+          <div class="dot active" onclick="goSlide(4,0)"></div>
+          <div class="dot" onclick="goSlide(4,1)"></div>
+          <div class="dot" onclick="goSlide(4,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Asrama Beledaa 2</div>
+          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 2 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 807.000 <span class="price-unit">/ hari (satu mess)</span></div>
+            <div class="price-value">Rp 50.500 <span class="price-unit">/ kamar</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 32 Orang</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-clock"></i> Operasional</div>
-            <div class="detail-val">07.00–20.00</div>
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 522 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Kendaraan</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-music"></i> Audio</span>
+            <span class="fac-tag"><i class="fas fa-user-tie"></i> Sopir</span>
+            <span class="fac-tag"><i class="fas fa-gas-pump"></i> BBM</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 4px 14px rgba(217,119,6,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 5. Asrama -->
+    <div class="fac-card fade-up d5" data-category="kendaraan" data-name="kendaraan minibus">
+      <div class="slider-wrap" data-slider="4">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#d97706); background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80'), linear-gradient(135deg,#78350f,#d97706); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#92400e,#f59e0b); background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80'), linear-gradient(135deg,#92400e,#f59e0b); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#fbbf24); background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80'), linear-gradient(135deg,#78350f,#fbbf24); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-4">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(4,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(4,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-4">
+          <div class="dot active" onclick="goSlide(4,0)"></div>
+          <div class="dot" onclick="goSlide(4,1)"></div>
+          <div class="dot" onclick="goSlide(4,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Asrama Beledaa 3</div>
+          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 3 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 807.000 <span class="price-unit">/ hari (satu mess)</span></div>
+            <div class="price-value">Rp 50.500 <span class="price-unit">/ kamar</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 32 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 522 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Kendaraan</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-music"></i> Audio</span>
+            <span class="fac-tag"><i class="fas fa-user-tie"></i> Sopir</span>
+            <span class="fac-tag"><i class="fas fa-gas-pump"></i> BBM</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 4px 14px rgba(217,119,6,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 5. Asrama -->
+    <div class="fac-card fade-up d5" data-category="kendaraan" data-name="kendaraan minibus">
+      <div class="slider-wrap" data-slider="4">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#d97706); background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80'), linear-gradient(135deg,#78350f,#d97706); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#92400e,#f59e0b); background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80'), linear-gradient(135deg,#92400e,#f59e0b); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#78350f,#fbbf24); background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80'), linear-gradient(135deg,#78350f,#fbbf24); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-4">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(4,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(4,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-4">
+          <div class="dot active" onclick="goSlide(4,0)"></div>
+          <div class="dot" onclick="goSlide(4,1)"></div>
+          <div class="dot" onclick="goSlide(4,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Asrama Beledaa 4</div>
+          <div class="card-img-cat"><i class="fas fa-van-shuttle"></i> Asrama Beledaa 4 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 807.000 <span class="price-unit">/ hari (satu mess)</span></div>
+            <div class="price-value">Rp 50.500 <span class="price-unit">/ kamar</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 32 Orang</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val"> 522 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
           </div>
         </div>
         <div>
@@ -776,15 +1449,15 @@
           <div class="dot" onclick="goSlide(5,2)"></div>
         </div>
         <div class="card-img-title">
-          <div class="card-img-name">Ruang Makan</div>
-          <div class="card-img-cat"><i class="fas fa-house"></i> Olamita 1&2 </div>
+          <div class="card-img-name">Ruang Makan Olamita 1</div>
+          <div class="card-img-cat"><i class="fas fa-house"></i> Olamita 1 </div>
         </div>
       </div>
       <div class="card-body">
         <div class="price-avail-row">
           <div class="price-block">
             <div class="price-label">Tarif Sewa</div>
-            <div class="price-value">Rp 3.000.000 <span class="price-unit">/ hari</span></div>
+            <div class="price-value">Rp 514.000 <span class="price-unit">/ hari</span></div>
           </div>
           <div class="avail-block">
             <div class="avail-label">Ketersediaan</div>
@@ -795,19 +1468,78 @@
         <div class="detail-grid">
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
-            <div class="detail-val">300 Orang</div>
+            <div class="detail-val"> 160 orang</div>
           </div>
           <div class="detail-item">
             <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
-            <div class="detail-val">500 m²</div>
+            <div class="detail-val">198 m²</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-sun"></i> Tersedia</div>
-            <div class="detail-val">Setiap Hari</div>
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-key" style="margin-bottom:8px;font-size:11px;"><i class="fas fa-star" style="color:var(--primary);font-size:9px"></i> Fasilitas Tersedia</div>
+          <div class="fac-tags">
+            <span class="fac-tag"><i class="fas fa-wind"></i> AC</span>
+            <span class="fac-tag"><i class="fas fa-volume-high"></i> Sound</span>
+            <span class="fac-tag"><i class="fas fa-parking"></i> Parkir Luas</span>
+            <span class="fac-tag"><i class="fas fa-toilet"></i> Toilet</span>
+            <span class="fac-tag"><i class="fas fa-utensils"></i> Catering Ready</span>
+          </div>
+        </div>
+        <a href="#" class="action-btn" style="background:linear-gradient(135deg,#9f1239,#e11d48);box-shadow:0 4px 14px rgba(244,63,94,0.3)"><i class="fas fa-calendar-plus"></i> Ajukan Peminjaman</a>
+      </div>
+    </div>
+
+    <!-- 6. Ruang Makan -->
+    <div class="fac-card fade-up d5" data-category="ruang" data-name="gedung serbaguna">
+      <div class="slider-wrap" data-slider="5">
+        <div class="slider-track">
+          <div class="slide-img" style="background: linear-gradient(135deg,#881337,#e11d48); background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80'), linear-gradient(135deg,#881337,#e11d48); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#9f1239,#f43f5e); background-image: url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80'), linear-gradient(135deg,#9f1239,#f43f5e); background-blend-mode:overlay;"></div>
+          <div class="slide-img" style="background: linear-gradient(135deg,#881337,#fb7185); background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&q=80'), linear-gradient(135deg,#881337,#fb7185); background-blend-mode:overlay;"></div>
+        </div>
+        <div class="slider-overlay"></div>
+        <span class="slide-status available"><i class="fas fa-circle"></i> Tersedia</span>
+        <div class="img-counter" id="counter-5">1 / 3</div>
+        <button class="slide-prev" onclick="slideCard(5,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slide-next" onclick="slideCard(5,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slide-dots" id="dots-5">
+          <div class="dot active" onclick="goSlide(5,0)"></div>
+          <div class="dot" onclick="goSlide(5,1)"></div>
+          <div class="dot" onclick="goSlide(5,2)"></div>
+        </div>
+        <div class="card-img-title">
+          <div class="card-img-name">Ruang Makan Olamita 1</div>
+          <div class="card-img-cat"><i class="fas fa-house"></i> Olamita 1 </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="price-avail-row">
+          <div class="price-block">
+            <div class="price-label">Tarif Sewa</div>
+            <div class="price-value">Rp 450.000 <span class="price-unit">/ hari</span></div>
+          </div>
+          <div class="avail-block">
+            <div class="avail-label">Ketersediaan</div>
+            <span class="avail-badge available"><div class="pulse"></div> Tersedia</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-users"></i> Kapasitas</div>
+            <div class="detail-val"> 50 orang</div>
           </div>
           <div class="detail-item">
-            <div class="detail-key"><i class="fas fa-clock"></i> Jam Operasional</div>
-            <div class="detail-val">07.00–22.00</div>
+            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Area</div>
+            <div class="detail-val">144 m²</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-key"><i class="fas fa-sun"></i> jadwal pemakaian</div>
+            <div class="detail-val"></div>
           </div>
         </div>
         <div>
