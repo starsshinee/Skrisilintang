@@ -29,7 +29,7 @@ class AssetTetap extends Model
 
     public function transaksiMasuk()
     {
-        return $this->hasMany(TransaksiMasukAsetTetap::class, 'aset_tetap_id');
+        return $this->hasMany(TransaksiMasukAssetTetap::class, 'aset_tetap_id');
     }
 
     public function transaksiKeluar()

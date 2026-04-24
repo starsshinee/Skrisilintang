@@ -116,8 +116,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [AdminSarprasController::class, 'dashboard']) ->name('dashboard');
             Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
             Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
-            Route::get('/tambah-kerusakan', [AdminSarprasController::class, 'createKerusakan'])->name('tambah-kerusakan');
-            Route::post('/tambah-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('store-kerusakan');
+            Route::get('/tambah-kerusakan', [AdminSarprasController::class, 'createKerusakan'])
+            ->name('tambah-kerusakan');  // ← PASTI SEPERTI INI
+            Route::post('/tambah-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])
+            ->name('store-kerusakan');
             // // Data kerusakan
             //     Route::middleware(['auth'])->group(function() {
             //     Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
@@ -147,10 +149,28 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');              
+            
+            // Laporan (tetap sama)
             Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
             Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
             Route::get('/laporan-mutasi-barang', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi-barang');
             Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembalian');
+
+            // ========== CRUD DATA ASET TETAP ==========
+            Route::post('/data-aset-tetap', [AdminAsettetapController::class, 'store'])->name('data-aset-tetap.store');
+            Route::get('/data-aset-tetap/create', [AdminAsettetapController::class, 'create'])->name('data-aset-tetap.create');
+            Route::get('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'show'])->name('data-aset-tetap.show');
+            Route::get('/data-aset-tetap/{aset}/edit', [AdminAsettetapController::class, 'edit'])->name('data-aset-tetap.edit');
+            Route::put('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'update'])->name('data-aset-tetap.update');
+            Route::delete('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'destroy'])->name('data-aset-tetap.destroy');
+
+            // ========== CRUD TRANSAKSI MASUK ASET TETAP ==========
+            Route::get('/transaksi-masuk/create', [AdminAsettetapController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
+            Route::post('/transaksi-masuk', [AdminAsettetapController::class, 'storeTransaksiMasuk'])->name('transaksi-masuk.store');
+            Route::get('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'showTransaksiMasuk'])->name('transaksi-masuk.show');
+            Route::get('/transaksi-masuk/{transaksi}/edit', [AdminAsettetapController::class, 'editTransaksiMasuk'])->name('transaksi-masuk.edit');
+            Route::put('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'updateTransaksiMasuk'])->name('transaksi-masuk.update');
+            Route::delete('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiMasuk'])->name('transaksi-masuk.destroy');
 
         });
 

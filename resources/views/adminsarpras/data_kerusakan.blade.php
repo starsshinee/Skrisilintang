@@ -241,14 +241,20 @@
     @endif
 
     <div class="toolbar">
-      <div class="search-wrap">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" type="text" placeholder="Cari kerusakan barang..." id="searchInput" oninput="filterTable()">
-      </div>
-      <a href="/tambah-kerusakan" class="btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
-        Tambah Data
-      </a>
+        <div class="search-wrap">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input class="search-input" type="text" placeholder="Cari kerusakan barang..." 
+                  id="searchInput" oninput="filterTable()">
+        </div>
+         <a href="{{ url('/tambah-kerusakan') }}" class="btn-primary">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path d="M12 5v14m-7-7h14"/>
+            </svg>
+            Tambah Data
+         </a>
     </div>
 
     <div class="table-card">

@@ -221,12 +221,15 @@ class AdminSarprasController extends Controller
     /**
      * Form tambah data kerusakan
      */
-    public function createKerusakan()
-    {
-        dd('CONTROLLER OK!');
+        public function createKerusakan()
+        {
+            return view('adminsarpras.tambah_kerusakan');
+        }
 
-        // return view('tambah-kerusakan');
-    }
+    // public function tambahKerusakan()
+    // {
+    //     return view('adminsarpras.tambah-kerusakan');
+    // }
 
     // public function storeKerusakan(Request $request)  // ← INI JUGA!
     // {

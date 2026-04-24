@@ -14,11 +14,16 @@ return new class extends Migration
             $table->string('kode_barang')->unique();
             $table->string('nup')->unique();
             $table->string('nama_barang');
-            $table->date('tanggal_perolehan')->nullable();
-            $table->integer('jumlah')->default(0);
-            $table->string('lokasi')->nullable(); // aktif, nonaktif, rusak
-            $table->enum('kondisi', ['baik', 'rusak ringan', 'rusak berat'])->nullable(); // baik, rusak, hilang
+            $table->string('merek')->nullable();
+            $table->string('kategori');
+            $table->date('tanggal_perolehan');
+            $table->decimal('nilai_perolehan', 15, 2);
+            $table->integer('jumlah')->default(1);
+            $table->string('lokasi');
+            $table->enum('kondisi', ['Baik', 'Cukup', 'Rusak'])->default('Baik');
             $table->timestamps();
+            
+            $table->index(['kode_barang', 'nup', 'nama_barang']);
         });
     }
 

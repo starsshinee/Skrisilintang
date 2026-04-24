@@ -216,14 +216,14 @@ class PegawaiController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.Auth::id(),
-            'no_telepon' => 'nullable|string|max:15',
-        ]);
+        // $request->validate([
+        //     'nama' => 'required|string|max:255',
+        //     'email' => 'required|email|unique:users,email,'.Auth::id(),
+        //     'no_telepon' => 'nullable|string|max:15',
+        // ]);
 
-        Auth::user()->update($request->only(['nama', 'email', 'no_telepon']));
-        return redirect()->back()->with('success', 'Profile berhasil diupdate!');
+        // Auth::user()->update($request->only(['nama', 'email', 'no_telepon']));
+        // return redirect()->back()->with('success', 'Profile berhasil diupdate!');
     }
 
     /**

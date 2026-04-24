@@ -314,7 +314,7 @@
         </div>
 
         <div class="btn-group">
-          <a href="{{ route('kerusakan.index') }}" class="btn-secondary">Batal</a>
+          <a href="{{ route('data-kerusakan') }}" class="btn-secondary">Batal</a>
           <button type="submit" class="btn-primary">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
