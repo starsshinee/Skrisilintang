@@ -262,12 +262,12 @@
     <div class="page-top">
       <div>
         <h1>Peminjaman Barang</h1>
-        <p>3 data ditemukan</p>
+        <p id="dataCount">{{ $peminjamanBarang->total() }} data ditemukan</p>
       </div>
-      <button class="btn-tambah">
+      {{-- <button class="btn-tambah">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Tambah Baru
-      </button>
+      </button> --}}
     </div>
 
     <div class="table-card">
@@ -292,8 +292,8 @@
       <thead>
         <tr>
           <th>No</th>
-          <th>Kode Barang</th>
-          <th>NUP</th>
+          {{-- <th>Kode Barang</th>
+          <th>NUP</th> --}}
           <th>Nama Barang</th>
           <th>Merek</th>
           <th>Jumlah</th>
@@ -305,7 +305,7 @@
         </tr>
       </thead>
       <tbody>
-        @forelse($peminjamanbarang as $index => $item)
+        @forelse($peminjamanBarang as $index => $item)
           <tr>
             <td><strong>{{ $index + 1 }}</strong></td>
             <td>{{ $item->kode_barang }}</td>

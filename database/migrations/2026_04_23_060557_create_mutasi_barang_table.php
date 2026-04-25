@@ -16,14 +16,11 @@ return new class extends Migration
         Schema::create('mutasi_barang', function (Blueprint $table) {
             $table->id();
             
-            // Nomor mutasi unik
-            $table->string('nomor_mutasi')->unique();
-            
             // Relasi
             $table->foreignId('aset_tetap_id')->constrained('aset_tetap')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-            // Data Utama (SESUAI TABEL)
+            // Data Utama
             $table->string('kode_barang');
             $table->string('nama_barang');
             
@@ -34,16 +31,10 @@ return new class extends Migration
             // Tanggal
             $table->date('tanggal_mutasi');
             
-            // Tambahan
-            $table->text('alasan_mutasi')->nullable();
-            $table->string('penerima')->nullable();
-            $table->text('keterangan')->nullable();
-            
             $table->timestamps();
             
             // Index
-            $table->index('kode_barang');
-            $table->index('tanggal_mutasi');
+            $table->index(['kode_barang', 'tanggal_mutasi', 'lokasi_awal', 'lokasi_akhir']);
         });
     }
 

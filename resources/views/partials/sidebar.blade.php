@@ -51,6 +51,7 @@
         ['href' => route('adminasettetap.transaksi-masuk'), 'label' => 'Transaksi Masuk', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-masuk'],
         ['href' => route('adminasettetap.transaksi-keluar'), 'label' => 'Transaksi Keluar', 'icon' => 'fas fa-boxes', 'route' => 'adminasettetap.transaksi-keluar'],
         ['href' => route ('adminasettetap.mutasi-barang'), 'label' => 'Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'adminasettetap.mutasi-barang'],
+        
         [
           'label' => 'Manajemen Peminjaman',
           'icon' => 'fas fa-exchange-alt',
@@ -69,6 +70,9 @@
             ['href' => route('adminasettetap.pengembalian-kendaraan'), 'label' => 'Pengembalian Kendaraan', 'route' => 'adminasettetap.pengembalian-kendaraan'],
           ]
         ],
+        ['href' => route('adminasettetap.pengaduan'), 'label' => 'Pengaduan', 'icon' => 'fas fa-flag', 'route' => 'adminasettetap.pengaduan'],
+        ['href' =>route('adminasettetap.survey-kepuasan'), 'label' => 'Survey Kepuasan', 'icon' => 'fas fa-chart-line', 'route' => 'adminasettetap.survey-kepuasan'],
+        
         [
           'label' => 'Laporan & Statistik',
           'icon' => 'fas fa-chart-bar',

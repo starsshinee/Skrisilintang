@@ -34,7 +34,7 @@ class AssetTetap extends Model
 
     public function transaksiKeluar()
     {
-        return $this->hasMany(TransaksiKeluarAsetTetap::class, 'aset_tetap_id');
+        return $this->hasMany(TransaksiKeluarAssetTetap::class, 'aset_tetap_id');
     }
 
     public function peminjamanKendaraan()

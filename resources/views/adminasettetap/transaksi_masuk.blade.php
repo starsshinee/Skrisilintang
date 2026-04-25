@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIMASET - Data Aset Tetap</title>
+<title>SIPANDU - Data Aset Tetap</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -463,48 +463,76 @@
 </main>
 
 {{-- MODAL CREATE --}}
+{{-- MODAL CREATE --}}
 <div id="createModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 class="modal-title"><i class="fas fa-plus-circle text-success me-2"></i>Tambah Transaksi Masuk</h3>
-      <p class="modal-subtitle">Isi data transaksi masuk aset tetap baru</p>
+  <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
+
+    {{-- HEADER --}}
+    <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--blue),#7C3AED); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(79,111,255,.35); flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:17px; font-weight:800; color:var(--text);">Tambah Transaksi Masuk</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Isi data transaksi masuk aset tetap baru</div>
+          </div>
+        </div>
+        <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;" onmouseover="this.style.background='#FEF2F2';this.style.color='#EF4444';this.style.borderColor='#FECACA'" onmouseout="this.style.background='var(--surface)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
     </div>
-    <form id="createForm" method="POST" action="{{ route('adminasettetap.transaksi-masuk.store') }}">
+
+    {{-- FORM BODY --}}
+    <form id="createForm" method="POST" action="{{ route('adminasettetap.transaksi-masuk.store') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
       @csrf
-      <div class="modal-body">
+
+      <div style="padding:20px 28px; overflow-y:auto; flex:1;">
+
+        {{-- SECTION: Identifikasi Transaksi --}}
+        <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:0;">
+          <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Identifikasi Transaksi</span>
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Nomor Transaksi *</label>
-            <input type="text" name="nomor_transaksi" class="form-input" required>
+            <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nomor_transaksi" class="form-input" placeholder="Contoh: TRX-2026-001" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Kode Barang *</label>
-            <input type="text" name="kode_barang" class="form-input" required>
+            <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_barang" class="form-input" placeholder="Contoh: 3.06.01.01.001" required>
+          </div>
+        </div>
+
+        {{-- SECTION: Data Barang --}}
+        <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:4px;">
+          <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Data Barang</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">NUP <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nup" class="form-input" placeholder="Nomor Urut Pendaftaran" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jumlah <span style="color:var(--danger);">*</span></label>
+            <input type="number" name="jumlah" class="form-input" min="1" placeholder="1" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">NUP *</label>
-            <input type="text" name="nup" class="form-input" required>
+            <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nama_barang" class="form-input" placeholder="Nama lengkap aset tetap" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Jumlah *</label>
-            <input type="number" name="jumlah" class="form-input" min="1" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nama Barang *</label>
-            <input type="text" name="nama_barang" class="form-input" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Merek</label>
-            <input type="text" name="merek" class="form-input">
+            <label class="form-label">Merek <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
+            <input type="text" name="merek" class="form-input" placeholder="Merek / brand aset">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Kondisi *</label>
+            <label class="form-label">Kondisi <span style="color:var(--danger);">*</span></label>
             <select name="kondisi" class="form-select" required>
               <option value="">Pilih Kondisi</option>
               @foreach($kondisiOptions as $kondisi)
@@ -512,6 +540,15 @@
               @endforeach
             </select>
           </div>
+          <div class="form-group">
+            <label class="form-label">Lokasi <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="lokasi" class="form-input" placeholder="Ruangan / gedung lokasi aset" required>
+          </div>
+        </div>
+
+        {{-- SECTION: Data Perolehan --}}
+        <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:4px;">
+          <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Data Perolehan</span>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -520,38 +557,50 @@
           </div>
           <div class="form-group">
             <label class="form-label">Nilai Perolehan</label>
-            <input type="number" name="nilai_perolehan" class="form-input" step="0.01" min="0">
+            <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg); transition:all .15s;" onfocusin="this.style.borderColor='var(--blue)';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,111,255,.1)'" onfocusout="this.style.borderColor='var(--border)';this.style.background='var(--bg)';this.style.boxShadow='none'">
+              <span style="padding:10px 12px; font-size:12.5px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F0F4FF; white-space:nowrap;">Rp</span>
+              <input type="number" name="nilai_perolehan" step="0.01" min="0" placeholder="0" style="flex:1; border:none; background:transparent; padding:10px 14px; font-family:inherit; font-size:13.5px; color:var(--text); outline:none;">
+            </div>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Lokasi *</label>
-            <input type="text" name="lokasi" class="form-input" required>
+            <label class="form-label">Supplier <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
+            <input type="text" name="supplier" class="form-input" placeholder="Nama supplier / vendor">
           </div>
           <div class="form-group">
-            <label class="form-label">Supplier</label>
-            <input type="text" name="supplier" class="form-input">
+            <label class="form-label">Nomor Referensi <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
+            <input type="text" name="nomor_referensi" class="form-input" placeholder="Nomor BAST / SPK / dokumen">
           </div>
         </div>
-                <div class="form-group">
-          <label class="form-label">Nomor Referensi</label>
-          <input type="text" name="nomor_referensi" class="form-input">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Keterangan <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
+          <textarea name="keterangan" class="form-input" rows="3" placeholder="Masukkan keterangan tambahan jika diperlukan..." style="resize:vertical; min-height:80px; line-height:1.5;"></textarea>
         </div>
-        <div class="form-group form-row.full">
-          <label class="form-label">Keterangan</label>
-          <textarea name="keterangan" class="form-textarea" placeholder="Masukkan keterangan tambahan..."></textarea>
+
+      </div>
+
+      {{-- FOOTER --}}
+      <div style="padding:16px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; gap:12px;">
+        <div style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Kolom bertanda <strong style="color:var(--danger); margin:0 2px;">*</strong> wajib diisi
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('createModal')">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Simpan Transaksi
+          </button>
         </div>
       </div>
-      <div class="btn-group">
-        <button type="button" class="btn-modal btn-cancel" onclick="closeModal('createModal')">Batal</button>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-save me-2"></i>Simpan Transaksi
-        </button>
-      </div>
-      
+
     </form>
   </div>
 </div>
+
 
 {{-- MODAL DETAIL --}}
 <div id="detailModal" class="modal-overlay">

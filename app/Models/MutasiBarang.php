@@ -13,7 +13,6 @@ class MutasiBarang extends Model
     protected $table = 'mutasi_barang';
     
     protected $fillable = [
-        'nomor_mutasi',
         'aset_tetap_id',
         'user_id',
         'kode_barang',
@@ -21,9 +20,6 @@ class MutasiBarang extends Model
         'lokasi_awal',
         'lokasi_akhir',
         'tanggal_mutasi',
-        'alasan_mutasi',
-        'penerima',
-        'keterangan'
     ];
 
     protected $casts = [
@@ -48,9 +44,32 @@ class MutasiBarang extends Model
                      ->where('lokasi_akhir', $lokasiAkhir);
     }
 
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('kode_barang', 'like', "%{$search}%")
+                     ->orWhere('nama_barang', 'like', "%{$search}%")
+                     ->orWhere('lokasi_awal', 'like', "%{$search}%")
+                     ->orWhere('lokasi_akhir', 'like', "%{$search}%");
+    }
+
     // Accessors
+    public function getNoMutasiAttribute(): string
+    {
+        return 'MT-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
+    }
+
     public function getLokasiPerubahanAttribute(): string
     {
         return "{$this->lokasi_awal} → {$this->lokasi_akhir}";
+    }
+
+    public function getTanggalInputAttribute(): string
+    {
+        return $this->created_at?->format('d/m/Y');
+    }
+
+    public function getTanggalMutasiFormattedAttribute(): string
+    {
+        return $this->tanggal_mutasi?->format('d/m/Y');
     }
 }

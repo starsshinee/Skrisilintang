@@ -20,6 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// ========== PENGADUAN dan SURVEY KEPUASAN PUBLIC FORM (TIDAK PERLU LOGIN) ==========
+Route::post('/pengaduan/store', [AdminAsettetapController::class, 'pengaduanStore'])->name('pengaduan.store');
+Route::post('/survey/store', [AdminAsettetapController::class, 'surveyStore'])->name('survey.store');
+
 // ──────────────────────────────────────────────────────────────────────
 // Autentikasi – hanya untuk tamu (belum login)
 // ──────────────────────────────────────────────────────────────────────
@@ -145,6 +149,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/transaksi-masuk', [AdminAsettetapController::class, 'TransaksiMasuk'])->name('transaksi-masuk');
             Route::get('/transaksi-keluar', [AdminAsettetapController::class, 'TransaksiKeluar'])->name('transaksi-keluar');
             Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
+            Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
+            Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
             Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
@@ -157,12 +163,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembalian');
 
             // ========== CRUD DATA ASET TETAP ==========
-            Route::post('/data-aset-tetap', [AdminAsettetapController::class, 'store'])->name('data-aset-tetap.store');
-            Route::get('/data-aset-tetap/create', [AdminAsettetapController::class, 'create'])->name('data-aset-tetap.create');
-            Route::get('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'show'])->name('data-aset-tetap.show');
-            Route::get('/data-aset-tetap/{aset}/edit', [AdminAsettetapController::class, 'edit'])->name('data-aset-tetap.edit');
-            Route::put('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'update'])->name('data-aset-tetap.update');
-            Route::delete('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'destroy'])->name('data-aset-tetap.destroy');
+           Route::get('/transaksi-keluar/create', [AdminAsettetapController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
+            Route::post('/transaksi-keluar', [AdminAsettetapController::class, 'storeTransaksiKeluar'])->name('transaksi-keluar.store');
+            Route::get('/transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'showTransaksiKeluar'])->name('transaksi-keluar.show');
+            Route::get('/transaksi-keluar/{transaksi}/edit', [AdminAsettetapController::class, 'editTransaksiKeluar'])->name('transaksi-keluar.edit');
+            Route::put('/transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'updateTransaksiKeluar'])->name('transaksi-keluar.update');
+            Route::delete('/transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
+
+            // ========== AJAX ==========
+            Route::get('/transaksi-keluar/aset/{id}', [AdminAsettetapController::class, 'getAsetKeluarData'])->name('transaksi-keluar.aset-data');
 
             // ========== CRUD TRANSAKSI MASUK ASET TETAP ==========
             Route::get('/transaksi-masuk/create', [AdminAsettetapController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
@@ -172,6 +181,23 @@ Route::middleware('auth')->group(function () {
             Route::put('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'updateTransaksiMasuk'])->name('transaksi-masuk.update');
             Route::delete('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiMasuk'])->name('transaksi-masuk.destroy');
 
+            //CRUD MUTASI BARANG
+            Route::get('/aset-tetap/mutasi-barang/create', [AdminAsetTetapController::class, 'createMutasi'])->name('mutasi-barang.create');
+            Route::post('/aset-tetap/mutasi-barang', [AdminAsetTetapController::class, 'storeMutasi'])->name('mutasi-barang.store');
+            Route::get('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'showMutasi'])->name('mutasi-barang.show');
+            Route::get('/aset-tetap/mutasi-barang/{mutasi}/edit', [AdminAsetTetapController::class, 'editMutasi'])->name('mutasi-barang.edit');
+            Route::put('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'updateMutasi'])->name('mutasi-barang.update');
+            Route::delete('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'destroyMutasi'])->name('mutasi-barang.destroy');
+            
+            //CRUD PENGADUAN
+            Route::get('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanShow'])->name('pengaduan.show');
+            Route::put('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanUpdate'])->name('pengaduan.update');
+            Route::delete('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanDestroy'])->name('pengaduan.destroy');
+
+            //DELET SURVEY KEPUASAN
+            Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');
+            
+            
         });
 
     // ──────────────────────────────────────────────────────────────────

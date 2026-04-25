@@ -4,113 +4,90 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-
-
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PeminjamanKendaraan extends Model
 {
     protected $table = 'peminjaman_kendaraan';
     
-    // ✅ HANYA lindungi field sensitif
-    protected $guarded = [
-        'id',
-        'user_id',
-        'aset_tetap_id',
-        'reviewed_by_adminasettetap_id',
-        'approved_by_adminasettetap_id',
-        'approved_by_kasubag_id',
-        'status'
-    ];
+    protected $guarded = ['id'];
     
-    // ✅ Field yang boleh diisi
     protected $fillable = [
-        'user_id',
-        'aset_tetap_id',
-        'nama_kendaraan',
-        'kategori',
-        'merek',
-        'jumlah',
-        'tujuan_peminjaman',
-        'tanggal_peminjaman',
-        'tanggal_pengembalian',
-        'komentar'
+        'user_id', 'nama_barang', 'kode_barang', 'nup', 'merek',
+        'jumlah', 'deskripsi_peruntukan', 'request_date',
+        'tanggal_peminjaman', 'tanggal_pengembalian', 'komentar',
+        'status'
     ];
 
     protected $casts = [
-        'jumlah' => 'integer',
+        'request_date' => 'datetime',
         'tanggal_peminjaman' => 'datetime',
         'tanggal_pengembalian' => 'datetime',
-        'diteruskan_ke_kasubag_date' => 'datetime',
-        'approved_by_kasubag_date' => 'datetime',
+        'jumlah' => 'integer'
     ];
 
+    // Relasi
+    public function user(): BelongsTo { return $this->belongsTo(User::class); }
     
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
+    public function reviewedBy(): BelongsTo 
+    { 
+        return $this->belongsTo(User::class, 'reviewed_by_adminasettetap_id'); 
+    }
+    
+    public function approvedBy(): BelongsTo 
+    { 
+        return $this->belongsTo(User::class, 'approved_by_adminasettetap_id'); 
+    }
+    
+    public function approvedByKasubag(): BelongsTo 
+    { 
+        return $this->belongsTo(User::class, 'approved_by_kasubag_id'); 
+    }
+    
+    public function pengembalianKendaraan(): HasOne 
+    { 
+        return $this->hasOne(PengembalianKendaraan::class); 
     }
 
-    // Kendaraan dari master aset tetap
-    public function assetTetap(): BelongsTo
-    {
-        return $this->belongsTo(AssetTetap::class, 'aset_tetap_id');
+    // Scopes
+    public function scopePending($query) { return $query->where('status', 'pending'); }
+    public function scopeDalamReview($query) { return $query->where('status', 'dalam_review'); }
+    public function scopeBisaDiedit($query) { 
+        return $query->whereIn('status', ['pending', 'dalam_review']); 
+    }
+    public function scopeByUser($query, $userId) { 
+        return $query->where('user_id', $userId); 
     }
 
-    // Admin Aset Tetap yang mereview
-    public function reviewedBy(): BelongsTo
+    // Status helpers
+    public function getStatusDisplayAttribute()
     {
-        return $this->belongsTo(User::class, 'reviewed_by_adminasettetap_id');
+        return match(strtolower($this->status)) {
+            'pending' => 'Pending',
+            'dalam_review' => 'Dalam Review',
+            'disetujui_admin' => 'Disetujui Admin',
+            'disetujui' => 'Disetujui',
+            'dikembalikan' => 'Dikembalikan',
+            'ditolak' => 'Ditolak',
+            default => ucfirst($this->status)
+        };
     }
 
-    // Admin Aset Tetap yang approve
-    public function approvedBy(): BelongsTo
+    public function getStatusBadgeClassAttribute()
     {
-        return $this->belongsTo(User::class, 'approved_by_adminasettetap_id');
+        return match(strtolower($this->status)) {
+            'pending', 'dalam_review' => 'status-pending',
+            'disetujui_admin', 'disetujui', 'dikembalikan' => 'status-diterima',
+            'ditolak' => 'status-ditolak',
+            default => 'status-pending'
+        };
     }
 
-    // Kasubag yang approve
-    public function approvedByKasubag(): BelongsTo
+    // Check if current user can edit
+    public function canEditBy(Auth $user)
     {
-        return $this->belongsTo(User::class, 'approved_by_kasubag_id');
-    }
-
-    // Pengembalian kendaraan
-    public function pengembalian(): HasMany
-    {
-        return $this->hasMany(PengembalianKendaraan::class, 'peminjaman_kendaraan_id');
-    }
-
-    // ✅ ACCESSOR UNTUK HTML
-    public function getNopolAttribute()
-    {
-        return $this->assetTetap->nopol ?? $this->nama_kendaraan ?? 'N/A';
-    }
-
-    public function getMerkAttribute()
-    {
-        return $this->assetTetap->merk ?? $this->merek ?? 'Tidak diketahui';
-    }
-
-    public function getTipeAttribute()
-    {
-        return $this->assetTetap->tipe ?? $this->kategori ?? 'Umum';
-    }
-
-    // ✅ SCOPE Workflow
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeDalamReview($query)
-    {
-        return $query->where('status', 'dalam_review');
-    }
-
-    public function scopeDisetujuiAdmin($query)
-    {
-        return $query->where('status', 'disetujui_admin');
+        return in_array($this->status, ['pending', 'dalam_review']);
     }
 }

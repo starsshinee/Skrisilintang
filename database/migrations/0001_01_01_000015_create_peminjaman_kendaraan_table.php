@@ -8,53 +8,34 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('peminjaman_kendaraan', function (Blueprint $table) {
-           $table->id();
+        // php artisan make:migration create_peminjaman_kendaraan_table
+Schema::create('peminjaman_kendaraan', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->onDelete('cascade');
     
-        // Requester & Asset
-        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-        $table->foreignId('aset_tetap_id')->constrained('aset_tetap')->onDelete('cascade');
-        
-        // Data Kendaraan
-        $table->string('nama_kendaraan');
-        $table->string('kode_barang');
-        $table->string('nup');
-        $table->string('merek');
-        $table->integer('jumlah');
-        
-        // Detail Peminjaman
-        $table->text('tujuan_peminjaman');
-        // $table->date('tanggal_mulai');
-        // $table->date('tanggal_selesai');
-        
-        // Tanggal Tracking
-        $table->timestamp('tanggal_peminjaman')->nullable();
-        $table->timestamp('tanggal_pengembalian')->nullable();
-        
-        // Workflow Admin Aset Tetap
-        $table->foreignId('reviewed_by_adminasettetap_id')->nullable()->constrained('users');
-        $table->foreignId('approved_by_adminasettetap_id')->nullable()->constrained('users');
-        
-        // Workflow Kasubag
-        $table->timestamp('diteruskan_ke_kasubag_date')->nullable();
-        $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
-        $table->timestamp('approved_by_kasubag_date')->nullable();
-        
-        $table->text('komentar')->nullable();
-        
-        $table->enum('status', [
-            'pending', 
-            'dalam_review', 
-            'disetujui_admin', 
-            'diteruskan_kasubag',
-            'disetujui', 
-            'sedang_dipakai',
-            'dikembalikan',
-            'ditolak'
-        ])->default('pending');
-        
-        $table->timestamps();
-            });
+    $table->string('nama_barang');
+    $table->string('kode_barang')->nullable();
+    $table->string('nup')->nullable();
+    $table->string('merek')->nullable();
+    $table->integer('jumlah');
+    $table->text('deskripsi_peruntukan');
+    
+    $table->dateTime('request_date')->nullable();
+    $table->date('tanggal_peminjaman')->nullable();
+    $table->date('tanggal_pengembalian')->nullable();
+    $table->text('komentar')->nullable();
+    
+    // Workflow fields (sama persis dengan peminjaman_barang)
+    $table->foreignId('reviewed_by_adminasettetap_id')->nullable()->constrained('users');
+    $table->foreignId('approved_by_adminasettetap_id')->nullable()->constrained('users');
+    $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
+    $table->enum('status', ['pending', 'dalam_review', 'disetujui_admin', 'disetujui', 'ditolak'])->default('pending');
+    $table->dateTime('diteruskan_ke_kasubag_date')->nullable();
+    $table->dateTime('approved_by_kasubag_date')->nullable();
+    
+    $table->timestamps();
+    });
+    
     }
 
     public function down(): void

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPANDU - Peminjaman Kendaraan</title>
+<title>SIPANDU - Peminjaman Kendaraan Masuk</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -262,12 +262,12 @@
     <div class="page-top">
       <div>
         <h1>Peminjaman Kendaraan</h1>
-        <p>3 data ditemukan</p>
+        <p id="dataCount">{{ $peminjamanKendaraan->total() }} data ditemukan</p>
       </div>
-      <button class="btn-tambah">
+      {{-- <button class="btn-tambah">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Tambah Baru
-      </button>
+      </button> --}}
     </div>
 
     <div class="table-card">
@@ -288,88 +288,112 @@
         </button>
       </div>
 
-      <table>
-        <thead>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          {{-- <th>Kode Barang</th>
+          <th>NUP</th> --}}
+          <th>Nama Barang</th>
+          <th>Merek</th>
+          <th>Jumlah</th>
+          <th>Deskripsi Peruntukan</th>
+          <th>Peminjam</th>
+          <th>Tgl Pinjam - Kembali</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse($peminjamanKendaraan as $index => $item)
           <tr>
-              <th>No</th>
-              <th>Nama Kendaraan</th>
-              <th>Kategori</th>
-              <th>Jumlah</th>
-              <th>Deskripsi Peruntukan</th>
-              <th>Peminjam</th>
-              <th>Status</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>01</strong></td>
-            <td>Motor Honda Beat CBS</td>
-            <td>Kendaraan roda 2</td>
-            <td>1</td>
-            <td>Untuk keperluan dinas</td>
-            <td>Lintang</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
+            <td><strong>{{ $index + 1 }}</strong></td>
+            <td>{{ $item->kode_barang }}</td>
+            <td>{{ $item->nup ?? '-' }}</td>
+            <td>{{ $item->nama_barang }}</td>
+            <td>{{ $item->merek ?? '-' }}</td>
+            <td><strong>{{ $item->jumlah }}</strong></td>
+            <td style="max-width: 200px;">
+              <div style="font-size:12px; line-height:1.4;">{{ Str::limit($item->deskripsi_peruntukan, 80) }}</div>
+            </td>
+            <td>{{ $item->user->name }}</td>
             <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
-              </button>
+              {{ $item->tanggal_peminjaman ? \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') : '-' }} 
+              <br><small style="color:#64748B;">{{ $item->tanggal_pengembalian ? \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') : '-' }}</small>
+            </td>
+            <td>
+              @php $status = strtolower($item->status) @endphp
+              @switch($status)
+                @case('pending')
+                  <span class="status-badge status-pending">
+                    <i class="fas fa-clock" style="font-size:10px; margin-right:3px;"></i>
+                    Pending
+                  </span>
+                  @break
+                @case('dalam_review')
+                  <span class="status-badge status-pending">
+                    <i class="fas fa-eye" style="font-size:10px; margin-right:3px;"></i>
+                    Dalam Review
+                  </span>
+                  @break
+                @case('disetujui_admin')
+                  <span class="status-badge status-diterima">
+                    <i class="fas fa-check-circle" style="font-size:10px; margin-right:3px;"></i>
+                    Disetujui Admin
+                  </span>
+                  @break
+                @case('disetujui')
+                  <span class="status-badge status-diterima">
+                    <i class="fas fa-thumbs-up" style="font-size:10px; margin-right:3px;"></i>
+                    Disetujui
+                  </span>
+                  @break
+                @case('ditolak')
+                  <span class="status-badge status-ditolak">
+                    <i class="fas fa-times-circle" style="font-size:10px; margin-right:3px;"></i>
+                    Ditolak
+                  </span>
+                  @break
+                @default
+                  <span class="status-badge status-pending">{{ ucfirst($status) }}</span>
+              @endswitch
+            </td>
+            <td>
+              <a href="{{ route('admin.peminjaman-barang.show', $item->id) }}" class="action-btn" title="Detail">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                  <circle cx="12" cy="12" r="3.25"/>
+                  <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                </svg>
+              </a>
+              
+              @if($item->status == 'pending' || $item->status == 'dalam_review')
+                <a href="{{ route('admin.peminjaman-barang.edit', $item->id) }}" class="action-btn" title="Edit">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41z"/>
+                  </svg>
+                </a>
+                <form action="{{ route('admin.peminjaman-barang.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus?')">
+                  @csrf @method('DELETE')
+                  <button type="submit" class="action-btn danger" title="Hapus">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#EF4444">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                  </button>
+                </form>
+              @endif
             </td>
           </tr>
+        @empty
           <tr>
-            <td><strong>002</strong></td>
-            <td>Motor Yamaha Mio Sporty</td>
-            <td>Kendaraan roda 2</td>
-            <td>2</td>
-            <td>Untuk keperluan dinas</td>
-            <td>Lintang</td>
-            <td><span class="status-badge status-diterima">Diterima</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
-              </button>
+            <td colspan="11" style="text-align:center; padding:40px; color:var(--muted);">
+              <i class="fas fa-inbox" style="font-size:48px; margin-bottom:12px; opacity:.5;"></i>
+              <div style="font-size:15px; font-weight:600; margin-bottom:4px;">Belum ada data peminjaman</div>
+              <div style="font-size:13px;">Mulai dengan menambah peminjaman baru</div>
             </td>
           </tr>
-          <tr>
-            <td><strong>TM-003</strong></td>
-            <td>Motor Suzuki Viva CBS</td>
-            <td>Kendaraan roda 2</td>
-            <td>1</td>
-            <td>Untuk keperluan dinas</td>
-            <td>Rizky</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        @endforelse
+      </tbody>
+    </table>
 
       <div class="table-footer">
         <span>Menampilkan 1–3 dari 3 data</span>
