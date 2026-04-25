@@ -3,53 +3,416 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use App\Models\{
+    Persediaan,
+    Kerusakan,
+    TransaksiKeluarPersediaan,
+    TransaksiMasukPersediaan,
+};
+  
 
 class AdminPersediaanController extends Controller
 {
     public function dashboard()
     {
-        // Logika untuk dashboard admin persediaan
-        return view('adminpersediaan.dashbord');
+        return view('adminpersediian.dashbord');
     }
 
-    public function dataPersediaan()
+    // 📋 DATA PERSEDIAAN
+    public function dataPersediaan(Request $request)
     {
-        // Logika untuk menampilkan data persediaan
-        return view('adminpersediaan.data_persediaan');
+        $query = Persediaan::query();
+        
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('kode_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        if ($request->filled('kategori')) {
+            $query->where('kode_kategori', $request->kategori);
+        }
+
+        $persediaan = $query->latest()->paginate(10);
+
+        return view('adminpersediian.data_persediaan', compact('persediaan'));
     }
 
-    public function TransaksiMasuk()
+    public function create()
     {
-        // Logika untuk menampilkan transaksi masuk persediaan
-        return view('adminpersediaan.transaksi_masuk');
+        return view('adminpersediian.form_persediaan');
     }
 
-    public function TransaksiKeluar()
+    public function store(Request $request)
     {
-        // Logika untuk menampilkan transaksi keluar persediaan
-        return view('adminpersediaan.transaksi_keluar');
+        $request->validate([
+            'kode_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => 'required|string|max:50|unique:persediaan,kode_barang',
+            'nama_barang' => 'required|string|max:200',
+            'tanggal_masuk' => 'required|date',
+            'harga_satuan' => 'required|numeric|min:0',
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
+        Persediaan::create($request->all() + [
+            'harga_total' => $request->harga_satuan * $request->jumlah,
+        ]);
+
+        return redirect()->route('adminpersediian.data-persediaan')
+            ->with('success', 'Data persediaan berhasil ditambahkan!');
     }
 
-    public function PermintaanPersediaan()
+    public function show(Persediaan $persediaan)
     {
-        // Logika untuk menampilkan permintaan persediaan
-        return view('adminpersediaan.permintaan_persediaan');
+        return view('adminpersediian.detail_persediaan', compact('persediaan'));
     }
 
-    public function laporanPermintaanPersediaan()
+    public function edit(Persediaan $persediaan)
     {
-        // Logika untuk menampilkan laporan permintaan persediaan
-        return view('adminpersediaan.laporan_permintaan_persediaan');
+        return view('adminpersediian.form_persediaan', compact('persediaan'));
     }
 
-    public function laporanTransaksiMasuk()
+    public function update(Request $request, Persediaan $persediaan)
     {
-        return view('adminpersediaan.laporan_transaksi_masuk');
+        $request->validate([
+            'kode_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => ['required', 'string', 'max:50', Rule::unique('persediaan')->ignore($persediaan)],
+            'nama_barang' => 'required|string|max:200',
+            'tanggal_masuk' => 'required|date',
+            'harga_satuan' => 'required|numeric|min:0',
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
+        $persediaan->update($request->all() + [
+            'harga_total' => $request->harga_satuan * $request->jumlah,
+        ]);
+
+        return redirect()->route('adminpersediian.data-persediaan')
+            ->with('success', 'Data persediaan berhasil diupdate!');
     }
 
-    public function laporanTransaksiKeluar()
+    public function destroy(Persediaan $persediaan)
     {
-        return view('adminpersediaan.laporan_transaksi_keluar');
+        $persediaan->delete();
+        return redirect()->route('adminpersediaan.data-persediaan')
+            ->with('success', 'Data persediaan berhasil dihapus!');
     }
+
+    // 📤 Transaksi Keluar
+    //=========TRANSAKSI KELUAR PERSEDIAAN========//
     
+    /** INDEX - Tampilkan daftar transaksi keluar */
+    public function transaksiKeluar(Request $request)
+    {
+        $query = TransaksiKeluarPersediaan::query();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kota_kategori', 'like', '%'.$request->search.'%')
+                  ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        // Filter tanggal
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+
+        // Filter kota kategori
+        if ($request->filled('kota_kategori')) {
+            $query->where('kota_kategori', $request->kota_kategori);
+        }
+
+        $transaksi = $query->latest('tanggal_input')->paginate(10);
+        
+        return view('adminpersediian.transaksi_keluar', compact('transaksi'));
+    }
+
+    /** CREATE - Tampilkan form tambah */
+    public function createTransaksiKeluar()
+    {
+        $persediaan = Persediaan::select('kode_barang', 'nama_barang')
+                               ->orderBy('kategori')
+                               ->get();
+        
+        return view('adminpersediian.form_transaksi_keluar', compact('persediaan'));
+    }
+
+    /** STORE - Simpan transaksi keluar */
+    public function storeTransaksiKeluar(Request $request)
+    {
+        $request->validate([
+            'nomor_transaksi' => 'required|string|max:50|unique:transaksi_keluar_persediaan,nomor_transaksi',
+            'tanggal_input' => 'required|date',
+            'kota_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => 'required|string|max:50',
+            'nama_barang' => 'required|string|max:200',
+            'jumlah_keluar' => 'required|integer|min:1',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
+        // Cek stok persediaan
+        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        if (!$persediaan || $persediaan->jumlah < $request->jumlah_keluar) {
+            return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
+                        ->withInput();
+        }
+
+        // Simpan transaksi
+        TransaksiKeluarPersediaan::create($request->all());
+
+        // Kurangi stok persediaan
+        $persediaan->decrement('jumlah', $request->jumlah_keluar);
+
+        return redirect()->route('admin.transaksi-keluar.index')
+            ->with('success', 'Transaksi keluar berhasil disimpan!');
+    }
+
+    /** SHOW - Detail transaksi */
+    public function showTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
+    {
+        return response()->json($transaksiKeluar);
+    }
+
+    /** EDIT - Form edit */
+    public function editTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
+    {
+        $persediaan = Persediaan::select('kode_barang', 'nama_barang')
+                               ->orderBy('kategori')
+                               ->get();
+        
+        return view('adminpersediian.form_transaksi_keluar', [
+            'transaksi' => $transaksiKeluar,
+            'persediaan' => $persediaan
+        ]);
+    }
+
+    /** UPDATE - Update transaksi */
+    public function updateTransaksiKeluar(Request $request, TransaksiKeluarPersediaan $transaksiKeluar)
+    {
+        $request->validate([
+            'nomor_transaksi' => ['required', 'string', 'max:50', Rule::unique('transaksi_keluar_persediaan', 'nomor_transaksi')->ignore($transaksiKeluar->id)],
+            'tanggal_input' => 'required|date',
+            'kota_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => 'required|string|max:50',
+            'nama_barang' => 'required|string|max:200',
+            'jumlah_keluar' => 'required|integer|min:1',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
+        // Cek stok sebelum update
+        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        if (!$persediaan || $persediaan->jumlah < $request->jumlah_keluar) {
+            return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
+                        ->withInput();
+        }
+
+        $oldJumlah = $transaksiKeluar->jumlah_keluar;
+        $transaksiKeluar->update($request->all());
+
+        // Adjust stok persediaan
+        $persediaan->increment('jumlah', $oldJumlah); // Kembalikan stok lama
+        $persediaan->decrement('jumlah', $request->jumlah_keluar); // Kurangi stok baru
+
+        return redirect()->route('admin.transaksi-keluar.index')
+            ->with('success', 'Transaksi keluar berhasil diupdate!');
+    }
+
+    /** DESTROY - Hapus transaksi */
+    public function destroyTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
+    {
+        // Kembalikan stok persediaan
+        $persediaan = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
+        if ($persediaan) {
+            $persediaan->increment('jumlah', $transaksiKeluar->jumlah_keluar);
+        }
+
+        $transaksiKeluar->delete();
+
+        return redirect()->route('admin.transaksi-keluar.index')
+            ->with('success', 'Transaksi keluar berhasil dihapus!');
+    }
+
+    // 📥 Transaksi Masuk Persediaan
+/** INDEX - Tampilkan daftar transaksi masuk */
+    public function transaksiMasuk(Request $request)
+    {
+        $query = TransaksiMasukPersediaan::query();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('no', 'like', '%'.$request->search.'%')
+                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
+                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        // Filter tanggal
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+
+        // Filter kategori
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
+        }
+
+        $transaksi = $query->latest('tanggal_input')->paginate(10);
+        
+        return view('adminpersediian.transaksi_masuk', compact('transaksi'));
+    }
+
+    /** CREATE - Tampilkan form tambah */
+    public function createTransaksiMasuk()
+    {
+        return view('adminpersediian.form_transaksi_masuk');
+    }
+
+    /** STORE - Simpan transaksi masuk */
+    public function storeTransaksiMasuk(Request $request)
+    {
+        $request->validate([
+            'tanggal_input' => 'required|date',
+            'kode_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => 'required|string|max:50',
+            'nama_barang' => 'required|string|max:200',
+            'jumlah_masuk' => 'required|integer|min:1',
+            'harga_satuan' => 'required|numeric|min:0',
+            'created_by' => 'nullable|string|max:100',
+        ]);
+
+        // Cek apakah barang sudah ada di persediaan
+        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+
+        if ($persediaan) {
+            // Update persediaan yang sudah ada
+            $persediaan->increment('jumlah', $request->jumlah_masuk);
+            $persediaan->harga_total += $request->harga_satuan * $request->jumlah_masuk;
+            $persediaan->save();
+        } else {
+            // Buat persediaan baru
+            Persediaan::create([
+                'kode_kategori' => $request->kode_kategori,
+                'kategori' => $request->kategori,
+                'kode_barang' => $request->kode_barang,
+                'nama_barang' => $request->nama_barang,
+                'tanggal_masuk' => $request->tanggal_input,
+                'harga_satuan' => $request->harga_satuan,
+                'jumlah' => $request->jumlah_masuk,
+                'harga_total' => $request->harga_satuan * $request->jumlah_masuk,
+            ]);
+        }
+
+        // Simpan transaksi masuk
+        TransaksiMasukPersediaan::create($request->all() + [
+            'total' => $request->harga_satuan * $request->jumlah_masuk,
+            'user_id' => auth()->id() ?? null,
+        ]);
+
+        return redirect()->route('adminpersediian.transaksi-masuk')
+            ->with('success', 'Transaksi masuk berhasil disimpan!');
+    }
+
+    /** SHOW - Detail transaksi */
+    public function showTransaksiMasuk(TransaksiMasukPersediaan $transaksiMasuk)
+    {
+        return view('adminpersediian.detail_transaksi_masuk', compact('transaksiMasuk'));
+    }
+
+    /** EDIT - Form edit */
+    public function editTransaksiMasuk(TransaksiMasukPersediaan $transaksiMasuk)
+    {
+        return view('adminpersediian.form_transaksi_masuk', compact('transaksiMasuk'));
+    }
+
+    /** UPDATE - Update transaksi */
+    public function updateTransaksiMasuk(Request $request, TransaksiMasukPersediaan $transaksiMasuk)
+    {
+        $request->validate([
+            'tanggal_input' => 'required|date',
+            'kode_kategori' => 'required|string|max:20',
+            'kategori' => 'required|string|max:100',
+            'kode_barang' => 'required|string|max:50',
+            'nama_barang' => 'required|string|max:200',
+            'jumlah_masuk' => 'required|integer|min:1',
+            'harga_satuan' => 'required|numeric|min:0',
+            'created_by' => 'nullable|string|max:100',
+        ]);
+
+        // Backup data lama untuk adjust persediaan
+        $oldJumlah = $transaksiMasuk->jumlah_masuk;
+        $oldKodeBarang = $transaksiMasuk->kode_barang;
+
+        // Update transaksi
+        $transaksiMasuk->update($request->all() + [
+            'total' => $request->harga_satuan * $request->jumlah_masuk,
+        ]);
+
+        // Adjust persediaan lama (kurangi jumlah lama)
+        $persediaanLama = Persediaan::where('kode_barang', $oldKodeBarang)->first();
+        if ($persediaanLama) {
+            $persediaanLama->decrement('jumlah', $oldJumlah);
+            if ($persediaanLama->jumlah == 0) {
+                $persediaanLama->delete();
+            }
+        }
+
+        // Update persediaan baru
+        $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        if ($persediaanBaru) {
+            $persediaanBaru->increment('jumlah', $request->jumlah_masuk);
+        } else {
+            Persediaan::create([
+                'kode_kategori' => $request->kode_kategori,
+                'kategori' => $request->kategori,
+                'kode_barang' => $request->kode_barang,
+                'nama_barang' => $request->nama_barang,
+                'tanggal_masuk' => $request->tanggal_input,
+                'harga_satuan' => $request->harga_satuan,
+                'jumlah' => $request->jumlah_masuk,
+                'harga_total' => $request->harga_satuan * $request->jumlah_masuk,
+            ]);
+        }
+
+        return redirect()->route('adminpersediian.transaksi-masuk')
+            ->with('success', 'Transaksi masuk berhasil diupdate!');
+    }
+
+    /** DESTROY - Hapus transaksi */
+    public function destroyTransaksiMasuk(TransaksiMasukPersediaan $transaksiMasuk)
+    {
+        // Kurangi stok persediaan
+        $persediaan = Persediaan::where('kode_barang', $transaksiMasuk->kode_barang)->first();
+        if ($persediaan) {
+            $persediaan->decrement('jumlah', $transaksiMasuk->jumlah_masuk);
+            if ($persediaan->jumlah == 0) {
+                $persediaan->delete();
+            }
+        }
+
+        $transaksiMasuk->delete();
+
+        return redirect()->route('admin.transaksi-masuk.index')
+            ->with('success', 'Transaksi masuk berhasil dihapus!');
+    }
+    public function PermintaanPersediaan() { return view('adminpersediian.permintaan_persediaan'); }
+    public function laporanPermintaanPersediaan() { return view('adminpersediian.laporan_permintaan_persediaan'); }
+    public function laporanTransaksiMasuk() { return view('adminpersediian.laporan_transaksi_masuk'); }
+    public function laporanTransaksiKeluar() { return view('adminpersediian.laporan_transaksi_keluar'); }
 }

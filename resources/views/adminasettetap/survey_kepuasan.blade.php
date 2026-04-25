@@ -263,6 +263,21 @@
     padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px;
     border: none; cursor: pointer; transition: all .2s; font-family: inherit;
   }
+  .btn-download {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 10px;
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: white; text-decoration: none;
+  font-weight: 600; font-size: 13px;
+  box-shadow: 0 2px 8px rgba(16,185,129,.3);
+  transition: all .2s;
+}
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(16,185,129,.4);
+  color: white;
+}
+.btn-download svg { width: 18px; height: 18px; }
   .btn-primary {
     background: linear-gradient(135deg, var(--amber), #FBBF24);
     color: white; box-shadow: 0 4px 14px rgba(245,158,11,.35);
@@ -350,6 +365,16 @@
         <h1>Survey Kepuasan Layanan</h1>
         <p>{{ $surveys->total() }} survey ditemukan</p>
       </div>
+            <!-- TOMTOM B DOWNLOAD LAPORAN EXCEL -->
+      <a href="{{ route('adminasettetap.survey.excel-export', request()->query()) }}"
+         class="btn-download" 
+         id="downloadExcelBtn"
+         title="Download Laporan Excel">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        Download Excel
+      </a>
     </div>
 
     <div class="table-card">

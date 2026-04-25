@@ -16,37 +16,27 @@ return new class extends Migration
         Schema::create('transaksi_masuk_persediaan', function (Blueprint $table) {
             $table->id();
             
-            // Nomor transaksi unik
-            $table->string('nomor_transaksi')->unique();
+            // Kolom sesuai header tabel HTML
+            $table->integer('no')->autoIncrement()->unique(); // No (urut)
+            $table->date('tanggal_input'); // Tanggal Input
+            $table->string('kode_kategori', 20); // Kode Kategori
+            $table->string('kategori', 100); // Kategori
+            $table->string('kode_barang', 50); // Kode Barang
+            $table->string('nama_barang', 200); // Nama Barang
+            $table->integer('jumlah_masuk'); // Jumlah Masuk
+            $table->decimal('harga_satuan', 15, 2); // Harga Satuan
+            $table->decimal('total', 15, 2); // Total
             
-            // Relasi
-            $table->foreignId('persediaan_id')->constrained('persediaan')->onDelete('cascade');
+            // Kolom tambahan untuk tracking
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            
-            // Data Utama (SESUAI TABEL)
-            $table->string('kode_kategori');
-            $table->string('kategori');
-            $table->string('kode_barang');
-            $table->string('nama_barang');
-            
-            // Jumlah & Harga
-            $table->integer('jumlah_masuk');
-            $table->decimal('harga_satuan', 15, 2)->nullable();
-            
-            // Total (computed)
-            $table->decimal('total', 15, 2)->nullable();
-            
-            // Tambahan
-            $table->date('tanggal_masuk');
-            $table->string('supplier')->nullable();
-            $table->string('nomor_referensi')->nullable();
-            $table->text('keterangan')->nullable();
+            $table->string('created_by')->nullable();
             
             $table->timestamps();
             
-            // Index
+            // Indexes untuk performa
+            $table->index(['tanggal_input']);
             $table->index(['kode_kategori', 'kode_barang']);
-            $table->index('tanggal_masuk');
+            $table->index('created_at');
         });
     }
 

@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PeminjamanGedung;
-use App\Models\PengembalianGedung;
-use App\Models\AdminSarpras;
-use App\Models\Kerusakan;
+use Illuminate\Support\Facades\Storage;
+use App\Models\{
+    AdminSarpras,
+    PengembalianGedung,
+    PeminjamanGedung,
+    Kerusakan
+};
+
 
 class AdminSarprasController extends Controller
 {
@@ -226,16 +230,10 @@ class AdminSarprasController extends Controller
             return view('adminsarpras.tambah_kerusakan');
         }
 
-    // public function tambahKerusakan()
-    // {
-    //     return view('adminsarpras.tambah-kerusakan');
-    // }
-
-    // public function storeKerusakan(Request $request)  // ← INI JUGA!
-    // {
-    //     // TODO: logic simpan
-    //     return redirect()->route('data-kerusakan')->with('success', 'OK!');
-    // }
+    public function tambahKerusakan()
+    {
+        return view('adminsarpras.tambah-kerusakan');
+    }
 
     /**
      * Simpan data kerusakan baru
@@ -266,119 +264,192 @@ class AdminSarprasController extends Controller
             ->with('success', 'Data kerusakan berhasil ditambahkan!');
     }
 
-    // /**
-    //  * Edit data kerusakan
-    //  */
-    // public function editKerusakan(Kerusakan $kerusakan)
-    // {
-    //     return view('adminsarpras.edit_kerusakan', compact('kerusakan'));
-    // }
+    /**
+     * Edit data kerusakan
+     */
+    public function editKerusakan(Kerusakan $kerusakan)
+    {
+        return view('adminsarpras.edit_kerusakan', compact('kerusakan'));
+    }
 
-    // /**
-    //  * Update data kerusakan
-    //  */
-    // public function updateKerusakan(Request $request, Kerusakan $kerusakan)
-    // {
-    //     $request->validate([
-    //         'tanggal_input' => 'required|date',
-    //         'nama_barang' => 'required|string|max:255',
-    //         'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang,' . $kerusakan->id,
-    //         'nup' => 'required|string|max:100|unique:kerusakans,nup,' . $kerusakan->id,
-    //         'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
-    //         'lokasi' => 'required|string|max:255',
-    //         'deskripsi' => 'nullable|string',
-    //         'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-    //     ]);
+    /**
+     * Update data kerusakan
+     */
+    public function updateKerusakan(Request $request, Kerusakan $kerusakan)
+    {
+        $request->validate([
+            'tanggal_input' => 'required|date',
+            'nama_barang' => 'required|string|max:255',
+            'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang,' . $kerusakan->id,
+            'nup' => 'required|string|max:100|unique:kerusakans,nup,' . $kerusakan->id,
+            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
+            'lokasi' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-    //     $data = $request->all();
+        $data = $request->all();
 
-    //     // Upload foto baru jika ada
-    //     if ($request->hasFile('foto')) {
-    //         // Hapus foto lama
-    //         if ($kerusakan->foto && file_exists(storage_path('app/public/' . $kerusakan->foto))) {
-    //             unlink(storage_path('app/public/' . $kerusakan->foto));
-    //         }
-    //         $data['foto'] = $request->file('foto')->store('kerusakan_photos', 'public');
-    //     }
+        // Upload foto baru jika ada
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama
+            if ($kerusakan->foto && file_exists(storage_path('app/public/' . $kerusakan->foto))) {
+                unlink(storage_path('app/public/' . $kerusakan->foto));
+            }
+            $data['foto'] = $request->file('foto')->store('kerusakan_photos', 'public');
+        }
 
-    //     $kerusakan->update($data);
+        $kerusakan->update($data);
 
-    //     return redirect()->route('admin.sarpras.kerusakan.index')
-    //         ->with('success', 'Data kerusakan berhasil diupdate!');
-    // }
+        return redirect()->route('admin.sarpras.kerusakan.index')
+            ->with('success', 'Data kerusakan berhasil diupdate!');
+    }
 
-    // /**
-    //  * Hapus data kerusakan
-    //  */
-    // public function destroyKerusakan(Kerusakan $kerusakan)
-    // {
-    //     // Hapus foto
-    //     if ($kerusakan->foto && file_exists(storage_path('app/public/' . $kerusakan->foto))) {
-    //         unlink(storage_path('app/public/' . $kerusakan->foto));
-    //     }
+    /**
+     * Hapus data kerusakan
+     */
+    public function destroyKerusakan(Kerusakan $kerusakan)
+    {
+        // Hapus foto
+        if ($kerusakan->foto && file_exists(storage_path('app/public/' . $kerusakan->foto))) {
+            unlink(storage_path('app/public/' . $kerusakan->foto));
+        }
 
-    //     $kerusakan->delete();
+        $kerusakan->delete();
 
-    //     return redirect()->route('admin.sarpras.kerusakan.index')
-    //         ->with('success', 'Data kerusakan berhasil dihapus!');
-    // }
+        return redirect()->route('admin.sarpras.kerusakan.index')
+            ->with('success', 'Data kerusakan berhasil dihapus!');
+    }
 
-    // /**
-    //  * Detail data kerusakan
-    //  */
-    // public function showKerusakan(Kerusakan $kerusakan)
-    // {
-    //     return view('adminsarpras.detail_kerusakan', compact('kerusakan'));
-    // }
+    /**
+     * Detail data kerusakan
+     */
+    public function showKerusakan(Kerusakan $kerusakan)
+    {
+        return view('adminsarpras.detail_kerusakan', compact('kerusakan'));
+    }
 
-    // /**
-    //  * Laporan kerusakan (statistik bulanan/tahunan)
-    //  */
-    // public function laporanKerusakan(Request $request)
-    // {
-    //     $query = Kerusakan::query();
+    /**
+ * API untuk load data edit (JSON)
+ */
+public function editKerusakanJson(Kerusakan $kerusakan)
+{
+    return response()->json([
+        'id' => $kerusakan->id,
+        'tanggal_input' => $kerusakan->tanggal_input,
+        'nama_barang' => $kerusakan->nama_barang,
+        'kode_barang' => $kerusakan->kode_barang,
+        'nup' => $kerusakan->nup,
+        'kondisi' => $kerusakan->kondisi,
+        'lokasi' => $kerusakan->lokasi,
+        'deskripsi' => $kerusakan->deskripsi,
+        'foto' => $kerusakan->foto,
+        'foto_url' => $kerusakan->foto ? asset('storage/' . $kerusakan->foto) : null,
+    ]);
+}
 
-    //     // Filter bulan/tahun
-    //     if ($request->filled('bulan') && $request->filled('tahun')) {
-    //         $query->whereYear('tanggal_input', $request->tahun)
-    //               ->whereMonth('tanggal_input', $request->bulan);
-    //     }
+/**
+ * API untuk detail data (JSON)
+ */
+public function showKerusakanJson(Kerusakan $kerusakan)
+{
+    return response()->json([
+        'id' => $kerusakan->id,
+        'tanggal_input' => $kerusakan->tanggal_input,
+        'nama_barang' => $kerusakan->nama_barang,
+        'kode_barang' => $kerusakan->kode_barang,
+        'nup' => $kerusakan->nup,
+        'kondisi' => $kerusakan->kondisi,
+        'lokasi' => $kerusakan->lokasi,
+        'deskripsi' => $kerusakan->deskripsi,
+        'foto' => $kerusakan->foto,
+        'foto_url' => $kerusakan->foto ? asset('storage/' . $kerusakan->foto) : null,
+    ]);
+}
 
-    //     // Filter kondisi
-    //     if ($request->filled('kondisi')) {
-    //         $query->where('kondisi', $request->kondisi);
-    //     }
+/**
+ * Update via AJAX
+ */
+public function updateKerusakanAjax(Request $request, Kerusakan $kerusakan)
+{
+    $request->validate([
+        'tanggal_input' => 'required|date',
+        'nama_barang' => 'required|string|max:255',
+        'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang,' . $kerusakan->id,
+        'nup' => 'required|string|max:100|unique:kerusakans,nup,' . $kerusakan->id,
+        'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
+        'lokasi' => 'required|string|max:255',
+        'deskripsi' => 'nullable|string',
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
 
-    //     $laporan = $query->latest()->paginate(20);
+    $data = $request->all();
 
-    //     $stats = [
-    //         'total' => Kerusakan::count(),
-    //         'per_kondisi' => Kerusakan::selectRaw('kondisi, count(*) as total')
-    //             ->groupBy('kondisi')
-    //             ->pluck('total', 'kondisi'),
-    //         'per_lokasi' => Kerusakan::selectRaw('lokasi, count(*) as total')
-    //             ->groupBy('lokasi')
-    //             ->orderByDesc('total')
-    //             ->limit(5)
-    //             ->pluck('total', 'lokasi')
-    //     ];
+    // Upload foto baru jika ada
+    if ($request->hasFile('foto')) {
+        // Hapus foto lama
+        if ($kerusakan->foto && Storage::disk('public')->exists($kerusakan->foto)) {
+            Storage::disk('public')->delete($kerusakan->foto);
+        }
+        $data['foto'] = $request->file('foto')->store('kerusakan_photos', 'public');
+    }
 
-    //     return view('adminsarpras.laporan_kerusakan', compact('laporan', 'stats'));
-    // }
+    $kerusakan->update($data);
 
-    // /**
-    //  * Export data kerusakan ke Excel/CSV (opsional)
-    //  */
-    // public function exportKerusakan(Request $request)
-    // {
-    //     $kerusakans = Kerusakan::filterKondisi($request->kondisi)
-    //         ->search($request->search)
-    //         ->get();
+    return response()->json([
+        'success' => true,
+        'message' => 'Data berhasil diupdate!'
+    ]);
+}
 
-    //     // Logic export menggunakan Laravel Excel atau Maatwebsite
-    //     return response()->json([
-    //         'message' => 'Export berhasil',
-    //         'data' => $kerusakans
-    //     ]);
-    // }
+    /**
+     * Laporan kerusakan (statistik bulanan/tahunan)
+     */
+    public function laporanKerusakan(Request $request)
+    {
+        $query = Kerusakan::query();
+
+        // Filter bulan/tahun
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $query->whereYear('tanggal_input', $request->tahun)
+                  ->whereMonth('tanggal_input', $request->bulan);
+        }
+
+        // Filter kondisi
+        if ($request->filled('kondisi')) {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        $laporan = $query->latest()->paginate(20);
+
+        $stats = [
+            'total' => Kerusakan::count(),
+            'per_kondisi' => Kerusakan::selectRaw('kondisi, count(*) as total')
+                ->groupBy('kondisi')
+                ->pluck('total', 'kondisi'),
+            'per_lokasi' => Kerusakan::selectRaw('lokasi, count(*) as total')
+                ->groupBy('lokasi')
+                ->orderByDesc('total')
+                ->limit(5)
+                ->pluck('total', 'lokasi')
+        ];
+
+        return view('adminsarpras.laporan_kerusakan', compact('laporan', 'stats'));
+    }
+
+    /**
+     * Export data kerusakan ke Excel/CSV (opsional)
+     */
+    public function exportKerusakan(Request $request)
+    {
+        $kerusakans = Kerusakan::filterKondisi($request->kondisi)
+            ->search($request->search)
+            ->get();
+
+        // Logic export menggunakan Laravel Excel atau Maatwebsite
+        return response()->json([
+            'message' => 'Export berhasil',
+            'data' => $kerusakans
+        ]);
+    }
 }

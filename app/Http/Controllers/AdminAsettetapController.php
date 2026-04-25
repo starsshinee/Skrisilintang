@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 
+
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{
     AssetTetap,
@@ -12,6 +14,7 @@ use App\Models\{
     TransaksiKeluarAssetTetap,
     MutasiBarang,
     Pengaduan,
+    SurveyExport,
     SurveyKepuasan,
     PeminjamanBarang,
     PengembalianBarang,
@@ -1001,5 +1004,10 @@ public function surveyStore(Request $request)
         'totalSurvey', 'surveyStats', 'rataRataRating', 
         'quoteTerbaik', 'trendBulanIni'
     );
+    }
+
+    public function exportExcel(Request $request)
+    {
+    return Excel::download(new SurveyExport($request), 'survey.excel-export' . now()->format('d-m-Y') . '.xlsx');
     }
 }

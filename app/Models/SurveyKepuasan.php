@@ -72,4 +72,17 @@ class SurveyKepuasan extends Model
 
         return $labels[$this->kepuasan] ?? 'Tidak Puas';
     }
+
+    
+    // ✅ TAMBAH SCOPE FILTER INI
+    public function scopeFilter($query, $request)
+    {
+        return $query->when($request->filled('search'), function($q) use ($request) {
+            $q->where('nama', 'like', '%' . $request->search . '%')
+              ->orWhere('email', 'like', '%' . $request->search . '%');
+        })->when($request->filled('kepuasan'), function($q) use ($request) {
+            $q->where('kepuasan', $request->kepuasan);
+        });
+    }
+
 }

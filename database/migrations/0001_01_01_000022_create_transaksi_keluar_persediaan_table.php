@@ -16,37 +16,29 @@ return new class extends Migration
         Schema::create('transaksi_keluar_persediaan', function (Blueprint $table) {
             $table->id();
             
-            // Nomor transaksi unik
+            // Sesuai kolom tabel: No (auto increment)
             $table->string('nomor_transaksi')->unique();
             
-            // Relasi
-            $table->foreignId('persediaan_id')->constrained('persediaan')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // Kolom sesuai header tabel
+            $table->date('tanggal_input');           // Tanggal Input
+            $table->string('kota_kategori');         // Kota Kategori
+            $table->string('kategori');              // Kategori
+            $table->string('kode_barang');           // Kode Barang
+            $table->string('nama_barang');           // Nama Barang
+            $table->integer('jumlah_keluar');        // Jumlah Keluar
+            $table->decimal('harga', 15, 2);         // Harga
+            $table->decimal('total', 15, 2);         // Total
             
-            // Data Utama (SESUAI TABEL)
-            $table->string('kode_kategori');  // "Kota Kategori" → typo? 
-            $table->string('kategori');
-            $table->string('kode_barang');
-            $table->string('nama_barang');
+            // Relasi (opsional, bisa dihapus jika tidak digunakan)
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             
-            // Jumlah & Harga
-            $table->integer('jumlah_keluar');
-            $table->decimal('harga', 15, 2)->nullable();  // "Harga" sesuai tabel
-            
-            // Total (computed)
-            $table->decimal('total', 15, 2)->nullable();
-            
-            // Tambahan
-            $table->date('tanggal_keluar');
-            $table->string('penerima')->nullable();
-            $table->string('tujuan')->nullable();
-            $table->text('keterangan')->nullable();
             
             $table->timestamps();
             
-            // Index
-            $table->index(['kode_kategori', 'kode_barang']);
-            $table->index('tanggal_keluar');
+            // Index sesuai kolom utama tabel
+            $table->index(['tanggal_input']);
+            $table->index(['kota_kategori', 'kategori']);
+            $table->index('kode_barang');
         });
     }
 

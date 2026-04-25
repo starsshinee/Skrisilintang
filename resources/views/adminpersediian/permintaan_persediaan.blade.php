@@ -296,7 +296,9 @@
               <th>Merek</th>
               <th>Pemohon</th>
               <th>Jumlah</th>
-              <th>Deskripsi Peruntukan</th>
+              <th>tanggal diminta</th>
+              <th>tanggal dibutuhkan</th>
+              <th>Tujuan Penggunaan</th>
               <th>Status</th>
             <th>Aksi</th>
           </tr>

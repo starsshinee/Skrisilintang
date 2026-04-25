@@ -584,7 +584,7 @@
       </div>
 
       <!-- STATISTIK PENGADUAN (Opsional) -->
-      <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-8 border border-red-100 shadow-sm">
+      {{-- <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-8 border border-red-100 shadow-sm">
         <h3 class="text-xl font-bold text-navy-900 mb-8">Status Pengaduan</h3>
         <div class="space-y-4">
           <div class="flex items-center justify-between p-4 bg-white/50 rounded-xl backdrop-blur-sm">
@@ -594,8 +594,8 @@
             </div>
             <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
               <div class="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            </div>
-          </div>
+            </div> --}}
+          {{-- </div>
           <div class="flex items-center justify-between p-4 bg-white/50 rounded-xl backdrop-blur-sm">
             <div>
               <p class="text-sm text-slate-600">Selesai</p>
@@ -608,7 +608,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
 
         <!-- SURVEY KEPUASAN -->
           <div class="grid lg:grid-cols-2 gap-8 mb-16"></div>

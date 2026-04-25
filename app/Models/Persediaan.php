@@ -2,39 +2,58 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Persediaan extends Model
 {
+    use HasFactory;
+
     protected $table = 'persediaan';
-    protected $guarded = [
+    
+    protected $fillable = [
         'kode_kategori',
         'kategori',
         'kode_barang',
         'nama_barang',
-        'harga',
         'tanggal_masuk',
-        'jumlah',
-        'stok'
+        'harga_satuan',
+        'harga_total',
+        'jumlah'
     ];
 
     protected $casts = [
         'tanggal_masuk' => 'date',
-        'harga' => 'decimal:2',
+        'harga_satuan' => 'decimal:2',
+        'harga_total' => 'decimal:2',
+        'jumlah' => 'integer',
     ];
 
-    public function permintaan()
+    // Accessor untuk format harga
+    protected function hargaSatuan(): Attribute
     {
-        return $this->hasMany(PermintaanPersediaan::class, 'persediaan_id');
+        return Attribute::make(
+            get: fn ($value) => 'Rp ' . number_format($value, 2, ',', '.'),
+        );
     }
 
-    public function transaksiMasuk()
+    protected function hargaTotal(): Attribute
     {
-        return $this->hasMany(TransaksiMasukPersediaan::class, 'persediaan_id');
+        return Attribute::make(
+            get: fn ($value) => 'Rp ' . number_format($value, 2, ',', '.'),
+        );
     }
 
-    public function transaksiKeluar()
+    // Auto calculate harga_total
+    public function getHargaTotalAttribute($value)
     {
-        return $this->hasMany(TransaksiKeluarPersediaan::class, 'persediaan_id');
+        return $this->harga_satuan * $this->jumlah;
+    }
+
+    // Scope untuk filter kategori
+    public function scopeKategori($query, $kodeKategori)
+    {
+        return $query->where('kode_kategori', $kodeKategori);
     }
 }

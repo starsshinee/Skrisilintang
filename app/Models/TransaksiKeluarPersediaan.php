@@ -14,47 +14,46 @@ class TransaksiKeluarPersediaan extends Model
     
     protected $fillable = [
         'nomor_transaksi',
-        'persediaan_id',
+        'tanggal_input',     // ✅ Sesuai "Tanggal Input"
+        'kota_kategori',     // ✅ Sesuai "Kota Kategori"
+        'kategori',          // ✅ Sesuai "Kategori"
+        'kode_barang',       // ✅ Sesuai "Kode Barang"
+        'nama_barang',       // ✅ Sesuai "Nama Barang"
+        'jumlah_keluar',     // ✅ Sesuai "Jumlah Keluar"
+        'harga',             // ✅ Sesuai "Harga"
+        'total',             // ✅ Sesuai "Total"
         'user_id',
-        'kode_kategori',
-        'kategori',
-        'kode_barang',
-        'nama_barang',
-        'jumlah_keluar',
-        'harga',  // Sesuai tabel "Harga"
-        'total',
-        'tanggal_keluar',
-        'penerima',
-        'tujuan',
-        'keterangan'
     ];
 
     protected $casts = [
-        'tanggal_keluar' => 'date',
+        'tanggal_input' => 'date',
         'harga' => 'decimal:2',
         'total' => 'decimal:2',
         'jumlah_keluar' => 'integer',
     ];
 
-    // Relasi
-    public function persediaan(): BelongsTo
-    {
-        return $this->belongsTo(Persediaan::class);
-    }
-
+    // Relasi User (opsional)
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Mutator: Auto hitung total
-    public function setHargaAttribute($value)
+    // ✅ MUTATOR: Auto hitung TOTAL = Harga × Jumlah Keluar
+    public function setHargaAttribute($value): void
     {
         $this->attributes['harga'] = $value;
-        $this->attributes['total'] = $value * $this->jumlah_keluar;
+        $this->attributes['total'] = $value * ($this->attributes['jumlah_keluar'] ?? 0);
     }
 
-    // Accessors
+    public function setJumlahKeluarAttribute($value): void
+    {
+        $this->attributes['jumlah_keluar'] = $value;
+        if ($this->attributes['harga']) {
+            $this->attributes['total'] = $this->attributes['harga'] * $value;
+        }
+    }
+
+    // ✅ ACCESSOR: Format Rupiah untuk tampilan tabel
     public function getHargaFormatAttribute(): string
     {
         return 'Rp ' . number_format($this->harga ?? 0, 0, ',', '.');
@@ -63,5 +62,26 @@ class TransaksiKeluarPersediaan extends Model
     public function getTotalFormatAttribute(): string
     {
         return 'Rp ' . number_format($this->total ?? 0, 0, ',', '.');
+    }
+
+    public function getNoAttribute(): string
+    {
+        return $this->getKey();
+    }
+
+    // ✅ SCOPE untuk filter tabel
+    public function scopeFilterTanggal($query, $tanggal)
+    {
+        return $query->whereDate('tanggal_input', $tanggal);
+    }
+
+    public function scopeFilterKotaKategori($query, $kotaKategori)
+    {
+        return $query->where('kota_kategori', 'like', "%{$kotaKategori}%");
+    }
+
+    public function scopeFilterKategori($query, $kategori)
+    {
+        return $query->where('kategori', 'like', "%{$kategori}%");
     }
 }

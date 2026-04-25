@@ -15,85 +15,18 @@
     --text: #1E293B;
     --muted: #94A3B8;
     --border: #E8EDF5;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-w);
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-  }
-  .sidebar-logo {
-    display: flex; align-items: center; gap: 10px;
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .logo-icon {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--blue), #7C3AED);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .logo-icon svg { width: 20px; height: 20px; fill: white; }
-  .logo-text strong { font-size: 15px; font-weight: 800; color: var(--text); display: block; }
-  .logo-text span { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 1px; }
-
-  .sidebar-section { padding: 16px 16px 4px; }
-  .sidebar-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; padding: 0 4px 8px; }
-
-  .role-badge {
-    background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
-    border: 1px solid #C7D2FE;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 12px; font-weight: 700; color: var(--blue);
-    margin: 0 16px 16px;
-  }
-
-  .nav { flex: 1; overflow-y: auto; padding: 4px 12px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    font-size: 13.5px; font-weight: 500;
-    color: #64748B;
-    cursor: pointer; transition: all .15s;
-    margin-bottom: 2px;
-  }
-  .nav-item:hover { background: var(--bg); color: var(--text); }
-  .nav-item.active { background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: var(--blue); font-weight: 700; }
-  .nav-item svg { width: 17px; height: 17px; flex-shrink: 0; }
-  .nav-item .chevron { margin-left: auto; width: 14px; height: 14px; }
-
-  .sidebar-footer { border-top: 1px solid var(--border); padding: 14px 16px; }
-  .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .user-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue), #7C3AED);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 13px; font-weight: 700;
-  }
-  .user-detail strong { font-size: 13px; font-weight: 700; display: block; }
-  .user-detail span { font-size: 11px; color: var(--muted); }
-  .btn-logout {
-    width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 8px; border-radius: 8px;
-    border: 1px solid var(--border);
-    background: transparent; color: #64748B;
-    font-size: 13px; font-weight: 600; font-family: inherit;
-    cursor: pointer; transition: all .15s;
-  }
-  .btn-logout:hover { background: #FEF2F2; color: #EF4444; border-color: #FECACA; }
 
   /* MAIN */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
+  /* TOPBAR — sama persis dengan Data Persediaan */
   .topbar {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -122,12 +55,22 @@
 
   .content { padding: 28px; flex: 1; }
 
+  /* ALERT */
+  .alert {
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; font-weight: 600;
+  }
+  .alert-success { background: #ECFDF5; color: var(--success); border: 1px solid #BBF7D0; }
+  .alert-danger { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; }
+
   /* PAGE HEADER */
   .page-top {
     display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px;
   }
   .page-top h1 { font-size: 22px; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
   .page-top p { font-size: 13px; color: var(--muted); }
+
+  /* TOMBOL TAMBAH — gradient seperti Data Persediaan */
   .btn-tambah {
     display: flex; align-items: center; gap: 7px;
     padding: 10px 18px; border-radius: 10px;
@@ -151,12 +94,13 @@
     display: flex; align-items: center; gap: 12px;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
   }
   .search-wrap {
     flex: 1; display: flex; align-items: center; gap: 8px;
     border: 1.5px solid var(--border); border-radius: 10px;
     padding: 8px 14px; background: var(--bg);
-    transition: border-color .15s;
+    transition: border-color .15s; min-width: 200px;
   }
   .search-wrap:focus-within { border-color: var(--blue); }
   .search-wrap input {
@@ -173,15 +117,6 @@
   }
   .filter-select:focus { border-color: var(--blue); }
 
-  .btn-filter {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: var(--bg);
-    font-family: inherit; font-size: 13px; color: #64748B; cursor: pointer;
-    transition: all .15s;
-  }
-  .btn-filter:hover { border-color: var(--blue); color: var(--blue); }
-
   table { width: 100%; border-collapse: collapse; }
   thead tr { background: #F8FAFF; }
   th {
@@ -196,61 +131,127 @@
     font-size: 13.5px; color: var(--text);
     border-bottom: 1px solid var(--border);
   }
-  
   tr:last-child td { border-bottom: none; }
   tbody tr { transition: background .15s; }
   tbody tr:hover { background: #F8FAFF; }
 
-  /* Pastikan tombol aksi berada dalam satu baris */
-  td:last-child {
-    white-space: nowrap; /* Cegah tombol aksi terpecah ke baris baru */
-  }
+  .font-mono { font-family: 'Monaco', 'Menlo', monospace; }
+  .text-green-600 { color: var(--success) !important; }
+  .text-lg { font-size: 16px; }
 
-  /* Aksi tombol tetap inline-flex, beri jarak horizontal */
+  /* ACTION BUTTONS */
+  td:last-child { white-space: nowrap; }
   .action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0; /* gap tidak diperlukan karena margin digunakan */
-    margin-left: 6px; /* spasi antar tombol */
-    vertical-align: middle; /* sejajarkan vertikal */
-  }
-
-  .action-btn {
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 36px; height: 36px; border-radius: 8px;
     border: 1px solid var(--border); background: var(--surface);
     display: inline-flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all .15s; margin-left: 4px;
   }
-  .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
-  .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
+  .action-btn:hover { background: #EEF2FF; border-color: var(--blue); transform: translateY(-1px); }
+  .action-btn.danger:hover { background: #FEF2F2; border-color: var(--danger); }
+  .action-btn svg { width: 16px; height: 16px; }
 
-  /* PAGINATION */
+  /* TABLE FOOTER */
   .table-footer {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 20px;
     border-top: 1px solid var(--border);
     font-size: 13px; color: var(--muted);
   }
-  .pagination { display: flex; align-items: center; gap: 6px; }
-  .page-btn {
-    padding: 6px 12px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-family: inherit; font-size: 13px; color: #64748B;
-    cursor: pointer; transition: all .15s;
+
+  /* MODAL — sama persis dengan Data Persediaan */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;
+    z-index: 1000; opacity: 0; visibility: hidden; transition: all .2s;
   }
-  .page-btn:hover { border-color: var(--blue); color: var(--blue); }
-  .page-btn.active {
-    background: var(--blue); border-color: var(--blue);
-    color: white; font-weight: 700;
+  .modal-overlay.show { opacity: 1; visibility: visible; }
+  .modal {
+    background: var(--surface); border-radius: var(--radius); padding: 28px;
+    max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;
+    transform: scale(.9) translateY(-20px); transition: all .2s;
+  }
+  .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+
+  .btn {
+    padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px;
+    border: none; cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), #7C3AED);
+    color: white; box-shadow: 0 4px 14px rgba(79,111,255,.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,111,255,.45); }
+  .btn-cancel { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #DC2626; }
+  .btn-group { display: flex; gap: 12px; justify-content: flex-end; }
+
+  /* FORM */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .form-group { display: flex; flex-direction: column; margin-bottom: 0; }
+  .form-label {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 8px;
+  }
+  .form-input, .form-select {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    border: 2px solid var(--border); background: var(--bg);
+    font-family: inherit; font-size: 14px; transition: all .2s;
+    box-sizing: border-box;
+  }
+  .form-input:focus, .form-select:focus {
+    outline: none; border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(79,111,255,0.1);
+    background: white;
+  }
+  .error-text { font-size: 12px; color: var(--danger); margin-top: 6px; font-weight: 500; }
+
+  /* Section label divider */
+  .section-label {
+    font-size: 10.5px; font-weight: 700; color: var(--blue);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    padding-bottom: 10px; border-bottom: 1.5px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .section-label-inner {
+    background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+    border-radius: 4px; padding: 4px 10px;
+  }
+  .section-label-inner.green {
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+    color: var(--success);
+  }
+
+  /* Total display box */
+  .total-box {
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+    border: 1.5px solid #A7F3D0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 4px;
+  }
+  .total-box-label { font-size: 13px; color: var(--success); font-weight: 600; }
+  .total-box-value { font-size: 20px; font-weight: 800; color: var(--success); }
+
+  @media (max-width: 768px) {
+    .main { margin-left: 0; }
+    .table-toolbar { flex-direction: column; align-items: stretch; }
+    .form-row { grid-template-columns: 1fr; }
+    .page-top { flex-direction: column; gap: 16px; align-items: stretch; }
+    .table-footer { flex-direction: column; gap: 12px; text-align: center; }
   }
 </style>
 </head>
 <body>
 
+{{-- SIDEBAR --}}
 @include('partials.sidebar')
 
 <main class="main">
+
+  {{-- TOPBAR — sama persis dengan Data Persediaan --}}
   <div class="topbar">
     <span class="topbar-title">Transaksi Masuk</span>
     <div class="topbar-right">
@@ -258,42 +259,60 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <span class="date-text">Jumat, 17 April 2026</span>
-      <button class="btn-keluar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
-        Keluar
-      </button>
+      <span class="date-text">{{ now()->translatedFormat('l, d F Y') }}</span>
+      <button class="btn-keluar">Keluar</button>
     </div>
   </div>
 
   <div class="content">
+
+    {{-- ALERT --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      {{ session('success') }}
+    </div>
+    @endif
+
+    @if($errors->any())
+    <div class="alert alert-danger">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      @foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach
+    </div>
+    @endif
+
+    {{-- PAGE HEADER --}}
     <div class="page-top">
       <div>
         <h1>Transaksi Masuk</h1>
-        <p>3 data ditemukan</p>
+        <p>{{ $transaksi->total() }} data ditemukan</p>
       </div>
-      <button class="btn-tambah">
+      <button onclick="openModal('createModal')" class="btn-tambah">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Tambah Baru
       </button>
     </div>
 
+    {{-- TABLE --}}
     <div class="table-card">
       <div class="table-toolbar">
-        <div class="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" placeholder="Cari...">
-        </div>
-        <select class="filter-select">
-          <option>Semua Status</option>
-          <option>Diterima</option>
-          <option>Pending</option>
-          <option>Ditolak</option>
-        </select>
-        <button class="btn-filter">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39A1 1 0 0018.95 4H5.04a1 1 0 00-.79 1.61z"/></svg>
-          Filter
-        </button>
+        <form method="GET" action="{{ route('adminpersediaan.transaksi-masuk') }}" class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8">
+            <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+          <input type="text" name="search" placeholder="Cari nomor, kode barang, nama barang..." value="{{ request('search') }}">
+        </form>
+
+        <form method="GET" action="{{ route('adminpersediaan.transaksi-masuk') }}" style="display:flex; gap:12px;">
+          <input type="hidden" name="search" value="{{ request('search') }}">
+          <input type="date" name="tanggal_input" class="filter-select" value="{{ request('tanggal_input') }}">
+          <select name="kode_kategori" class="filter-select" onchange="this.form.submit()">
+            <option value="">Semua Kategori</option>
+            @foreach(\App\Models\TransaksiMasukPersediaan::distinct()->orderBy('kode_kategori')->pluck('kode_kategori')->toArray() as $kategori)
+              <option value="{{ $kategori }}" {{ request('kode_kategori') == $kategori ? 'selected' : '' }}>{{ $kategori }}</option>
+            @endforeach
+          </select>
+        </form>
       </div>
 
       <table>
@@ -312,91 +331,451 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>01</strong></td>
-            <td>18-04-2026</td>
-            <td>K01</td>
-            <td>Elektronik</td>
-            <td>001</td>
-            <td>Kulkas</td>
-            <td>10</td>
-            <td>Rp 25.000.000</td>
-            <td>Rp 250.000.000</td>
+          @forelse($transaksi as $index => $item)
+          <tr data-id="{{ $item->id }}"
+              data-no="{{ $item->no }}"
+              data-tanggal-input="{{ $item->tanggal_input }}"
+              data-kode-kategori="{{ $item->kode_kategori }}"
+              data-kategori="{{ $item->kategori }}"
+              data-kode-barang="{{ $item->kode_barang }}"
+              data-nama-barang="{{ $item->nama_barang }}"
+              data-jumlah-masuk="{{ $item->jumlah_masuk }}"
+              data-harga-satuan="{{ $item->harga_satuan }}"
+              data-total="{{ $item->total }}">
+            <td><strong>{{ $item->no }}</strong></td>
+            <td>{{ $item->tanggal_input_format }}</td>
+            <td>{{ $item->kode_kategori }}</td>
+            <td>{{ $item->kategori }}</td>
+            <td><strong>{{ $item->kode_barang }}</strong></td>
+            <td>{{ Str::limit($item->nama_barang, 30) }}</td>
+            <td><strong class="text-lg">{{ number_format($item->jumlah_masuk) }}</strong></td>
+            <td class="font-mono">{{ $item->harga_satuan_format }}</td>
+            <td class="font-mono font-semibold text-green-600">{{ $item->total_format }}</td>
             <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
+                <svg viewBox="0 0 24 24" fill="#4F6FFF"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
               </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
+                <svg viewBox="0 0 24 24" fill="#10B981"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/></svg>
               </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
+              <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
+                <svg viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
             </td>
           </tr>
+          @empty
           <tr>
-            <td><strong>02</strong></td>
-            <td>18-04-2026</td>
-            <td>K02</td>
-            <td>Furnitur</td>
-            <td>002</td>
-            <td>Meja Kerja</td>
-            <td>10</td>
-            <td>Rp 25.000.000</td>
-            <td>Rp 250.000.000</td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
+            <td colspan="10" style="text-align:center; padding:60px; color:var(--muted);">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
+                <path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 16.22.86 14 .86c-1.3 0-2.35.64-3 1.6C10.35 1.5 9.3.86 8 .86 5.78.86 4 2.54 4 4.66c0 .46.11.9.18 1.34H2c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
               </svg>
-              </button>
+              <div style="font-size:15px; font-weight:700; margin-bottom:8px;">Belum ada transaksi masuk</div>
             </td>
           </tr>
-          <tr>
-            <td><strong>03</strong></td>
-            <td>18-04-2026</td>
-            <td>K03</td>
-            <td>Elektronik</td>
-            <td>003</td>
-            <td>Televisi</td>
-            <td>10</td>
-            <td>Rp 25.000.000</td>  
-            <td>Rp 250.000.000</td>
-            <td>
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">  
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
-              </button>
-            </td>
-          </tr>
+          @endforelse
         </tbody>
       </table>
 
       <div class="table-footer">
-        <span>Menampilkan 1–3 dari 3 data</span>
-        <div class="pagination">
-          <button class="page-btn">Prev</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">Next</button>
-        </div>
+        <span>Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data</span>
+        <div>{{ $transaksi->appends(request()->query())->links() }}</div>
       </div>
     </div>
   </div>
 </main>
+
+{{-- ===================== MODAL CREATE ===================== --}}
+<div id="createModal" class="modal-overlay">
+  <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
+
+    {{-- Header --}}
+    <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--blue),#7C3AED); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(79,111,255,.35); flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:17px; font-weight:800; color:var(--text);">Tambah Transaksi Masuk</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Isi data transaksi masuk barang persediaan</div>
+          </div>
+        </div>
+        <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    {{-- Form --}}
+    <form id="createForm" method="POST" action="{{ route('adminpersediaan.transaksi-masuk') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      @csrf
+      <div style="padding:28px; overflow-y:auto; flex:1;">
+
+        {{-- Seksi Kategori --}}
+        <div class="section-label" style="margin-bottom:24px;">
+          <span class="section-label-inner">Data Kategori</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_kategori" id="create_kode_kategori" class="form-input" placeholder="Cth: ATK, ELK" maxlength="10" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kategori" id="create_kategori" class="form-input" placeholder="Alat Tulis Kantor, dll" required>
+          </div>
+        </div>
+
+        {{-- Seksi Barang --}}
+        <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
+          <span class="section-label-inner green">Data Barang</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_barang" id="create_kode_barang" class="form-input" placeholder="Cth: ATK001" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nama_barang" id="create_nama_barang" class="form-input" placeholder="Nama lengkap barang" required>
+          </div>
+        </div>
+
+        {{-- Tanggal & Harga Satuan --}}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
+            <input type="date" name="tanggal_input" id="create_tanggal_input" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
+            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
+              <input type="number" name="harga_satuan" id="create_harga_satuan" min="0" step="1000" placeholder="0" required oninput="calculateTotal('create')"
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
+            </div>
+          </div>
+        </div>
+
+        {{-- Jumlah & Total --}}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah Masuk <span style="color:var(--danger);">*</span></label>
+            <input type="number" name="jumlah_masuk" id="create_jumlah_masuk" class="form-input" min="1" placeholder="1" required oninput="calculateTotal('create')">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total</label>
+            <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
+              <input type="text" id="create_total_display" readonly
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {{-- Footer --}}
+      <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
+        <div style="font-size:12px; color:var(--muted); flex:1;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" style="vertical-align:middle; margin-right:4px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          Kolom bertanda <strong style="color:var(--danger);">*</strong> wajib diisi
+        </div>
+        <button type="button" onclick="closeModal('createModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Batal</button>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--blue),#7C3AED); color:white; box-shadow:0 4px 14px rgba(79,111,255,.35); padding:12px 28px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-right:6px; vertical-align:middle;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+          Simpan Transaksi
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ===================== MODAL DETAIL ===================== --}}
+<div id="detailModal" class="modal-overlay">
+  <div class="modal" style="max-width:580px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#EEF2FF,#E0E7FF); display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:18px; font-weight:800; color:var(--text); margin:0;">Detail Transaksi Masuk</h3>
+          <p id="detailSubtitle" style="font-size:13px; color:var(--muted); margin:4px 0 0 0;"></p>
+        </div>
+      </div>
+      <button onclick="closeModal('detailModal')" style="width:36px; height:36px; border-radius:10px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <div id="detailContent"></div>
+
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+      <button onclick="closeModal('detailModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Tutup</button>
+    </div>
+  </div>
+</div>
+
+{{-- ===================== MODAL EDIT ===================== --}}
+<div id="editModal" class="modal-overlay">
+  <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18);">
+
+    {{-- Header --}}
+    <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#FEF3C7,#FEF2F2); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#FBBF24); display:flex; align-items:center; justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:17px; font-weight:800; color:var(--text);">Edit Transaksi Masuk</div>
+            <div id="editSubtitle" style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;"></div>
+          </div>
+        </div>
+        <button onclick="closeModal('editModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <form id="editForm" method="POST" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      @method('PUT')
+      <div style="padding:28px; overflow-y:auto; flex:1;">
+        <input type="hidden" name="id" id="edit_id">
+
+        <div class="section-label" style="margin-bottom:24px;">
+          <span class="section-label-inner">Data Kategori</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_kategori" id="edit_kode_kategori" class="form-input" maxlength="10" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kategori" id="edit_kategori" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
+          <span class="section-label-inner green">Data Barang</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_barang" id="edit_kode_barang" class="form-input" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nama_barang" id="edit_nama_barang" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
+            <input type="date" name="tanggal_input" id="edit_tanggal_input" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
+            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
+              <input type="number" name="harga_satuan" id="edit_harga_satuan" min="0" step="1000" placeholder="0" required oninput="calculateTotal('edit')"
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah Masuk <span style="color:var(--danger);">*</span></label>
+            <input type="number" name="jumlah_masuk" id="edit_jumlah_masuk" class="form-input" min="1" required oninput="calculateTotal('edit')">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total</label>
+            <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
+              <input type="text" id="edit_total_display" readonly
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
+        <button type="button" onclick="closeModal('editModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Batal</button>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--warning),#F59E0B); color:white; box-shadow:0 4px 14px rgba(245,158,11,.35); padding:12px 28px;">
+          Update Transaksi
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ===================== MODAL DELETE ===================== --}}
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal" style="max-width:480px;">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="width:72px; height:72px; border-radius:20px; background:linear-gradient(135deg,#FEF2F2,#FEE2E2); margin:0 auto 20px; display:flex; align-items:center; justify-content:center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </div>
+      <h3 style="font-size:20px; font-weight:800; color:var(--text); margin-bottom:8px;">Hapus Transaksi?</h3>
+      <p style="color:var(--muted); font-size:14px; line-height:1.6; max-width:360px; margin:0 auto;">
+        Data transaksi ini akan dihapus permanen dan tidak dapat dipulihkan kembali.
+      </p>
+      <p id="deleteTitle" style="font-weight:700; color:var(--danger); margin-top:12px; font-size:15px;"></p>
+    </div>
+
+    <form id="deleteForm" method="POST">
+      @csrf @method('DELETE')
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button type="button" onclick="closeModal('deleteModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:14px 28px;">Batal</button>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--danger),#DC2626); color:white; padding:14px 28px; box-shadow:0 4px 14px rgba(239,68,68,.35);">
+          Hapus Permanen
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ——— Helpers ———
+  function formatRupiah(angka) {
+    return new Intl.NumberFormat('id-ID').format(angka);
+  }
+
+  function calculateTotal(prefix) {
+    const jumlah  = parseInt(document.getElementById(prefix + '_jumlah_masuk').value)  || 0;
+    const harga   = parseInt(document.getElementById(prefix + '_harga_satuan').value)  || 0;
+    document.getElementById(prefix + '_total_display').value = formatRupiah(jumlah * harga);
+  }
+
+  // ——— Modal open/close (pola sama dengan Data Persediaan) ———
+  function openModal(id) {
+    document.getElementById(id).classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(id = null) {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+    document.body.style.overflow = '';
+  }
+
+  // Klik di luar modal
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  });
+
+  // ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ——— CREATE ———
+  // (tombol "Tambah Baru" langsung memanggil openModal('createModal'))
+  document.getElementById('createForm').addEventListener('submit', function() {
+    // set default tanggal jika kosong
+  });
+  // Set tanggal hari ini saat modal dibuka
+  document.querySelector('[onclick="openModal(\'createModal\')"]')?.addEventListener('click', () => {
+    document.getElementById('create_tanggal_input').value = new Date().toISOString().split('T')[0];
+    document.getElementById('create_total_display').value = '0';
+  });
+
+  // ——— DETAIL ———
+  function openDetail(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if (!row) return;
+    const d = {
+      no:            row.dataset.no,
+      tanggal_input: row.dataset.tanggalInput,
+      kode_kategori: row.dataset.kodeKategori,
+      kategori:      row.dataset.kategori,
+      kode_barang:   row.dataset.kodeBarang,
+      nama_barang:   row.dataset.namaBarang,
+      jumlah_masuk:  parseInt(row.dataset.jumlahMasuk),
+      harga_satuan:  parseInt(row.dataset.hargaSatuan),
+      total:         parseInt(row.dataset.total),
+    };
+
+    document.getElementById('detailSubtitle').textContent = `Kode Barang: ${d.kode_barang}`;
+    document.getElementById('detailContent').innerHTML = `
+      <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px;">
+        <div style="padding:8px 14px; background:#EEF2FF; border-radius:8px; font-weight:800; color:var(--blue); font-size:13px;">${d.kode_kategori}</div>
+        <div style="font-weight:600; color:var(--text);">${d.kategori}</div>
+        <div style="margin-left:auto; padding:6px 12px; background:#F8FAFF; border-radius:8px; font-size:12px; color:var(--muted); font-weight:600;">No. ${d.no}</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Kode Barang</div>
+          <div style="font-size:16px; font-weight:800; color:var(--text); font-family:monospace;">${d.kode_barang}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Nama Barang</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text);">${d.nama_barang}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Tanggal Input</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text);">${d.tanggal_input}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Jumlah Masuk</div>
+          <div style="font-size:20px; font-weight:800; color:var(--success);">${d.jumlah_masuk.toLocaleString('id-ID')}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Harga Satuan</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text);">Rp ${formatRupiah(d.harga_satuan)}</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border-radius:10px; padding:16px; border:1.5px solid #A7F3D0;">
+          <div style="font-size:11px; color:var(--success); font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Total</div>
+          <div style="font-size:22px; font-weight:800; color:var(--success);">Rp ${formatRupiah(d.total)}</div>
+        </div>
+      </div>
+    `;
+    openModal('detailModal');
+  }
+
+  // ——— EDIT ———
+  function openEdit(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if (!row) return;
+    const d = {
+      id:            row.dataset.id,
+      no:            row.dataset.no,
+      tanggal_input: row.dataset.tanggalInput,
+      kode_kategori: row.dataset.kodeKategori,
+      kategori:      row.dataset.kategori,
+      kode_barang:   row.dataset.kodeBarang,
+      nama_barang:   row.dataset.namaBarang,
+      jumlah_masuk:  row.dataset.jumlahMasuk,
+      harga_satuan:  row.dataset.hargaSatuan,
+    };
+
+    document.getElementById('edit_id').value             = d.id;
+    document.getElementById('edit_tanggal_input').value  = d.tanggal_input;
+    document.getElementById('edit_kode_kategori').value  = d.kode_kategori;
+    document.getElementById('edit_kategori').value       = d.kategori;
+    document.getElementById('edit_kode_barang').value    = d.kode_barang;
+    document.getElementById('edit_nama_barang').value    = d.nama_barang;
+    document.getElementById('edit_jumlah_masuk').value   = d.jumlah_masuk;
+    document.getElementById('edit_harga_satuan').value   = d.harga_satuan;
+    document.getElementById('editSubtitle').textContent  = `Kode Barang: ${d.kode_barang}`;
+    document.getElementById('editForm').action = `{{ route('adminpersediaan.transaksi-masuk.update', ':id') }}`.replace(':id', d.id);
+
+    calculateTotal('edit');
+    openModal('editModal');
+  }
+
+  // ——— DELETE ———
+  function confirmDelete(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if (!row) return;
+    document.getElementById('deleteTitle').textContent =
+      `Kode: ${row.dataset.kodeBarang} — ${row.dataset.namaBarang}`;
+    document.getElementById('deleteForm').action =
+      `{{ route('adminpersediaan.transaksi-masuk.destroy', ':id') }}`.replace(':id', id);
+    openModal('deleteModal');
+  }
+</script>
+
 </body>
 </html>
