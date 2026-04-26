@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Gedung;
 
 class TamuController extends Controller
 {
@@ -24,10 +25,34 @@ class TamuController extends Controller
         return view('tamu.pengaturan_akun');
     }
 
-    public function infoFasilitas()
+    /**
+     * Info Fasilitas – data diambil dari tabel gedung (relasi dengan CRUD admin sarpras)
+     */
+    public function infoFasilitas(Request $request)
     {
-        // Logika untuk info fasilitas
-        return view('tamu.info_fasilitas');
+        $query = Gedung::query();
+
+        // Filter pencarian
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_gedung', 'like', '%' . $request->search . '%')
+                  ->orWhere('lokasi', 'like', '%' . $request->search . '%')
+                  ->orWhere('fasilitas', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter kategori
+        if ($request->filled('kategori') && $request->kategori !== 'all') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        $gedungs = $query->latest()->get();
+
+        // Statistik untuk hero section
+        $totalGedung = Gedung::count();
+        $tersedia    = Gedung::where('ketersediaan', 'Tersedia')->count();
+
+        return view('tamu.info_fasilitas', compact('gedungs', 'totalGedung', 'tersedia'));
     }
 
     public function pengembalianGedung()

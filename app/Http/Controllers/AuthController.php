@@ -10,33 +10,23 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
     // ────────────────────────────────────────────────────────────────────
     // Halaman Login
     // ────────────────────────────────────────────────────────────────────
-
-    /**
-     * Tampilkan halaman login.
-     */
     public function showLogin(): View
     {
-        return view('auth.login', [
-            'alreadyLoggedIn' => Auth::check(),
-        ]);
+        return view('auth.login', ['alreadyLoggedIn' => Auth::check()]);
     }
 
     // ────────────────────────────────────────────────────────────────────
     // Proses Login
     // ────────────────────────────────────────────────────────────────────
-
-    /**
-     * Proses permintaan login.
-     */
     public function login(Request $request): RedirectResponse
     {
-        // Validasi input
         $request->validate([
             'username' => ['required', 'string', 'max:100'],
             'password' => ['required', 'string'],
@@ -45,42 +35,30 @@ class AuthController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        // Rate limiter – max 5 percobaan per 60 detik per IP + username
         $throttleKey = Str::lower($request->input('username')) . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors([
-                    'username' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
-                ]);
+                ->withErrors(['username' => "Terlalu banyak percobaan. Coba lagi dalam {$seconds} detik."]);
         }
 
-        // Cari user berdasarkan username
         $user = User::where('username', $request->input('username'))->first();
 
-        // Verifikasi user & password
-        if (! $user || ! Hash::check($request->input('password'), $user->password)) {
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
             RateLimiter::hit($throttleKey, 60);
-
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors([
-                    'username' => 'Username atau password tidak sesuai.',
-                ]);
+                ->withErrors(['username' => 'Username atau password salah.']);
         }
 
-        // Cek apakah akun aktif
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors([
-                    'username' => 'Akun Anda tidak aktif. Hubungi administrator.',
-                ]);
+                ->withErrors(['username' => 'Akun tidak aktif. Hubungi admin.']);
         }
 
-        // Login berhasil
         RateLimiter::clear($throttleKey);
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
@@ -91,28 +69,19 @@ class AuthController extends Controller
     // ────────────────────────────────────────────────────────────────────
     // Logout
     // ────────────────────────────────────────────────────────────────────
-
-    /**
-     * Proses logout pengguna.
-     */
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-            ->with('success', 'Anda telah berhasil keluar dari sistem.');
+            ->with('success', 'Anda telah logout.');
     }
 
     // ────────────────────────────────────────────────────────────────────
-    // Helper: Redirect berdasarkan peran
+    // Redirect by Role
     // ────────────────────────────────────────────────────────────────────
-
-    /**
-     * Tentukan halaman tujuan setelah login berdasarkan peran user.
-     */
     private function redirectByRole(User $user): RedirectResponse
     {
         return match ($user->role) {
@@ -129,45 +98,106 @@ class AuthController extends Controller
     }
 
     // ────────────────────────────────────────────────────────────────────
-    // (Opsional) Profil & Ganti Password
+    // Profile
     // ────────────────────────────────────────────────────────────────────
-
-    /**
-     * Tampilkan halaman profil pengguna yang sedang login.
-     */
     public function showProfile(): View
     {
         return view('auth.profile', ['user' => Auth::user()]);
     }
 
-    /**
-     * Proses pergantian password pengguna.
-     */
+    // ✅ FIXED: Update Profile (NO MORE INTELLISENSE ERROR!)
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'nip' => ['sometimes', 'nullable', 'string', 'max:30'],
+            'jabatan' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'signature' => ['sometimes', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'signature.image' => 'File harus gambar.',
+            'signature.max' => 'Ukuran maksimal 2MB.',
+        ]);
+
+        // Update fields
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->filled('nip')) {
+            $user->nip = $request->nip;
+        }
+        if ($request->filled('jabatan')) {
+            $user->jabatan = $request->jabatan;
+        }
+
+        // Handle signature upload
+        if ($request->hasFile('signature')) {
+            $path = $request->file('signature')->store('signatures', 'public');
+            $user->signature = $path;
+        }
+
+        $user->save();
+
+        return back()->with('success', '✅ Profile berhasil diupdate!');
+    }
+
+    // ✅ FIXED: Change Password (NO MORE INTELLISENSE ERROR!)
     public function changePassword(Request $request): RedirectResponse
     {
         $request->validate([
-            'current_password'      => ['required', 'string'],
-            'new_password'          => ['required', 'string', 'min:8', 'confirmed'],
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'current_password.required' => 'Password lama wajib diisi.',
-            'new_password.required'     => 'Password baru wajib diisi.',
-            'new_password.min'          => 'Password baru minimal 8 karakter.',
-            'new_password.confirmed'    => 'Konfirmasi password baru tidak cocok.',
+            'new_password.required' => 'Password baru wajib diisi.',
+            'new_password.min' => 'Password minimal 8 karakter.',
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         /** @var User $user */
         $user = Auth::user();
 
-        if (! Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors([
-                'current_password' => 'Password lama tidak sesuai.',
-            ]);
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password lama salah!']);
         }
 
-        $user->update([
-            'password' => Hash::make($request->input('new_password')),
+        // ✅ SAFE ASSIGNMENT
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return back()->with('success', '✅ Password berhasil diubah!');
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // Register (Superadmin only)
+    // ────────────────────────────────────────────────────────────────────
+    public function register(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:100', 'unique:users,username'],
+            'email' => ['nullable', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', Rule::in(['superadmin','kepalabpmp','kasubag','adminpersediaan','adminsarpras','adminasettetap','pegawai','tamu'])],
+            'nip' => ['nullable', 'string', 'max:30'],
+            'jabatan' => ['nullable', 'string', 'max:255'],
         ]);
 
-        return back()->with('success', 'Password berhasil diperbarui.');
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'nip' => $request->nip,
+            'jabatan' => $request->jabatan,
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('login')
+            ->with('success', "✅ User {$user->name} berhasil dibuat!");
     }
 }

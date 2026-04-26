@@ -452,6 +452,16 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
               <td style="color:var(--muted);font-size:12px">{{ $item->luas_bangunan }} m²</td>
               <td>{!! $item->ketersediaan_badge !!}</td>
               <td>
+                @if($item->kategori)
+                  <span class="badge b-blue">
+                    <i class="fas fa-{{ $item->icon }}"></i>
+                    {{ \App\Models\Gedung::kategoriOptions()[$item->kategori] ?? $item->kategori }}
+                  </span>
+                @else
+                  <span class="badge b-slate">—</span>
+                @endif
+              </td>
+              <td>
                 <div class="acts">
                   <button class="act act-eye" title="Detail" onclick="openDetailAjax({{ $item->id }})">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
@@ -528,6 +538,14 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
             <input type="text" name="nama_gedung" id="t-nama" placeholder="Gedung Serba Guna A" required>
           </div>
           <div class="fg">
+            <label>Kategori <span class="req">*</span></label>
+            <select name="kategori" id="t-kategori" required>
+              @foreach(\App\Models\Gedung::kategoriOptions() as $value => $label)
+                <option value="{{ $value }}">{{ $label }}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="fg">
             <label>Lokasi<span class="req">*</span></label>
             <input type="text" name="lokasi" id="t-lokasi" placeholder="Kampus Utara Blok B" required>
           </div>
@@ -600,6 +618,14 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
           <div class="fg">
             <label>Nama Gedung<span class="req">*</span></label>
             <input type="text" name="nama_gedung" id="e-nama" required>
+          </div>
+          <div class="fg">
+            <label>Kategori <span class="req">*</span>
+            <select name="kategori" id="e-kategori" required>
+              @foreach(\App\Models\Gedung::kategoriOptions() as $value => $label)
+                <option value="{{ $value }}">{{ $label }}</option>
+              @endforeach
+            </select></label>
           </div>
           <div class="fg">
             <label>Lokasi<span class="req">*</span></label>

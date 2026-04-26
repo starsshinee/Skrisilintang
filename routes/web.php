@@ -47,13 +47,60 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // ──────────────────────────────────────────────────────────────────────
 // Area yang memerlukan login (semua peran)
 // ──────────────────────────────────────────────────────────────────────
+// routes/web.php
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+});
+
+// Protected Routes - PAKAI MIDDLEWARE ANDA!
+Route::middleware('checkrole')->group(function () {
+    Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/signature', [AuthController::class, 'updateProfile'])->name('profile.signature');
+    Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// Superadmin Register - PAKAI MIDDLEWARE ANDA!
+    Route::middleware('checkrole:superadmin')->group(function () {
+        Route::get('/register', function() { return view('auth.register'); })->name('register.show');
+        Route::post('/register', [AuthController::class, 'register'])->name('register');
+    });
+
+    // Role-specific dashboards
+    Route::middleware('checkrole:superadmin')->group(function () {
+        Route::get('/superadmin/dashboard', fn() => view('superadmin.dashboard'))->name('superadmin.dashboard');
+    });
+    Route::middleware('checkrole:kepalabpmp')->group(function () {
+        Route::get('/kepalabpmp/dashboard', fn() => view('kepalabpmp.dashboard'))->name('kepalabpmp.dashboard');
+    });
+    Route::middleware('checkrole:kasubag')->group(function () {
+        Route::get('/kasubag/dashboard', fn() => view('kasubag.dashboard'))->name('kasubag.dashboard');
+    });
+    Route::middleware('checkrole:adminpersediaan')->group(function () {
+        Route::get('/adminpersediaan/dashboard', fn() => view('adminpersediaan.dashboard'))->name('kasubag.dashboard');
+    });
+    Route::middleware('checkrole:adminsarpras')->group(function () {
+        Route::get('/adminsarpras/dashboard', fn() => view('adminsarpras.dashboard'))->name('adminsarpras.dashboard');
+    });
+    Route::middleware('checkrole:adminasettetap')->group(function () {
+        Route::get('/adminasettetap/dashboard', fn() => view('adminasettetap.dashboard'))->name('adminasettetap.dashboard');
+    });
+    Route::middleware('checkrole:pegawai')->group(function () {
+        Route::get('/pegawai/dashboard', fn() => view('pegawai.dashboard'))->name('pegawai.dashboard');
+    });
+    Route::middleware('checkrole:tamu')->group(function () {
+        Route::get('/tamu/dashboard', fn() => view('tamu.dashboard'))->name('tamu.dashboard');
+    });
 
 Route::middleware('auth')->group(function () {
 
-    // Profil & ganti password – semua peran yang sudah login
-    Route::get('/profil', [AuthController::class, 'showProfile'])->name('profile');
-    Route::post('/profil/ganti-password', [AuthController::class, 'changePassword'])->name('password.change');
-
+    Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/signature', [AuthController::class, 'updateProfile'])->name('profile.signature'); // Same method
+    Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // ──────────────────────────────────────────────────────────────────
     // SUPER ADMIN – akses penuh ke semua fitur
     // ──────────────────────────────────────────────────────────────────
@@ -63,6 +110,8 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard',      fn () => view('superadmin.dashbord'))->name('dashboard');
             Route::get('/manajemen-user', fn () => view('superadmin.manajemen_user'))->name('manajemen-user');
+            Route::post('/register', [AuthController::class, 'register'])->name('register');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -74,7 +123,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', [KepalaBPMPController::class, 'dashboard'])->name('dashboard');
             Route::get('/laporan', [KepalaBPMPController::class, 'laporan'])->name('laporan');
-
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -90,6 +139,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');                
             Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
             Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung'); 
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -102,6 +152,7 @@ Route::middleware('auth')->group(function () {
         
         // Dashboard
         Route::get('/dashboard', [AdminPersediaanController::class, 'dashboard'])->name('dashboard');
+        Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         
         // 📋 DATA PERSEDIAAN - Custom Routes (bukan resource)
         Route::get('/data-persediaan', [AdminPersediaanController::class, 'dataPersediaan'])->name('data-persediaan');
@@ -152,13 +203,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/daftar-pengembalian', [AdminSarprasController::class, 'daftarPengembalian'])->name('daftar-pengembalian');
             Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
             Route::get('/laporan-kerusakan', [AdminSarprasController::class, 'laporanKerusakan'])->name('laporan-kerusakan');
-            Route::get('/pengaturan-akun', [AdminSarprasController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             
             //DATA GEDUNG
             Route::post('/data-gedung', [AdminSarprasController::class, 'storeGedung'])->name('data-gedung.store');
             Route::get('/gedung/{gedung}', [AdminSarprasController::class, 'showGedungJson'])->name('gedung.show');
             Route::put('/gedung/{gedung}', [AdminSarprasController::class, 'updateGedung'])->name('gedung.update');
             Route::delete('/gedung/{gedung}', [AdminSarprasController::class, 'destroyGedung'])->name('gedung.destroy');
+             Route::get('data-gedung/{gedung}', [AdminSarprasController::class, 'showGedungJson'])->name('data-gedung.show');
+            
                     
             // Modal AJAX Routes (BARU)
             Route::get('/data-kerusakan/{kerusakan}/edit', [AdminSarprasController::class, 'editKerusakanJson'])->name('kerusakan.edit.json');
@@ -188,9 +241,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
-            Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');              
+            Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');  
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');            
             
-            // Laporan (tetap sama)
+            // Laporan 
             Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
             Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
             Route::get('/laporan-mutasi-barang', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi-barang');
@@ -258,7 +312,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
             Route::get('/permintaan-persediaan', [PegawaiController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
-            Route::get('/pengaturan-akun', [PegawaiController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -271,7 +325,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [TamuController::class, 'dashboard'])->name('dashboard');
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
             Route::get('/pengembalian-gedung', [TamuController::class, 'pengembaliangedung'])->name('pengembalian-gedung');
-            Route::get('/pengaturan-akun', [TamuController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });
 });

@@ -2,6 +2,8 @@
 
 use App\Models\User;
 
+
+
 return [
 
     /*
@@ -18,6 +20,11 @@ return [
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+    ],
+
+    'admin_sarpras' => [
+        'driver' => 'session',
+        'provider' => 'adminsarpras', // Must match provider below
     ],
 
     /*
@@ -70,6 +77,11 @@ return [
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
+        // ],
+
+        // 'adminsarpras' => [
+        // 'driver' => 'eloquent',
+        // 'model' => App\Models\AdminSarpras::class,
         // ],
     ],
 

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'nip',
         'jabatan',
         'is_active',
+        'signature'
     ];
 
     /**
@@ -69,6 +70,17 @@ class User extends Authenticatable
     public function getProfileCompletenessAttribute(): int
     {
         return $this->profile?->profile_completeness ?? 0;
+    }
+
+    // SCOPE
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeByRole($query, string $role)
+    {
+        return $query->where('role', $role);
     }
 
     // ----------------------------------------------------------------

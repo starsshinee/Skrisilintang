@@ -290,11 +290,11 @@
           </div>
           <span class="stat-label-sm">Total Kerusakan</span>
         </div>
-        <div class="stat-value" style="color:var(--blue)">{{ $kerusakan->total() ?? 0 }}</div>
+        <div class="stat-value" style="color:var(--blue)">{{ $kerusakans->total() ?? 0 }}</div>
         <div class="stat-sub">Keseluruhan</div>
         <div class="stat-trend trend-up">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-          +{{ $kerusakan->total() ?? 0 }} dari bulan lalu
+          +{{ $kerusakans->total() ?? 0 }} dari bulan lalu
         </div>
       </div>
       <div class="stat-card">
@@ -305,7 +305,7 @@
           <span class="stat-label-sm">Kondisi Baik</span>
         </div>
         <div class="stat-value" style="color:var(--green)">{{ $stats['baik'] ?? 0 }}</div>
-        <div class="stat-sub">{{ number_format(($stats['baik'] ?? 0)/max(1,$kerusakan->total())*100,1) }}% dari total</div>
+        <div class="stat-sub">{{ number_format(($stats['baik'] ?? 0)/max(1,$kerusakans->total())*100,1) }}% dari total</div>
         <div class="stat-trend trend-up">✓ Aman digunakan</div>
       </div>
       <div class="stat-card">
@@ -341,7 +341,7 @@
           </div>
           <span class="stat-label-sm">Distribusi Kondisi Bulan Ini</span>
         </div>
-        <div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:12px">{{ $kerusakan->total() ?? 0 }} <span style="font-size:14px;color:var(--muted);font-weight:500">laporan</span></div>
+        <div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:12px">{{ $kerusakans->total() ?? 0 }} <span style="font-size:14px;color:var(--muted);font-weight:500">laporan</span></div>
         <div style="display:flex;gap:14px">
           <div style="text-align:center">
             <div style="font-size:20px;font-weight:800;color:var(--green)">{{ $stats['baik'] ?? 0 }}</div>
@@ -365,13 +365,13 @@
           <span class="stat-label-sm">Tingkat Kerusakan</span>
         </div>
         <div style="font-size:22px;font-weight:800;color:var(--teal);margin-bottom:8px">
-          {{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakan->total())*100,1) }}% 
+          {{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakans->total())*100,1) }}% 
           <span style="font-size:13px;color:var(--muted);font-weight:500">rusak</span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill" style="background:var(--teal);width:{{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakan->total())*100,1) }}%"></div>
+          <div class="progress-fill" style="background:var(--teal);width:{{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakans->total())*100,1) }}%"></div>
         </div>
-        <div style="font-size:11.5px;color:#64748B;margin-top:8px">{{ ($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0) }} dari {{ $kerusakan->total() ?? 0 }} laporan rusak</div>
+        <div style="font-size:11.5px;color:#64748B;margin-top:8px">{{ ($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0) }} dari {{ $kerusakans->total() ?? 0 }} laporan rusak</div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg,#FFF7ED,#FFFBF5)">
         <div class="stat-header">
@@ -422,21 +422,21 @@
                     <circle cx="75" cy="75" r="55" fill="none" stroke="#EF4444" stroke-width="26"
             stroke-dasharray="173 287" stroke-dashoffset="287" stroke-linecap="butt"
             transform="rotate(-262 75 75)"/>
-          <text x="75" y="71" text-anchor="middle" dominant-baseline="middle" font-size="20" font-weight="800" fill="#1E293B" font-family="Plus Jakarta Sans">{{ $kerusakan->total() ?? 0 }}</text>
+          <text x="75" y="71" text-anchor="middle" dominant-baseline="middle" font-size="20" font-weight="800" fill="#1E293B" font-family="Plus Jakarta Sans">{{ $kerusakans->total() ?? 0 }}</text>
           <text x="75" y="87" text-anchor="middle" font-size="10" fill="#94A3B8" font-family="Plus Jakarta Sans">laporan</text>
         </svg>
         <div class="donut-labels">
           <div class="donut-row">
             <div class="donut-name"><div class="donut-dot" style="background:#10B981"></div>Baik</div>
-            <div class="donut-pct" style="color:#10B981">{{ $stats['baik'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['baik'] ?? 0)/max(1,$kerusakan->total())*100,0) }}%</span></div>
+            <div class="donut-pct" style="color:#10B981">{{ $stats['baik'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['baik'] ?? 0)/max(1,$kerusakans->total())*100,0) }}%</span></div>
           </div>
           <div class="donut-row">
             <div class="donut-name"><div class="donut-dot" style="background:#F59E0B"></div>Rusak Ringan</div>
-            <div class="donut-pct" style="color:#F59E0B">{{ $stats['rusak_ringan'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['rusak_ringan'] ?? 0)/max(1,$kerusakan->total())*100,0) }}%</span></div>
+            <div class="donut-pct" style="color:#F59E0B">{{ $stats['rusak_ringan'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['rusak_ringan'] ?? 0)/max(1,$kerusakans->total())*100,0) }}%</span></div>
           </div>
           <div class="donut-row">
             <div class="donut-name"><div class="donut-dot" style="background:#EF4444"></div>Rusak Berat</div>
-            <div class="donut-pct" style="color:#EF4444">{{ $stats['rusak_berat'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['rusak_berat'] ?? 0)/max(1,$kerusakan->total())*100,0) }}%</span></div>
+            <div class="donut-pct" style="color:#EF4444">{{ $stats['rusak_berat'] ?? 0 }} <span style="color:var(--muted);font-weight:400;font-size:11px">{{ number_format(($stats['rusak_berat'] ?? 0)/max(1,$kerusakans->total())*100,0) }}%</span></div>
           </div>
         </div>
       </div>
@@ -478,7 +478,7 @@
             </tr>
           </thead>
           <tbody id="tableBody">
-            @forelse($kerusakan as $kerusakan)
+            @forelse($kerusakans as $kerusakan)
             <tr data-id="{{ $kerusakan->id }}"
                 data-kode="{{ strtolower($kerusakan->kode_barang) }}"
                 data-nama="{{ strtolower($kerusakan->nama_barang) }}"
@@ -522,18 +522,18 @@
           </tbody>
         </table>
         <div class="table-footer">
-          <span>Menampilkan {{ $kerusakan->firstItem() ?? 0 }}–{{ $kerusakan->lastItem() ?? 0 }} dari {{ $kerusakan->total() ?? 0 }} data</span>
+          <span>Menampilkan {{ $kerusakans->firstItem() ?? 0 }}–{{ $kerusakans->lastItem() ?? 0 }} dari {{ $kerusakans->total() ?? 0 }} data</span>
           <div class="pagination">
-            @if($kerusakan->onFirstPage())
+            @if($kerusakans->onFirstPage())
               <button class="page-btn" disabled>Prev</button>
             @else
-              <a href="{{ $kerusakan->previousPageUrl() }}" class="page-btn">Prev</a>
+              <a href="{{ $kerusakans->previousPageUrl() }}" class="page-btn">Prev</a>
             @endif
-            @foreach($kerusakan->getUrlRange(1, $kerusakan->lastPage()) as $page => $url)
-              <a href="{{ $url }}" class="page-btn {{ $kerusakan->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
+            @foreach($kerusakans->getUrlRange(1, $kerusakans->lastPage()) as $page => $url)
+              <a href="{{ $url }}" class="page-btn {{ $kerusakans->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
             @endforeach
-            @if($kerusakan->hasMorePages())
-              <a href="{{ $kerusakan->nextPageUrl() }}" class="page-btn">Next</a>
+            @if($kerusakans->hasMorePages())
+              <a href="{{ $kerusakans->nextPageUrl() }}" class="page-btn">Next</a>
             @else
               <button class="page-btn" disabled>Next</button>
             @endif
@@ -550,18 +550,18 @@
             </tr>
           </thead>
           <tbody>
-            @forelse($kerusakan->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat']) as $kerusakan)
+            @forelse($kerusakans->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat']) as $kerusakan)
             <tr>
-              <td>{{ \Carbon\Carbon::parse($kerusakan->tanggal_input)->format('d/m/Y') }}</td>
-              <td style="font-weight:500;">{{ $kerusakan->nama_barang }}</td>
-              <td><span class="kode-barang">{{ $kerusakan->kode_barang }}</span></td>
-              <td>{{ $kerusakan->lokasi }}</td>
+              <td>{{ \Carbon\Carbon::parse($kerusakans->tanggal_input)->format('d/m/Y') }}</td>
+              <td style="font-weight:500;">{{ $kerusakans->nama_barang }}</td>
+              <td><span class="kode-barang">{{ $kerusakans->kode_barang }}</span></td>
+              <td>{{ $kerusakans->lokasi }}</td>
               <td>
-                <span class="kondisi-badge {{ $kerusakan->kondisi == 'Rusak Ringan' ? 'kondisi-ringan' : 'kondisi-berat' }}">
-                  {{ $kerusakan->kondisi }}
+                <span class="kondisi-badge {{ $kerusakans->kondisi == 'Rusak Ringan' ? 'kondisi-ringan' : 'kondisi-berat' }}">
+                  {{ $kerusakans->kondisi }}
                 </span>
               </td>
-              <td style="font-size:12.5px;color:#64748B">{{ Str::limit($kerusakan->deskripsi ?? '—', 50) }}</td>
+              <td style="font-size:12.5px;color:#64748B">{{ Str::limit($kerusakans->deskripsi ?? '—', 50) }}</td>
             </tr>
             @empty
             <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Belum ada laporan kerusakan</td></tr>
@@ -599,11 +599,11 @@
             @endif
             <tr style="background:#F8FAFF;font-weight:700">
               <td><strong>Total</strong></td>
-              <td><strong>{{ $kerusakan->total() ?? 0 }}</strong></td>
+              <td><strong>{{ $kerusakans->total() ?? 0 }}</strong></td>
               <td style="color:var(--green)">{{ $stats['baik'] ?? 0 }}</td>
               <td style="color:var(--amber)">{{ $stats['rusak_ringan'] ?? 0 }}</td>
               <td style="color:var(--red)">{{ $stats['rusak_berat'] ?? 0 }}</td>
-              <td style="color:var(--orange)">{{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakan->total())*100,1) }}%</td>
+              <td style="color:var(--orange)">{{ number_format((($stats['rusak_ringan'] ?? 0) + ($stats['rusak_berat'] ?? 0))/max(1,$kerusakans->total())*100,1) }}%</td>
             </tr>
           </tbody>
         </table>

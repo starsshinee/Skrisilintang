@@ -176,6 +176,7 @@
       'navItems' => [
         ['href' => route('kepalabpmp.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'kepalabpmp.dashboard'],
         ['href' => route('kepalabpmp.laporan'), 'label' => 'Laporan BMN', 'icon' => 'fas fa-file-pdf', 'route' => 'kepalabpmp.laporan'],
+        ['href' => route('kepalabpmp.pengaturan-akun'), 'label' => 'Pengaturan Akun', 'icon' => 'fas fa-gear', 'route' => 'kepalabpmp.pengaturan-akun'], 
        
       ]
     ],

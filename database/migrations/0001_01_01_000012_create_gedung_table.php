@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('kapasitas');
             $table->enum('ketersediaan', ['Tersedia', 'Sedang Dipakai', 'Renovasi', 'Perlu Perbaikan']);
             $table->text('fasilitas')->nullable();
+            $table->enum('kategori', ['ruang_sidang', 'mess', 'asrama', 'ruang_makan', 'aula', 'ruang_kelas'])
+                  ->nullable();
             $table->timestamps();
         });
     }

@@ -348,7 +348,7 @@
       <div class="topbar-title">Pengaturan Akun</div>
     </div>
     <div class="topbar-right">
-      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Kasubag</div>
+      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Tamu</div>
       <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>
@@ -373,7 +373,7 @@
               <div class="avatar-edit"><i class="fas fa-pen"></i></div>
             </div>
             <div class="avatar-info">
-              <h3>Kasubag</h3>
+              <h3>Tamu</h3>
               <p>BPMP Provinsi Gorontalo • NIP: 0983654321</p>
               <button class="avatar-upload-btn"><i class="fas fa-camera"></i> Ubah Foto</button>
             </div>
@@ -399,7 +399,6 @@
                 <div class="form-label"><i class="fas fa-id-card"></i> NIP</div>
                 <input type="text" class="form-input" value="0983654321">
               </div>
-            </div>
             <div class="form-grid-2">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-envelope"></i> Email</div>
