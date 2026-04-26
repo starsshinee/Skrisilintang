@@ -9,18 +9,358 @@
   /* ===== RESET & BASE ===== */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --primary:       #3b6bda;
+    --primary-d:     #2f55b8;
+    --primary-light: #eef2ff;
+    --bg:            #f1f5fb;
+    --surface:       #ffffff;
+    --border:        #e2e8f0;
+    --text-primary:  #0f172a;
+    --text-secondary:#475569;
+    --text-tertiary: #94a3b8;
+    --shadow-sm: 0 1px 3px rgba(15,23,42,.07), 0 1px 2px rgba(15,23,42,.04);
+    --shadow-md: 0 4px 16px rgba(15,23,42,.09);
+    --radius:    12px;
+  }
+
+  html, body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ===== LAYOUT — sidebar already handled by partials.sidebar ===== */
+  .main {
+    /* keep whatever margin your sidebar partial sets */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: var(--shadow-sm);
+  }
+  .topbar-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -.03em;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .notif-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background .15s;
+  }
+  .notif-btn:hover { background: var(--bg); }
+  .notif-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 1.5px solid var(--surface);
+  }
+  .date-text {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .btn-keluar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: 9px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #ef4444;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .btn-keluar:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+  /* ===== CONTENT ===== */
+  .content {
+    padding: 28px;
+    flex: 1;
+  }
+
+  /* ─── HEADER ─── */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.page-hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.page-hdr p{font-size:13px;color:var(--muted);margin-top:2px}
+
+  /* ===== FLASH ALERTS ===== */
+  .alert-flash {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .alert-success-flash {
+    background: #ecfdf5;
+    color: #10b981;
+    border: 1px solid #a7f3d0;
+  }
+  .alert-error-flash {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+  }
+
+  /* ===== TOOLBAR ===== */
+  /* ─── TOOLBAR ─── */
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.search-box{position:relative;flex:1;min-width:200px}
+.search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--hint);pointer-events:none}
+.search-box input{
+  width:100%;padding:10px 12px 10px 36px;
+  border:0.5px solid var(--border2);border-radius:var(--r);
+  font-size:13px;font-family:inherit;background:var(--surface);color:var(--txt);
+  outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.search-box input::placeholder{color:var(--hint)}
+.filter-select{
+  padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--r);
+  font-size:13px;font-family:inherit;background:var(--surface);color:var(--txt);
+  outline:none;cursor:pointer;transition:border-color .15s;
+}
+.filter-select:focus{border-color:var(--primary)}
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 20px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(59,107,218,.25);
+  }
+  .btn-primary:hover { background: var(--primary-d); }
+
+  /* ===== TABLE CARD ===== */
+  .table-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    background: #f8faff;
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8faff; }
+
+  tbody td {
+    padding: 11px 16px;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+
+  /* row number dimmed */
+  tbody td:first-child {
+    color: var(--text-tertiary);
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+
+  /* date col */
+  td[style*="white-space:nowrap"] {
+    color: var(--text-secondary);
+  }
+
+  /* ===== STATUS BADGES ===== */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 7px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .badge-baik         { background:#ecfdf5; color:#10b981; border:1px solid #a7f3d0; }
+  .badge-baik::before         { background:#10b981; }
+  .badge-rusak-ringan { background:#fffbeb; color:#f59e0b; border:1px solid #fde68a; }
+  .badge-rusak-ringan::before { background:#f59e0b; }
+  .badge-rusak-sedang { background:#fff7ed; color:#f97316; border:1px solid #fed7aa; }
+  .badge-rusak-sedang::before { background:#f97316; }
+  .badge-rusak-berat  { background:#fef2f2; color:#ef4444; border:1px solid #fecaca; }
+  .badge-rusak-berat::before  { background:#ef4444; }
+  .badge-hancur       { background:#fff1f2; color:#e11d48; border:1px solid #fda4af; }
+  .badge-hancur::before       { background:#e11d48; }
+
+  /* ===== KODE BARANG MONOSPACE PILL ===== */
+  /* (keeps the inline style from Blade but upgrades the look) */
+  tbody td span[style*="monospace"] {
+    font-size: 12px !important;
+    background: var(--bg) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-secondary) !important;
+    padding: 3px 9px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+  }
+
+  /* ===== ACTION BUTTONS ===== */
+  .action-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .act-btn {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 7px;
+    border: 1px solid;
+    cursor: pointer;
+    background: transparent;
+    transition: all .15s;
+  }
+  .act-btn.view  { border-color: #bfdbfe; color: var(--primary); }
+  .act-btn.view:hover  { background: var(--primary-light); }
+  /* edit button — green */
+  .act-btn[style*="#10b981"] {
+    border-color: #a7f3d0 !important;
+    color: #10b981 !important;
+    background: #ecfdf5 !important;
+  }
+  .act-btn[style*="#10b981"]:hover {
+    background: #bbf7d0 !important;
+  }
+  .act-btn.del   { border-color: #fecaca; color: #ef4444; }
+  .act-btn.del:hover   { background: #fef2f2; }
+
+  /* photo action button */
+  .act-btn.photo { border-color: #e0e7ff; color: #6366f1; }
+  .act-btn.photo:hover { background: #eef2ff; }
+
+  /* ===== PHOTO THUMBNAIL ===== */
+  .photo-thumbnail {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity .15s, transform .15s;
+    display: block;
+  }
+  .photo-thumbnail:hover { opacity: .85; transform: scale(1.06); }
+
+  .photo-empty-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1.5px dashed var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-tertiary);
+    background: var(--bg);
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 64px 24px;
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+  .empty-state h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+  .empty-state p { font-size: 13.5px; }
+
   /* ===== MODAL OVERLAY ===== */
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(2px);
+    background: rgba(15,23,42,.42);
+    backdrop-filter: blur(3px);
     display: none; align-items: center; justify-content: center;
     z-index: 200; padding: 20px;
   }
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: #fff;
+    background: var(--surface);
     border-radius: 18px;
     width: 520px; max-width: 100%;
     max-height: 92vh; overflow-y: auto;
@@ -36,10 +376,10 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; background: #fff; z-index: 1;
+    position: sticky; top: 0; background: var(--surface); z-index: 1;
     border-radius: 18px 18px 0 0;
   }
-  .modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .modal-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
 
   .close-btn {
     width: 32px; height: 32px;
@@ -55,15 +395,15 @@
   /* ===== FORM ===== */
   form { padding: 20px 24px; }
 
-  .form-group { margin-bottom: 16px; }
+  .form-group { margin-bottom: 15px; }
   .form-label {
-    font-size: 11.5px; font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase; letter-spacing: .05em;
-    margin-bottom: 7px; display: block;
+    font-size: 11px; font-weight: 700;
+    color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px; display: block;
   }
   .form-input, .form-select, .form-textarea {
-    width: 100%; padding: 10px 13px;
+    width: 100%; padding: 9px 13px;
     border: 1px solid var(--border);
     border-radius: 10px;
     font-family: inherit; font-size: 13.5px;
@@ -72,7 +412,7 @@
   }
   .form-input:focus, .form-select:focus, .form-textarea:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59,107,218,.12);
+    box-shadow: 0 0 0 3px rgba(59,107,218,.10);
   }
   .form-textarea { min-height: 80px; resize: vertical; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -82,11 +422,12 @@
   .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
   .file-input-label {
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 13px;
+    padding: 11px 13px;
     border: 1.5px dashed var(--border);
     border-radius: 10px; cursor: pointer;
     font-size: 13px; color: var(--text-secondary);
     transition: all .15s;
+    background: var(--bg);
   }
   .file-input-label:hover {
     border-color: var(--primary);
@@ -102,7 +443,7 @@
   /* Modal footer */
   .modal-footer {
     display: flex; justify-content: flex-end; gap: 10px;
-    padding: 16px 24px;
+    padding: 15px 24px;
     border-top: 1px solid var(--border);
     background: var(--bg); border-radius: 0 0 18px 18px;
   }
@@ -115,46 +456,33 @@
   }
   .btn-cancel:hover { background: var(--bg); }
   .btn-save {
-    padding: 9px 20px;
+    padding: 9px 22px;
     background: var(--primary); color: #fff;
     border: none; border-radius: 10px;
     font-family: inherit; font-size: 13.5px; font-weight: 700;
     cursor: pointer; transition: background .15s;
+    box-shadow: 0 2px 8px rgba(59,107,218,.25);
   }
-  .btn-save:hover { background: #3058c0; }
+  .btn-save:hover { background: var(--primary-d); }
 
   /* ===== DETAIL MODAL ===== */
   .detail-body { padding: 8px 24px 4px; }
   .detail-row {
     display: flex; gap: 16px; align-items: flex-start;
-    padding: 11px 0; border-bottom: 1px solid var(--border);
+    padding: 12px 0; border-bottom: 1px solid var(--border);
     font-size: 13.5px;
   }
   .detail-row:last-child { border-bottom: none; }
   .detail-label {
-    font-size: 11.5px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .05em; color: var(--text-secondary);
-    min-width: 120px; padding-top: 2px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-tertiary);
+    min-width: 120px; padding-top: 2px; flex-shrink: 0;
   }
-  .detail-value { color: var(--text-primary); flex: 1; line-height: 1.5; }
+  .detail-value { color: var(--text-primary); flex: 1; line-height: 1.6; }
   .detail-photo {
     width: 100%; max-height: 200px; object-fit: cover;
     border-radius: 10px; margin-top: 4px;
     border: 1px solid var(--border);
-  }
-
-  /* ===== PHOTO THUMBNAIL in table ===== */
-  .photo-thumbnail {
-    width: 38px; height: 38px; border-radius: 8px;
-    object-fit: cover; border: 1px solid var(--border);
-    cursor: pointer; transition: opacity .15s;
-  }
-  .photo-thumbnail:hover { opacity: .8; }
-  .photo-empty-icon {
-    width: 38px; height: 38px; border-radius: 8px;
-    border: 1.5px dashed var(--border);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-tertiary, #94a3b8);
   }
 </style>
 </head>
@@ -209,15 +537,11 @@
     </div>
     @endif
 
-    {{-- TOOLBAR --}}
-    <div class="toolbar">
-      <div class="search-wrap">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
-        </svg>
-        <input class="search-input" type="text" placeholder="Cari nama atau kode barang..."
-               id="searchInput" oninput="filterTable()">
+  {{-- -header --}}
+    <div class="page-hdr">
+      <div>
+        <h1>Data Kerusakan</h1>
+        <p>Kelola data gedung yang mengalami kerusakan</p>
       </div>
       <button class="btn-primary" onclick="openModal('create')">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -225,6 +549,21 @@
         </svg>
         Tambah Data
       </button>
+    </div>
+
+    {{-- TOOLBAR --}}
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Cari nama barang atau kode…" id="searchInput" oninput="filterTable()">
+      </div>
+      <select class="filter-select" id="statusFilter" onchange="filterTable()">
+        <option value="">Semua Status</option>
+        <option value="Baik">Baik</option>
+        <option value="Rusak Berat">Rusak Berat</option>
+        <option value="Rusak Ringan">Rusak Ringan</option>
+      </select>
+      
     </div>
 
     {{-- TABLE --}}
@@ -250,27 +589,25 @@
               data-kode="{{ strtolower($kerusakan->kode_barang) }}"
               data-nama="{{ strtolower($kerusakan->nama_barang) }}">
             <td>{{ $loop->iteration }}</td>
-            <td style="white-space:nowrap;">
+            <td style="white-space:nowrap;color:var(--text-secondary);">
               {{ \Carbon\Carbon::parse($kerusakan->tanggal_input)->format('d/m/Y') }}
             </td>
-            <td>{{ $kerusakan->nama_barang }}</td>
+            <td style="font-weight:500;">{{ $kerusakan->nama_barang }}</td>
             <td>
-              <span style="font-family:monospace;font-size:12.5px;font-weight:700;
-                           background:var(--bg);padding:3px 8px;border-radius:6px;
+              <span style="font-family:monospace;font-size:12px;font-weight:700;
+                           background:var(--bg);padding:3px 9px;border-radius:6px;
                            border:1px solid var(--border);color:var(--text-secondary);">
                 {{ $kerusakan->kode_barang }}
               </span>
             </td>
-            <td>{{ $kerusakan->nup }}</td>
+            <td style="color:var(--text-secondary);">{{ $kerusakan->nup }}</td>
             <td>
               @php
                 $kondisiClass = match($kerusakan->kondisi) {
                   'Baik'         => 'badge-baik',
                   'Rusak Ringan' => 'badge-rusak-ringan',
-                  'Rusak Sedang' => 'badge-rusak-sedang',
                   'Rusak Berat'  => 'badge-rusak-berat',
-                  'Hancur'       => 'badge-hancur',
-                  default        => 'badge-rusak-sedang'
+                  default        => 'badge-baik'
                 };
               @endphp
               <span class="status-badge {{ $kondisiClass }}">{{ $kerusakan->kondisi }}</span>
@@ -303,7 +640,7 @@
                 </div>
               @endif
             </td>
-            <td>{{ $kerusakan->lokasi }}</td>
+            <td style="color:var(--text-secondary);">{{ $kerusakan->lokasi }}</td>
             <td>
               <div class="action-btns">
                 <button class="act-btn view" title="Lihat Detail"
@@ -336,7 +673,7 @@
       </table>
       @else
       <div class="empty-state">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" width="48" height="48">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.2" width="52" height="52">
           <path d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm0 0V9a2 2 0 0 0 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h.01"/>
         </svg>
         <h3>Belum ada data kerusakan</h3>
@@ -365,7 +702,7 @@
       <button class="close-btn" onclick="closeModal()" aria-label="Tutup">&times;</button>
     </div>
 
-    <form id="crudForm" enctype="multipart/form-data">
+    <form id="crudForm" method="POST" action="{{ route('adminsarpras.kerusakan.store') }}" enctype="multipart/form-data">
       @csrf
       <input type="hidden" name="id" id="kerusakanId">
 
@@ -381,9 +718,7 @@
             <option value="">Pilih kondisi</option>
             <option value="Baik">Baik</option>
             <option value="Rusak Ringan">Rusak Ringan</option>
-            <option value="Rusak Sedang">Rusak Sedang</option>
             <option value="Rusak Berat">Rusak Berat</option>
-            <option value="Hancur">Hancur</option>
           </select>
         </div>
       </div>
@@ -415,7 +750,7 @@
 
       <div class="form-group">
         <label class="form-label" for="deskripsi">
-          Deskripsi <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-tertiary,#94a3b8)">(opsional)</span>
+          Deskripsi <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-tertiary)">(opsional)</span>
         </label>
         <textarea name="deskripsi" id="deskripsi"
                   class="form-input form-textarea"
@@ -497,7 +832,7 @@
 </div>
 
 {{-- ============================================================ --}}
-{{--  JAVASCRIPT                                                   --}}
+{{--  JAVASCRIPT — tidak ada perubahan logika                     --}}
 {{-- ============================================================ --}}
 <script>
 let currentKerusakanId = null;
@@ -552,7 +887,7 @@ function closeModal() {
 
 /* ---------- Load data into edit form ---------- */
 function loadKerusakanData(id) {
-  fetch(`/admin/sarpras/kerusakan/${id}/edit`)
+  fetch(`/adminsarpras/data-kerusakan/${id}/edit`)
     .then(r => r.json())
     .then(data => {
       document.getElementById('tanggal_input').value = data.tanggal_input;
@@ -574,7 +909,7 @@ function loadKerusakanData(id) {
 
 /* ---------- Detail Modal ---------- */
 function openDetailModal(id) {
-  fetch(`/admin/sarpras/kerusakan/${id}`)
+  fetch(`/adminsarpras/data-kerusakan/${id}`)
     .then(r => r.json())
     .then(data => {
       document.getElementById('detailTanggal').textContent =
@@ -611,9 +946,7 @@ function getKondisiClass(kondisi) {
   const map = {
     'Baik'         : 'badge-baik',
     'Rusak Ringan' : 'badge-rusak-ringan',
-    'Rusak Sedang' : 'badge-rusak-sedang',
     'Rusak Berat'  : 'badge-rusak-berat',
-    'Hancur'       : 'badge-hancur',
   };
   return map[kondisi] || 'badge-rusak-sedang';
 }
@@ -623,7 +956,7 @@ function confirmDelete(id) {
   if (!confirm('Yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) return;
   const form = document.createElement('form');
   form.method = 'POST';
-  form.action = `/admin/sarpras/kerusakan/${id}`;
+  form.action = `/adminsarpras/data-kerusakan/${id}`;
   form.innerHTML = `@csrf @method('DELETE')`;
   document.body.appendChild(form);
   form.submit();
@@ -649,7 +982,7 @@ document.getElementById('foto').addEventListener('change', function (e) {
 
 /* ---------- Form submit (edit via AJAX) ---------- */
 document.getElementById('crudForm').addEventListener('submit', function (e) {
-  if (!isEditMode) return; // biarkan form submit biasa untuk create
+  if (!isEditMode) return;
   e.preventDefault();
 
   const formData = new FormData(this);

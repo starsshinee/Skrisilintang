@@ -10,21 +10,42 @@ return new class extends Migration
     {
         Schema::create('peminjaman_gedung', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama_gedung');
-            $table->string('foto_gedung')->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->string('lokasi');
-            $table->decimal('luas_bangunan', 10, 2);
-            $table->integer('kapasitas');
-            $table->json('fasilitas')->nullable();
-            $table->decimal('tarif_sewa', 12, 2);
-            $table->enum('ketersediaan', ['tersedia', 'tidak_tersedia'])->default('tersedia');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             
-            // Workflow fields
-            $table->foreignId('reviewed_by_adminsarpras_id')->nullable()->constrained('users');
-            $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
+            // Data peminjam
+            $table->string('nama_lengkap');
+            $table->string('nip_nik');
+            $table->string('instansi_lembaga');
+            $table->string('kabupaten_kota');
+            
+            // Data fasilitas + TARIF
+            $table->string('fasilitas'); 
+            $table->string('nama_fasilitas')->nullable();
+            $table->decimal('tarif_per_hari', 15, 2); // Tarif per hari dari fasilitas
+            
+            // Data waktu peminjaman
+            $table->date('tanggal_pinjam');
+            $table->date('tanggal_kembali');
+            $table->time('jam_mulai');
+            $table->time('jam_selesai');
+            $table->integer('lama_peminjaman_hari')->default(1); // Auto calculated
+            
+            // Data pembayaran (AUTO CALCULATED)
+            $table->decimal('total_pembayaran', 15, 2)->default(0);
+            
+            // Lainnya
+            $table->text('tujuan_penggunaan');
+            $table->string('nomor_kontak');
+            $table->string('surat_path')->nullable();
+            
+            // Workflow
             $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');
+            $table->text('komentar')->nullable();
+            $table->foreignId('reviewed_by_admin_id')->nullable()->constrained('users');
+            $table->timestamp('tanggal_approval')->nullable();
+            $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
+            $table->timestamp('approved_by_kasubag_date')->nullable();
+            $table->timestamp('diteruskan_ke_kasubag_date')->nullable();
             
             $table->timestamps();
         });

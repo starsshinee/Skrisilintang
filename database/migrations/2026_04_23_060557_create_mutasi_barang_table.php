@@ -32,12 +32,19 @@ return new class extends Migration
             $table->date('tanggal_mutasi');
             
             $table->timestamps();
-            
-            // Index
-            $table->index(['kode_barang', 'tanggal_mutasi', 'lokasi_awal', 'lokasi_akhir']);
         });
+            
+            // INDEX DENGAN NAMA PENDEK (✅ Anti error MySQL)
+        Schema::table('mutasi_barang', function (Blueprint $table) {
+            $table->index('kode_barang', 'idx_kode');
+            $table->index('tanggal_mutasi', 'idx_tgl');
+            $table->index(['lokasi_awal', 'lokasi_akhir'], 'idx_lokasi');
+            $table->index(['kode_barang', 'tanggal_mutasi'], 'idx_kode_tgl');
+        });
+        
     }
 
+    
     public function down(): void
     {
         Schema::dropIfExists('mutasi_barang');

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             
             // Kolom sesuai header tabel HTML
-            $table->integer('no')->autoIncrement()->unique(); // No (urut)
             $table->date('tanggal_input'); // Tanggal Input
             $table->string('kode_kategori', 20); // Kode Kategori
             $table->string('kategori', 100); // Kategori

@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\{
     AdminSarpras,
+    Gedung,
     PengembalianGedung,
     PeminjamanGedung,
-    Kerusakan
+    Kerusakan,
+    laporanKerusakan,
+    laporanPeminjamanGedung,
+    
 };
 
 
@@ -41,13 +45,135 @@ class AdminSarprasController extends Controller
         // return view('adminsarpras.dashboard', compact('stats', 'peminjaman_terbaru', 'pengembalian_menunggu'));
     }
 
-    public function dataGedung()
+    // DATA GEDUNG
+    public function dataGedung(Request $request)
     {
-        // Data master gedung yang bisa dipinjam
-        $gedung = []; // Bisa dari model Gedung jika ada
-        return view('adminsarpras.data_gedung', compact('gedung'));
+        $query = Gedung::query();
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_gedung', 'like', '%'.$request->search.'%')
+                ->orWhere('lokasi', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        if ($request->filled('ketersediaan')) {
+            $query->where('ketersediaan', $request->ketersediaan);
+        }
+
+        // ✅ KONSISTEN - $gedung untuk view
+        $gedung = $query->latest()->paginate(10);
+        
+        $stats = [
+            'total' => Gedung::count(),
+            'tersedia' => Gedung::where('ketersediaan', 'Tersedia')->count(),
+            'dipakai' => Gedung::where('ketersediaan', 'Sedang Dipakai')->count(),
+            'renovasi' => Gedung::whereIn('ketersediaan', ['Renovasi', 'Perlu Perbaikan'])->count(),
+        ];
+
+        return view('adminsarpras.data_gedung', compact('gedung', 'stats'));
     }
 
+    // Tambah gedung
+    public function storeGedung(Request $request)
+    {
+        $validated = $request->validate([
+        'nama_gedung' => 'required|string|max:255',
+        'lokasi' => 'required|string|max:255',
+        'luas_bangunan' => 'required|string|max:100',
+        'tarif_sewa' => 'required|integer|min:0',
+        'kapasitas' => 'required|integer|min:1',
+        'ketersediaan' => 'required|in:Tersedia,Sedang Dipakai,Renovasi,Perlu Perbaikan',
+        'fasilitas' => 'nullable|string|max:1000',
+        'foto_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $data = [
+        'nama_gedung' => $validated['nama_gedung'],
+        'lokasi' => $validated['lokasi'],
+        'luas_bangunan' => $validated['luas_bangunan'],
+        'tarif_sewa' => $validated['tarif_sewa'],
+        'kapasitas' => $validated['kapasitas'],
+        'ketersediaan' => $validated['ketersediaan'],
+        'fasilitas' => $validated['fasilitas'] ?? null,
+        ];
+
+        //✅ UPLOAD FOTO TERpisah
+        if ($request->hasFile('foto_url')) {
+            $data['foto_url'] = $request->file('foto_url')->store('gedung_photos', 'public');
+        }
+
+        // ✅ SEKARANG AMAN
+        $gedung = Gedung::create($data);
+
+        return redirect()->route('adminsarpras.data-gedung')
+            ->with('success', 'Gedung berhasil ditambahkan!');
+    }
+
+    // Edit gedung
+    public function updateGedung(Request $request, Gedung $gedung)
+    {
+        $request->validate([
+            'nama_gedung' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'luas_bangunan' => 'required|string|max:100',
+            'tarif_sewa' => 'required|integer|min:0',
+            'kapasitas' => 'required|integer|min:1',
+            'ketersediaan' => 'required|in:Tersedia,Sedang Dipakai,Renovasi,Perlu Perbaikan',
+            'fasilitas' => 'nullable|string',
+            'foto_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $data = $request->all();
+
+        // Update foto
+        if ($request->hasFile('foto_url')) {
+            // Hapus foto lama
+            if ($gedung->foto_url && Storage::disk('public')->exists($gedung->foto_url)) {
+                Storage::disk('public')->delete($gedung->foto_url);
+            }
+            $data['foto_url'] = $request->file('foto_url')->store('gedung_photos', 'public');
+        }
+
+        $gedung->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gedung berhasil diupdate!'
+        ]);
+    }
+
+    // Hapus gedung
+    public function destroyGedung(Gedung $gedung)
+    {
+        // Hapus foto
+        if ($gedung->foto_url && Storage::disk('public')->exists($gedung->foto_url)) {
+            Storage::disk('public')->delete($gedung->foto_url);
+        }
+
+        $gedung->delete();
+
+        return redirect()->back()->with('success', 'Gedung berhasil dihapus!');
+    }
+
+    // API untuk detail JSON
+    public function showGedungJson(Gedung $gedung)
+    {
+        return response()->json([
+            'id' => $gedung->id,
+            'nama_gedung' => $gedung->nama_gedung,
+            'foto_url' => $gedung->foto_url ? asset('storage/' . $gedung->foto_url) : null,
+            'lokasi' => $gedung->lokasi,
+            'luas_bangunan' => $gedung->luas_bangunan,
+            'tarif_sewa' => $gedung->tarif_sewa,
+            'kapasitas' => $gedung->kapasitas,
+            'ketersediaan' => $gedung->ketersediaan,
+            'fasilitas' => $gedung->fasilitas,
+        ]);
+    }
+
+
+    //====DAFTAR PEMINJAMAN=========
     public function daftarPeminjaman(Request $request)
     {
         $query = PeminjamanGedung::with('pengembalian');
@@ -187,7 +313,9 @@ class AdminSarprasController extends Controller
      */
     public function dataKerusakan(Request $request)
     {
-        $query = Kerusakan::query();  // ✅ Kerusakan (PascalCase)
+        $query = Kerusakan::query(); 
+            ->orderBy('tanggal_input', 'desc')
+            ->orderBy('id', 'desc'); // ✅ Kerusakan (PascalCase)
 
         // Filter kondisi
         if ($request->filled('kondisi')) {
@@ -215,8 +343,7 @@ class AdminSarprasController extends Controller
             'total' => Kerusakan::count(),
             'baik' => Kerusakan::where('kondisi', 'Baik')->count(),
             'rusak_ringan' => Kerusakan::where('kondisi', 'Rusak Ringan')->count(),
-            'rusak_sedang' => Kerusakan::where('kondisi', 'Rusak Sedang')->count(),
-            'rusak_berat' => Kerusakan::whereIn('kondisi', ['Rusak Berat', 'Hancur'])->count(),
+            'rusak_berat' => Kerusakan::whereIn('kondisi', ['Rusak Berat'])->count(),
         ];
 
         return view('adminsarpras.data_kerusakan', compact('kerusakans', 'stats'));
@@ -243,15 +370,15 @@ class AdminSarprasController extends Controller
         $request->validate([
             'tanggal_input' => 'required|date',
             'nama_barang' => 'required|string|max:255',
-            'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang',
-            'nup' => 'required|string|max:100|unique:kerusakans,nup',
-            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
+            'kode_barang' => 'required|string|max:50|unique:kerusakan,kode_barang',
+            'nup' => 'required|string|max:100|unique:kerusakan,nup',
+            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['tanggal_input', 'nama_barang', 'kode_barang', 'nup', 'kondisi', 'lokasi', 'deskripsi']);
 
         // Upload foto
         if ($request->hasFile('foto')) {
@@ -260,7 +387,7 @@ class AdminSarprasController extends Controller
 
         Kerusakan::create($data);
 
-        return redirect()->route('admin.sarpras.kerusakan.index')
+        return redirect()->route('adminsarpras.data-kerusakan')
             ->with('success', 'Data kerusakan berhasil ditambahkan!');
     }
 
@@ -280,15 +407,15 @@ class AdminSarprasController extends Controller
         $request->validate([
             'tanggal_input' => 'required|date',
             'nama_barang' => 'required|string|max:255',
-            'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang,' . $kerusakan->id,
-            'nup' => 'required|string|max:100|unique:kerusakans,nup,' . $kerusakan->id,
-            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
+            'kode_barang' => 'required|string|max:50|unique:kerusakan,kode_barang,' . $kerusakan->id,
+            'nup' => 'required|string|max:100|unique:kerusakan,nup,' . $kerusakan->id,
+            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['tanggal_input', 'nama_barang', 'kode_barang', 'nup', 'kondisi', 'lokasi', 'deskripsi']);
 
         // Upload foto baru jika ada
         if ($request->hasFile('foto')) {
@@ -301,7 +428,7 @@ class AdminSarprasController extends Controller
 
         $kerusakan->update($data);
 
-        return redirect()->route('admin.sarpras.kerusakan.index')
+        return redirect()->route('adminsarpras.data-kerusakan')
             ->with('success', 'Data kerusakan berhasil diupdate!');
     }
 
@@ -317,7 +444,7 @@ class AdminSarprasController extends Controller
 
         $kerusakan->delete();
 
-        return redirect()->route('admin.sarpras.kerusakan.index')
+        return redirect()->route('adminsarpras.data-kerusakan')
             ->with('success', 'Data kerusakan berhasil dihapus!');
     }
 
@@ -375,9 +502,9 @@ public function updateKerusakanAjax(Request $request, Kerusakan $kerusakan)
     $request->validate([
         'tanggal_input' => 'required|date',
         'nama_barang' => 'required|string|max:255',
-        'kode_barang' => 'required|string|max:50|unique:kerusakans,kode_barang,' . $kerusakan->id,
-        'nup' => 'required|string|max:100|unique:kerusakans,nup,' . $kerusakan->id,
-        'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Sedang,Rusak Berat,Hancur',
+        'kode_barang' => 'required|string|max:50|unique:kerusakan,kode_barang,' . $kerusakan->id,
+        'nup' => 'required|string|max:100|unique:kerusakan,nup,' . $kerusakan->id,
+        'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
         'lokasi' => 'required|string|max:255',
         'deskripsi' => 'nullable|string',
         'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'

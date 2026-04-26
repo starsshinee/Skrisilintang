@@ -8,17 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('gedung', function (Blueprint $table) {
+         Schema::create('gedung', function (Blueprint $table) {
             $table->id();
             $table->string('nama_gedung');
-            $table->string('foto_gedung')->nullable();
-            $table->text('deskripsi')->nullable();
+            $table->string('foto_url')->nullable();
             $table->string('lokasi');
-            $table->decimal('luas_bangunan', 10, 2)->nullable();
-            $table->integer('kapasitas')->nullable();
+            $table->string('luas_bangunan');
+            $table->integer('tarif_sewa');
+            $table->integer('kapasitas');
+            $table->enum('ketersediaan', ['Tersedia', 'Sedang Dipakai', 'Renovasi', 'Perlu Perbaikan']);
             $table->text('fasilitas')->nullable();
-            $table->decimal('tarif_sewa', 15, 2)->nullable();
-            $table->enum('ketersediaan', ['tersedia', 'tidak tersedia'])->default('tersedia'); // tersedia, tidak tersedia
             $table->timestamps();
         });
     }

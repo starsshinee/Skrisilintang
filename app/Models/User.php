@@ -3,6 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne; 
+
+use Illuminate\Database\Eloquent\Model;
+use App\Models\UserProfile;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -48,6 +53,22 @@ class User extends Authenticatable
             'password'          => 'hashed',
             'is_active'         => 'boolean',
         ];
+    }
+
+    /**
+     * Relasi ke profil user (1:1)
+     */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    /**
+     * Profile completeness percentage
+     */
+    public function getProfileCompletenessAttribute(): int
+    {
+        return $this->profile?->profile_completeness ?? 0;
     }
 
     // ----------------------------------------------------------------
