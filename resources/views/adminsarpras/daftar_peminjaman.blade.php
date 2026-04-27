@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daftar Peminjaman - Admin Sarana Prasarana</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,42 +27,25 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  .sidebar {
-    width: var(--sidebar-width); background: var(--sidebar-bg);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column;
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+  .act-forward { 
+    background: #f59e0b; color: #fff; 
   }
-  .sidebar-brand {
-    display: flex; align-items: center; gap: 12px;
-    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+  .act-forward:hover { 
+      background: #d97706; 
   }
-  .brand-icon {
-    width: 44px; height: 44px; background: var(--primary);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  .badge-warning { 
+      background: var(--warning-light); color: var(--warning); 
   }
-  .brand-text strong { font-size: 13px; font-weight: 700; display: block; }
-  .brand-text span { font-size: 11px; color: var(--text-secondary); }
-  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px; border-radius: 10px;
-    font-size: 14px; font-weight: 500; color: var(--text-secondary);
-    cursor: pointer; transition: all .2s; text-decoration: none;
+  .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      display: none; align-items: center; justify-content: center; z-index: 200;
   }
-  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
-  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .sidebar-user {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 20px; border-top: 1px solid var(--border);
+  .modal-overlay.open { display: flex; }
+  .modal {
+      background: #fff; border-radius: 16px; padding: 28px;
+      width: 520px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
   }
-  .user-avatar {
-    width: 36px; height: 36px; background: var(--primary);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #fff;
-  }
-  .user-info strong { font-size: 13px; font-weight: 700; display: block; }
-  .user-info span { font-size: 11px; color: var(--text-secondary); }
 
   .topbar {
     background: var(--surface);
@@ -217,6 +201,23 @@
       </div>
     </div>
 
+    <!-- ✅ TOAST NOTIFICATION (di sini, setelah top-bar) -->
+    @if(session('error'))
+    <div style="position:fixed;top:90px;right:20px;z-index:1000;padding:12px 20px;background:#fee;color:#dc2626;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-weight:500;max-width:400px;" 
+         id="errorToast">
+        {{ session('error') }}
+        <button onclick="this.parentElement.remove()" style="margin-left:12px;background:none;border:none;font-size:18px;cursor:pointer;float:right;">&times;</button>
+    </div>
+    @endif
+
+    @if(session('success'))
+    <div style="position:fixed;top:90px;right:20px;z-index:1000;padding:12px 20px;background:#d1fae5;color:#065f46;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-weight:500;max-width:400px;" 
+         id="successToast">
+        {{ session('success') }}
+        <button onclick="this.parentElement.remove()" style="margin-left:12px;background:none;border:none;font-size:18px;cursor:pointer;float:right;">&times;</button>
+    </div>
+    @endif
+
 
     <div class="table-card">
       <table>
@@ -258,22 +259,58 @@
                 </span>
             </td>
             <td>
-                <span class="status-badge {{ $item->status == 'disetujui' ? 'badge-approved' : ($item->status == 'pending' ? 'badge-pending' : 'badge-rejected') }}">
+                <!-- ✅ STATUS BADGE DIPERBAIKI -->
+                <span class="status-badge 
+                    @if($item->status == 'disetujui' || $item->status == 'disetujui_kasubag')
+                        badge-approved
+                    @elseif($item->status == 'pending')
+                        badge-pending
+                    @elseif($item->status == 'dalam_review')
+                        badge-warning
+                    @else
+                        badge-rejected
+                    @endif">
                     {{ ucfirst(str_replace('_', ' ', $item->status)) }}
                 </span>
+                @if($item->diteruskan_ke_kasubag_date)
+                <br><small class="text-muted">Diteruskan: {{ $item->diteruskan_ke_kasubag_date->locale('id')->isoFormat('D MMM') }}</small>
+                @endif
             </td>
             <td>
                 <div class="action-btns">
-                    <button class="act-btn act-view" title="Detail">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                    <!-- ✅ TOMTOM DOWNLOAD SURAT -->
+                    @if($item->surat_path)
+                    <a href="{{ route('adminsarpras.download-surat', $item->id) }}" 
+                       class="act-btn act-dash" title="📄 Download Surat" 
+                       download>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="21"/>
+                            <line x1="16" y1="21" x2="8" y2="13"/>
+                        </svg>
+                    </a>
+                    @endif
+
+                    <!-- ✅ ACTION BUTTONS BERDASARKAN STATUS -->
                     @if($item->status == 'pending')
-                      <button class="act-btn act-approve" title="Setujui" onclick="approvePeminjaman({{ $item->id }})">
-                          <i class="fas fa-check"></i>
-                      </button>
-                      <button class="act-btn act-reject" title="Tolak" onclick="rejectPeminjaman({{ $item->id }})">
-                          <i class="fas fa-times"></i>
-                      </button>
+                        <!-- Forward ke Kasubag -->
+                        <button class="act-btn act-forward" title="➡️ Teruskan ke Kasubag" 
+                                onclick="openForwardModal({{ $item->id }})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                          
+                        </button>
+                        <!-- Tolak -->
+                        <button class="act-btn act-reject" title="❌ Tolak" 
+                                onclick="openRejectModal({{ $item->id }})">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.36 6.64L19.78 5.22a1 1 0 0 0 0-1.41 1 1 0 0 0-1.41 0L17 5.64l-1.64-1.64a1 1 0 0 0-1.41 0 1 1 0 0 0 0 1.41l1.42 1.42L14.36 9a1 1 0 1 0 1.41 1.41L17 9.36l1.64 1.64a1 1 0 1 0 1.41-1.41L18.36 6.64z"/>
+                            </svg>
+                        </button>
+                    @elseif($item->status == 'dalam_review')
+                        <span class="status-badge badge-warning" title="Sedang di-review Kasubag">⏳ Kasubag</span>
                     @endif
                 </div>
             </td>
@@ -288,7 +325,162 @@
         </tbody>
       </table>
     </div>
+
+    <!-- PAGINATION -->
+    <div class="mt-6">
+        {{ $peminjaman->links() }}
+    </div>
   </div>
 </main>
+
+
+<!-- Modal Forward to Kasubag -->
+<div class="modal-overlay" id="forwardModal">
+    <div class="modal">
+        <h3 class="modal-title">📤 Teruskan ke Kasubag</h3>
+        <form id="forwardForm">
+            <input type="hidden" id="forwardId" name="id">
+            <div class="form-group">
+                <label class="form-label">Komentar untuk Kasubag (Opsional)</label>
+                <textarea class="form-input" name="komentar" rows="4" 
+                         placeholder="Tulis instruksi/keterangan untuk Kasubag..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('forwardModal')">Batal</button>
+                <button type="submit" class="btn-primary">✅ Teruskan ke Kasubag</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Reject -->
+<div class="modal-overlay" id="rejectModal">
+    <div class="modal">
+        <h3 class="modal-title">❌ Tolak Peminjaman</h3>
+        <form id="rejectForm">
+            <input type="hidden" id="rejectId" name="id">
+            <div class="form-group">
+                <label class="form-label">Alasan Penolakan <span style="color:#e63946">*</span></label>
+                <textarea class="form-input" name="komentar" rows="4" required 
+                         placeholder="Jelaskan alasan penolakan secara jelas..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
+                <button type="submit" class="btn-primary" style="background:var(--danger)">🚫 Tolak</button>
+            </div>
+        </form>
+    </div>
+</div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    window.filterTab = function(status, element) {
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        element.classList.add('active');
+        
+        const url = new URL(window.location);
+        if (status !== 'semua') {
+            url.searchParams.set('status', status === 'menunggu' ? 'pending' : status);
+        } else {
+            url.searchParams.delete('status');
+        }
+        window.location.href = url;
+    }
+
+    window.openForwardModal = function(id) {
+        document.getElementById('forwardId').value = id;
+        document.getElementById('forwardModal').classList.add('open');
+    }
+
+    window.openRejectModal = function(id) {
+        document.getElementById('rejectId').value = id;
+        document.getElementById('rejectModal').classList.add('open');
+    }
+
+    window.closeModal = function(modalId) {
+        document.getElementById(modalId).classList.remove('open');
+        if (modalId === 'forwardModal') document.getElementById('forwardForm').reset();
+        if (modalId === 'rejectModal') document.getElementById('rejectForm').reset();
+    }
+
+    // ✅ FORWARD FORM - JSON
+    document.getElementById('forwardForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('forwardId').value;
+        const komentar = this.querySelector('textarea[name="komentar"]').value;
+        
+        fetch(`/adminsarpras/peminjaman/${id}/forward`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ komentar })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Gagal meneruskan!');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Terjadi kesalahan: ' + err.message);
+        });
+    });
+
+    // ✅ REJECT FORM - JSON
+    document.getElementById('rejectForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('rejectId').value;
+        const komentar = this.querySelector('textarea[name="komentar"]').value;
+        
+        if (!komentar.trim()) {
+            alert('Alasan penolakan wajib diisi!');
+            return;
+        }
+        
+        fetch(`/adminsarpras/peminjaman/${id}/reject`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ komentar })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Gagal menolak!');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Terjadi kesalahan: ' + err.message);
+        });
+    });
+
+    // Auto hide toast
+    setTimeout(() => {
+        const toasts = document.querySelectorAll('#errorToast, #successToast');
+        toasts.forEach(toast => toast.remove());
+    }, 5000);
+});
+</script>
 </body>
 </html>

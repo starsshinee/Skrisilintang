@@ -135,10 +135,26 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', [KasubagController::class, 'dashboard'])->name('dashboard');
             Route::get('/pengaturan-akun', [KasubagController::class, 'pengaturanAkun'])->name('pengaturan-akun');
+
+            //PEMINJAMAN BARANG
             Route::get('/persetujuan-peminjaman-barang', [KasubagController::class, 'persetujuanPeminjamanBarang'])->name('persetujuan-peminjaman-barang');
-            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');                
+
+            //PEMINJAMAN KENDARAAN
+            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');   
+            
+            //PERMINTAAN PERSEDIAAN
             Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
+            
+            // PEMINJAMAN GEDUNG
+            Route::get('/peminjaman-gedung/{peminjaman}', [KasubagController::class, 'show'])->name('peminjaman-gedung.show');
+            Route::post('/peminjaman-gedung/{peminjaman}/approve', [KasubagController::class, 'approveByKasubag']);
+            Route::post('/peminjaman-gedung/{peminjaman}/reject', [KasubagController::class, 'rejectByKasubag']);
+            Route::get('/peminjaman-gedung/{peminjaman}/download', [KasubagController::class, 'downloadSurat']);
             Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung'); 
+            Route::get('/peminjaman/{peminjaman}/surat/download', [KasubagController::class, 'downloadSurat'])->name('download-surat');
+            Route::get('/kasubag/peminjaman-gedung/{peminjaman}', [KasubagController::class, 'show'])->name('kasubag.peminjaman-gedung.show');
+
+            //PENGATURAN AKUN
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
@@ -203,6 +219,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/daftar-pengembalian', [AdminSarprasController::class, 'daftarPengembalian'])->name('daftar-pengembalian');
             Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
             Route::get('/laporan-kerusakan', [AdminSarprasController::class, 'laporanKerusakan'])->name('laporan-kerusakan');
+            Route::get('/peminjaman/{peminjaman}/surat/download', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             
             //DATA GEDUNG
@@ -220,7 +237,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/data-kerusakan/{kerusakan}/update', [AdminSarprasController::class, 'updateKerusakanAjax'])->name('kerusakan.update.ajax');
             Route::delete('/data-kerusakan/{kerusakan}', [AdminSarprasController::class, 'destroyKerusakan'])->name('kerusakan.destroy');
 
-
+            //ROUTE PERSETUJUAN PEMINJAMAN
+            Route::post('/peminjaman/{peminjaman}/forward', [AdminSarprasController::class, 'forwardToKasubag'])->name('peminjaman.forward');
+            Route::post('/peminjaman/{peminjaman}/reject', [AdminSarprasController::class, 'rejectByAdmin'])->name('peminjaman.reject');
+            Route::get('/peminjaman/{peminjaman}/download-surat', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
         });
 
 
@@ -325,6 +345,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [TamuController::class, 'dashboard'])->name('dashboard');
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
             Route::post('/peminjaman-gedung', [TamuController::class, 'storePeminjamanGedung'])->name('peminjaman-gedung.store');
+            Route::get('/peminjaman-gedung/{peminjaman}', [TamuController::class, 'showPeminjamanGedung'])->name('peminjaman-gedung.show');
             Route::get('/pengembalian-gedung', [TamuController::class, 'pengembaliangedung'])->name('pengembalian-gedung');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');

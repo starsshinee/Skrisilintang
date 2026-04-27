@@ -30,7 +30,7 @@ class Persediaan extends Model
         'jumlah' => 'integer',
     ];
 
-    // Accessor untuk format harga
+    // Accessor untuk format harga satuan
     protected function hargaSatuan(): Attribute
     {
         return Attribute::make(
@@ -38,6 +38,7 @@ class Persediaan extends Model
         );
     }
 
+    // Accessor untuk format harga total
     protected function hargaTotal(): Attribute
     {
         return Attribute::make(
@@ -45,10 +46,15 @@ class Persediaan extends Model
         );
     }
 
-    // Auto calculate harga_total
+    // Auto calculate harga_total using RAW database values
     public function getHargaTotalAttribute($value)
     {
-        return $this->harga_satuan * $this->jumlah;
+        $rawHargaSatuan = $this->getRawOriginal('harga_satuan');
+        $rawJumlah = $this->getRawOriginal('jumlah');
+        
+        $total = $rawHargaSatuan * $rawJumlah;
+        
+        return 'Rp ' . number_format($total, 2, ',', '.');
     }
 
     // Scope untuk filter kategori

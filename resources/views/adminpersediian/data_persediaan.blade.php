@@ -335,6 +335,7 @@
             data-harga-total="{{ $item->harga_total }}"
             data-jumlah="{{ $item->jumlah }}">
             <!-- CORRECT -->
+            <td><strong>{{ $persediaan->firstItem() + $loop->index }}</strong></td>
             <td><strong>{{ $item->kode_kategori }}</strong></td>
             <td>{{ $item->kategori }}</td>
             <td><strong>{{ $item->kode_barang }}</strong></td>

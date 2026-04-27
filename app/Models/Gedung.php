@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\{
+    Peminjaman,
+};
 
 class Gedung extends Model
 {
@@ -83,6 +86,11 @@ class Gedung extends Model
         };
     }
 
+    public function peminjaman()
+    {
+        return $this->hasMany(PeminjamanGedung::class, 'gedung_id');
+    }
+
 
     public function getTarifSewaFormatAttribute()
     {
@@ -112,4 +120,5 @@ class Gedung extends Model
     {
         return $query->where('kategori', $kategori);
     }
+
 }

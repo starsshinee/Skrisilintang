@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berita Acara Pinjam Pakai</title>
+<title>Berita Acara Pinjam Pakai - {{ $request->user->nama_lengkap ?? 'Peminjam' }}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -20,118 +20,29 @@
     width: 210mm;
     min-height: 297mm;
     background: #fff;
-    padding: 20mm 25mm 20mm 30mm;
+    padding: 0 25mm 20mm 25mm;
     box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   }
 
-  /* HEADER */
-  .header {
-    display: flex;
-    align-items: flex-start;
-    border-bottom: 3px solid #000;
-    padding-bottom: 8px;
-    margin-bottom: 14px;
+  /* KOP SURAT IMAGE */
+  .kop-surat {
+    text-align: center;
+    margin-bottom: 8px;
+    padding-bottom: 0;
   }
 
-  .logo-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 155px;
-  }
-
-  .logo-img {
-    width: 60px;
-    height: 60px;
-  }
-
-  /* SVG Garuda-like logo placeholder */
-  .logo-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #1a5276 0%, #2e86c1 60%, #85c1e9 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .logo-text-group {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .logo-brand {
-    font-family: Arial, sans-serif;
-    font-size: 15pt;
-    font-weight: bold;
-    color: #1a5276;
-    letter-spacing: 0px;
-    line-height: 1;
-  }
-
-  .logo-brand span.kemen { color: #1a5276; }
-  .logo-brand span.dik { color: #e8a020; font-weight: 900; }
-  .logo-brand span.dasmen { color: #1a5276; }
-
-  .logo-subtitle {
-    font-family: Arial, sans-serif;
-    font-size: 7.5pt;
-    color: #1a5276;
-    margin-top: 1px;
-    letter-spacing: 0.2px;
-    font-weight: bold;
-  }
-
-  .header-divider {
-    width: 2px;
-    height: 72px;
-    background: #000;
-    margin: 0 14px;
-  }
-
-  .header-right {
-    flex: 1;
-    font-family: Arial, sans-serif;
-    font-size: 8pt;
-    line-height: 1.55;
-    color: #111;
-  }
-
-  .header-right .instansi-name {
-    font-size: 10pt;
-    font-weight: bold;
-    line-height: 1.3;
-    margin-bottom: 2px;
-  }
-
-  .header-right .sub-unit {
-    font-size: 8pt;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 3px;
-  }
-
-  .header-right .alamat {
-    font-size: 7.5pt;
-    color: #444;
-  }
-
-  .header-right .kontak {
-    font-size: 7.5pt;
-    color: #444;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 1px;
+  .kop-surat img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   /* JUDUL */
   .judul-section {
     text-align: center;
-    margin: 10px 0 6px 0;
+    margin: 8px 0 6px 0;
   }
 
   .judul-section h2 {
@@ -140,6 +51,7 @@
     letter-spacing: 1.5px;
     text-transform: uppercase;
     font-family: "Times New Roman", serif;
+    text-decoration: underline;
   }
 
   .nomor-surat {
@@ -170,7 +82,7 @@
   }
 
   .identitas-table td:first-child {
-    width: 90px;
+    width: 110px;
   }
 
   .identitas-table td:nth-child(2) {
@@ -196,7 +108,6 @@
 
   .paragraf .highlight {
     font-weight: bold;
-    text-decoration: underline;
   }
 
   /* BARANG TABLE */
@@ -213,7 +124,7 @@
   }
 
   .barang-table td:first-child {
-    width: 110px;
+    width: 130px;
   }
 
   .barang-table td:nth-child(2) {
@@ -231,6 +142,7 @@
     font-style: italic;
     font-weight: bold;
     margin: 10px 0 2px 0;
+    text-decoration: underline;
   }
 
   .catatan-list {
@@ -262,7 +174,7 @@
   }
 
   .ttd-block .peran {
-    margin-bottom: 40px;
+    margin-bottom: 55px;
     font-weight: bold;
   }
 
@@ -276,6 +188,13 @@
     font-size: 11pt;
   }
 
+  .ttd-block .ttd-area {
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .ttd-mengetahui {
     text-align: center;
     margin-top: 12px;
@@ -287,8 +206,8 @@
   }
 
   .ttd-mengetahui .sub-label {
-    font-weight: normal;
-    margin-bottom: 38px;
+    font-weight: bold;
+    margin-bottom: 55px;
   }
 
   .ttd-mengetahui .nama {
@@ -302,95 +221,63 @@
 
   @media print {
     body { background: none; padding: 0; }
-    .page { box-shadow: none; margin: 0; }
+    .page { box-shadow: none; margin: 0; padding: 0 20mm 15mm 20mm; }
   }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo-area">
-      <!-- Logo Kemendikdasmen SVG -->
-      <svg width="62" height="62" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="31" cy="31" r="30" fill="#f0f4fa" stroke="#1a5276" stroke-width="1.5"/>
-        <!-- Garuda simplified -->
-        <ellipse cx="31" cy="26" rx="10" ry="13" fill="#1a5276"/>
-        <ellipse cx="31" cy="24" rx="6" ry="8" fill="#f7c948"/>
-        <!-- Wings -->
-        <ellipse cx="16" cy="28" rx="10" ry="5" fill="#1a5276" transform="rotate(-20 16 28)"/>
-        <ellipse cx="46" cy="28" rx="10" ry="5" fill="#1a5276" transform="rotate(20 46 28)"/>
-        <!-- Body -->
-        <ellipse cx="31" cy="35" rx="7" ry="9" fill="#1a5276"/>
-        <!-- Shield -->
-        <rect x="27" y="30" width="8" height="10" rx="2" fill="#f7c948"/>
-        <!-- Stars -->
-        <circle cx="31" cy="14" r="2" fill="#f7c948"/>
-        <text x="31" y="56" text-anchor="middle" font-size="5" fill="#1a5276" font-family="Arial" font-weight="bold">KEMENDIKDASMEN</text>
-      </svg>
-
-      <div class="logo-text-group">
-        <div class="logo-brand">
-          <span class="kemen">Kemen</span><span class="dik">dik</span><span class="dasmen">dasmen</span>
-        </div>
-        <div class="logo-subtitle">Kementerian Pendidikan Dasar dan Menengah</div>
-      </div>
-    </div>
-
-    <div class="header-divider"></div>
-
-    <div class="header-right">
-      <div class="instansi-name">Kementerian Pendidikan Dasar dan Menengah</div>
-      <div class="sub-unit">Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo</div>
-      <div class="alamat">Jalan dr. Zainal Umar Sidiki, Tilongkabila, Bone Bolango, 96119</div>
-      <div class="alamat">Kotak Pos 1024</div>
-      <div class="kontak">
-        <span>🌐 www.kemendikdasmen.go.id</span>
-        <span>☎ 08042200045</span>
-        <span>📠 777</span>
-      </div>
-    </div>
+  <!-- KOP SURAT (IMAGE) -->
+  <div class="kop-surat">
+    <img src="{{ asset('storage/kop_surat.png') }}" alt="Kop Surat BPMP Provinsi Gorontalo">
   </div>
 
   <!-- JUDUL -->
   <div class="judul-section">
     <h2>Berita Acara Pinjam Pakai</h2>
-    <div class="nomor-surat">No: &nbsp;/BPMP.GTLO/KPA/2025</div>
+    <div class="nomor-surat">No: &nbsp;/BPMP.GTLO/KPA/{{ date('Y') }}</div>
   </div>
 
   <!-- PEMBUKA -->
   <div class="pembuka">
-    Pada &nbsp;hari &nbsp;ini &nbsp;<strong><em>Senin</em></strong>. &nbsp;tanggal <strong><em>Tiga Belas</em></strong> &nbsp;Bulan &nbsp;<strong><em>Januari</em></strong> &nbsp;Tahun &nbsp;<strong><em>Dua Ribu Dua Puluh Lima</em></strong> &nbsp;yang bertanda tangan dibawah ini :
+    @php
+      $tgl = $request->created_at ?? now();
+      $hari = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('l');
+      $tanggal = \Carbon\Carbon::parse($tgl)->translatedFormat('j');
+      $bulan = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('F');
+      $tahun = \Carbon\Carbon::parse($tgl)->translatedFormat('Y');
+    @endphp
+    Pada &nbsp;hari &nbsp;ini &nbsp;<strong><em>{{ $hari }}</em></strong>, &nbsp;tanggal <strong><em>{{ $tanggal }}</em></strong> &nbsp;Bulan &nbsp;<strong><em>{{ $bulan }}</em></strong> &nbsp;Tahun &nbsp;<strong><em>{{ $tahun }}</em></strong> &nbsp;yang bertanda tangan dibawah ini :
   </div>
 
-  <!-- IDENTITAS -->
+  <!-- IDENTITAS PEMINJAM -->
   <table class="identitas-table">
     <tr>
       <td>Nama</td>
       <td>:</td>
-      <td>Sri Rahayu Pakaya</td>
+      <td>{{ $request->user->nama_lengkap ?? '-' }}</td>
     </tr>
     <tr>
       <td>NIP</td>
       <td>:</td>
-      <td>197801292003122001</td>
+      <td>{{ $request->user->nip ?? '-' }}</td>
     </tr>
     <tr>
       <td>Jabatan</td>
       <td>:</td>
-      <td>Pelaksana</td>
+      <td>{{ $request->user->jabatan ?? 'Pelaksana' }}</td>
     </tr>
     <tr>
       <td>Alamat</td>
       <td>:</td>
-      <td class="bold-val">Perumahan Toto Permai Kabila Bonbol</td>
+      <td class="bold-val">{{ $request->user->alamat ?? '-' }}</td>
     </tr>
   </table>
 
   <!-- PARAGRAF REFERENSI PMK -->
   <div class="paragraf">
-    Sesuai dengan &nbsp;<span class="highlight">PMK Nomor:115/PMK.06/2020 Tentang &nbsp;Pemanfaatan Barang Milik Negara</span>, Maka demi untuk tertibnya administrasi Berita Acara Pinjam Pakai ini &nbsp;sebagai berikut:
+    Sesuai dengan &nbsp;<span class="highlight">PMK Nomor:115/PMK.06/2020 Tentang &nbsp;Pemanfaatan Barang Milik Negara</span>. Maka demi untuk tertibnya administrasi Berita Acara Pinjam Pakai ini &nbsp;sebagai berikut:
   </div>
 
   <!-- DATA BARANG -->
@@ -398,27 +285,35 @@
     <tr>
       <td>Nama Barang</td>
       <td>:</td>
-      <td class="bval">SEPEDA MOTOR DM 6310 E</td>
+      <td class="bval">{{ $request->nama_barang ?? '-' }}</td>
     </tr>
     <tr>
       <td>Merk/Type</td>
       <td>:</td>
-      <td class="bval">YAMAHA FINO &nbsp;125 CC WARNA PUTIH</td>
+      <td>{{ $request->merek ?? '-' }}</td>
     </tr>
     <tr>
       <td>Jumlah</td>
       <td>:</td>
-      <td>1 unit</td>
+      <td>{{ $request->jumlah ?? 1 }} unit</td>
     </tr>
     <tr>
       <td>Jangka waktu</td>
       <td>:</td>
-      <td>1 tahun s/d 31 des 2025</td>
+      <td>
+        @if($request->tanggal_peminjaman && $request->tanggal_pengembalian)
+          {{ \Carbon\Carbon::parse($request->tanggal_peminjaman)->locale('id')->translatedFormat('d F Y') }}
+          s/d
+          {{ \Carbon\Carbon::parse($request->tanggal_pengembalian)->locale('id')->translatedFormat('d F Y') }}
+        @else
+          -
+        @endif
+      </td>
     </tr>
     <tr>
       <td>Untuk Keperluan</td>
       <td>:</td>
-      <td>operasional kepala BPMP</td>
+      <td>{{ $request->deskripsi_peruntukan ?? 'operasional kepala BPMP' }}</td>
     </tr>
   </table>
 
@@ -448,8 +343,13 @@
     </div>
     <div class="ttd-block">
       <div class="peran">Peminjam</div>
-      <div class="nama">Sri Rahayu Pakaya</div>
-      <div class="nip">NIP. 197801292003122001</div>
+      <div class="ttd-area">
+        @if(!empty($ttdBase64))
+          <img src="{{ $ttdBase64 }}" alt="Tanda Tangan" style="max-width: 100px; max-height: 50px;">
+        @endif
+      </div>
+      <div class="nama">{{ $request->user->nama_lengkap ?? '........................' }}</div>
+      <div class="nip">NIP. {{ $request->user->nip ?? '........................' }}</div>
     </div>
   </div>
 

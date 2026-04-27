@@ -13,7 +13,6 @@ class TransaksiMasukPersediaan extends Model
     protected $table = 'transaksi_masuk_persediaan';
     
     protected $fillable = [
-        'no',
         'tanggal_input',
         'kode_kategori',
         'kategori',
@@ -40,16 +39,16 @@ class TransaksiMasukPersediaan extends Model
     }
 
     // Auto-generate nomor urut (No)
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($model) {
-            if (empty($model->no)) {
-                $model->no = static::max('no') + 1;
-            }
-        });
-    }
+    //     static::creating(function ($model) {
+    //         if (empty($model->no)) {
+    //             $model->no = static::max('no') + 1;
+    //         }
+    //     });
+    // }
 
     // Mutator: Auto hitung total saat harga_satuan atau jumlah_masuk diubah
     public function setHargaSatuanAttribute($value)
@@ -69,10 +68,10 @@ class TransaksiMasukPersediaan extends Model
     }
 
     // Accessors untuk format tampilan
-    public function getNoAttribute($value)
-    {
-        return $value ?? static::max('no') + 1;
-    }
+    // public function getNoAttribute($value)
+    // {
+    //     return $value ?? static::max('no') + 1;
+    // }
 
     public function getHargaSatuanFormatAttribute(): string
     {

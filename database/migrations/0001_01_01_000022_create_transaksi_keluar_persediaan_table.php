@@ -21,7 +21,7 @@ return new class extends Migration
             
             // Kolom sesuai header tabel
             $table->date('tanggal_input');           // Tanggal Input
-            $table->string('kota_kategori');         // Kota Kategori
+            $table->string('kode_kategori');         // Kota Kategori
             $table->string('kategori');              // Kategori
             $table->string('kode_barang');           // Kode Barang
             $table->string('nama_barang');           // Nama Barang
@@ -37,7 +37,7 @@ return new class extends Migration
             
             // Index sesuai kolom utama tabel
             $table->index(['tanggal_input']);
-            $table->index(['kota_kategori', 'kategori']);
+            $table->index(['kode_kategori', 'kategori']);
             $table->index('kode_barang');
         });
     }

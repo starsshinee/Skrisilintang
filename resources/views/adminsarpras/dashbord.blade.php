@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - Admin Sarana Prasarana</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root {
     --primary: #4361ee;
@@ -26,73 +27,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  /* Sidebar */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-  }
-  .sidebar-brand {
-    display: flex; align-items: center; gap: 12px;
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .brand-icon {
-    width: 44px; height: 44px; background: var(--primary);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  }
-  .brand-icon svg { color: #fff; }
-  .brand-text { line-height: 1.2; }
-  .brand-text strong { font-size: 13px; font-weight: 700; color: var(--text-primary); display: block; }
-  .brand-text span { font-size: 11px; color: var(--text-secondary); }
-  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px; border-radius: 10px;
-    font-size: 14px; font-weight: 500; color: var(--text-secondary);
-    cursor: pointer; transition: all .2s; text-decoration: none;
-  }
-  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
-  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .sidebar-user {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 20px; border-top: 1px solid var(--border);
-  }
-  .user-avatar {
-    width: 36px; height: 36px; background: var(--primary);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #fff;
-  }
-  .user-info strong { font-size: 13px; font-weight: 700; display: block; }
-  .user-info span { font-size: 11px; color: var(--text-secondary); }
-
-  /* Main */
-  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
-  .topbar {
-    background: var(--card-bg); border-bottom: 1px solid var(--border);
-    padding: 14px 28px; display: flex; justify-content: flex-end; align-items: center;
-    position: sticky; top: 0; z-index: 50;
-  }
-  .notif-btn {
-    position: relative; width: 38px; height: 38px;
-    border-radius: 50%; background: var(--body-bg);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid var(--border);
-  }
-  .notif-badge {
-    position: absolute; top: 4px; right: 4px;
-    width: 8px; height: 8px; background: var(--danger);
-    border-radius: 50%; border: 2px solid #fff;
-  }
-  .content { padding: 24px 28px; flex: 1; }
-
-   /* ── MAIN CONTENT ── */
+  /* ── MAIN CONTENT ── */
   .main { margin-left: 256px; flex: 1; padding: 0 32px 32px; }
 
   /* TOP BAR */
@@ -100,7 +35,7 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 20px 0 24px;
     position: sticky; top: 0; z-index: 50;
-    background: var(--bg);
+    background: var(--body-bg);
   }
   .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
@@ -189,7 +124,9 @@
     background: var(--card-bg); border-radius: 16px;
     padding: 20px; border: 1px solid var(--border);
     position: relative; overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
   }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
   .stat-icon {
     width: 44px; height: 44px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
@@ -201,18 +138,22 @@
   }
   .badge-blue { background: #e0e7ff; color: var(--primary); }
   .badge-green { background: var(--success-light); color: var(--success); }
+  .badge-orange { background: var(--warning-light); color: var(--warning); }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
   .stat-value { font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
   .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+  .stat-sub { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
 
   /* Grid bottom */
-  .bottom-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 24px; }
+  .bottom-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; margin-bottom: 24px; }
 
   /* Chart Card */
   .card {
     background: var(--card-bg); border-radius: 16px;
     border: 1px solid var(--border); padding: 24px;
   }
-  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .card-title i { color: var(--primary); font-size: 14px; }
 
   /* Bar Chart */
   .chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 180px; }
@@ -220,38 +161,85 @@
   .bar {
     width: 100%; border-radius: 6px 6px 0 0;
     background: linear-gradient(180deg, #4361ee 0%, #3a0ca3 100%);
-    transition: opacity .2s;
+    transition: all .3s ease;
     cursor: pointer;
+    position: relative;
+    min-height: 4px;
   }
-  .bar:hover { opacity: 0.8; }
+  .bar:hover { opacity: 0.85; transform: scaleY(1.02); }
   .bar-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+  .bar-count {
+    font-size: 10px; font-weight: 700; color: var(--primary);
+    margin-bottom: 2px;
+  }
 
   /* Activity */
-  .activity-list { display: flex; flex-direction: column; gap: 12px; }
-  .activity-item { display: flex; align-items: flex-start; gap: 12px; }
-  .act-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .activity-list { display: flex; flex-direction: column; gap: 14px; }
+  .activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
+  .activity-item:last-child { border-bottom: none; }
+  .act-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .act-text { flex: 1; }
-  .act-text p { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .act-text p { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+  .act-text .act-by { font-size: 11px; color: var(--primary); font-weight: 600; }
   .act-text span { font-size: 11px; color: var(--text-secondary); }
 
   /* Table */
   .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .see-all { font-size: 13px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+  .see-all { font-size: 13px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .see-all:hover { text-decoration: underline; }
   table { width: 100%; border-collapse: collapse; }
   thead th {
     font-size: 12px; font-weight: 600; color: var(--text-secondary);
-    padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border);
-    text-transform: uppercase; letter-spacing: .05em;
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .05em; background: #fafbff;
   }
   tbody td { padding: 14px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
   tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
   .status-badge {
     display: inline-flex; padding: 4px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
+    font-size: 12px; font-weight: 600; align-items: center; gap: 4px;
   }
   .status-approved { background: var(--success-light); color: var(--success); }
   .status-pending { background: var(--warning-light); color: var(--warning); }
   .status-rejected { background: var(--danger-light); color: var(--danger); }
+  .status-review { background: #e0e7ff; color: var(--primary); }
+
+  .peminjam-cell { display: flex; flex-direction: column; }
+  .peminjam-cell strong { font-weight: 600; color: var(--text-primary); }
+  .peminjam-cell small { font-size: 11px; color: var(--text-secondary); }
+
+  /* Quick Stats Row */
+  .quick-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .quick-stat {
+    background: var(--card-bg); border-radius: 14px; padding: 18px 20px;
+    border: 1px solid var(--border); display: flex; align-items: center; gap: 14px;
+  }
+  .qs-icon { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 16px; flex-shrink: 0; }
+  .qs-info { flex: 1; }
+  .qs-label { font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .qs-value { font-size: 20px; font-weight: 800; color: var(--text-primary); margin-top: 2px; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+  .empty-state i { font-size: 40px; opacity: 0.3; margin-bottom: 10px; display: block; }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .animate { animation: fadeUp .5s ease both; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .1s; } .d3 { animation-delay: .15s; } .d4 { animation-delay: .2s; }
+
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .quick-stats { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 0 16px 32px; }
+    .hero { flex-direction: column; text-align: center; gap: 20px; }
+    .hero-right { text-align: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -266,11 +254,13 @@
     <div class="topbar-right">
       <div class="topbar-date">
         <i class="fas fa-calendar" style="color:var(--primary)"></i>
-        Rabu, 15 April 2026
+        {{ now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
       </div>
       <div class="notif-btn">
         <i class="fas fa-bell"></i>
-        <div class="notif-dot"></div>
+        @if($peminjamanPending > 0)
+          <div class="notif-dot"></div>
+        @endif
       </div>
     </div>
   </div>
@@ -281,134 +271,193 @@
     <div class="hero-blob2"></div>
     <div class="hero-left">
       <div class="hero-greeting">👋 Selamat datang kembali!</div>
-      <div class="hero-title">Halo, Admin Sarana dan Prasarana!</div>
-      <div class="hero-sub" font-weight="500">
+      <div class="hero-title">Halo, {{ $user->name ?? 'Admin Sarana dan Prasarana' }}!</div>
+      <div class="hero-sub">
         Sebagai Admin Sarana dan Prasarana, Anda dapat mengelola data gedung, ruangan, dan peminjaman fasilitas di BPMP Provinsi Gorontalo.
       </div>
     </div>
     <div class="hero-right">
       <div class="hero-inst">Instansi: BPMP Provinsi Gorontalo</div>
-      <div class="hero-nip">NIP: 0983654321</div>
+      <div class="hero-nip">NIP: {{ $user->nip ?? '-' }}</div>
       <a href="{{ route('adminsarpras.pengaturan-akun') }}" class="hero-btn">
         <i class="fas fa-gear"></i> Pengaturan Akun
       </a>
     </div>
   </div>
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#eef0fd">
-          <svg width="22" height="22" fill="none" stroke="#4361ee" viewBox="0 0 24 24" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg>
-        </div>
-        <div class="badge badge-blue">+2</div>
-        <div class="stat-value">24</div>
-        <div class="stat-label">Total Gedung</div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid animate d2">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#eef0fd">
+        <i class="fas fa-building" style="color:#4361ee;font-size:20px"></i>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#fff4ec">
-          <svg width="22" height="22" fill="none" stroke="#f4a261" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-        </div>
-        <div class="badge badge-green">+5</div>
-        <div class="stat-value">148</div>
-        <div class="stat-label">Total Ruangan</div>
+      @if($gedungBaruBulanIni > 0)
+        <div class="badge badge-blue">+{{ $gedungBaruBulanIni }}</div>
+      @endif
+      <div class="stat-value">{{ $totalGedung }}</div>
+      <div class="stat-label">Total Gedung</div>
+      <div class="stat-sub">{{ $gedungTersedia }} tersedia</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fff4ec">
+        <i class="fas fa-clipboard-list" style="color:#f4a261;font-size:20px"></i>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#e8faf9">
-          <svg width="22" height="22" fill="none" stroke="#2ec4b6" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        </div>
-        <div class="stat-value">67</div>
-        <div class="stat-label">Peminjaman Aktif</div>
+      @if($peminjamanBulanIni > 0)
+        <div class="badge badge-orange">+{{ $peminjamanBulanIni }}</div>
+      @endif
+      <div class="stat-value">{{ $totalPeminjaman }}</div>
+      <div class="stat-label">Total Peminjaman</div>
+      <div class="stat-sub">{{ $peminjamanAktif }} menunggu proses</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e8faf9">
+        <i class="fas fa-check-circle" style="color:#2ec4b6;font-size:20px"></i>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#fdecea">
-          <svg width="22" height="22" fill="none" stroke="#e63946" viewBox="0 0 24 24" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-        </div>
-        <div class="stat-value">12</div>
-        <div class="stat-label">Perlu Perbaikan</div>
+      <div class="stat-value">{{ $peminjamanDisetujui }}</div>
+      <div class="stat-label">Disetujui</div>
+      <div class="stat-sub">{{ $peminjamanDitolak }} ditolak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fdecea">
+        <i class="fas fa-exclamation-triangle" style="color:#e63946;font-size:20px"></i>
+      </div>
+      <div class="stat-value">{{ $perluPerbaikan }}</div>
+      <div class="stat-label">Perlu Perbaikan</div>
+      <div class="stat-sub">{{ $rusakBerat }} rusak berat · {{ $rusakRingan }} rusak ringan</div>
+    </div>
+  </div>
+
+  <!-- Quick Stats Row -->
+  <div class="quick-stats animate d2">
+    <div class="quick-stat">
+      <div class="qs-icon" style="background:#fff4ec;color:#f4a261">
+        <i class="fas fa-hourglass-half"></i>
+      </div>
+      <div class="qs-info">
+        <div class="qs-label">Pending</div>
+        <div class="qs-value">{{ $peminjamanPending }}</div>
       </div>
     </div>
-
-    <!-- Chart + Activity -->
-    <div class="bottom-grid">
-      <div class="card">
-        <div class="card-title">Statistik Peminjaman Bulanan</div>
-        <div class="chart-wrap">
-          <div class="bar-group"><div class="bar" style="height:60%"></div><span class="bar-label">Jan</span></div>
-          <div class="bar-group"><div class="bar" style="height:45%"></div><span class="bar-label">Feb</span></div>
-          <div class="bar-group"><div class="bar" style="height:75%"></div><span class="bar-label">Mar</span></div>
-          <div class="bar-group"><div class="bar" style="height:65%"></div><span class="bar-label">Apr</span></div>
-          <div class="bar-group"><div class="bar" style="height:70%"></div><span class="bar-label">Mei</span></div>
-          <div class="bar-group"><div class="bar" style="height:85%"></div><span class="bar-label">Jun</span></div>
-          <div class="bar-group"><div class="bar" style="height:78%"></div><span class="bar-label">Jul</span></div>
-          <div class="bar-group"><div class="bar" style="height:80%"></div><span class="bar-label">Agu</span></div>
-          <div class="bar-group"><div class="bar" style="height:72%"></div><span class="bar-label">Sep</span></div>
-          <div class="bar-group"><div class="bar" style="height:95%"></div><span class="bar-label">Okt</span></div>
-          <div class="bar-group"><div class="bar" style="height:88%"></div><span class="bar-label">Nov</span></div>
-          <div class="bar-group"><div class="bar" style="height:55%"></div><span class="bar-label">Des</span></div>
-        </div>
+    <div class="quick-stat">
+      <div class="qs-icon" style="background:#e0e7ff;color:#4361ee">
+        <i class="fas fa-paper-plane"></i>
       </div>
-
-      <div class="card">
-        <div class="card-title">Aktivitas Terbaru</div>
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="act-icon" style="background:#e8faf9">
-              <svg width="16" height="16" fill="none" stroke="#2ec4b6" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div class="act-text"><p>Peminjaman Aula disetujui</p><span>5 menit lalu</span></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon" style="background:#eef0fd">
-              <svg width="16" height="16" fill="none" stroke="#4361ee" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div class="act-text"><p>Gedung baru ditambahkan</p><span>1 jam lalu</span></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon" style="background:#fff4ec">
-              <svg width="16" height="16" fill="none" stroke="#f4a261" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
-            </div>
-            <div class="act-text"><p>Laporan kondisi Gedung E</p><span>2 jam lalu</span></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon" style="background:#f3e8fd">
-              <svg width="16" height="16" fill="none" stroke="#9333ea" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-            </div>
-            <div class="act-text"><p>Peminjaman baru oleh Maya</p><span>3 jam lalu</span></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon" style="background:#fdecea">
-              <svg width="16" height="16" fill="none" stroke="#e63946" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-            </div>
-            <div class="act-text"><p>Jadwal perbaikan Lab Kimia</p><span>5 jam lalu</span></div>
-          </div>
-        </div>
+      <div class="qs-info">
+        <div class="qs-label">Dalam Review Kasubag</div>
+        <div class="qs-value">{{ $peminjamanDalamReview }}</div>
       </div>
     </div>
+    <div class="quick-stat">
+      <div class="qs-icon" style="background:#e8faf9;color:#2ec4b6">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+      <div class="qs-info">
+        <div class="qs-label">Total Pendapatan</div>
+        <div class="qs-value" style="font-size:17px">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Recent Table -->
+  <!-- Chart + Activity -->
+  <div class="bottom-grid animate d3">
     <div class="card">
-      <div class="table-header">
-        <span class="card-title" style="margin-bottom:0">Peminjaman Terbaru</span>
-        <a class="see-all" href="daftar-peminjaman.html">Lihat Semua →</a>
+      <div class="card-title"><i class="fas fa-chart-bar"></i> Statistik Peminjaman {{ now()->year }}</div>
+      <div class="chart-wrap">
+        @foreach($chartBars as $bar)
+          <div class="bar-group">
+            <div class="bar-count">{{ $bar['count'] > 0 ? $bar['count'] : '' }}</div>
+            <div class="bar" style="height:{{ max($bar['height'], 3) }}%"
+                 title="{{ $bar['label'] }}: {{ $bar['count'] }} peminjaman"></div>
+            <span class="bar-label">{{ $bar['label'] }}</span>
+          </div>
+        @endforeach
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Peminjam</th>
-            <th>Ruangan</th>
-            <th>Tanggal</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Dr. Ahmad Fauzi</td><td>Aula Utama</td><td>15 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
-          <tr><td>Siti Nurhaliza</td><td>Lab Komputer 1</td><td>16 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
-          <tr><td>Budi Santoso</td><td>R. Rapat 201</td><td>17 Jun 2025</td><td><span class="status-badge status-pending">Menunggu</span></td></tr>
-          <tr><td>Maya Putri</td><td>Auditorium</td><td>18 Jun 2025</td><td><span class="status-badge status-approved">Disetujui</span></td></tr>
-          <tr><td>Rizky Ramadhan</td><td>Lab Fisika</td><td>19 Jun 2025</td><td><span class="status-badge status-rejected">Ditolak</span></td></tr>
-        </tbody>
-      </table>
     </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-clock-rotate-left"></i> Aktivitas Terbaru</div>
+      <div class="activity-list">
+        @forelse($aktivitasTerbaru as $akt)
+          <div class="activity-item">
+            <div class="act-icon" style="background:{{ $akt['bg'] }}">
+              <i class="fas {{ $akt['icon'] }}" style="color:{{ $akt['color'] }};font-size:14px"></i>
+            </div>
+            <div class="act-text">
+              <p>{{ $akt['text'] }}</p>
+              <span class="act-by">{{ $akt['by'] }}</span> · <span>{{ $akt['time'] }}</span>
+            </div>
+          </div>
+        @empty
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <div>Belum ada aktivitas</div>
+          </div>
+        @endforelse
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Table -->
+  <div class="card animate d4">
+    <div class="table-header">
+      <span class="card-title" style="margin-bottom:0"><i class="fas fa-list-check"></i> Peminjaman Terbaru</span>
+      <a class="see-all" href="{{ route('adminsarpras.daftar-peminjaman') }}">Lihat Semua <i class="fas fa-arrow-right" style="font-size:11px"></i></a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Peminjam</th>
+          <th>Fasilitas</th>
+          <th>Tanggal Pinjam</th>
+          <th>Total Bayar</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse($peminjamanTerbaru as $item)
+          <tr>
+            <td>
+              <div class="peminjam-cell">
+                <strong>{{ $item->nama_lengkap }}</strong>
+                <small>{{ $item->instansi_lembaga }}</small>
+              </div>
+            </td>
+            <td>{{ $item->nama_fasilitas ?? $item->gedung?->nama_gedung ?? '-' }}</td>
+            <td>{{ $item->tanggal_pinjam?->locale('id')->isoFormat('D MMM YYYY') }}</td>
+            <td style="font-weight:600">Rp {{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
+            <td>
+              @switch($item->status)
+                @case('disetujui')
+                @case('disetujui_kasubag')
+                  <span class="status-badge status-approved"><i class="fas fa-check-circle" style="font-size:10px"></i> {{ ucfirst(str_replace('_', ' ', $item->status)) }}</span>
+                  @break
+                @case('pending')
+                  <span class="status-badge status-pending"><i class="fas fa-clock" style="font-size:10px"></i> Pending</span>
+                  @break
+                @case('dalam_review')
+                  <span class="status-badge status-review"><i class="fas fa-paper-plane" style="font-size:10px"></i> Dalam Review</span>
+                  @break
+                @case('ditolak')
+                  <span class="status-badge status-rejected"><i class="fas fa-times-circle" style="font-size:10px"></i> Ditolak</span>
+                  @break
+                @default
+                  <span class="status-badge status-pending">{{ ucfirst($item->status) }}</span>
+              @endswitch
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <div style="font-size:14px;font-weight:600;margin-bottom:4px">Belum ada data peminjaman</div>
+                <div style="font-size:12px">Data peminjaman akan muncul di sini</div>
+              </div>
+            </td>
+          </tr>
+        @endforelse
+      </tbody>
+    </table>
   </div>
 </main>
 </body>

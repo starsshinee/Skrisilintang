@@ -162,6 +162,51 @@ class TamuController extends Controller
         ]);
     }
 
+    /**
+     * Detail peminjaman gedung (JSON untuk modal)
+     */
+    public function showPeminjamanGedung(PeminjamanGedung $peminjaman)
+    {
+        // Pastikan hanya pemilik yang bisa melihat detail
+        if ($peminjaman->user_id !== auth()->id()) {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak'], 403);
+        }
+
+        $peminjaman->load('gedung');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $peminjaman->id,
+                'kode' => 'REQ-TAM-' . str_pad($peminjaman->id, 3, '0', STR_PAD_LEFT),
+                'nama_lengkap' => $peminjaman->nama_lengkap,
+                'nip_nik' => $peminjaman->nip_nik,
+                'instansi_lembaga' => $peminjaman->instansi_lembaga,
+                'kabupaten_kota' => $peminjaman->kabupaten_kota,
+                'nama_fasilitas' => $peminjaman->nama_fasilitas ?? $peminjaman->gedung?->nama_gedung,
+                'fasilitas' => $peminjaman->fasilitas,
+                'lokasi' => $peminjaman->gedung?->lokasi ?? '-',
+                'tanggal_pinjam' => $peminjaman->tanggal_pinjam?->format('d M Y'),
+                'tanggal_kembali' => $peminjaman->tanggal_kembali?->format('d M Y'),
+                'jam_mulai' => $peminjaman->jam_mulai ? \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') : '-',
+                'jam_selesai' => $peminjaman->jam_selesai ? \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') : '-',
+                'lama_peminjaman_hari' => $peminjaman->lama_peminjaman_hari,
+                'tarif_per_hari' => 'Rp ' . number_format($peminjaman->tarif_per_hari, 0, ',', '.'),
+                'total_pembayaran' => 'Rp ' . number_format($peminjaman->total_pembayaran, 0, ',', '.'),
+                'tujuan_penggunaan' => $peminjaman->tujuan_penggunaan,
+                'nomor_kontak' => $peminjaman->nomor_kontak,
+                'status' => $peminjaman->status,
+                'status_label' => ucfirst(str_replace('_', ' ', $peminjaman->status)),
+                'status_pembayaran' => $peminjaman->status_pembayaran,
+                'cara_pembayaran' => ucfirst($peminjaman->cara_pembayaran),
+                'komentar' => $peminjaman->komentar,
+                'surat_url' => $peminjaman->surat_path ? asset('storage/' . $peminjaman->surat_path) : null,
+                'created_at' => $peminjaman->created_at?->format('d M Y H:i'),
+                'diteruskan_ke_kasubag_date' => $peminjaman->diteruskan_ke_kasubag_date?->format('d M Y H:i'),
+            ]
+        ]);
+    }
+
     public function pengaturanAkun()
     {
         // Logika untuk pengaturan akun

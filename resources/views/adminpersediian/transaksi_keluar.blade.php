@@ -260,6 +260,7 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Nomor Transaksi</th>
             <th>Tanggal Input</th>
             <th>Kode Kategori</th>
             <th>Kategori</th>
@@ -275,58 +276,59 @@
         <tbody>
           @forelse($transaksi as $index => $item)
           <tr data-id="{{ $item->id }}"
-              data-nomor-transaksi="{{ $item->nomor_transaksi }}"
-              data-tanggal-input="{{ $item->tanggal_input }}"
-              data-kode-kategori="{{ $item->kode_kategori }}"
+              data-nomor_transaksi="{{ $item->nomor_transaksi }}"
+              data-tanggal_input="{{ $item->tanggal_input ? $item->tanggal_input->format('Y-m-d') : '' }}"
+              data-kode_kategori="{{ $item->kode_kategori }}"
               data-kategori="{{ $item->kategori }}"
-              data-kode-barang="{{ $item->kode_barang }}"
-              data-nama-barang="{{ $item->nama_barang }}"
-              data-jumlah-keluar="{{ $item->jumlah_keluar }}"
+              data-kode_barang="{{ $item->kode_barang }}"
+              data-nama_barang="{{ $item->nama_barang }}"
+              data-jumlah_keluar="{{ $item->jumlah_keluar }}"
               data-harga="{{ $item->harga }}"
               data-total="{{ $item->total }}"
-              data-keterangan="{{ $item->keterangan }}">
-            <td><strong>{{ $item->nomor_transaksi }}</strong></td>
-            <td>{{ $item->tanggal_input_format ?? $item->tanggal_input }}</td>
-            <td>{{ $item->kode_kategori }}</td>
-            <td>{{ $item->kategori }}</td>
-            <td><strong>{{ $item->kode_barang }}</strong></td>
-            <td>{{ Str::limit($item->nama_barang, 25) }}</td>
-            <td><strong class="text-lg text-red-600">{{ number_format($item->jumlah_keluar) }}</strong></td>
-            <td class="font-mono">{{ isset($item->harga_format) ? $item->harga_format : 'Rp ' . number_format($item->harga) }}</td>
-            <td class="font-mono font-semibold text-red-600">{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total) }}</td>
-            <td>{{ Str::limit($item->keterangan, 30) }}</td>
-            <td>
-              <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
-                <svg viewBox="0 0 24 24" fill="#4F6FFF"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
-                <svg viewBox="0 0 24 24" fill="#10B981"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/></svg>
-              </button>
-              <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
-                <svg viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-            </td>
-          </tr>
-          @empty
-          <tr>
-            <td colspan="11" style="text-align:center; padding:60px; color:var(--muted);">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
-                <path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm2-8h6v6h-6v-6zm0-2V4h6v4h-6zM5 8V5h2V3H5V1H3v2H1v1.99L3 8h2z"/>
-              </svg>
-              <div style="font-size:15px; font-weight:700; margin-bottom:8px;">Belum ada transaksi keluar</div>
-            </td>
-          </tr>
-          @endforelse
-        </tbody>
-      </table>
+              data-keterangan="{{ $item->keterangan ?? '' }}">
+              <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
+              <td><strong>{{ $item->nomor_transaksi }}</strong></td>
+              <td>{{ $item->tanggal_input_format ?? $item->tanggal_input }}</td>
+              <td>{{ $item->kode_kategori }}</td>
+              <td>{{ $item->kategori }}</td>
+              <td><strong>{{ $item->kode_barang }}</strong></td>
+              <td>{{ Str::limit($item->nama_barang, 25) }}</td>
+              <td><strong class="text-lg text-red-600">{{ number_format($item->jumlah_keluar) }}</strong></td>
+              <td class="font-mono">{{ isset($item->harga_format) ? $item->harga_format : 'Rp ' . number_format($item->harga) }}</td>
+              <td class="font-mono font-semibold text-red-600">{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total) }}</td>
+              <td>{{ Str::limit($item->keterangan, 30) }}</td>
+              <td>
+                <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
+                  <svg viewBox="0 0 24 24" fill="#4F6FFF"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </button>
+                <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
+                  <svg viewBox="0 0 24 24" fill="#10B981"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/></svg>
+                </button>
+                <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
+                  <svg viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
+              </td>
+            </tr>
+            @empty
+            <tr>
+              <td colspan="11" style="text-align:center; padding:60px; color:var(--muted);">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
+                  <path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm2-8h6v6h-6v-6zm0-2V4h6v4h-6zM5 8V5h2V3H5V1H3v2H1v1.99L3 8h2z"/>
+                </svg>
+                <div style="font-size:15px; font-weight:700; margin-bottom:8px;">Belum ada transaksi keluar</div>
+              </td>
+            </tr>
+            @endforelse
+          </tbody>
+        </table>
 
-      <div class="table-footer">
-        <span>Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data</span>
-        <div>{{ $transaksi->appends(request()->query())->links() }}</div>
+        <div class="table-footer">
+          <span>Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data</span>
+          <div>{{ $transaksi->appends(request()->query())->links() }}</div>
+        </div>
       </div>
     </div>
-  </div>
-</main>
+  </main>
 
 {{-- ===================== MODAL CREATE ===================== --}}
 <div id="createModal" class="modal-overlay">
@@ -494,6 +496,7 @@
     </div>
 
     <form id="editForm" method="POST" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      @csrf
       @method('PUT')
       <div style="padding:28px; overflow-y:auto; flex:1;">
         <input type="hidden" name="id" id="edit_id">
@@ -646,16 +649,16 @@
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
     const d = {
-      nomor:         row.dataset.nomorTransaksi,
-      tanggal:       row.dataset.tanggalInput,
-      kode_kategori: row.dataset.kodeKategori,
-      kategori:      row.dataset.kategori,
-      kode_barang:   row.dataset.kodeBarang,
-      nama_barang:   row.dataset.namaBarang,
-      jumlah:        parseInt(row.dataset.jumlahKeluar),
-      harga:         parseInt(row.dataset.harga),
-      total:         parseInt(row.dataset.total),
-      keterangan:    row.dataset.keterangan || '-',
+        nomor: row.dataset.nomorTransaksi,           // ✅ snake_case → camelCase
+        tanggal: row.dataset.tanggalInput,
+        kode_kategori: row.dataset.kodeKategori,
+        kategori: row.dataset.kategori,
+        kode_barang: row.dataset.kodeBarang,
+        nama_barang: row.dataset.namaBarang,
+        jumlah: parseInt(row.dataset.jumlahKeluar),
+        harga: parseFloat(row.dataset.harga),
+        total: parseFloat(row.dataset.total),
+        keterangan: row.dataset.keterangan || '-',
     };
 
     document.getElementById('detailSubtitle').textContent = `No. Transaksi: ${d.nomor}`;
@@ -704,30 +707,35 @@
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
     const d = {
-      id:              row.dataset.id,
-      nomor_transaksi: row.dataset.nomorTransaksi,
-      tanggal_input:   row.dataset.tanggalInput,
-      kode_kategori:   row.dataset.kodeKategori,
-      kategori:        row.dataset.kategori,
-      kode_barang:     row.dataset.kodeBarang,
-      nama_barang:     row.dataset.namaBarang,
-      jumlah_keluar:   row.dataset.jumlahKeluar,
-      harga:           row.dataset.harga,
-      keterangan:      row.dataset.keterangan,
+        id: id,
+        nomor_transaksi: row.dataset.nomorTransaksi,
+        tanggal_input: row.dataset.tanggalInput,
+        kode_kategori: row.dataset.kodeKategori,
+        kategori: row.dataset.kategori,
+        kode_barang: row.dataset.kodeBarang,
+        nama_barang: row.dataset.namaBarang,
+        jumlah_keluar: row.dataset.jumlahKeluar,
+        harga: row.dataset.harga,
+        keterangan: row.dataset.keterangan || '',
     };
 
-    document.getElementById('edit_id').value                = d.id;
-    document.getElementById('edit_nomor_transaksi').value   = d.nomor_transaksi;
-    document.getElementById('edit_tanggal_input').value     = d.tanggal_input;
-    document.getElementById('edit_kode_kategori').value     = d.kode_kategori;
-    document.getElementById('edit_kategori').value          = d.kategori;
-    document.getElementById('edit_kode_barang').value       = d.kode_barang;
-    document.getElementById('edit_nama_barang').value       = d.nama_barang;
-    document.getElementById('edit_jumlah_keluar').value     = d.jumlah_keluar;
-    document.getElementById('edit_harga').value             = d.harga;
-    document.getElementById('edit_keterangan').value        = d.keterangan;
-    document.getElementById('editSubtitle').textContent     = `Kode Barang: ${d.kode_barang}`;
-    document.getElementById('editForm').action = `{{ route('adminpersediaan.transaksi-keluar.update', ':id') }}`.replace(':id', d.id);
+    // Populate form
+    document.getElementById('edit_id').value = d.id;
+    document.getElementById('edit_nomor_transaksi').value = d.nomor_transaksi;
+    document.getElementById('edit_tanggal_input').value = d.tanggal_input;
+    document.getElementById('edit_kode_kategori').value = d.kode_kategori;
+    document.getElementById('edit_kategori').value = d.kategori;
+    document.getElementById('edit_kode_barang').value = d.kode_barang;
+    document.getElementById('edit_nama_barang').value = d.nama_barang;
+    document.getElementById('edit_jumlah_keluar').value = d.jumlah_keluar;
+    document.getElementById('edit_harga').value = d.harga;
+    document.getElementById('edit_keterangan').value = d.keterangan;
+    
+    document.getElementById('editSubtitle').textContent = `Kode Barang: ${d.kode_barang}`;
+    
+    // Update form action
+    document.getElementById('editForm').action = 
+        `{{ route('adminpersediaan.transaksi-keluar.update', ':id') }}`.replace(':id', d.id);
 
     calculateTotal('edit');
     openModal('editModal');

@@ -21,6 +21,7 @@
         ['href' => route('pegawai.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-home', 'route' => 'pegawai.dashboard'],
         ['href' => route('pegawai.peminjaman-barang'), 'label' => 'Peminjaman Barang', 'icon' => 'fas fa-box', 'route' => 'pegawai.peminjaman-barang'],
         ['href' => route('pegawai.peminjaman-kendaraan'), 'label' => 'Peminjaman Kendaraan', 'icon' => 'fas fa-car', 'route' => 'pegawai.peminjaman-kendaraan'],
+        ['href' =>route ('pegawai.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'icon' => 'fas fa-boxes', 'route' => 'pegawai.permintaan-persediaan'],
         
 
         ['href' => route ('pegawai.pengembalian-barang'), 'label' => 'Pengembalian Barang', 'icon' => 'fas fa-undo', 'route' => 'pegawai.pengembalian-barang'],
@@ -118,6 +119,8 @@
         ],
       ]
     ],
+
+    //ADMIN SARPRAS
     'adminsarpras' => [
       'bgGradient' => 'from-cyan-900 to-cyan-800',
       'badgeText' => 'Admin Sarpras',

@@ -45,9 +45,10 @@ return new class extends Migration
             // Workflow
             $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');
             $table->text('komentar')->nullable();
-            $table->foreignId('reviewed_by_admin_id')->nullable()->constrained('users');
+            // $table->unsignedBigInteger('reviewed_by_admin_id')->nullable();
+            $table->foreignId('reviewed_by_admin_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('tanggal_approval')->nullable();
-            $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
+            $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('approved_by_kasubag_date')->nullable();
             $table->timestamp('diteruskan_ke_kasubag_date')->nullable();
             

@@ -63,7 +63,7 @@ class AdminPersediaanController extends Controller
             'harga_total' => $request->harga_satuan * $request->jumlah,
         ]);
 
-        return redirect()->route('adminpersediian.data-persediaan')
+        return redirect()->route('adminpersediaan.data-persediaan')
             ->with('success', 'Data persediaan berhasil ditambahkan!');
     }
 
@@ -93,7 +93,7 @@ class AdminPersediaanController extends Controller
             'harga_total' => $request->harga_satuan * $request->jumlah,
         ]);
 
-        return redirect()->route('adminpersediian.data-persediaan')
+        return redirect()->route('adminpersediaan.data-persediaan')
             ->with('success', 'Data persediaan berhasil diupdate!');
     }
 
@@ -118,7 +118,7 @@ class AdminPersediaanController extends Controller
                 $q->where('kode_barang', 'like', '%'.$request->search.'%')
                   ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
                   ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
-                  ->orWhere('kota_kategori', 'like', '%'.$request->search.'%')
+                  ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
                   ->orWhere('kategori', 'like', '%'.$request->search.'%');
             });
         }
@@ -128,9 +128,9 @@ class AdminPersediaanController extends Controller
             $query->whereDate('tanggal_input', $request->tanggal_input);
         }
 
-        // Filter kota kategori
-        if ($request->filled('kota_kategori')) {
-            $query->where('kota_kategori', $request->kota_kategori);
+        // Filter kode kategori
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
         }
 
         $transaksi = $query->latest('tanggal_input')->paginate(10);
@@ -154,7 +154,7 @@ class AdminPersediaanController extends Controller
         $request->validate([
             'nomor_transaksi' => 'required|string|max:50|unique:transaksi_keluar_persediaan,nomor_transaksi',
             'tanggal_input' => 'required|date',
-            'kota_kategori' => 'required|string|max:20',
+            'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50',
             'nama_barang' => 'required|string|max:200',
@@ -175,7 +175,7 @@ class AdminPersediaanController extends Controller
         // Kurangi stok persediaan
         $persediaan->decrement('jumlah', $request->jumlah_keluar);
 
-        return redirect()->route('admin.transaksi-keluar.index')
+        return redirect()->route('adminpersediaan.transaksi-keluar')
             ->with('success', 'Transaksi keluar berhasil disimpan!');
     }
 
@@ -204,33 +204,56 @@ class AdminPersediaanController extends Controller
         $request->validate([
             'nomor_transaksi' => ['required', 'string', 'max:50', Rule::unique('transaksi_keluar_persediaan', 'nomor_transaksi')->ignore($transaksiKeluar->id)],
             'tanggal_input' => 'required|date',
-            'kota_kategori' => 'required|string|max:20',
+            'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50',
             'nama_barang' => 'required|string|max:200',
             'jumlah_keluar' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string',
         ]);
 
-        // Cek stok sebelum update
-        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
-        if (!$persediaan || $persediaan->jumlah < $request->jumlah_keluar) {
-            return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
-                        ->withInput();
-        }
+        // 🔥 VALIDASI STOK: Cek apakah kode barang berubah
+    $persediaanLama = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
+    $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
 
-        $oldJumlah = $transaksiKeluar->jumlah_keluar;
-        $transaksiKeluar->update($request->all());
-
-        // Adjust stok persediaan
-        $persediaan->increment('jumlah', $oldJumlah); // Kembalikan stok lama
-        $persediaan->decrement('jumlah', $request->jumlah_keluar); // Kurangi stok baru
-
-        return redirect()->route('admin.transaksi-keluar.index')
-            ->with('success', 'Transaksi keluar berhasil diupdate!');
+    // Cek stok persediaan BARU
+    if (!$persediaanBaru || $persediaanBaru->jumlah < $request->jumlah_keluar) {
+        return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
+                    ->withInput();
     }
 
-    /** DESTROY - Hapus transaksi */
+    // 🔥 Backup data lama untuk adjust stok
+    $oldJumlahKeluar = $transaksiKeluar->jumlah_keluar;
+    $oldKodeBarang = $transaksiKeluar->kode_barang;
+    $kodeBarangBerubah = $oldKodeBarang !== $request->kode_barang;
+
+    // 🔥 SATU KALI UPDATE SAJA - Biarkan mutator handle total
+    $transaksiKeluar->update($request->all());
+
+    //🔥 Adjust stok persediaan
+    if ($kodeBarangBerubah) {
+        // Kembalikan stok BARANG LAMA
+        if ($persediaanLama) {
+            $persediaanLama->increment('jumlah', $oldJumlahKeluar);
+        }
+        // Kurangi stok BARANG BARU
+        $persediaanBaru->decrement('jumlah', $request->jumlah_keluar);
+    } else {
+        // Sama barang, adjust selisih jumlah
+        $selisih = $oldJumlahKeluar - $request->jumlah_keluar;
+        if ($selisih > 0) {
+            $persediaanBaru->increment('jumlah', $selisih);
+        } elseif ($selisih < 0) {
+            $persediaanBaru->decrement('jumlah', abs($selisih));
+        }
+    }
+
+    return redirect()->route('adminpersediaan.transaksi-keluar')
+        ->with('success', 'Transaksi keluar berhasil diupdate!');
+    }
+
+    /** DESTROY - Hapus transaksi keluar */
     public function destroyTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
     {
         // Kembalikan stok persediaan
@@ -241,7 +264,7 @@ class AdminPersediaanController extends Controller
 
         $transaksiKeluar->delete();
 
-        return redirect()->route('admin.transaksi-keluar.index')
+        return redirect()->route('adminpersediaan.transaksi-keluar')
             ->with('success', 'Transaksi keluar berhasil dihapus!');
     }
 
@@ -302,8 +325,9 @@ class AdminPersediaanController extends Controller
 
         if ($persediaan) {
             // Update persediaan yang sudah ada
-            $persediaan->increment('jumlah', $request->jumlah_masuk);
-            $persediaan->harga_total += $request->harga_satuan * $request->jumlah_masuk;
+            $persediaan->setRawAttributes([
+                'harga_total' => ($persediaan->getRawOriginal('harga_total') ?? 0) + ($request->harga_satuan * $request->jumlah_masuk)
+            ]);
             $persediaan->save();
         } else {
             // Buat persediaan baru
@@ -325,7 +349,7 @@ class AdminPersediaanController extends Controller
             'user_id' => auth()->id() ?? null,
         ]);
 
-        return redirect()->route('adminpersediian.transaksi-masuk')
+        return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil disimpan!');
     }
 
@@ -390,7 +414,7 @@ class AdminPersediaanController extends Controller
             ]);
         }
 
-        return redirect()->route('adminpersediian.transaksi-masuk')
+        return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil diupdate!');
     }
 
@@ -408,7 +432,7 @@ class AdminPersediaanController extends Controller
 
         $transaksiMasuk->delete();
 
-        return redirect()->route('admin.transaksi-masuk.index')
+        return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil dihapus!');
     }
     public function PermintaanPersediaan() { return view('adminpersediian.permintaan_persediaan'); }

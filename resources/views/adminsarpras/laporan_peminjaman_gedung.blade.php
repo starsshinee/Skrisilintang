@@ -225,13 +225,31 @@
 </style>
 </head>
 <body>
-
+@php
+// ✅ FIXED GLOBAL STATUS HELPER - PHP 7.4+ Compatible
+function getStatusBadge($status) {
+    $badges = [
+        'disetujui' => ['class' => 'status-disetujui', 'text' => '✅ Disetujui'],
+        'pending' => ['class' => 'status-pending', 'text' => '⏳ Pending'],
+        'dalam_review' => ['class' => 'status-pending', 'text' => '🔍 Dalam Review'],
+        'dipinjam' => ['class' => 'status-disetujui', 'text' => '📍 Dipinjam'],
+        'ditolak' => ['class' => 'status-ditolak', 'text' => '❌ Ditolak'],
+        'terlambat' => ['class' => 'status-ditolak', 'text' => '⚠️ Terlambat']
+    ];
+    
+    if (isset($badges[$status])) {
+        return $badges[$status];
+    }
+    
+    return ['class' => 'status-pending', 'text' => '⏳ Pending'];
+}
+@endphp
 @include('partials.sidebar')
 
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <span class="topbar-title">Laporan Peminjaman & Pengembalian</span>
+    <span class="topbar-title">Laporan Peminjaman</span>
     <div class="topbar-right">
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -249,8 +267,8 @@
     <!-- Header -->
     <div class="page-top">
       <div>
-        <h1>Laporan Peminjaman & Pengembalian</h1>
-        <p>Analisis lengkap peminjaman dan pengembalian persediaan</p>
+        <h1>Laporan Peminjaman</h1>
+        <p>Analisis lengkap peminjaman Gedung</p>
       </div>
       <button class="btn-unduh">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
@@ -258,8 +276,8 @@
       </button>
     </div>
 
-    <!-- STAT ROW 1 -->
-    <div class="stats-grid-4">
+    <!-- STAT ROW 1 - DYNAMIC -->
+    <div class="stats-grid-3">
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon ic-blue">
@@ -267,13 +285,14 @@
           </div>
           <span class="stat-label-sm">Total Peminjaman</span>
         </div>
-        <div class="stat-value" style="color:var(--blue)">3</div>
+        <div class="stat-value" style="color:var(--blue)">{{ $stats['total_peminjaman'] }}</div>
         <div class="stat-sub">Keseluruhan</div>
         <div class="stat-trend trend-up">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-          +2 dari bulan lalu
+          {{ number_format($stats['total_peminjaman']) }} transaksi
         </div>
       </div>
+
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon ic-green">
@@ -281,10 +300,11 @@
           </div>
           <span class="stat-label-sm">Sedang Dipinjam</span>
         </div>
-        <div class="stat-value" style="color:var(--green)">0</div>
-        <div class="stat-sub">0% dari total</div>
-        <div class="stat-trend trend-neu">— Tidak ada aktif</div>
+        <div class="stat-value" style="color:var(--green)">{{ $stats['sedang_dipinjam'] }}</div>
+        <div class="stat-sub">{{ $stats['persentase_approval'] ?? 0 }}% dari total</div>
+        <div class="stat-trend trend-neu">— {{ $stats['sedang_dipinjam'] }} aktif</div>
       </div>
+
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon ic-red">
@@ -292,24 +312,15 @@
           </div>
           <span class="stat-label-sm">Terlambat</span>
         </div>
-        <div class="stat-value" style="color:var(--red)">0</div>
+        <div class="stat-value" style="color:var(--red)">{{ $stats['terlambat'] }}</div>
         <div class="stat-sub">Perlu tindakan</div>
-        <div class="stat-trend" style="color:var(--green)">✓ Semua tepat waktu</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon ic-purple">
-            <svg viewBox="0 0 24 24"><path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6a5.87 5.87 0 01-2.8-.7l-1.46 1.46A7.93 7.93 0 0012 20c4.42 0 8-3.58 8-8h3l-4-4z"/></svg>
-          </div>
-          <span class="stat-label-sm">Total Pengembalian</span>
+        <div class="stat-trend" style="color:var(--green)">
+          ✓ {{ $stats['total_peminjaman'] - $stats['terlambat'] }} tepat waktu
         </div>
-        <div class="stat-value" style="color:var(--purple)">0</div>
-        <div class="stat-sub">Sudah dikembalikan</div>
-        <div class="stat-trend trend-neu">— Belum ada</div>
       </div>
     </div>
 
-    <!-- STAT ROW 2 -->
+    <!-- STATUS BULAN INI - DYNAMIC -->
     <div class="stats-grid-3">
       <div class="stat-card" style="background:linear-gradient(135deg,#EFF6FF,#F5F8FF)">
         <div class="stat-header">
@@ -318,242 +329,190 @@
           </div>
           <span class="stat-label-sm">Status Peminjaman Bulan Ini</span>
         </div>
-        <div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:12px">3 <span style="font-size:14px;color:var(--muted);font-weight:500">transaksi</span></div>
+        <div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:12px">
+          {{ $statusBulanIni['total'] ?? 0 }} 
+          <span style="font-size:14px;color:var(--muted);font-weight:500">transaksi</span>
+        </div>
         <div style="display:flex;gap:14px">
           <div style="text-align:center">
-            <div style="font-size:20px;font-weight:800;color:var(--green)">1</div>
+            <div style="font-size:20px;font-weight:800;color:var(--green)">{{ $statusBulanIni['disetujui'] ?? 0 }}</div>
             <div style="font-size:11px;color:#64748B">Disetujui</div>
           </div>
           <div style="text-align:center">
-            <div style="font-size:20px;font-weight:800;color:var(--amber)">2</div>
+            <div style="font-size:20px;font-weight:800;color:var(--amber)">{{ $statusBulanIni['pending'] ?? 0 }}</div>
             <div style="font-size:11px;color:#64748B">Pending</div>
           </div>
           <div style="text-align:center">
-            <div style="font-size:20px;font-weight:800;color:var(--red)">0</div>
+            <div style="font-size:20px;font-weight:800;color:var(--red)">{{ $statusBulanIni['ditolak'] ?? 0 }}</div>
             <div style="font-size:11px;color:#64748B">Ditolak</div>
           </div>
         </div>
       </div>
+
+      <!-- Tingkat Persetujuan -->
       <div class="stat-card" style="background:linear-gradient(135deg,#ECFDF5,#F5FFF9)">
         <div class="stat-header">
-          <div class="stat-icon ic-teal">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-          </div>
+          <div class="stat-icon ic-teal"><!-- svg --></div>
           <span class="stat-label-sm">Tingkat Persetujuan</span>
         </div>
-        <div style="font-size:22px;font-weight:800;color:var(--teal);margin-bottom:8px">33% <span style="font-size:13px;color:var(--muted);font-weight:500">disetujui</span></div>
+        <div style="font-size:22px;font-weight:800;color:var(--teal);margin-bottom:8px">
+          {{ $stats['persentase_approval'] ?? 0 }}% 
+          <span style="font-size:13px;color:var(--muted);font-weight:500">disetujui</span>
+        </div>
         <div class="progress-bar">
-          <div class="progress-fill" style="background:var(--teal);width:33%"></div>
+          <div class="progress-fill" style="background:var(--teal);width:{{ $stats['persentase_approval'] ?? 0 }}%"></div>
         </div>
-        <div style="font-size:11.5px;color:#64748B;margin-top:8px">1 dari 3 peminjaman disetujui</div>
-      </div>
-      <div class="stat-card" style="background:linear-gradient(135deg,#FFF7ED,#FFFBF5)">
-        <div class="stat-header">
-          <div class="stat-icon ic-orange">
-            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-          </div>
-          <span class="stat-label-sm">Rata-rata Durasi Pinjam</span>
+        <div style="font-size:11.5px;color:#64748B;margin-top:8px">
+          {{ $stats['disetujui'] }} dari {{ $stats['total_peminjaman'] }} peminjaman
         </div>
-        <div style="font-size:22px;font-weight:800;color:var(--orange);margin-bottom:8px">7 <span style="font-size:13px;color:var(--muted);font-weight:500">hari</span></div>
-        <div style="font-size:11.5px;color:#64748B">Per transaksi peminjaman</div>
-        <div style="font-size:11.5px;color:var(--orange);font-weight:600;margin-top:6px">↑ 1 hari dari rata-rata</div>
       </div>
-    </div>
 
-    <!-- CHARTS ROW -->
+      <!-- Rata-rata Durasi -->
+      <div class="stat-card" style="background:linear-gradient(135deg,#FFF7ED,#FFFBF5)">
+      <div class="stat-header">
+        <div class="stat-icon ic-orange"><!-- svg --></div>
+        <span class="stat-label-sm">Rata-rata Durasi</span>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:var(--orange);margin-bottom:8px">
+        {{ $stats['rata_rata_hari'] }} 
+        <span style="font-size:13px;color:var(--muted);font-weight:500">hari</span>
+      </div>
+      <div style="font-size:11.5px;color:#64748B">Per transaksi</div>
+    </div>
+  </div>
+
+    <!-- TREND CHART - DYNAMIC -->
     <div class="charts-row">
       <div class="chart-card">
-        <div class="chart-title">Tren Peminjaman & Pengembalian</div>
-        <div class="chart-sub">Perbandingan bulanan tahun 2025</div>
+        <div class="chart-title">Tren Peminjaman</div>
+        <div class="chart-sub">6 bulan terakhir</div>
         <div class="bar-chart">
-          <div class="bar-col"><div class="bar-val">5</div><div class="bar-wrap"><div class="bar" style="height:50%"></div></div><div class="bar-lbl">Jan</div></div>
-          <div class="bar-col"><div class="bar-val">8</div><div class="bar-wrap"><div class="bar" style="height:80%"></div></div><div class="bar-lbl">Feb</div></div>
-          <div class="bar-col"><div class="bar-val">6</div><div class="bar-wrap"><div class="bar" style="height:60%"></div></div><div class="bar-lbl">Mar</div></div>
-          <div class="bar-col"><div class="bar-val">10</div><div class="bar-wrap"><div class="bar" style="height:100%"></div></div><div class="bar-lbl">Apr</div></div>
-          <div class="bar-col"><div class="bar-val">7</div><div class="bar-wrap"><div class="bar" style="height:70%"></div></div><div class="bar-lbl">Mei</div></div>
-          <div class="bar-col"><div class="bar-val">9</div><div class="bar-wrap"><div class="bar" style="height:90%"></div></div><div class="bar-lbl">Jun</div></div>
-          <div class="bar-col"><div class="bar-val">4</div><div class="bar-wrap"><div class="bar" style="height:40%"></div></div><div class="bar-lbl">Jul</div></div>
-          <div class="bar-col"><div class="bar-val">3</div><div class="bar-wrap"><div class="bar green" style="height:30%"></div></div><div class="bar-lbl">Agu</div></div>
-          <div class="bar-col"><div class="bar-val">6</div><div class="bar-wrap"><div class="bar green" style="height:60%"></div></div><div class="bar-lbl">Sep</div></div>
-          <div class="bar-col"><div class="bar-val">5</div><div class="bar-wrap"><div class="bar green" style="height:50%"></div></div><div class="bar-lbl">Okt</div></div>
-          <div class="bar-col"><div class="bar-val">3</div><div class="bar-wrap"><div class="bar" style="height:30%"></div></div><div class="bar-lbl">Nov</div></div>
-          <div class="bar-col"><div class="bar-val">3</div><div class="bar-wrap"><div class="bar" style="height:30%"></div></div><div class="bar-lbl">Des</div></div>
-        </div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Peminjaman</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Pengembalian</div>
+          @foreach($trendData as $data)
+          <div class="bar-col">
+            <div class="bar-val">{{ $data['val'] }}</div>
+            <div class="bar-wrap">
+              <div class="bar" style="height:{{ $data['height'] }}%"></div>
+            </div>
+            <div class="bar-lbl">{{ $data['label'] }}</div>
+          </div>
+          @endforeach
         </div>
       </div>
 
+      <!-- DONUT CHART - FULL DYNAMIC -->
       <div class="chart-card">
         <div class="chart-title">Distribusi Status</div>
-        <div class="chart-sub">Komposisi per status</div>
+        <div class="chart-sub">Komposisi keseluruhan ({{ $donutData['total'] ?? 0 }} total)</div>
+        
+        <!-- SVG Donut dengan data real -->
         <svg class="donut-svg" viewBox="0 0 150 150">
+          <!-- Background circle -->
           <circle cx="75" cy="75" r="55" fill="none" stroke="#F1F5F9" stroke-width="26"/>
-          <circle cx="75" cy="75" r="55" fill="none" stroke="#F59E0B" stroke-width="26"
-            stroke-dasharray="231.2 114.5" stroke-dashoffset="86.4" stroke-linecap="butt"/>
-          <circle cx="75" cy="75" r="55" fill="none" stroke="#10B981" stroke-width="26"
-            stroke-dasharray="114.5 231.2" stroke-dashoffset="86.4" stroke-linecap="butt"
-            transform="rotate(-119.7 75 75)"/>
-          <text x="75" y="71" text-anchor="middle" dominant-baseline="middle" font-size="20" font-weight="800" fill="#1E293B" font-family="Plus Jakarta Sans">3</text>
-          <text x="75" y="87" text-anchor="middle" font-size="10" fill="#94A3B8" font-family="Plus Jakarta Sans">transaksi</text>
+          
+          <!-- Disetujui (hijau) - mulai dari 0° -->
+          @if($donutData['disetujui_pct'] ?? 0 > 0)
+          <circle cx="75" cy="75" r="55" fill="none" stroke="#10B981" stroke-width="26" 
+            stroke-dasharray="{{ ($donutData['disetujui_pct'] ?? 0) * 3.6 }} {{ 360 - (($donutData['disetujui_pct'] ?? 0) * 3.6) }}" 
+            stroke-linecap="round"/>
+          @endif
+          
+          <!-- Pending (kuning) - mulai setelah hijau -->
+          @php $startPending = ($donutData['disetujui_pct'] ?? 0) * 3.6; @endphp
+          @if($donutData['pending_pct'] ?? 0 > 0)
+          <circle cx="75" cy="75" r="55" fill="none" stroke="#F59E0B" stroke-width="26" 
+            stroke-dasharray="{{ ($donutData['pending_pct'] ?? 0) * 3.6 }} {{ 360 - (($donutData['pending_pct'] ?? 0) * 3.6) }}" 
+            stroke-dashoffset="-{{ $startPending }}" stroke-linecap="round"/>
+          @endif
+          
+          <!-- Ditolak (merah) - mulai setelah hijau + kuning -->
+          @php $startDitolak = $startPending + (($donutData['pending_pct'] ?? 0) * 3.6); @endphp
+          @if($donutData['ditolak_pct'] ?? 0 > 0)
+          <circle cx="75" cy="75" r="55" fill="none" stroke="#EF4444" stroke-width="26" 
+            stroke-dasharray="{{ ($donutData['ditolak_pct'] ?? 0) * 3.6 }} {{ 360 - (($donutData['ditolak_pct'] ?? 0) * 3.6) }}" 
+            stroke-dashoffset="-{{ $startDitolak }}" stroke-linecap="round"/>
+          @endif
+          
+          <!-- Center text -->
+          <text x="75" y="71" text-anchor="middle" dominant-baseline="middle" 
+                font-size="20" font-weight="800" fill="#1E293B" font-family="Plus Jakarta Sans">
+            {{ $donutData['total'] ?? 0 }}
+          </text>
+          <text x="75" y="87" text-anchor="middle" font-size="10" fill="#94A3B8" 
+                font-family="Plus Jakarta Sans">transaksi</text>
         </svg>
+
+        <!-- Legend dengan data real -->
         <div class="donut-labels">
           <div class="donut-row">
-            <div class="donut-name"><div class="donut-dot" style="background:#10B981"></div>Disetujui</div>
-            <div class="donut-pct" style="color:#10B981">1 <span style="color:var(--muted);font-weight:400;font-size:11px">33%</span></div>
+            <div class="donut-name">
+              <div class="donut-dot" style="background:#10B981"></div>Disetujui
+            </div>
+            <div class="donut-pct" style="color:#10B981">
+              {{ $donutData['disetujui'] ?? 0 }} 
+              <span style="color:var(--muted);font-weight:400;font-size:11px">({{ $donutData['disetujui_pct'] ?? 0 }}%)</span>
+            </div>
           </div>
           <div class="donut-row">
-            <div class="donut-name"><div class="donut-dot" style="background:#F59E0B"></div>Pending</div>
-            <div class="donut-pct" style="color:#F59E0B">2 <span style="color:var(--muted);font-weight:400;font-size:11px">67%</span></div>
+            <div class="donut-name">
+              <div class="donut-dot" style="background:#F59E0B"></div>Pending
+            </div>
+            <div class="donut-pct" style="color:#F59E0B">
+              {{ $donutData['pending'] ?? 0 }} 
+              <span style="color:var(--muted);font-weight:400;font-size:11px">({{ $donutData['pending_pct'] ?? 0 }}%)</span>
+            </div>
           </div>
           <div class="donut-row">
-            <div class="donut-name"><div class="donut-dot" style="background:#EF4444"></div>Ditolak</div>
-            <div class="donut-pct" style="color:#EF4444">0 <span style="color:var(--muted);font-weight:400;font-size:11px">0%</span></div>
-          </div>
-          <div class="donut-row">
-            <div class="donut-name"><div class="donut-dot" style="background:#8B5CF6"></div>Selesai</div>
-            <div class="donut-pct" style="color:#8B5CF6">0 <span style="color:var(--muted);font-weight:400;font-size:11px">0%</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB TABLE -->
-    <div class="tab-card">
-      <div class="tab-bar">
-        <button class="tab-btn active" data-tab="pinjam">Laporan Peminjaman</button>
-        <button class="tab-btn" data-tab="kembali">Laporan Pengembalian</button>
-        <button class="tab-btn" data-tab="gabungan">Ringkasan Gabungan</button>
-      </div>
-      <div class="tab-toolbar">
-        <div class="search-wrap">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" placeholder="Cari pemohon, item...">
-        </div>
-        <select class="filter-select">
-          <option>Semua Status</option>
-          <option>Disetujui</option>
-          <option>Pending</option>
-          <option>Ditolak</option>
-        </select>
-        <select class="filter-select">
-          <option>Semua Prioritas</option>
-          <option>Tinggi</option>
-          <option>Normal</option>
-          <option>Rendah</option>
-        </select>
-      </div>
-
-      <!-- Tab Peminjaman -->
-      <div class="tab-panel active" id="tab-pinjam">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th><th>Pemohon</th><th>Item Diminta</th><th>Tanggal</th><th>Prioritas</th><th>Status</th><th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="id-badge">PP-001</span></td>
-              <td><strong>Dept. Keuangan</strong></td>
-              <td style="font-size:12.5px">Kertas HVS (50), Tinta (5)</td>
-              <td>2025-01-15</td>
-              <td><span class="priority-badge prio-tinggi">Tinggi</span></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-              <td><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></button></td>
-            </tr>
-            <tr>
-              <td><span class="id-badge">PP-002</span></td>
-              <td><strong>Dept. IT</strong></td>
-              <td style="font-size:12.5px">Kabel LAN (20), Mouse (10)</td>
-              <td>2025-01-14</td>
-              <td><span class="priority-badge prio-normal">Normal</span></td>
-              <td><span class="status-badge status-disetujui">Disetujui</span></td>
-              <td><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></button></td>
-            </tr>
-            <tr>
-              <td><span class="id-badge">PP-003</span></td>
-              <td><strong>Dept. HR</strong></td>
-              <td style="font-size:12.5px">Map Folder (100), Stapler (5)</td>
-              <td>2025-01-13</td>
-              <td><span class="priority-badge prio-rendah">Rendah</span></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-              <td><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></button></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="table-footer">
-          <span>Menampilkan 1–3 dari 3 data</span>
-          <div class="pagination">
-            <button class="page-btn">Prev</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">Next</button>
+            <div class="donut-name">
+              <div class="donut-dot" style="background:#EF4444"></div>Ditolak
+            </div>
+            <div class="donut-pct" style="color:#EF4444">
+              {{ $donutData['ditolak'] ?? 0 }} 
+              <span style="color:var(--muted);font-weight:400;font-size:11px">({{ $donutData['ditolak_pct'] ?? 0 }}%)</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Tab Pengembalian -->
-      <div class="tab-panel" id="tab-kembali">
-        <table>
-          <thead>
-            <tr><th>ID</th><th>ID Peminjaman</th><th>Pemohon</th><th>Item</th><th>Tgl Kembali</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="#CBD5E1" style="display:block;margin:0 auto 10px"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
-                Belum ada data pengembalian
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Tab Gabungan -->
-      <div class="tab-panel" id="tab-gabungan">
-        <table>
-          <thead>
-            <tr><th>Departemen</th><th>Total Pinjam</th><th>Disetujui</th><th>Pending</th><th>Ditolak</th><th>Dikembalikan</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Dept. Keuangan</strong></td>
-              <td>1</td>
-              <td><span style="color:var(--green);font-weight:700">0</span></td>
-              <td><span style="color:var(--amber);font-weight:700">1</span></td>
-              <td><span style="color:var(--red);font-weight:700">0</span></td>
-              <td><span style="color:var(--purple);font-weight:700">0</span></td>
-            </tr>
-            <tr>
-              <td><strong>Dept. IT</strong></td>
-              <td>1</td>
-              <td><span style="color:var(--green);font-weight:700">1</span></td>
-              <td><span style="color:var(--amber);font-weight:700">0</span></td>
-              <td><span style="color:var(--red);font-weight:700">0</span></td>
-              <td><span style="color:var(--purple);font-weight:700">0</span></td>
-            </tr>
-            <tr>
-              <td><strong>Dept. HR</strong></td>
-              <td>1</td>
-              <td><span style="color:var(--green);font-weight:700">0</span></td>
-              <td><span style="color:var(--amber);font-weight:700">1</span></td>
-              <td><span style="color:var(--red);font-weight:700">0</span></td>
-              <td><span style="color:var(--purple);font-weight:700">0</span></td>
-            </tr>
-            <tr style="background:#F8FAFF">
-              <td><strong>Total</strong></td>
-              <td><strong>3</strong></td>
-              <td style="color:var(--green);font-weight:700">1</td>
-              <td style="color:var(--amber);font-weight:700">2</td>
-              <td style="color:var(--red);font-weight:700">0</td>
-              <td style="color:var(--purple);font-weight:700">0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
+      <!-- TABLE PEMINJAMAN - DYNAMIC -->
+    <div class="tab-panel active" id="tab-pinjam">
+      <table>
+        <thead>
+          <tr>
+            <th><span class="id-badge">ID</span></th><th>Pemohon</th><th>Gedung</th><th>Tanggal Pinjam</th><th>Status</th><th>Total Bayar</th><th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($peminjaman as $item)
+          <tr>
+            <td><span class="id-badge">PG-{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}</span></td>
+            <td><strong>{{ $item->nama_lengkap }}</strong><br><small>{{ $item->instansi_lembaga }}</small></td>
+            <td>{{ $item->gedung->nama_gedung ?? '—' }}<br><small>{{ $item->tanggal_pinjam->locale('id')->isoFormat('D MMM YYYY') }}</small></td>
+            <td>
+              <strong>{{ $item->tanggal_pinjam->locale('id')->isoFormat('D MMM') }}</strong><br>
+              <small>{{ $item->jam_mulai }} - {{ $item->jam_selesai }}</small>
+            </td>
+            <td>
+              @php 
+                $statusBadge = getStatusBadge($item->status);
+              @endphp
+              <span class="status-badge {{ $statusBadge['class'] }}">{{ $statusBadge['text'] }}</span>
+            </td>
+            <td>Rp {{ number_format($item->total_pembayaran ?? 0, 0, ',', '.') }}</td>
+            <td>
+              <a href="{{ route('adminsarpras.download-surat', $item->id) }}" class="action-btn" title="Download Surat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#94A3B8">
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+              </a>
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="7" class="text-center py-8" style="color:var(--muted)">Belum ada data peminjaman</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
   </div>
 </main>
 

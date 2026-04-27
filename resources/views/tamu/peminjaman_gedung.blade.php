@@ -732,14 +732,14 @@
                 @endif
               </div>
               <div class="req-card-footer">
-                <button class="card-btn detail" onclick="showDetail({{ $item['id'] }})">
-                  <i class="fas fa-eye"></i> Detail
-                </button>
-                @if(in_array($item['status'], ['pending', 'dalam_review']))
-                <button class="card-btn cancel" onclick="cancelRequest({{ $item['id'] }})">
-                  <i class="fas fa-xmark"></i> Batalkan
-                </button>
-                @endif
+                  <button class="card-btn detail" onclick="showDetail({{ $item['id'] }})">
+                      <i class="fas fa-eye"></i> Detail
+                  </button>
+                  @if(in_array($item['status'], ['pending', 'dalam_review']))
+                  <button class="card-btn cancel" onclick="cancelRequest({{ $item['id'] }})">
+                      <i class="fas fa-xmark"></i> Batalkan
+                  </button>
+                  @endif
               </div>
             </div>
           @empty
@@ -764,6 +764,192 @@
     <a href="#" class="mobile-tab"><i class="fas fa-user-circle"></i>Profil</a>
   </div>
 </nav>
+
+<!-- DETAIL MODAL -->
+<div id="detailModal" style="
+  position:fixed; inset:0; background:rgba(0,0,0,0.5); 
+  display:none; align-items:center; justify-content:center; z-index:300;
+  backdrop-filter:blur(4px);
+">
+  <div style="
+    background:#fff; border-radius:20px; width:560px; max-width:92vw; 
+    max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    animation: modalIn .3s ease;
+  ">
+    <!-- Modal Header -->
+    <div style="
+      padding:24px 28px 20px; 
+      background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      border-radius:20px 20px 0 0;
+      position:relative; overflow:hidden;
+    ">
+      <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.08)"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff">📋 Detail Peminjaman</div>
+          <div id="detailKode" style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px"></div>
+        </div>
+        <button onclick="closeDetailModal()" style="
+          width:32px;height:32px;border-radius:8px;border:none;
+          background:rgba(255,255,255,0.2);color:#fff;font-size:16px;
+          cursor:pointer;display:grid;place-items:center;
+        ">✕</button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding:24px 28px" id="detailBody">
+      <!-- Loading state -->
+      <div id="detailLoading" style="text-align:center;padding:40px 0;color:var(--text-secondary)">
+        <i class="fas fa-spinner fa-spin" style="font-size:32px;opacity:0.4;display:block;margin-bottom:12px"></i>
+        <div style="font-size:14px">Memuat detail...</div>
+      </div>
+
+      <!-- Content (hidden by default) -->
+      <div id="detailContent" style="display:none">
+        <!-- Status Badge -->
+        <div style="text-align:center;margin-bottom:20px">
+          <span id="detailStatusBadge" class="status-badge" style="font-size:13px;padding:6px 16px"></span>
+        </div>
+
+        <!-- Data Peminjam -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-user" style="color:var(--primary);font-size:10px"></i> Data Peminjam
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Nama</div>
+              <div id="detailNama" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">NIP/NIK</div>
+              <div id="detailNipNik" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Instansi</div>
+              <div id="detailInstansi" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Kab/Kota</div>
+              <div id="detailKabKota" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Fasilitas -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-building" style="color:var(--accent);font-size:10px"></i> Data Fasilitas
+          </div>
+          <div style="background:linear-gradient(135deg,#eff4ff,#f0fdff);padding:14px;border-radius:12px;border:1px solid #c7d7ff">
+            <div id="detailFasilitas" style="font-size:15px;font-weight:700;color:var(--text-primary)"></div>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <span id="detailKategori" style="font-size:10px;background:rgba(37,99,235,0.1);color:var(--primary);padding:2px 8px;border-radius:5px;font-weight:600"></span>
+              <span id="detailLokasi" style="font-size:10px;background:rgba(6,182,212,0.1);color:var(--accent);padding:2px 8px;border-radius:5px;font-weight:600"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waktu Peminjaman -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-calendar" style="color:var(--warning);font-size:10px"></i> Waktu Peminjaman
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Tgl Pinjam</div>
+              <div id="detailTglPinjam" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Tgl Kembali</div>
+              <div id="detailTglKembali" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Jam</div>
+              <div id="detailJam" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Durasi</div>
+              <div id="detailDurasi" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pembayaran -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-money-bill" style="color:var(--success);font-size:10px"></i> Pembayaran
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Tarif/Hari</div>
+              <div id="detailTarif" style="font-size:13px;font-weight:600;margin-top:3px;color:var(--primary)"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Total</div>
+              <div id="detailTotal" style="font-size:13px;font-weight:700;margin-top:3px;color:var(--success)"></div>
+            </div>
+            <div style="background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Cara Bayar</div>
+              <div id="detailCaraBayar" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tujuan -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-bullseye" style="color:var(--danger);font-size:10px"></i> Tujuan Penggunaan
+          </div>
+          <div id="detailTujuan" style="background:#f8faff;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;color:var(--text-primary)"></div>
+        </div>
+
+        <!-- Kontak -->
+        <div style="margin-bottom:20px">
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">📞 Kontak</div>
+              <div id="detailKontak" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+            <div style="flex:1;background:#f8faff;padding:10px 14px;border-radius:10px">
+              <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">📅 Tgl Pengajuan</div>
+              <div id="detailCreatedAt" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Komentar Admin (jika ada) -->
+        <div id="detailKomentarWrap" style="margin-bottom:20px;display:none">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-comment" style="color:var(--accent2);font-size:10px"></i> Komentar Admin
+          </div>
+          <div id="detailKomentar" style="background:#fef3c7;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;color:#92400e;border:1px solid #fcd34d"></div>
+        </div>
+
+        <!-- Surat Download (jika ada) -->
+        <div id="detailSuratWrap" style="margin-bottom:16px;display:none">
+          <a id="detailSuratLink" href="#" target="_blank" style="
+            display:flex;align-items:center;gap:8px;
+            padding:12px 16px;border-radius:10px;
+            background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.15);
+            color:var(--primary);font-size:13px;font-weight:600;text-decoration:none;
+            transition:all .2s;
+          ">
+            <i class="fas fa-file-download"></i> Download Surat Peminjaman
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes modalIn {
+    from { opacity:0; transform:scale(0.95) translateY(10px); }
+    to { opacity:1; transform:scale(1) translateY(0); }
+  }
+</style>
 
 <!-- TOAST -->
 <div id="toast" style="
@@ -828,6 +1014,152 @@
               }
           });
       });
+
+      // 7. FUNGSI DETAIL - Buka modal dengan AJAX
+      window.showDetail = function(id) {
+        // Show modal with loading
+        $('#detailModal').css('display', 'flex');
+        $('#detailLoading').show();
+        $('#detailContent').hide();
+
+        $.ajax({
+          url: `/tamu/peminjaman-gedung/${id}`,
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          success: function(res) {
+            if (res.success && res.data) {
+              const d = res.data;
+
+              // Kode
+              $('#detailKode').text(d.kode);
+
+              // Status badge
+              const statusClass = {
+                'pending': 'pending', 'dalam_review': 'pending',
+                'disetujui_kasubag': 'approved', 'disetujui': 'approved',
+                'ditolak': 'rejected'
+              };
+              const statusIcon = {
+                'pending': 'fa-clock', 'dalam_review': 'fa-hourglass-half',
+                'disetujui_kasubag': 'fa-check', 'disetujui': 'fa-check-double',
+                'ditolak': 'fa-times'
+              };
+              $('#detailStatusBadge')
+                .removeClass('pending approved rejected')
+                .addClass(statusClass[d.status] || 'pending')
+                .html(`<i class="fas ${statusIcon[d.status] || 'fa-circle'}"></i> ${d.status_label}`);
+
+              // Data peminjam
+              $('#detailNama').text(d.nama_lengkap);
+              $('#detailNipNik').text(d.nip_nik);
+              $('#detailInstansi').text(d.instansi_lembaga);
+              $('#detailKabKota').text(d.kabupaten_kota);
+
+              // Fasilitas
+              $('#detailFasilitas').text(d.nama_fasilitas);
+              $('#detailKategori').text(d.fasilitas ? d.fasilitas.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-');
+              $('#detailLokasi').text(d.lokasi);
+
+              // Waktu
+              $('#detailTglPinjam').text(d.tanggal_pinjam);
+              $('#detailTglKembali').text(d.tanggal_kembali);
+              $('#detailJam').text(d.jam_mulai + ' - ' + d.jam_selesai);
+              $('#detailDurasi').text(d.lama_peminjaman_hari + ' hari');
+
+              // Pembayaran
+              $('#detailTarif').text(d.tarif_per_hari);
+              $('#detailTotal').text(d.total_pembayaran);
+              $('#detailCaraBayar').text(d.cara_pembayaran);
+
+              // Tujuan & kontak
+              $('#detailTujuan').text(d.tujuan_penggunaan);
+              $('#detailKontak').text(d.nomor_kontak);
+              $('#detailCreatedAt').text(d.created_at);
+
+              // Komentar (jika ada)
+              if (d.komentar) {
+                $('#detailKomentar').text(d.komentar);
+                $('#detailKomentarWrap').show();
+              } else {
+                $('#detailKomentarWrap').hide();
+              }
+
+              // Surat (jika ada)
+              if (d.surat_url) {
+                $('#detailSuratLink').attr('href', d.surat_url);
+                $('#detailSuratWrap').show();
+              } else {
+                $('#detailSuratWrap').hide();
+              }
+
+              // Show content, hide loading
+              $('#detailLoading').hide();
+              $('#detailContent').show();
+            } else {
+              showToast('❌ Gagal memuat detail', 'error');
+              closeDetailModal();
+            }
+          },
+          error: function(xhr) {
+            let msg = 'Gagal memuat detail peminjaman';
+            try {
+              if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+              }
+            } catch(e) {}
+            showToast('❌ ' + msg, 'error');
+            closeDetailModal();
+          }
+        });
+      };
+
+      window.closeDetailModal = function() {
+        $('#detailModal').fadeOut(200);
+      };
+
+      // Tutup modal saat klik overlay
+      $('#detailModal').on('click', function(e) {
+        if (e.target === this) closeDetailModal();
+      });
+
+        window.cancelRequest = function(id) {
+          if (!confirm('Yakin ingin membatalkan permintaan ini?')) {
+              return;
+          }
+
+          const btn = $(`button[onclick="cancelRequest(${id})"]`);
+          const original = btn.html();
+          btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Membatalkan...');
+
+          $.ajax({
+              url: `/tamu/peminjaman-gedung/${id}/cancel`,
+              method: 'POST',
+              data: {
+                  _token: $('meta[name="csrf-token"]').attr('content')
+              },
+              success: function(res) {
+                  showToast(res.message || 'Permintaan berhasil dibatalkan', 'success');
+                  setTimeout(() => {
+                      $(`.req-card[data-id="${id}"]`).fadeOut(500, function() {
+                          $(this).remove();
+                      });
+                  }, 1000);
+              },
+              error: function(xhr) {
+                  let msg = 'Gagal membatalkan permintaan';
+                  try {
+                      const res = xhr.responseJSON;
+                      if (res && res.message) {
+                          msg = res.message;
+                      }
+                  } catch(e) {}
+                  showToast('❌ ' + msg, 'error');
+              },
+              complete: function() {
+                  btn.prop('disabled', false).html(original);
+              }
+          });
+      };
 
       // FUNCTIONS
       function filterFasilitas() {
@@ -1012,6 +1344,8 @@
 
       // Initial
       filterFasilitas();
+      updateCounter();
+
   });
 </script>
 </body>

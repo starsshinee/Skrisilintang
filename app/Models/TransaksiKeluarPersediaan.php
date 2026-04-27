@@ -15,7 +15,7 @@ class TransaksiKeluarPersediaan extends Model
     protected $fillable = [
         'nomor_transaksi',
         'tanggal_input',     // ✅ Sesuai "Tanggal Input"
-        'kota_kategori',     // ✅ Sesuai "Kota Kategori"
+        'kode_kategori',     // ✅ Sesuai "Kota Kategori"
         'kategori',          // ✅ Sesuai "Kategori"
         'kode_barang',       // ✅ Sesuai "Kode Barang"
         'nama_barang',       // ✅ Sesuai "Nama Barang"
@@ -39,18 +39,14 @@ class TransaksiKeluarPersediaan extends Model
     }
 
     // ✅ MUTATOR: Auto hitung TOTAL = Harga × Jumlah Keluar
-    public function setHargaAttribute($value): void
+    protected static function boot()
     {
-        $this->attributes['harga'] = $value;
-        $this->attributes['total'] = $value * ($this->attributes['jumlah_keluar'] ?? 0);
-    }
+        parent::boot();
 
-    public function setJumlahKeluarAttribute($value): void
-    {
-        $this->attributes['jumlah_keluar'] = $value;
-        if ($this->attributes['harga']) {
-            $this->attributes['total'] = $this->attributes['harga'] * $value;
-        }
+        // Auto calculate total saat saving
+        static::saving(function ($model) {
+            $model->total = ($model->harga ?? 0) * ($model->jumlah_keluar ?? 0);
+        });
     }
 
     // ✅ ACCESSOR: Format Rupiah untuk tampilan tabel
@@ -75,9 +71,9 @@ class TransaksiKeluarPersediaan extends Model
         return $query->whereDate('tanggal_input', $tanggal);
     }
 
-    public function scopeFilterKotaKategori($query, $kotaKategori)
+    public function scopeFilterKodeKategori($query, $kodeKategori)
     {
-        return $query->where('kota_kategori', 'like', "%{$kotaKategori}%");
+        return $query->where('kode_kategori', 'like', "%{$kodeKategori}%");
     }
 
     public function scopeFilterKategori($query, $kategori)

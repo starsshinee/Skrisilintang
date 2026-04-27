@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\{
     AdminSarpras,
     Gedung,
-    PengembalianGedung,
     PeminjamanGedung,
     Kerusakan,
-    laporanKerusakan,
-    laporanPeminjamanGedung,
-    
+    User
 };
 
 
@@ -20,29 +18,113 @@ class AdminSarprasController extends Controller
 {
     public function dashboard()
     {
-        return view('adminsarpras.dashbord');
-        // // Statistics untuk dashboard
-        // $stats = [
-        //     'total_peminjaman' => PeminjamanGedung::count(),
-        //     'peminjaman_aktif' => PeminjamanGedung::whereIn('status', ['dipinjam', 'terlambat'])->count(),
-        //     'pengembalian_menunggu' => PengembalianGedung::where('status_verifikasi', 'menunggu')->count(),
-        //     'pengembalian_selesai' => PengembalianGedung::where('status_verifikasi', 'disetujui')->count(),
-        //     'total_denda' => PengembalianGedung::sum('denda_akhir'),
-        // ];
+        $user = auth()->user();
 
-        // $peminjaman_terbaru = PeminjamanGedung::with('pengembalian')
-        //     ->whereIn('status', ['dipinjam', 'terlambat'])
-        //     ->latest()
-        //     ->limit(5)
-        //     ->get();
+        // ── Statistik Gedung ──
+        $totalGedung = Gedung::count();
+        $gedungTersedia = Gedung::where('ketersediaan', 'Tersedia')->count();
+        $gedungDigunakan = Gedung::where('ketersediaan', 'Sedang Dipakai')->count();
 
-        // $pengembalianGedung_menunggu = PengembalianGedung::with(['peminjaman', 'adminSarpras'])
-        //     ->where('status_verifikasi', 'menunggu')
-        //     ->latest()
-        //     ->limit(5)
-        //     ->get();
+        // ── Statistik Peminjaman ──
+        $totalPeminjaman = PeminjamanGedung::count();
+        $peminjamanPending = PeminjamanGedung::where('status', 'pending')->count();
+        $peminjamanDalamReview = PeminjamanGedung::where('status', 'dalam_review')->count();
+        $peminjamanDisetujui = PeminjamanGedung::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count();
+        $peminjamanDitolak = PeminjamanGedung::where('status', 'ditolak')->count();
+        $peminjamanAktif = $peminjamanPending + $peminjamanDalamReview;
 
-        // return view('adminsarpras.dashboard', compact('stats', 'peminjaman_terbaru', 'pengembalian_menunggu'));
+        // ── Statistik Kerusakan ──
+        $totalKerusakan = Kerusakan::count();
+        $rusakBerat = Kerusakan::where('kondisi', 'Rusak Berat')->count();
+        $rusakRingan = Kerusakan::where('kondisi', 'Rusak Ringan')->count();
+        $perluPerbaikan = $rusakBerat + $rusakRingan;
+
+        // ── Statistik Pembayaran ──
+        $totalPendapatan = PeminjamanGedung::whereIn('status', ['disetujui', 'disetujui_kasubag'])
+            ->sum('total_pembayaran');
+
+        // ── Chart: Peminjaman per bulan (tahun ini) ──
+        $chartData = [];
+        $bulanLabels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $maxMonthly = 1;
+
+        for ($m = 1; $m <= 12; $m++) {
+            $count = PeminjamanGedung::whereYear('created_at', now()->year)
+                ->whereMonth('created_at', $m)
+                ->count();
+            $chartData[] = $count;
+            if ($count > $maxMonthly) $maxMonthly = $count;
+        }
+
+        // Hitung persentase height untuk chart bars
+        $chartBars = [];
+        foreach ($chartData as $i => $count) {
+            $chartBars[] = [
+                'label' => $bulanLabels[$i],
+                'count' => $count,
+                'height' => $maxMonthly > 0 ? round(($count / $maxMonthly) * 100) : 0,
+            ];
+        }
+
+        // ── Peminjaman Terbaru (5 terakhir) ──
+        $peminjamanTerbaru = PeminjamanGedung::with('gedung')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        // ── Aktivitas Terbaru ──
+        $aktivitasTerbaru = PeminjamanGedung::with('gedung')
+            ->latest('updated_at')
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                $iconMap = [
+                    'pending' => ['icon' => 'fa-clock', 'bg' => '#f3e8fd', 'color' => '#9333ea'],
+                    'dalam_review' => ['icon' => 'fa-paper-plane', 'bg' => '#eef0fd', 'color' => '#4361ee'],
+                    'disetujui_kasubag' => ['icon' => 'fa-check-circle', 'bg' => '#e8faf9', 'color' => '#2ec4b6'],
+                    'disetujui' => ['icon' => 'fa-check-double', 'bg' => '#e8faf9', 'color' => '#2ec4b6'],
+                    'ditolak' => ['icon' => 'fa-times-circle', 'bg' => '#fdecea', 'color' => '#e63946'],
+                ];
+                $statusInfo = $iconMap[$item->status] ?? $iconMap['pending'];
+                $labelMap = [
+                    'pending' => 'Peminjaman baru',
+                    'dalam_review' => 'Diteruskan ke Kasubag',
+                    'disetujui_kasubag' => 'Disetujui Kasubag',
+                    'disetujui' => 'Peminjaman disetujui',
+                    'ditolak' => 'Peminjaman ditolak',
+                ];
+
+                return [
+                    'text' => ($labelMap[$item->status] ?? 'Peminjaman') . ' - ' . ($item->nama_fasilitas ?? $item->gedung?->nama_gedung ?? 'Gedung'),
+                    'by' => $item->nama_lengkap,
+                    'time' => $item->updated_at->locale('id')->diffForHumans(),
+                    'icon' => $statusInfo['icon'],
+                    'bg' => $statusInfo['bg'],
+                    'color' => $statusInfo['color'],
+                ];
+            });
+
+        // ── Gedung baru ditambahkan bulan ini ──
+        $gedungBaruBulanIni = Gedung::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        // ── Peminjaman bulan ini ──
+        $peminjamanBulanIni = PeminjamanGedung::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        return view('adminsarpras.dashbord', compact(
+            'user',
+            'totalGedung', 'gedungTersedia', 'gedungDigunakan',
+            'totalPeminjaman', 'peminjamanPending', 'peminjamanDalamReview',
+            'peminjamanDisetujui', 'peminjamanDitolak', 'peminjamanAktif',
+            'totalKerusakan', 'perluPerbaikan', 'rusakBerat', 'rusakRingan',
+            'totalPendapatan',
+            'chartBars',
+            'peminjamanTerbaru', 'aktivitasTerbaru',
+            'gedungBaruBulanIni', 'peminjamanBulanIni'
+        ));
     }
 
     // DATA GEDUNG
@@ -60,6 +142,20 @@ class AdminSarprasController extends Controller
         if ($request->filled('kategori')) {
         $query->kategori($request->kategori);
         }
+
+        // Eager load peminjaman dengan filter bulan ini dan status aktif
+        $gedungs = $query->with(['peminjaman' => function($q) {
+            $q->whereIn('status', ['disetujui', 'di setujui', 'berlangsung'])
+              ->whereMonth('tanggal_pinjam', now()->month)
+              ->whereYear('tanggal_pinjam', now()->year)
+              ->select('id', 'gedung_id', 'nama_lengkap', 'instansi_lembaga', 
+                       'tanggal_pinjam', 'tanggal_kembali', 'jam_mulai', 'jam_selesai', 'status');
+        }])->latest()->get();
+
+        // Hitung statistik
+        $totalGedung = $gedungs->count();
+        $tersedia = $gedungs->where('ketersediaan', 'Tersedia')->count();
+
 
 
         if ($request->filled('ketersediaan')) {
@@ -186,6 +282,17 @@ class AdminSarprasController extends Controller
         $query = PeminjamanGedung::with(['user', 'reviewer', 'approver'])
             ->orderBy('created_at', 'desc');
 
+        // Filter status berdasarkan tab
+        if ($request->filled('status')) {
+            if ($request->status == 'menunggu') {
+                $query->pendingReview();
+            } elseif ($request->status == 'disetujui') {
+                $query->whereIn('status', ['disetujui_kasubag', 'disetujui']);
+            } elseif ($request->status == 'ditolak') {
+                $query->where('status', 'ditolak');
+            }
+        }
+
         // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -205,136 +312,253 @@ class AdminSarprasController extends Controller
 
         return view('adminsarpras.daftar_peminjaman', compact('peminjaman'));
     }
-        public function approvePeminjaman(Request $request, PeminjamanGedung $peminjaman)
-    {
-        $peminjaman->update([
-            'status' => 'disetujui',
-            'reviewed_by_admin_id' => auth('adminsarpras')->id(),
-            'tanggal_approval' => now()
-        ]);
 
-        return response()->json(['success' => true, 'message' => 'Peminjaman disetujui']);
+    // Action: Teruskan ke Kasubag
+    public function forwardToKasubag(Request $request, PeminjamanGedung $peminjaman)
+    {
+        try {
+            // ✅ CEK AUTH DULU
+            if (!auth()->check()) {
+                return response()->json(['success' => false, 'message' => 'Belum login'], 401);
+            }
+
+            $adminId = auth()->id();
+            
+            $request->validate([
+                'komentar' => 'nullable|string|max:1000'
+            ]);
+
+            $peminjaman->update([
+                'status' => 'dalam_review',
+                'reviewed_by_admin_id' => $adminId,
+                'diteruskan_ke_kasubag_date' => now(),
+                'komentar' => $request->komentar
+            ]);
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Peminjaman berhasil diteruskan ke Kasubag!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Forward Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function rejectPeminjaman(Request $request, PeminjamanGedung $peminjaman)
+    // Action: Tolak oleh Admin
+    public function rejectByAdmin(Request $request, PeminjamanGedung $peminjaman)
     {
-        $request->validate(['komentar' => 'required|string|max:1000']);
-        
+        try {
+            if (!auth()->check()) {
+                return response()->json(['success' => false, 'message' => 'Belum login'], 401);
+            }
+
+            $request->validate([
+                'komentar' => 'required|string|max:1000'
+            ]);
+
+            $adminId = auth()->id();
+
         $peminjaman->update([
             'status' => 'ditolak',
-            'komentar' => $request->komentar,
-            'reviewed_by_admin_id' => auth('adminsarpras')->id()
+            'reviewed_by_admin_id' => $adminId,
+            'komentar' => $request->komentar
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Peminjaman ditolak']);
+        return response()->json([
+            'success' => true, 
+            'message' => 'Peminjaman berhasil ditolak!'
+        ]);
+    }catch (\Exception $e) {
+            \Log::error('Reject Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Download surat
+    public function downloadSurat(PeminjamanGedung $peminjaman)
+    {
+        // Cek apakah file surat ada
+        if (!$peminjaman->surat_path || !Storage::disk('public')->exists($peminjaman->surat_path)) {
+            return back()->with('error', 'Surat peminjaman tidak ditemukan!');
+        }
+
+        // Ambil path lengkap file
+        $filePath = storage_path('app/public/' . $peminjaman->surat_path);
+        
+        // Nama file download (dengan timestamp dan nama peminjam)
+        $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
+        $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." . 
+                        pathinfo($originalName, PATHINFO_EXTENSION);
+
+        return response()->download($filePath, $downloadName);
     }
 
     public function laporanPeminjamanGedung(Request $request)
     {
-        $query = PengembalianGedung::with(['peminjaman', 'adminSarpras'])
-            ->orderBy('waktu_verifikasi', 'desc');
+        // Query utama
+        $query = PeminjamanGedung::with(['user', 'gedung', 'reviewer', 'approver'])
+            ->select('id', 'user_id', 'gedung_id', 'nama_lengkap', 'instansi_lembaga', 
+                    'tanggal_pinjam', 'tanggal_kembali', 'jam_mulai', 'jam_selesai',
+                    'status', 'komentar', 'total_pembayaran', 'surat_path', 'lama_peminjaman_hari', 'created_at');
 
-        // Filter bulan/tahun
-        if ($request->filled('bulan') && $request->filled('tahun')) {
-            $query->whereYear('tanggal_pengembalian', $request->tahun)
-                  ->whereMonth('tanggal_pengembalian', $request->bulan);
-        }
-
-        // Filter status verifikasi
-        if ($request->filled('status_verifikasi')) {
-            $query->where('status_verifikasi', $request->status_verifikasi);
-        }
-
-        $laporan = $query->paginate(20);
-
-        $stats = [
-            'total' => PengembalianGedung::count(),
-            'baik' => PengembalianGedung::where('kondisi_gedung', 'baik')->count(),
-            'ringan' => PengembalianGedung::where('kondisi_gedung', 'ringan')->count(),
-            'rusak' => PengembalianGedung::where('kondisi_gedung', 'rusak')->count(),
-            'total_denda' => PengembalianGedung::sum('denda_akhir')
-        ];
-
-        return view('adminsarpras.laporan_peminjaman_gedung', compact('laporan', 'stats'));
-    }
-
-    public function daftarPengembalian(Request $request)
-    {
-        $query = PengembalianGedung::with(['peminjaman', 'adminSarpras'])
-            ->orderBy('created_at', 'desc');
-
-        // Filter status verifikasi
-        if ($request->filled('status_verifikasi')) {
-            $query->where('status_verifikasi', $request->status_verifikasi);
-        }
-
-        // Filter kondisi gedung
-        if ($request->filled('kondisi_gedung')) {
-            $query->where('kondisi_gedung', $request->kondisi_gedung);
-        }
-
-        // Search
+        // Filters
         if ($request->filled('search')) {
-            $query->whereHas('peminjaman', function($q) use ($request) {
-                $q->where('kode_peminjaman', 'like', '%'.$request->search.'%')
-                  ->orWhere('nama_gedung', 'like', '%'.$request->search.'%')
-                  ->orWhere('instansi', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
+                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
+                ->orWhere('tujuan_penggunaan', 'like', '%'.$request->search.'%');
             });
         }
 
-        $pengembalianGedung = $query->paginate(10);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-        return view('adminsarpras.daftar_pengembalian', compact('pengembalianGedung'));
+        $peminjaman = $query->latest('tanggal_pinjam')->paginate(10);
+
+        // ✅ SEMUA STATS DIHITUNG DI SINI
+        $stats = [
+            'total_peminjaman' => PeminjamanGedung::count(),
+            'sedang_dipinjam' => PeminjamanGedung::whereIn('status', ['disetujui', 'dipinjam'])->count(),
+            'terlambat' => PeminjamanGedung::where('status', 'terlambat')->count(),
+            'disetujui' => PeminjamanGedung::where('status', 'disetujui')->count(),
+            'pending' => PeminjamanGedung::whereIn('status', ['pending', 'dalam_review'])->count(),
+            'ditolak' => PeminjamanGedung::where('status', 'ditolak')->count(),
+            'total_pembayaran' => (float) PeminjamanGedung::sum('total_pembayaran'),
+            'rata_rata_hari' => (int) PeminjamanGedung::avg('lama_peminjaman_hari'),
+        ];
+
+        $donutData = [
+            'total' => $stats['total_peminjaman'],
+            'disetujui' => $stats['disetujui'],
+            'pending' => $stats['pending'],
+            'ditolak' => $stats['ditolak'],
+            'disetujui_pct' => $stats['total_peminjaman'] > 0 ? round(($stats['disetujui'] / $stats['total_peminjaman']) * 100) : 0,
+            'pending_pct' => $stats['total_peminjaman'] > 0 ? round(($stats['pending'] / $stats['total_peminjaman']) * 100) : 0,
+            'ditolak_pct' => $stats['total_peminjaman'] > 0 ? round(($stats['ditolak'] / $stats['total_peminjaman']) * 100) : 0,
+        ];
+
+        // Status bulan ini
+        $bulanIniQuery = PeminjamanGedung::whereYear('tanggal_pinjam', now()->year)
+                                        ->whereMonth('tanggal_pinjam', now()->month);
+        $statusBulanIni = [
+            'disetujui' => $bulanIniQuery->where('status', 'disetujui')->count(),
+            'pending' => $bulanIniQuery->clone()->whereIn('status', ['pending', 'dalam_review'])->count(),
+            'ditolak' => $bulanIniQuery->clone()->where('status', 'ditolak')->count(),
+            'total' => $bulanIniQuery->count()
+        ];
+
+        // Persentase approval
+        $total = $stats['total_peminjaman'] ?: 1;
+        $stats['persentase_approval'] = round(($stats['disetujui'] / $total) * 100);
+
+        // Trend data 6 bulan terakhir
+        $trendData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $count = PeminjamanGedung::whereYear('tanggal_pinjam', $bulan->year)
+                                    ->whereMonth('tanggal_pinjam', $bulan->month)
+                                    ->count();
+            $maxCount = PeminjamanGedung::whereYear('tanggal_pinjam', '>=', now()->subMonths(6)->year)
+                                    ->whereMonth('tanggal_pinjam', '>=', now()->subMonths(6)->month)
+                                    ->count();
+            $height = $maxCount > 0 ? ($count / $maxCount) * 100 : 0;
+            
+            $trendData[] = [
+                'val' => $count,
+                'height' => $height,
+                'label' => $bulan->locale('id')->isoFormat('MMM'),
+                'isGreen' => false
+            ];
+        }
+
+        return view('adminsarpras.laporan_peminjaman_gedung', compact(
+            'peminjaman', 'stats', 'statusBulanIni', 'trendData', 'donutData'
+        ));
     }
 
-    // public function pengaturanAkun()
-    // {
-    //     $admin = auth('adminsarpras')->user(); // Sesuaikan dengan guard auth
-    //     return view('adminsarpras.pengaturan_akun', compact('admin'));
+    // // public function daftarPengembalian(Request $request)
+    // // {
+    // //     $query = PengembalianGedung::with(['peminjaman', 'adminSarpras'])
+    // //         ->orderBy('created_at', 'desc');
+
+    // //     // Filter status verifikasi
+    // //     if ($request->filled('status_verifikasi')) {
+    // //         $query->where('status_verifikasi', $request->status_verifikasi);
+    // //     }
+
+    // //     // Filter kondisi gedung
+    // //     if ($request->filled('kondisi_gedung')) {
+    // //         $query->where('kondisi_gedung', $request->kondisi_gedung);
+    // //     }
+
+    // //     // Search
+    // //     if ($request->filled('search')) {
+    // //         $query->whereHas('peminjaman', function($q) use ($request) {
+    // //             $q->where('kode_peminjaman', 'like', '%'.$request->search.'%')
+    // //               ->orWhere('nama_gedung', 'like', '%'.$request->search.'%')
+    // //               ->orWhere('instansi', 'like', '%'.$request->search.'%');
+    // //         });
+    // //     }
+
+    // //     $pengembalianGedung = $query->paginate(10);
+
+    // //     return view('adminsarpras.daftar_pengembalian', compact('pengembalianGedung'));
+    // // }
+
+    // // Method tambahan untuk verifikasi
+    // public function verifikasiPengembalian(Request $request, PengembalianGedung $pengembalianGedung)
+    // // {
+    // //     $request->validate([
+    // //         'status_verifikasi' => 'required|in:disetujui,ditolak',
+    // //         'catatan_verifikasi' => 'required_if:status_verifikasi,ditolak|nullable|string|max:1000',
+    // //         'denda_akhir' => 'nullable|numeric|min:0'
+    // //     ]);
+
+    // //     $admin = auth('adminsarpras')->user();
+
+    // //     $pengembalianGedung->verifikasiOlehAdmin(
+    // //         $admin,
+    // //         $request->status_verifikasi,
+    // //         $request->catatan_verifikasi,
+    // //         $request->denda_akhir ?? 0
+    // //     );
+
+    // //     return redirect()->back()->with('success', 'Pengembalian berhasil diverifikasi!');
+    // // }
+
+    // // Method untuk detail pengembalian
+    // // public function showPengembalian(PengembalianGedung $pengembalianGedung)
+    // // {
+    // //     $pengembalianGedung->load(['peminjaman', 'adminSarpras']);
+    // //     return view('adminsarpras.pengembalian_detail', compact('pengembalianGedung'));
+    // // }
+
+    // // Method untuk cetak laporan
+    // // public function cetakLaporan(PengembalianGedung $pengembalianGedung)
+    // // {
+    // //     $pengembalianGedung->load(['peminjaman', 'adminSarpras']);
+    // //     // Logic cetak PDF atau print view
+    // //     return view('adminsarpras.cetak_laporan', compact('pengembalianGedung'));
+    // // }
+
+    // // // API untuk foto modal
+    // // public function getPhotos(PengembalianGedung $pengembalianGedung)
+    // // {
+    // //     return response()->json($pengembalianGedung->foto_kondisi ?? []);
     // }
-
-    // Method tambahan untuk verifikasi
-    public function verifikasiPengembalian(Request $request, PengembalianGedung $pengembalianGedung)
-    {
-        $request->validate([
-            'status_verifikasi' => 'required|in:disetujui,ditolak',
-            'catatan_verifikasi' => 'required_if:status_verifikasi,ditolak|nullable|string|max:1000',
-            'denda_akhir' => 'nullable|numeric|min:0'
-        ]);
-
-        $admin = auth('adminsarpras')->user();
-
-        $pengembalianGedung->verifikasiOlehAdmin(
-            $admin,
-            $request->status_verifikasi,
-            $request->catatan_verifikasi,
-            $request->denda_akhir ?? 0
-        );
-
-        return redirect()->back()->with('success', 'Pengembalian berhasil diverifikasi!');
-    }
-
-    // Method untuk detail pengembalian
-    public function showPengembalian(PengembalianGedung $pengembalianGedung)
-    {
-        $pengembalianGedung->load(['peminjaman', 'adminSarpras']);
-        return view('adminsarpras.pengembalian_detail', compact('pengembalianGedung'));
-    }
-
-    // Method untuk cetak laporan
-    public function cetakLaporan(PengembalianGedung $pengembalianGedung)
-    {
-        $pengembalianGedung->load(['peminjaman', 'adminSarpras']);
-        // Logic cetak PDF atau print view
-        return view('adminsarpras.cetak_laporan', compact('pengembalianGedung'));
-    }
-
-    // API untuk foto modal
-    public function getPhotos(PengembalianGedung $pengembalianGedung)
-    {
-        return response()->json($pengembalianGedung->foto_kondisi ?? []);
-    }
-
+    
     /**
      * Daftar semua data kerusakan ✅ FIXED
      */
@@ -367,34 +591,6 @@ class AdminSarprasController extends Controller
 
         return view('adminsarpras.data_kerusakan', compact('kerusakans', 'stats'));
     }
-
-    /**
-     * Laporan kerusakan (halaman khusus dengan charts)
-     */
-    // public function laporanKerusakan(Request $request)
-    // {
-    //     $query = Kerusakan::query()
-    //         ->orderBy('tanggal_input', 'desc');
-
-    //     // Filter bulan/tahun
-    //     if ($request->filled('bulan') && $request->filled('tahun')) {
-    //         $query->whereYear('tanggal_input', $request->tahun)
-    //               ->whereMonth('tanggal_input', $request->bulan);
-    //     }
-
-    //     // Filter kondisi
-    //     if ($request->filled('kondisi')) {
-    //         $query->where('kondisi', $request->kondisi);
-    //     }
-
-    //     // ✅ Pagination untuk laporan
-    //     $kerusakans = $query->paginate(20);
-
-    //     // ✅ Stats khusus laporan
-    //     $stats = $this->getKerusakanStats();
-
-    //     return view('adminsarpras.laporan_kerusakan', compact('kerusakans', 'stats'));
-    // }
 
     /**
      * Hitung semua statistik kerusakan

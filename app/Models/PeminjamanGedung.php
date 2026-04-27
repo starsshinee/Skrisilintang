@@ -48,24 +48,54 @@ class PeminjamanGedung extends Model
         return $this->belongsTo(Gedung::class);
     }
 
+    // Relationships (sama seperti sebelumnya)
+    public function user() 
+    { 
+        return $this->belongsTo(User::class, 'user_id'); 
+    }
+    public function reviewer() 
+    { 
+        return $this->belongsTo(User::class, 'reviewed_by_admin_id'); 
+    }
+    public function approver() { return $this->belongsTo(User::class, 'approved_by_kasubag_id'); }
+
+    // Scopes (sama seperti sebelumnya)
+    public function scopePendingReview($query)
+    {
+        return $query->whereIn('status', ['pending']);
+    }
+
+    public function scopeWaitingKasubag($query)
+    {
+        return $query->whereIn('status', ['dalam_review']);
+    }
+
+    public function scopeApprovedKasubag($query)
+    {
+        return $query->whereIn('status', ['disetujui_kasubag']);
+    }
+
     public function getStatusBadgeAttribute()
     {
         $badgeClass = match($this->status) {
             'di setujui' => 'approved',
             'pending' => 'pending',
-            'rejected' => 'rejected',
+            'di tolak' => 'rejected',
+            'dalam_review' => 'in_review',
+            'disetujui_kasubag' => 'approved_kasubag',
             default => 'pending'
         };
 
         return '<span class="status-badge ' . $badgeClass . '"><i class="fas fa-circle"></i> ' . ucfirst($this->status) . '</span>';
     }
 
-    // Relationships (sama seperti sebelumnya)
-    public function user() { return $this->belongsTo(User::class, 'user_id'); }
-    public function reviewer() { return $this->belongsTo(User::class, 'reviewed_by_admin_id'); }
-    public function approver() { return $this->belongsTo(User::class, 'approved_by_kasubag_id'); }
+    public function getStatusTextAttribute()
+    {
+        return ucfirst(str_replace('_', ' ', $this->status));
+    }
 
-    // Scopes (sama seperti sebelumnya)
-    public function scopePending($query) { return $query->where('status', 'pending'); }
-    public function scopeApproved($query) { return $query->whereIn('status', ['disetujui_kasubag', 'disetujui']); }
+    public function getSuratUrlAttribute()
+    {
+        return $this->surat_path ? asset('storage/' . $this->surat_path) : null;
+    }
 }
