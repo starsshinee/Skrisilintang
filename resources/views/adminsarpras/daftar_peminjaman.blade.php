@@ -109,6 +109,12 @@
   }
   .btn-primary:hover { background: #3251d4; }
 
+  /* ─── HEADER ─── */
+  .page-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+  .page-hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+  .page-hdr p{font-size:13px;color:var(--muted);margin-top:2px}
+
+
   /* Table */
   .table-card {
     background: var(--card-bg); border-radius: 16px;
@@ -194,104 +200,91 @@
       </button>
     </div>
   </div>
+
   <div class="content">
     <div class="top-bar">
+      <div class="page-hdr">
+        <div>
+          <h1>Daftar Peminjaman Gedung</h1>
+          <p>{{ $peminjaman->total() }} data ditemukan</p>
+        </div>
+      </div>
       <div class="tabs">
         <div class="tab active" onclick="filterTab('semua', this)">Semua</div>
         <div class="tab" onclick="filterTab('disetujui', this)">Disetujui</div>
         <div class="tab" onclick="filterTab('menunggu', this)">Menunggu</div>
         <div class="tab" onclick="filterTab('ditolak', this)">Ditolak</div>
       </div>
-      {{-- <button class="btn-primary" onclick="openModal()">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
-        Peminjaman Baru
-      </button> --}}
     </div>
+
 
     <div class="table-card">
       <table>
+        <!-- Update table header -->
         <thead>
-          <tr>
-            <th>No</th>
-            <th>Peminjam</th>
-            <th>Gedung/Ruangan</th>
-            <th>Tanggal</th>
-            <th>Keperluan</th>
-            <th>Status</th>
-            <th>Total Pembayaran</th>
-            <th>Status Pembayaran (Lunas/belum lunas)</th>
-            <th>Cara Pembayaran (Tunai/e-billing)</th>
-            <th>Aksi</th>
-          </tr>
+            <tr>
+                <th>No</th>
+                <th>Peminjam</th>
+                <th>Fasilitas</th>
+                <th>Tanggal Pinjam</th>
+                <th>Tujuan</th>
+                <th>Total Bayar</th>
+                <th>Status Pembayaran</th>
+                <th>Cara Bayar</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
         </thead>
-        <tbody id="pinjamTable">
-          <tr data-status="disetujui">
-            <td>1</td><td class="peminjam-name">Dr. Ahmad Fauzi</td>
-            <td>Aula Utama</td>
-            <td>15 Jun 2025</td>
-            <td>Seminar Nasional</td>
-            <td><span class="status-badge badge-approved">Disetujui</span></td>
-             <td>Rp. 2.500.000</td>
-            <td><div class="status-badge badge-approved">Lunas</div></td>
-            <td>Tunai</td>
-            <td><div class="action-btns">
-              <button class="action-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </button>
-              <button class="action-btn danger">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
-              <button class="action-btn edit">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
-              </svg>
-              </button>
-            </div></td>
-          </tr>
-          {{-- <tr data-status="disetujui">
-            <td>2</td><td class="peminjam-name">Siti Nurhaliza</td><td>Lab Komputer 1</td><td>Gedung B</td><td>16 Jun 2025</td><td>Workshop Python</td>
-            <td><span class="status-badge badge-approved">Disetujui</span></td>
-            <td><div class="act-dash">—</div></td>
-          </tr>
-          <tr data-status="menunggu">
-            <td>3</td><td class="peminjam-name">Budi Santoso</td><td>R. Rapat 201</td><td>Gedung C</td><td>17 Jun 2025</td><td>Rapat BEM</td>
-            <td><span class="status-badge badge-pending">Menunggu</span></td>
-            <td><div class="action-btns">
-              <button class="act-btn act-approve" onclick="approveRow(this)" title="Setujui">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <button class="act-btn act-reject" onclick="rejectRow(this)" title="Tolak">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-              </button>
-            </div></td>
-          </tr>
-          <tr data-status="disetujui">
-            <td>4</td><td class="peminjam-name">Maya Putri</td><td>Auditorium</td><td>Gedung D</td><td>18 Jun 2025</td><td>Wisuda</td>
-            <td><span class="status-badge badge-approved">Disetujui</span></td>
-            <td><div class="act-dash">—</div></td>
-          </tr>
-          <tr data-status="ditolak">
-            <td>5</td><td class="peminjam-name">Rizky Ramadhan</td><td>Lab Fisika</td><td>Gedung E</td><td>19 Jun 2025</td><td>Praktikum</td>
-            <td><span class="status-badge badge-rejected">Ditolak</span></td>
-            <td><div class="act-dash">—</div></td>
-          </tr>
-          <tr data-status="menunggu">
-            <td>6</td><td class="peminjam-name">Dewi Lestari</td><td>Co-working Space</td><td>Gedung F</td><td>20 Jun 2025</td><td>Hackathon</td>
-            <td><span class="status-badge badge-pending">Menunggu</span></td>
-            <td><div class="action-btns">
-              <button class="act-btn act-approve" onclick="approveRow(this)" title="Setujui">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <button class="act-btn act-reject" onclick="rejectRow(this)" title="Tolak">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-              </button>
-            </div></td>
-          </tr>
-          <tr data-status="disetujui">
-            <td>7</td><td class="peminjam-name">Hendra Wijaya</td><td>R. Rapat 101</td><td>Gedung A</td><td>21 Jun 2025</td><td>Interview Kerja</td>
-            <td><span class="status-badge badge-approved">Disetujui</span></td>
-            <td><div class="act-dash">—</div></td>
-          </tr> --}}
+
+        <tbody>
+        @forelse($peminjaman as $item)
+        <tr data-status="{{ $item->status }}">
+            <td>{{ $loop->iteration }}</td>
+            <td class="peminjam-name">{{ $item->nama_lengkap }}<br><small>{{ $item->instansi_lembaga }}</small></td>
+            <td>{{ $item->nama_fasilitas ?? $item->fasilitas }}</td>
+            <td>{{ $item->tanggal_pinjam->locale('id')->isoFormat('D MMM YYYY') }}</td>
+            <td>{{ Str::limit($item->tujuan_penggunaan, 30) }}</td>
+            <td>Rp {{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
+            <td>
+                @if($item->status_pembayaran == 'lunas')
+                    <span class="status-badge badge-approved">Lunas</span>
+                @else
+                    <span class="status-badge badge-pending">Belum Lunas</span>
+                @endif
+            </td>
+            <td>
+                <span class="status-badge {{ $item->cara_pembayaran == 'tunai' ? 'badge-approved' : 'badge-pending' }}">
+                    {{ ucfirst($item->cara_pembayaran) }}
+                </span>
+            </td>
+            <td>
+                <span class="status-badge {{ $item->status == 'disetujui' ? 'badge-approved' : ($item->status == 'pending' ? 'badge-pending' : 'badge-rejected') }}">
+                    {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                </span>
+            </td>
+            <td>
+                <div class="action-btns">
+                    <button class="act-btn act-view" title="Detail">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    @if($item->status == 'pending')
+                      <button class="act-btn act-approve" title="Setujui" onclick="approvePeminjaman({{ $item->id }})">
+                          <i class="fas fa-check"></i>
+                      </button>
+                      <button class="act-btn act-reject" title="Tolak" onclick="rejectPeminjaman({{ $item->id }})">
+                          <i class="fas fa-times"></i>
+                      </button>
+                    @endif
+                </div>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                Tidak ada data peminjaman
+            </td>
+        </tr>
+        @endforelse
         </tbody>
       </table>
     </div>

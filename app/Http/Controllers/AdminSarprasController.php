@@ -183,30 +183,50 @@ class AdminSarprasController extends Controller
     //====DAFTAR PEMINJAMAN=========
     public function daftarPeminjaman(Request $request)
     {
-        $query = PeminjamanGedung::with('pengembalian');
+        $query = PeminjamanGedung::with(['user', 'reviewer', 'approver'])
+            ->orderBy('created_at', 'desc');
 
         // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter terlambat
-        if ($request->boolean('terlambat')) {
-            $query->where('status', 'terlambat');
-        }
-
         // Search
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
-                $q->where('kode_peminjaman', 'like', '%'.$request->search.'%')
-                  ->orWhere('nama_gedung', 'like', '%'.$request->search.'%')
-                  ->orWhere('instansi', 'like', '%'.$request->search.'%');
+                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
+                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
+                ->orWhere('fasilitas', 'like', '%'.$request->search.'%')
+                ->orWhere('nama_fasilitas', 'like', '%'.$request->search.'%');
             });
         }
 
         $peminjaman = $query->paginate(15);
 
         return view('adminsarpras.daftar_peminjaman', compact('peminjaman'));
+    }
+        public function approvePeminjaman(Request $request, PeminjamanGedung $peminjaman)
+    {
+        $peminjaman->update([
+            'status' => 'disetujui',
+            'reviewed_by_admin_id' => auth('adminsarpras')->id(),
+            'tanggal_approval' => now()
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Peminjaman disetujui']);
+    }
+
+    public function rejectPeminjaman(Request $request, PeminjamanGedung $peminjaman)
+    {
+        $request->validate(['komentar' => 'required|string|max:1000']);
+        
+        $peminjaman->update([
+            'status' => 'ditolak',
+            'komentar' => $request->komentar,
+            'reviewed_by_admin_id' => auth('adminsarpras')->id()
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Peminjaman ditolak']);
     }
 
     public function laporanPeminjamanGedung(Request $request)

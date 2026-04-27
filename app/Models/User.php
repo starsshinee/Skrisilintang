@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserProfile;
+use App\Models\PeminjamanGedung;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -161,5 +162,11 @@ class User extends Authenticatable
             'tamu'            => 'Tamu',
             default           => ucfirst($this->role),
         };
+    }
+
+    // Di model User
+    public function peminjamanGedung()
+    {
+        return $this->hasMany(PeminjamanGedung::class, 'user_id');
     }
 }

@@ -324,6 +324,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/dashboard', [TamuController::class, 'dashboard'])->name('dashboard');
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
+            Route::post('/peminjaman-gedung', [TamuController::class, 'storePeminjamanGedung'])->name('peminjaman-gedung.store');
             Route::get('/pengembalian-gedung', [TamuController::class, 'pengembaliangedung'])->name('pengembalian-gedung');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');

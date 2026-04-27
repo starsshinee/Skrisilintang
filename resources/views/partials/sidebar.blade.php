@@ -619,6 +619,18 @@
     </form>
   </div>
 </aside>
+
+<script>
+
+// SIDEBAR MOBILE
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebarMobile');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+}
+
+</script>
  
   {{-- {{-- <div class="sidebar-footer"> --}}
     {{-- <div class="sidebar-user">

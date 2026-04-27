@@ -419,6 +419,7 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
             <th style="width:120px">Tarif Sewa</th>
             <th style="width:80px">Luas</th>
             <th style="width:110px">Status</th>
+            <th style="width:110px">Kategori</th>
             <th style="width:110px">Aksi</th>
           </tr>
         </thead>

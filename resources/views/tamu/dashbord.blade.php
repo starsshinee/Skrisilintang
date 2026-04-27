@@ -148,16 +148,16 @@
   .logout-btn:hover { background: rgba(239,68,68,0.16); }
 
   /* ── MAIN CONTENT ── */
-  .main { margin-left: 256px; flex: 1; padding: 0 32px 32px; }
+  .main { margin-left: 256px; flex: 1; padding: 24px 28px 32px; }
 
   /* TOP BAR */
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 0 24px;
+    padding: 0 0 24px;
     position: sticky; top: 0; z-index: 50;
     background: var(--bg);
   }
-  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
+  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
   .topbar-date {
     font-size: 13px; color: var(--text-secondary); font-weight: 500;
@@ -195,7 +195,7 @@
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     box-shadow: 0 8px 32px rgba(37,99,235,0.28);
   }
   .hero::before {
@@ -219,7 +219,7 @@
     right: 120px; bottom: -60px;
     pointer-events: none;
   }
-  .hero-left { position: relative; z-index: 2; }
+  .hero-left { position: relative; z-index: 2; flex: 1; }
   .hero-greeting { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 500; margin-bottom: 6px; letter-spacing: .5px; }
   .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
   .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 380px; line-height: 1.6; }
@@ -239,7 +239,12 @@
   .hero-btn:hover { background: rgba(255,255,255,0.28); }
 
   /* STAT CARDS */
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+  .stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; 
+    margin-bottom: 32px; 
+  }
   .stat-card {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -276,50 +281,89 @@
   .stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: var(--text-primary); line-height: 1; }
   .stat-sub { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
 
-  /* BOTTOM GRID */
-  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  /* MAIN CONTENT GRID */
+  .content-grid { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 0;
+  }
 
-  /* FASILITAS CARD */
+  /* SECTION CARDS */
   .section-card {
     background: var(--card-bg);
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .section-header {
-    padding: 20px 24px 16px;
+    padding: 24px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border);
   }
-  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .section-title { 
+    font-family: 'Space Grotesk', sans-serif; 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: var(--text-primary); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+  }
   .section-title i { color: var(--primary); }
   .see-all { font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px; }
   .see-all:hover { text-decoration: underline; }
 
-  .facility-list { padding: 16px 24px; display: flex; flex-direction: column; gap: 12px; }
-  .facility-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px;
-    background: #f8faff;
+  /* QUICK ACTIONS */
+  .quick-actions {
+    display: grid; 
+    grid-template-columns: 1fr 1fr;
+    gap: 12px; 
+    padding: 24px;
+    flex: 1;
+  }
+  .qa-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid #e8eeff;
-    transition: all .2s;
-    cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    text-decoration: none;
+    border: 1.5px solid transparent;
   }
-  .facility-item:hover { background: #eff4ff; border-color: #bfcfff; transform: translateX(3px); }
-  .fac-icon {
-    width: 42px; height: 42px;
-    border-radius: 11px;
-    display: grid; place-items: center;
-    font-size: 17px; flex-shrink: 0;
+  .qa-btn.primary { 
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+    color: #fff; 
+    box-shadow: 0 4px 14px rgba(37,99,235,0.3); 
   }
-  .fac-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-  .fac-cap { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-  .fac-price { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--primary); background: rgba(37,99,235,0.08); padding: 4px 10px; border-radius: 7px; white-space: nowrap; }
+  .qa-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+  .qa-btn.outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+  .qa-btn.outline:hover { background: rgba(37,99,235,0.05); }
+  .qa-btn.accent { 
+    background: linear-gradient(135deg, var(--accent2), #7c3aed); 
+    color: #fff; 
+    box-shadow: 0 4px 14px rgba(139,92,246,0.3); 
+  }
+  .qa-btn.accent:hover { transform: translateY(-2px); }
+  .qa-btn.success { 
+    background: linear-gradient(135deg, var(--success), #059669); 
+    color: #fff; 
+    box-shadow: 0 4px 14px rgba(16,185,129,0.3); 
+  }
+  .qa-btn.success:hover { transform: translateY(-2px); }
+  .qa-btn i { font-size: 17px; }
 
   /* RECENT REQUESTS */
-  .req-list { padding: 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .req-list { 
+    padding: 24px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px;
+    flex: 1;
+  }
   .req-empty { text-align: center; padding: 40px 20px; }
   .req-empty-icon { font-size: 48px; color: #dde5f9; margin-bottom: 12px; }
   .req-empty-text { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
@@ -348,30 +392,6 @@
   .req-badge.approved { background: rgba(16,185,129,0.1); color: var(--success); }
   .req-badge.rejected { background: rgba(239,68,68,0.1); color: var(--danger); }
 
-  /* QUICK ACTIONS */
-  .quick-actions {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 12px; padding: 16px 24px;
-  }
-  .qa-btn {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .2s;
-    text-decoration: none;
-    border: 1.5px solid transparent;
-  }
-  .qa-btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
-  .qa-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
-  .qa-btn.outline { background: transparent; color: var(--primary); border-color: var(--primary); }
-  .qa-btn.outline:hover { background: rgba(37,99,235,0.05); }
-  .qa-btn.accent { background: linear-gradient(135deg, var(--accent2), #7c3aed); color: #fff; box-shadow: 0 4px 14px rgba(139,92,246,0.3); }
-  .qa-btn.accent:hover { transform: translateY(-2px); }
-  .qa-btn.success { background: linear-gradient(135deg, var(--success), #059669); color: #fff; box-shadow: 0 4px 14px rgba(16,185,129,0.3); }
-  .qa-btn.success:hover { transform: translateY(-2px); }
-  .qa-btn i { font-size: 17px; }
-
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -384,6 +404,22 @@
   .animate { animation: fadeUp .5s ease both; }
   .d1 { animation-delay: .05s; } .d2 { animation-delay: .1s; } .d3 { animation-delay: .15s; }
   .d4 { animation-delay: .2s; } .d5 { animation-delay: .25s; } .d6 { animation-delay: .3s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; }
+    .main { margin-left: 0; padding: 16px; }
+    .hero { flex-direction: column; text-align: center; }
+    .hero-right { text-align: center; margin-top: 16px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .topbar { flex-direction: column; gap: 12px; }
+    .topbar-right { width: 100%; justify-content: space-between; }
+  }
 </style>
 </head>
 <body>
@@ -393,16 +429,18 @@
 <!-- MAIN -->
 <main class="main">
   <!-- TOPBAR -->
-  <div class="topbar">
+  <div class="topbar animate d1">
     <div class="topbar-title">Dashboard Tamu</div>
     <div class="topbar-right">
       <div class="topbar-date">
         <i class="fas fa-calendar" style="color:var(--primary)"></i>
-        Rabu, 15 April 2026
+        {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
       </div>
-      <div class="notif-btn">
+      <div class="notif-btn" onclick="toggleNotifications()">
         <i class="fas fa-bell"></i>
-        <div class="notif-dot"></div>
+        {{-- @if($notifikasi->count() > 0)
+          <div class="notif-dot"></div>
+        @endif --}}
       </div>
     </div>
   </div>
@@ -413,12 +451,17 @@
     <div class="hero-blob2"></div>
     <div class="hero-left">
       <div class="hero-greeting">👋 Selamat datang kembali!</div>
-      <div class="hero-title">Halo!</div>
-      <div class="hero-sub">Sebagai Tamu, Anda dapat mengajukan permintaan peminjaman aset dan fasilitas BPMP Provinsi Gorontalo.</div>
+      <h1 class="hero-title">Halo, {{ auth()->user()->nama_lengkap ?? 'Tamu' }}!</h1>
+      <div class="hero-sub">
+        @if(auth()->user()->instansi_lembaga)
+          {{ auth()->user()->instansi_lembaga }} • 
+        @endif
+        Kelola permintaan peminjaman aset dan fasilitas BPMP Provinsi Gorontalo dengan mudah.
+      </div>
     </div>
     <div class="hero-right">
-      <div class="hero-inst">Instansi: BPMP Provinsi Gorontalo</div>
-      <div class="hero-nip">NIP: 0983654321</div>
+      <div class="hero-inst">{{ auth()->user()->instansi_lembaga ?? 'Tamu Eksternal' }}</div>
+      <div class="hero-nip">{{ auth()->user()->email ?? 'tamu@example.com' }}</div>
       <a href="{{ route('tamu.pengaturan-akun') }}" class="hero-btn">
         <i class="fas fa-gear"></i> Pengaturan Akun
       </a>
@@ -431,7 +474,7 @@
       <div class="stat-icon blue"><i class="fas fa-file-lines"></i></div>
       <div>
         <div class="stat-label">Total Permintaan</div>
-        <div class="stat-value">0</div>
+        <div class="stat-value">{{ $stats['total'] ?? 0 }}</div>
         <div class="stat-sub">Sepanjang waktu</div>
       </div>
     </div>
@@ -439,7 +482,7 @@
       <div class="stat-icon yellow"><i class="fas fa-hourglass-half"></i></div>
       <div>
         <div class="stat-label">Menunggu</div>
-        <div class="stat-value">0</div>
+        <div class="stat-value">{{ $stats['pending'] ?? 0 }}</div>
         <div class="stat-sub">Menunggu persetujuan</div>
       </div>
     </div>
@@ -447,96 +490,89 @@
       <div class="stat-icon green"><i class="fas fa-circle-check"></i></div>
       <div>
         <div class="stat-label">Diterima</div>
-        <div class="stat-value">0</div>
+        <div class="stat-value">{{ $stats['approved'] ?? 0 }}</div>
         <div class="stat-sub">Permintaan disetujui</div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM GRID -->
-  <div class="bottom-grid">
-    <!-- Fasilitas -->
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+    <!-- Left Column - Quick Actions -->
     <div class="section-card animate d5">
       <div class="section-header">
-        <div class="section-title"><i class="fas fa-building"></i> Tarif Sewa Fasilitas</div>
-        <a href="{{ route('tamu.peminjaman-gedung') }}" class="see-all">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+        <div class="section-title"><i class="fas fa-bolt"></i> Aksi Cepat</div>
       </div>
-      <div class="facility-list">
-        <div class="facility-item">
-          <div class="fac-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><i class="fas fa-chalkboard-user"></i></div>
-          <div>
-            <div class="fac-name">Aula Utama BPMP</div>
-            <div class="fac-cap"><i class="fas fa-users" style="font-size:10px"></i> 200 Orang</div>
-          </div>
-          <div class="fac-price">Rp 2.500.000/hari</div>
-        </div>
-        <div class="facility-item">
-          <div class="fac-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6"><i class="fas fa-people-group"></i></div>
-          <div>
-            <div class="fac-name">Ruang Rapat VIP</div>
-            <div class="fac-cap"><i class="fas fa-users" style="font-size:10px"></i> 20 Orang</div>
-          </div>
-          <div class="fac-price">Rp 1.000.000/hari</div>
-        </div>
-        <div class="facility-item">
-          <div class="fac-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4"><i class="fas fa-desktop"></i></div>
-          <div>
-            <div class="fac-name">Lab Komputer</div>
-            <div class="fac-cap"><i class="fas fa-computer" style="font-size:10px"></i> 30 Unit PC</div>
-          </div>
-          <div class="fac-price">Rp 1.500.000/hari</div>
-        </div>
-        <div class="facility-item">
-          <div class="fac-icon" style="background:rgba(16,185,129,0.1);color:#10b981"><i class="fas fa-book-open"></i></div>
-          <div>
-            <div class="fac-name">Ruang Pelatihan A</div>
-            <div class="fac-cap"><i class="fas fa-users" style="font-size:10px"></i> 40 Orang</div>
-          </div>
-          <div class="fac-price">Rp 800.000/hari</div>
-        </div>
+      <div class="quick-actions">
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="qa-btn primary">
+          <i class="fas fa-plus-circle"></i> Ajukan Peminjaman
+        </a>
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="qa-btn primary">
+          <i class="fas fa-clock-rotate-left"></i> Lihat Histori
+        </a>
+        <a href="{{ route('tamu.pengaturan-akun') }}" class="qa-btn accent">
+          <i class="fas fa-user-pen"></i> Edit Profil
+        </a>
+        {{-- <a href="{{ route('tamu.kontak') }}" class="qa-btn success">
+          <i class="fas fa-phone"></i> Kontak BPMP
+        </a> --}}
       </div>
     </div>
 
-    <!-- Right Column -->
-    <div style="display:flex;flex-direction:column;gap:24px">
-      <!-- Quick Actions -->
-      <div class="section-card animate d5">
-        <div class="section-header">
-          <div class="section-title"><i class="fas fa-bolt"></i> Aksi Cepat</div>
-        </div>
-        <div class="quick-actions">
-          <a href="{{ route('tamu.peminjaman-gedung') }}" class="qa-btn primary">
-            <i class="fas fa-plus-circle"></i> Ajukan Peminjaman
-          </a>
-          <a href="#" class="qa-btn outline">
-            <i class="fas fa-clock-rotate-left"></i> Lihat Histori
-          </a>
-          <a href="{{ route('tamu.pengaturan-akun') }}" class="qa-btn accent">
-            <i class="fas fa-user-pen"></i> Edit Profil
-          </a>
-          <a href="#" class="qa-btn success">
-            <i class="fas fa-phone"></i> Kontak BPMP
-          </a>
-        </div>
+    <!-- Right Column - Recent Requests -->
+    <div class="section-card animate d6">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-list-check"></i> Permintaan Terbaru</div>
+        <a href="{{ route('tamu.peminjaman-gedung') }}" class="see-all">
+          Lihat Semua <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
-
-      <!-- Recent Requests -->
-      <div class="section-card animate d6">
-        <div class="section-header">
-          <div class="section-title"><i class="fas fa-list-check"></i> Permintaan Terbaru</div>
-          <a href="#" class="see-all">Lihat Semua <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="req-list">
+      <div class="req-list">
+        @forelse($peminjaman_terbaru as $item)
+          <div class="req-item">
+            <div class="req-status-dot {{ $item->status == 'pending' ? 'pending' : ($item->status == 'disetujui' ? 'approved' : 'rejected') }}"></div>
+            <div class="req-info">
+              <div class="req-name">{{ Str::limit($item->tujuan_penggunaan, 35) }}</div>
+              <div class="req-date">
+                {{ $item->tanggal_pinjam->locale('id')->isoFormat('D MMM YY') }} • 
+                {{ $item->nama_fasilitas ?? $item->fasilitas }}
+              </div>
+            </div>
+            <span class="req-badge {{ $item->status }}">
+              {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+            </span>
+          </div>
+        @empty
           <div class="req-empty">
             <div class="req-empty-icon"><i class="fas fa-inbox"></i></div>
             <div class="req-empty-text">Belum ada permintaan</div>
             <div class="req-empty-sub">Ajukan peminjaman gedung untuk memulai</div>
           </div>
-        </div>
+        @endforelse
       </div>
     </div>
   </div>
 </main>
+
+<script>
+function toggleNotifications() {
+  // Add notification dropdown logic here
+  alert('Fitur notifikasi akan segera hadir!');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Add animation on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+      }
+    });
+  });
+  
+  document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+});
+</script>
 
 </body>
 </html>

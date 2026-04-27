@@ -1,5 +1,5 @@
 <?php
-
+// Lengkapi migration yang terpotong
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -32,6 +32,10 @@ return new class extends Migration
             
             // Data pembayaran (AUTO CALCULATED)
             $table->decimal('total_pembayaran', 15, 2)->default(0);
+            
+            // Status pembayaran & cara pembayaran (BARU)
+            $table->enum('status_pembayaran', ['belum_lunas', 'lunas'])->default('belum_lunas');
+            $table->enum('cara_pembayaran', ['tunai', 'transfer'])->default('tunai');
             
             // Lainnya
             $table->text('tujuan_penggunaan');

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIBMN - Informasi Fasilitas</title>
+<title>SIPANDU - Informasi Fasilitas</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -498,7 +498,7 @@
                             <div class="detail-val">{{ number_format($gedung->kapasitas) }} Orang</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-val">{{ number_format((float)$gedung->kapasitas) }} Orang</div>
+                            <div class="detail-key"><i class="fas fa-ruler-combined"></i> Luas Bangunan</div>
                             <div class="detail-val">{{ number_format((float)$gedung->luas_bangunan, 2) }} m²</div>
                         </div>
                         @if($gedung->jadwal_pemakaian)
@@ -523,7 +523,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <a href="{{ route('fasilitas.show', $gedung->id) }}" class="action-btn">
+                    <a href="{{ route('adminsarpras.data-gedung.show', $gedung->id) }}" class="action-btn">
                         <i class="fas fa-calendar-plus"></i> Ajukan Peminjaman
                     </a>
                 </div>
