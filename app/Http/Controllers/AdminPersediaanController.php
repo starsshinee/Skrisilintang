@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\{
     Persediaan,
-    Kerusakan,
+    PermintaanPersediaan,
     TransaksiKeluarPersediaan,
     TransaksiMasukPersediaan,
 };
@@ -435,7 +436,62 @@ class AdminPersediaanController extends Controller
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil dihapus!');
     }
-    public function PermintaanPersediaan() { return view('adminpersediian.permintaan_persediaan'); }
+    
+    //PERMINTAAN PERSEDIAAN
+    public function permintaanPersediaan(Request $request)
+    {
+       $query = PermintaanPersediaan::with(['user', 'persediaan', 'reviewedBy'])
+                               ->latest();
+
+    if ($request->filled('search')) {
+        $query->where(function($q) use ($request) {
+            $q->whereHas('persediaan', fn($x) => $x->where('nama_barang', 'like', '%'.$request->search.'%'))
+              ->orWhere('nama_lengkap', 'like', '%'.$request->search.'%');
+        });
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $permintaan = $query->paginate(10);
+    return view('adminpersediian.permintaan_persediaan', compact('permintaan'));
+    }
+
+    public function reviewPermintaan(Request $request, PermintaanPersediaan $permintaan)
+    {
+        if (!in_array($permintaan->status, ['pending'])) {
+            return back()->with('error', 'Permintaan sudah diproses!');
+        }
+
+        if ($request->action === 'teruskan') {
+            $permintaan->update([
+                'status' => 'dalam_review',
+                'reviewed_by_adminpersediaan_id' => Auth::id(),
+            ]);
+            
+            return back()->with('success', 'Permintaan diteruskan ke Kasubag!');
+        }
+
+        $permintaan->update([
+            'status' => 'ditolak',
+            'reviewed_by_adminpersediaan_id' => Auth::id(),
+        ]);
+
+        return back()->with('success', 'Permintaan ditolak!');
+    }
+
+    public function generateSuratPermintaan(PermintaanPersediaan $permintaan)
+    {
+        if (!in_array($permintaan->status, ['dalam_review', 'disetujui_kasubag'])) {
+            return back()->with('error', 'Surat hanya bisa digenerate untuk permintaan yang sudah direview!');
+        }
+
+        // Generate PDF atau download template surat
+        $pdf = \PDF::loadView('adminpersediian.surat_permintaan', compact('permintaan'));
+        return $pdf->download('surat_permintaan_' . $permintaan->id . '.pdf');
+    }
+
     public function laporanPermintaanPersediaan() { return view('adminpersediian.laporan_permintaan_persediaan'); }
     public function laporanTransaksiMasuk() { return view('adminpersediian.laporan_transaksi_masuk'); }
     public function laporanTransaksiKeluar() { return view('adminpersediian.laporan_transaksi_keluar'); }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\{
     PeminjamanGedung,
+    PermintaanPersediaan,
 };
 
 class KasubagController extends Controller
@@ -153,8 +155,34 @@ class KasubagController extends Controller
      //PERMINTAAN PERSEDIAAN
     public function persetujuanPermintaanPersediaan()
     {
-        // Logika untuk menampilkan halaman persetujuan permintaan persediaan
+        $query = PermintaanPersediaan::with(['user', 'persediaan', 'reviewedBy'])
+                                   ->whereIn('status', ['dalam_review', 'disetujui_kasubag'])
+                                   ->latest();
+
+        $permintaan = $query->paginate(15);
+
         return view('kasubag.persetujuan_permintaan_persediaan');
+    }
+
+    public function approvePermintaan(Request $request, PermintaanPersediaan $permintaan)
+    {
+        if (!in_array($permintaan->status, ['dalam_review', 'disetujui_kasubag'])) {
+            return back()->with('error', 'Permintaan tidak valid untuk diproses!');
+        }
+
+        if ($request->action === 'setuju') {
+            $permintaan->update([
+                'status' => 'disetujui',
+                'approved_by_kasubag_id' => Auth::id(),
+            ]);
+        } else {
+            $permintaan->update([
+                'status' => 'ditolak',
+                'approved_by_kasubag_id' => Auth::id(),
+            ]);
+        }
+
+        return back()->with('success', 'Permintaan berhasil diproses!');
     }
 
     public function pengaturanAkun()

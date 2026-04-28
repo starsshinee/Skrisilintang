@@ -144,6 +144,8 @@ Route::middleware('auth')->group(function () {
             
             //PERMINTAAN PERSEDIAAN
             Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
+            Route::get('/kasubag/permintaan-persediaan', [KasubagController::class, 'permintaanPersediaan'])->name('kasubag.permintaan-persediaan');
+            Route::post('/kasubag/permintaan/{permintaan}/approve', [KasubagController::class, 'approvePermintaan'])->name('kasubag.approve-permintaan');
             
             // PEMINJAMAN GEDUNG
             Route::get('/peminjaman-gedung/{peminjaman}', [KasubagController::class, 'show'])->name('peminjaman-gedung.show');
@@ -199,9 +201,16 @@ Route::middleware('auth')->group(function () {
 
         //PERMINTAAN PERSEDIAAN
         Route::get('/permintaan-persediaan', [AdminPersediaanController::class, 'PermintaanPersediaan'])->name('permintaan-persediaan');
+        
+        Route::get('/adminpersediaan/permintaan-persediaan', [AdminPersediaanController::class, 'permintaanPersediaan'])->name('adminpersediaan.permintaan-persediaan');
+        Route::post('/adminpersediaan/permintaan/{permintaan}/review', [AdminPersediaanController::class, 'reviewPermintaan'])->name('adminpersediaan.review-permintaan');
+        Route::get('/adminpersediaan/surat/{permintaan}', [AdminPersediaanController::class, 'generateSuratPermintaan'])->name('adminpersediaan.surat-permintaan');
+
+        //LAPORAN
         Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');
         Route::get('/laporan-transaksi-masuk', [AdminPersediaanController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
         Route::get('/laporan-transaksi-keluar', [AdminPersediaanController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
+        
 });
 
     // ──────────────────────────────────────────────────────────────────
@@ -331,8 +340,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengembalian-barang', [PegawaiController::class, 'pengembalianBarang'])->name('pengembalian-barang');
             Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
-            Route::get('/permintaan-persediaan', [PegawaiController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
+
+            //PERMINTAAN PERSEDIAAN
+            Route::get('/permintaan-persediaan', [PegawaiController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
+            Route::post('/permintaan-persediaan', [PegawaiController::class, 'storePermintaanPersediaan'])->name('permintaan-persediaan.store');
+            Route::get('/pegawai/permintaan-persediaan/{id}', [PegawaiController::class, 'detailPermintaanPersediaan']);
+            Route::post('/pegawai/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancelPermintaanPersediaan']);
         });
 
     // ──────────────────────────────────────────────────────────────────

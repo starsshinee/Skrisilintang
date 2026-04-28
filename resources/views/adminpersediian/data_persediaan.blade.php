@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPANDU - Data Aset Tetap</title>
@@ -554,6 +555,7 @@
     </div>
 
     <form id="editForm" method="POST" style="display:flex; flex-direction:column; flex:1;">
+      @csrf
       @method('PUT')
       <div style="padding:28px; overflow-y:auto; flex:1;">
         {{-- Form fields sama persis seperti create, tapi dengan ID untuk edit --}}
@@ -595,7 +597,7 @@
     <label class="form-label">Harga Satuan <span style="color:var(--danger);">*</span></label>
     <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
       <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-      <input type="number" name="harga_satuan" id="editHargaSatuan" step="0.01" min="0" class="form-input-price" placeholder="0" required style="border-left:none; border-radius:0 10px 10px 0;">
+      <input type="text" name="harga_satuan" id="editHargaSatuan" step="0.01" min="0" class="form-input-price" placeholder="0" required style="border-left:none; border-radius:0 10px 10px 0;">
     </div>
   </div>
 </div>
@@ -644,7 +646,8 @@
     </div>
     
     <form id="deleteForm" method="POST">
-      @csrf @method('DELETE')
+      @csrf 
+      @method('DELETE')
       <div style="display:flex; gap:12px; justify-content:flex-end;">
         <button type="button" onclick="closeModal('deleteModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:14px 28px;">
           Batal
@@ -660,14 +663,13 @@
 <script>
 let persediaanData = {};
 
-// Close modal on overlay click
+// Close modal & ESC key
 document.querySelectorAll('.modal-overlay').forEach(modal => {
   modal.addEventListener('click', e => {
     if (e.target === modal) closeModal();
   });
 });
 
-// ESC key
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });
@@ -685,119 +687,171 @@ function closeModal(modalId = null) {
   if (modalId === 'editModal') document.getElementById('editForm').reset();
 }
 
-// Calculate total price
-function calculateTotal() {
-  const hargaSatuan = parseFloat(document.querySelector('[name="harga_satuan"]').value) || 0;
-  const jumlah = parseFloat(document.querySelector('[name="jumlah"]').value) || 0;
-  const total = hargaSatuan * jumlah;
-  document.getElementById('hargaTotal').value = new Intl.NumberFormat('id-ID').format(total);
+// 🔥 UTILITY FUNCTIONS - Handle angka BESAR
+function getRawNumber(selector) {
+  const input = typeof selector === 'string' ? document.querySelector(selector) : selector;
+  return input ? parseFloat((input.value || '').replace(/[^\d.,]/g, '')) || 0 : 0;
 }
 
+function formatCurrency(number) {
+  return new Intl.NumberFormat('id-ID', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(number);
+}
+
+function parseDatasetNumber(value) {
+  return parseFloat((value || '0').replace(/[^\d.]/g, '')) || 0;
+}
+
+// 🔥 CALCULATE - Fixed untuk angka besar
+function calculateTotal() {
+  const hargaSatuanRaw = getRawNumber('[name="harga_satuan"]');
+  const jumlahRaw = parseFloat(document.querySelector('[name="jumlah"]')?.value) || 0;
+  const total = hargaSatuanRaw * jumlahRaw;
+  document.getElementById('hargaTotal').value = formatCurrency(total);
+}
+
+function calculateTotalEdit() {
+  const hargaSatuanRaw = getRawNumber('#editHargaSatuan');
+  const jumlahRaw = parseFloat(document.getElementById('editJumlah')?.value) || 0;
+  const total = hargaSatuanRaw * jumlahRaw;
+  document.getElementById('editHargaTotal').value = formatCurrency(total);
+}
+
+// 🔥 EVENT HANDLERS - Pemisahan input vs blur
+document.addEventListener('input', function(e) {
+  // HANYA calculate, TIDAK format input!
+  if (e.target.matches('[name="jumlah"], [name="harga_satuan"], #editJumlah, #editHargaSatuan')) {
+    setTimeout(() => {
+      if (e.target.matches('[name="jumlah"], [name="harga_satuan"]')) calculateTotal();
+      if (e.target.matches('#editJumlah, #editHargaSatuan')) calculateTotalEdit();
+    }, 50);
+  }
+}, true);
+
+document.addEventListener('blur', function(e) {
+  // FORMAT HANYA saat blur (keluar input)
+  if (e.target.classList.contains('form-input-price')) {
+    const rawValue = getRawNumber(e.target);
+    e.target.value = formatCurrency(rawValue);
+  }
+}, true);
+
+// 🔥 DETAIL MODAL - Fixed dataset parsing
 function populateDetailModal(data) {
   document.getElementById('detailTitle').textContent = `Kode: ${data.kode_barang}`;
   
   document.getElementById('detailContent').innerHTML = `
-    <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <!-- Kategori -->
       <div style="display:flex; gap:16px; align-items:center;">
-        <div style="width:100px; padding:8px 12px; background:#F0F9FF; border-radius:8px; font-weight:700; color:var(--blue); font-size:13px; text-align:center;">${data.kode_kategori}</div>
-        <div style="font-weight:600; color:var(--text);">${data.kategori}</div>
+        <div style="width:100px; padding:8px 12px; background:#F0F9FF; border-radius:8px; font-weight:700; color:var(--blue); font-size:13px; text-align:center; white-space:nowrap;">${data.kode_kategori}</div>
+        <div style="font-weight:600; color:var(--text); font-size:14px;">${data.kategori}</div>
       </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+      
+      <!-- Kode & Nama -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
         <div>
           <div style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:8px;">Kode Barang</div>
           <div style="font-size:16px; font-weight:800; color:var(--text);">${data.kode_barang}</div>
         </div>
         <div>
           <div style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:8px;">Nama Barang</div>
-          <div style="font-size:15px; font-weight:700; color:var(--text);">${data.nama_barang}</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text); line-height:1.3;">${data.nama_barang}</div>
         </div>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:20px;">
+      
+      <!-- Stats Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; padding:20px; background:#F8FAFF; border-radius:12px; border:1px solid var(--border);">
         <div>
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Tanggal Masuk</div>
-          <div style="font-weight:600;">${new Date(data.tanggal_masuk).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'})}</div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Tanggal Masuk</div>
+          <div style="font-weight:600; font-size:14px;">${new Date(data.tanggal_masuk).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'})}</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Jumlah Stok</div>
-          <div style="font-weight:700; font-size:18px; color:var(--success);">${parseInt(data.jumlah).toLocaleString('id-ID')}</div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Jumlah Stok</div>
+          <div style="font-weight:700; font-size:20px; color:var(--success);">${parseInt(data.jumlah).toLocaleString('id-ID')}</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Harga Satuan</div>
-          <div style="font-weight:600; color:var(--text);">Rp ${parseFloat(data.harga_satuan).toLocaleString('id-ID')}</div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Harga Satuan</div>
+          <div style="font-weight:600; font-size:15px; color:var(--text);">Rp ${formatCurrency(parseDatasetNumber(data.harga_satuan))}</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Harga Total</div>
-          <div style="font-weight:700; font-size:16px; color:var(--blue);">Rp ${parseFloat(data.harga_total).toLocaleString('id-ID')}</div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Harga Total</div>
+          <div style="font-weight:700; font-size:18px; color:var(--blue); background:linear-gradient(135deg,#EEF2FF,#E0E7FF); padding:8px 12px; border-radius:8px; display:inline-block;">
+            Rp ${formatCurrency(parseDatasetNumber(data.harga_total))}
+          </div>
         </div>
       </div>
     `;
 }
 
-// Detail Modal (already mostly correct, but make consistent)
+// 🔥 OPEN MODALS - Fixed dataset access
 function openDetail(id) {
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if (!row) {
-        alert('Data tidak ditemukan!');
-        return;
-    }
-
-    const persediaan = {
-        id: row.dataset.id,
-        kode_kategori: row.dataset.kodeKategori,
-        kategori: row.dataset.kategori,
-        kode_barang: row.dataset.kodeBarang,
-        nama_barang: row.dataset.namaBarang,
-        harga_satuan: parseFloat(row.dataset.hargaSatuan),
-        harga_total: parseFloat(row.dataset.hargaTotal),
-        jumlah: parseInt(row.dataset.jumlah),
-        tanggal_masuk: row.dataset.tanggalMasuk
-    };
-
-    populateDetailModal(persediaan);
-    openModal('detailModal');
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (!row) return alert('Data tidak ditemukan!');
+  
+  const persediaan = {
+    id: row.dataset.id,
+    kode_kategori: row.dataset.kodeKategori || row.dataset.kode_kategori || '',
+    kategori: row.dataset.kategori || '',
+    kode_barang: row.dataset.kodeBarang || row.dataset.kode_barang || '',
+    nama_barang: row.dataset.namaBarang || row.dataset.nama_barang || '',
+    harga_satuan: row.dataset.hargaSatuan || row.dataset.harga_satuan || '0',
+    harga_total: row.dataset.hargaTotal || row.dataset.harga_total || '0',
+    jumlah: row.dataset.jumlah || '0',
+    tanggal_masuk: row.dataset.tanggalMasuk || row.dataset.tanggal_masuk || ''
+  };
+  
+  populateDetailModal(persediaan);
+  openModal('detailModal');
 }
 
-// Edit Modal - FIXED
 function openEdit(id) {
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if (!row) {
-        alert('Data tidak ditemukan!');
-        return;
-    }
+  refreshCsrfToken();
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (!row) return alert('Data tidak ditemukan!');
 
-    const persediaan = {
-        id: row.dataset.id,
-        kode_kategori: row.dataset.kodeKategori,
-        kategori: row.dataset.kategori,
-        kode_barang: row.dataset.kodeBarang,
-        nama_barang: row.dataset.namaBarang,
-        tanggal_masuk: row.dataset.tanggalMasuk,
-        harga_satuan: row.dataset.hargaSatuan,
-        jumlah: row.dataset.jumlah,
-        harga_total: row.dataset.hargaTotal
-    };
+  const persediaan = {
+    id: row.dataset.id,
+    kode_kategori: row.dataset.kodeKategori || row.dataset.kode_kategori || '',
+    kategori: row.dataset.kategori || '',
+    kode_barang: row.dataset.kodeBarang || row.dataset.kode_barang || '',
+    nama_barang: row.dataset.namaBarang || row.dataset.nama_barang || '',
+    tanggal_masuk: row.dataset.tanggalMasuk || row.dataset.tanggal_masuk || '',
+    harga_satuan: row.dataset.hargaSatuan || row.dataset.harga_satuan || '0',
+    jumlah: row.dataset.jumlah || '0',
+    harga_total: row.dataset.hargaTotal || row.dataset.harga_total || '0'
+  };
 
-    populateEditModal(persediaan);
-    document.getElementById('editForm').action = `{{ route('adminpersediaan.data-persediaan.update', ':id') }}`.replace(':id', id);
-    openModal('editModal');
+  const form = document.getElementById('editForm');
+  form.action = `{{ route('adminpersediaan.data-persediaan.update', ':id') }}`.replace(':id', id);
+
+  populateEditModal(persediaan);
+  document.getElementById('editForm').action = `{{ route('adminpersediaan.data-persediaan.update', ':id') }}`.replace(':id', id);
+  openModal('editModal');
 }
 
-// Delete Modal - FIXED
+function refreshCsrfToken() {
+  const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  document.querySelectorAll('input[name="_token"]').forEach(el => {
+    el.value = token;
+  });
+}
+
 function confirmDelete(id) {
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if (!row) {
-        alert('Data tidak ditemukan!');
-        return;
-    }
+  refreshCsrfToken();
 
-    const kode_barang = row.dataset.kodeBarang;
-    const nama_barang = row.dataset.namaBarang;
-    
-    document.getElementById('deleteTitle').textContent = `Kode: ${kode_barang} - ${nama_barang}`;
-    document.getElementById('deleteForm').action = `{{ route('adminpersediaan.data-persediaan.destroy', ':id') }}`.replace(':id', id);
-    openModal('deleteModal');
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (!row) return alert('Data tidak ditemukan!');
+  
+  const kode_barang = row.dataset.kodeBarang || row.dataset.kode_barang || '';
+  const nama_barang = row.dataset.namaBarang || row.dataset.nama_barang || '';
+  
+  document.getElementById('deleteTitle').textContent = `Kode: ${kode_barang} - ${nama_barang}`;
+  document.getElementById('deleteForm').action = `{{ route('adminpersediaan.data-persediaan.destroy', ':id') }}`.replace(':id', id);
+  openModal('deleteModal');
 }
-
 
 function populateEditModal(data) {
   document.getElementById('editId').value = data.id;
@@ -806,32 +860,14 @@ function populateEditModal(data) {
   document.getElementById('editKodeBarang').value = data.kode_barang;
   document.getElementById('editNamaBarang').value = data.nama_barang;
   document.getElementById('editTanggalMasuk').value = data.tanggal_masuk;
-  document.getElementById('editHargaSatuan').value = data.harga_satuan;
+  document.getElementById('editHargaSatuan').value = formatCurrency(parseDatasetNumber(data.harga_satuan));
   document.getElementById('editJumlah').value = data.jumlah;
-  calculateTotalEdit();
+  document.getElementById('editHargaTotal').value = formatCurrency(parseDatasetNumber(data.harga_total));
   document.getElementById('editTitle').textContent = `Kode Barang: ${data.kode_barang}`;
+  calculateTotalEdit(); 
 }
 
-function calculateTotalEdit() {
-  const hargaSatuan = parseFloat(document.getElementById('editHargaSatuan')?.value) || 0;
-  const jumlah = parseFloat(document.getElementById('editJumlah')?.value) || 0;
-  const total = hargaSatuan * jumlah;
-  document.getElementById('editHargaTotal').value = new Intl.NumberFormat('id-ID').format(total);
-}
-
-
-
-// Form price formatting
-document.addEventListener('input', function(e) {
-  if (e.target.classList.contains('form-input-price')) {
-    let value = e.target.value.replace(/[^\d.]/g, '');
-    if (value) {
-      e.target.value = parseFloat(value).toLocaleString('id-ID');
-    }
-  }
-});
-
-// Auto calculate on create form
+// 🔥 INIT
 document.addEventListener('DOMContentLoaded', function() {
   calculateTotal();
 });
@@ -850,11 +886,15 @@ document.addEventListener('DOMContentLoaded', function() {
   border: 2px solid var(--border); background: var(--bg);
   font-family: inherit; font-size: 14px; transition: all .2s;
   box-sizing: border-box;
+  ime-mode: disabled;
+  min-width: 0;
+  white-space: nowrap;
 }
 .form-input:focus { 
   outline: none; border-color: var(--blue); 
   box-shadow: 0 0 0 4px rgba(79,111,255,0.1);
   background: white;
+
 }
 .error-text { 
   font-size: 12px; color: var(--danger); margin-top: 6px; 

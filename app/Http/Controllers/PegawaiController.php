@@ -10,6 +10,7 @@ use App\Models\PeminjamanKendaraan;
 use App\Models\PengembalianKendaraan;
 use App\Models\AssetTetap;           // ✅ IMPORT INI
 use App\Models\PermintaanPersediaan;
+use App\Models\Persediaan;
 use App\Models\User;
 
 class PegawaiController extends Controller
@@ -84,31 +85,128 @@ class PegawaiController extends Controller
      */
     public function permintaanPersediaan(Request $request)
     {
-        $query = PermintaanPersediaan::with('user')
-            ->latest();
+        $persediaan = Persediaan::select('id', 'kode_barang', 'nama_barang', 'jumlah')
+                               ->where('jumlah', '>', 0)// Hanya barang tersedia
+                               ->orderBy('nama_barang')
+                               ->orderBy('nama_barang')
+                               ->get();
+        
+        
+        $riwayat = PermintaanPersediaan::where('user_id', Auth::id())
+                                     ->with('persediaan')
+                                     ->latest()
+                                     ->limit(5)
+                                     ->get();
 
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        $permintaanPersediaan = $query->paginate(15);
-        return view('pegawai.permintaan_persediaan', compact('permintaanPersediaan'));
+        return view('pegawai.permintaan_persediaan', compact('persediaan', 'riwayat'));
     }
 
-    /**
+    public function storePermintaanPersediaan(Request $request)
+    {
+        $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'nama_barang' => 'required|string|max:255',
+            'kode_barang' => 'required|string|max:50', 
+            'persediaan_id' => 'required|exists:persediaan,id',
+            'jumlah_diminta' => 'required|integer|min:1',
+            'tanggal_permintaan' => 'required|date|after_or_equal:today',
+            'tanggal_dibutuhkan' => 'required|date|after:tanggal_permintaan',
+            'tujuan_penggunaan' => 'required|string|max:1000',
+        ]);
+
+        // ✅ CEK STOK BERDASARKAN KODE BARANG
+        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        
+        if (!$persediaan || $persediaan->jumlah < $request->jumlah_diminta) {
+            return back()->withErrors([
+                'kode_barang' => 'Stok tidak mencukupi atau barang tidak ditemukan!'
+            ])->withInput();
+        }
+
+            PermintaanPersediaan::create([
+            'nama_lengkap' => $request->nama_lengkap,
+            'kode_barang' => $request->kode_barang,           // ✅ GUNAKAN INI
+            'nama_barang' => $request->nama_barang,
+            'persediaan_id' => $persediaan->id,               // ✅ AMBIL ID
+            'user_id' => Auth::id(),
+            'jumlah_diminta' => $request->jumlah_diminta,
+            'tanggal_permintaan' => $request->tanggal_permintaan,
+            'tanggal_dibutuhkan' => $request->tanggal_dibutuhkan,
+            'tujuan_penggunaan' => $request->tujuan_penggunaan,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Permintaan berhasil dikirim! Menunggu persetujuan Admin Persediaan.');
+    }
+
+     /**
      * Riwayat Permintaan
      */
     public function riwayatPermintaan(Request $request)
     {
-        $query = PermintaanPersediaan::with('user')
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->when($request->date_from, fn($q) => $q->whereDate('created_at', '>=', $request->date_from))
-            ->when($request->date_to, fn($q) => $q->whereDate('created_at', '<=', $request->date_to))
-            ->latest();
+        $query = PermintaanPersediaan::where('user_id', Auth::id())
+                                   ->with('persediaan', 'reviewedBy', 'approvedByKasubag')
+                                   ->latest();
 
-        $riwayatPermintaan = $query->paginate(20);
-        return view('pegawai.riwayat_permintaan', compact('riwayatPermintaan'));
+        $riwayat = $query->paginate(10);
+        return view('pegawai.permintaan_persediaan', compact('riwayat'));
     }
+
+    public function detailPermintaanPersediaan($id)
+    {
+        $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
+                                        ->findOrFail($id);
+
+        if ($permintaan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $permintaan->id,
+                'kode' => 'REQ-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT),
+                'nama_lengkap' => $permintaan->nama_lengkap,
+                'nama_barang' => $permintaan->nama_barang,
+                'persediaan' => $permintaan->persediaan ? [
+                    'nama_barang' => $permintaan->persediaan->nama_barang,
+                    'kode_barang' => $permintaan->persediaan->kode_barang,
+                    'kategori' => $permintaan->persediaan->kategori,
+                    'jumlah' => $permintaan->persediaan->jumlah,
+                    'satuan' => $permintaan->persediaan->satuan ?? 'unit'
+                ] : null,
+                'jumlah_diminta' => $permintaan->jumlah_diminta,
+                'tanggal_permintaan' => $permintaan->tanggal_permintaan->format('d M Y'),
+                'tanggal_dibutuhkan' => $permintaan->tanggal_dibutuhkan->format('d M Y'),
+                'tujuan_penggunaan' => $permintaan->tujuan_penggunaan,
+                'status' => $permintaan->status,
+                'status_label' => $permintaan->status_badge['text'],
+                'created_at' => $permintaan->created_at->format('d M Y H:i'),
+                'reviewed_by' => $permintaan->reviewedBy?->name ?? '-',
+                'approved_by_kasubag' => $permintaan->approvedByKasubag?->name ?? '-',
+                'komentar' => $permintaan->komentar ?? null,
+                'surat_url' => $permintaan->surat_url ? asset('storage/' . $permintaan->surat_url) : null,
+            ]
+        ]);
+    }
+
+    public function cancelPermintaanPersediaan($id)
+    {
+        $permintaan = PermintaanPersediaan::where('user_id', Auth::id())
+                                        ->whereIn('status', ['pending'])
+                                        ->findOrFail($id);
+
+        $permintaan->update([
+            'status' => 'dibatalkan_pengguna',
+            'updated_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permintaan persediaan berhasil dibatalkan!'
+        ]);
+    }
+
 
     /**
      * Peminjaman Kendaraan - Daftar & Verifikasi
