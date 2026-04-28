@@ -19,9 +19,12 @@
     --text-muted: #64748B;
     --muted: #94A3B8;
     --border: #E8EDF5;
+    --success: #10B981;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
   .topbar {
     background: var(--surface);
@@ -60,7 +63,7 @@
   .btn-unduh {
     display: flex; align-items: center; gap: 7px;
     padding: 10px 18px; border-radius: 10px;
-    background: var(--green);
+    background: linear-gradient(135deg, var(--green), #059669);
     color: white; font-size: 13.5px; font-weight: 700;
     font-family: inherit; border: none; cursor: pointer;
     box-shadow: 0 4px 14px rgba(16,185,129,.3);
@@ -68,10 +71,29 @@
   }
   .btn-unduh:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,.4); }
 
+  /* FILTER BAR */
+  .filter-bar {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .filter-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-input {
+    padding: 10px 14px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--bg);
+    font-family: inherit; font-size: 13px; color: var(--text);
+    transition: border-color .15s;
+  }
+  .filter-input:focus { outline: none; border-color: var(--blue); }
+  .filter-select { padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); font-family: inherit; font-size: 13px; cursor: pointer; }
+
   /* STAT CARDS */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
   }
@@ -110,19 +132,19 @@
     margin-bottom: 24px;
   }
   .chart-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
-  .chart-area { height: 150px; display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+  .chart-area { height: 200px; display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; position: relative; }
   .chart-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
   .bar-wrap { flex: 1; display: flex; align-items: flex-end; width: 100%; }
   .bar {
     width: 100%; border-radius: 6px 6px 0 0;
-    background: linear-gradient(180deg, #10B981, #059669);
+    background: linear-gradient(180deg, var(--green), #059669);
     min-height: 4px;
     transition: opacity .2s;
   }
   .bar:hover { opacity: .8; }
-  .bar-val { font-size: 10px; font-weight: 700; color: #064E3B; }
+  .bar-val { font-size: 11px; font-weight: 700; color: #064E3B; }
   .bar-label { font-size: 10px; color: #6B7280; }
-  .chart-baseline { border-top: 1.5px solid #D1FAE5; }
+  .chart-baseline { position: absolute; bottom: 20%; left: 0; right: 0; border-top: 1.5px solid #D1FAE5; }
 
   /* TABLE */
   .table-card {
@@ -130,6 +152,12 @@
     border-radius: var(--radius);
     border: 1px solid var(--border);
     overflow: hidden;
+  }
+  .table-toolbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
   }
   table { width: 100%; border-collapse: collapse; }
   thead tr { background: #F0FDF4; }
@@ -148,19 +176,35 @@
   tr:last-child td { border-bottom: none; }
   tbody tr:hover { background: #F0FDF4; }
 
-  .id-cell { font-weight: 700; color: var(--green); }
-  .nilai-cell { font-weight: 700; color: var(--green); }
+  .font-mono { font-family: 'Monaco', monospace; }
+  .text-green { color: var(--success) !important; font-weight: 700; }
+  .text-muted { color: var(--muted); }
 
-  .status-badge {
-    display: inline-block; padding: 4px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 700;
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
   }
-  .status-diterima { background: #DCFCE7; color: #15803D; }
-  .status-pending { background: #FEF3C7; color: #B45309; }
+
+  @media (max-width: 768px) {
+    .main { margin-left: 0; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .table-toolbar { flex-direction: column; align-items: stretch; }
+    .table-footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
 </style>
 </head>
 <body>
+
+{{-- SIDEBAR --}}
 @include('partials.sidebar')
+
+@php
+    use App\Models\TransaksiMasukPersediaan;
+@endphp
+
 <main class="main">
 
 <div class="topbar">
@@ -170,27 +214,55 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
       <span class="notif-dot"></span>
     </div>
-    <span class="date-text">Jumat, 17 April 2026</span>
-    <button class="btn-keluar">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
-      Keluar
-    </button>
+    <span class="date-text">{{ now()->translatedFormat('l, d F Y') }}</span>
+    <button class="btn-keluar">Keluar</button>
   </div>
 </div>
 
 <div class="content">
+  {{-- PAGE HEADER --}}
   <div class="page-top">
-    <div>
-      <h1>Laporan Transaksi Masuk</h1>
-      <p>Detail dan analisis semua transaksi masuk aset</p>
-    </div>
-    <button class="btn-unduh">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-      Unduh Laporan
-    </button>
+  <div>
+    <h1>Laporan Transaksi Masuk</h1>
+    <p> Berikut Daftar data transaksi Masuk</p>
+  </div>
+  <a href="{{ route('adminpersediaan.laporan-transaksi-masuk.pdf', request()->query()) }}" 
+     class="btn-unduh" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+    </svg>
+    Unduh PDF
+  </a>
+</div>
+
+  {{-- FILTER --}}
+  <div class="filter-bar">
+    <form method="GET" action="{{ route('adminpersediaan.laporan-transaksi-masuk') }}">
+      <div class="filter-row">
+        <div class="filter-group">
+          <svg width="16" height="16" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" name="search" class="filter-input" placeholder="Cari kode barang, nama barang..." value="{{ request('search') }}">
+        </div>
+        <div class="filter-group">
+          <input type="date" name="tanggal_input" class="filter-input" value="{{ request('tanggal_input') }}">
+        </div>
+        <div class="filter-group">
+          <select name="kode_kategori" class="filter-select" onchange="this.form.submit()">
+            <option value="">Semua Kategori</option>
+            @foreach(\App\Models\TransaksiMasukPersediaan::distinct()->orderBy('kode_kategori')->pluck('kode_kategori')->toArray() as $kategori)
+              <option value="{{ $kategori }}" {{ request('kode_kategori') == $kategori ? 'selected' : '' }}>{{ $kategori }}</option>
+            @endforeach
+          </select>
+        </div>
+        @if(request()->hasAny(['search', 'tanggal_input', 'kode_kategori']))
+          <a href="{{ route('adminpersediaan.laporan-transaksi-masuk') }}" class="filter-input" style="background:#FEF2F2;color:#EF4444;padding:10px 16px;text-decoration:none;border-color:#FECACA;font-weight:600;">Reset</a>
+        @endif
+      </div>
+      <input type="hidden" name="page" value="{{ request('page', 1) }}">
+    </form>
   </div>
 
-  <!-- Stats -->
+  {{-- STATS --}}
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-header">
@@ -199,28 +271,8 @@
         </div>
         <span class="stat-label-sm">Total Transaksi</span>
       </div>
-      <div class="stat-value">3</div>
+      <div class="stat-value text-green">{{ $stats['total_transaksi'] ?? 0 }}</div>
       <div class="stat-sub">Bulan ini</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-header">
-        <div class="stat-icon ic-teal">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        </div>
-        <span class="stat-label-sm">Diterima</span>
-      </div>
-      <div class="stat-value" style="color:#10B981">2</div>
-      <div class="stat-sub">67%</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-header">
-        <div class="stat-icon ic-amber">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-        </div>
-        <span class="stat-label-sm">Pending</span>
-      </div>
-      <div class="stat-value" style="color:#F59E0B">1</div>
-      <div class="stat-sub">33%</div>
     </div>
     <div class="stat-card">
       <div class="stat-header">
@@ -229,124 +281,113 @@
         </div>
         <span class="stat-label-sm">Total Nilai</span>
       </div>
-      <div class="stat-value" style="font-size:22px">Rp 202 Jt</div>
-      <div class="stat-sub">Estimasi</div>
+      <div class="stat-value" style="font-size:24px">Rp {{ number_format($stats['total_nilai'] ?? 0, 0, ',', '.') }}</div>
+      <div class="stat-sub">Bulan ini</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon ic-teal">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        </div>
+        <span class="stat-label-sm">Total Item</span>
+      </div>
+      <div class="stat-value">{{ $transaksi->sum('jumlah_masuk') ?? 0 }}</div>
+      <div class="stat-sub">Unit</div>
     </div>
   </div>
 
-  <!-- Chart -->
+  {{-- CHART (Data bulan ini) --}}
   <div class="chart-card">
-    <div class="chart-title">Tren Penerimaan Aset</div>
+    <div class="chart-title">Tren Transaksi Masuk (6 Bulan Terakhir)</div>
     <div class="chart-area">
+      @php
+        $bulanData = [];
+        for($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $count = TransaksiMasukPersediaan::whereYear('tanggal_input', $bulan->year)
+                                            ->whereMonth('tanggal_input', $bulan->month)
+                                            ->count();
+            $bulanData[] = ['label' => $bulan->translatedFormat('M'), 'value' => $count];
+        }
+        $maxValue = max(array_column($bulanData, 'value')) ?: 1;
+      @endphp
+      @foreach($bulanData as $data)
       <div class="chart-col">
-        <div class="bar-val">8</div>
-        <div class="bar-wrap"><div class="bar" style="height:40%"></div></div>
-        <div class="bar-label">Jan</div>
+        <div class="bar-val">{{ $data['value'] }}</div>
+        <div class="bar-wrap">
+          <div class="bar" style="height: {{ ($data['value'] / $maxValue) * 100 }}%"></div>
+        </div>
+        <div class="bar-label">{{ $data['label'] }}</div>
       </div>
-      <div class="chart-col">
-        <div class="bar-val">12</div>
-        <div class="bar-wrap"><div class="bar" style="height:60%"></div></div>
-        <div class="bar-label">Feb</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">15</div>
-        <div class="bar-wrap"><div class="bar" style="height:75%"></div></div>
-        <div class="bar-label">Mar</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">9</div>
-        <div class="bar-wrap"><div class="bar" style="height:45%"></div></div>
-        <div class="bar-label">Apr</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">18</div>
-        <div class="bar-wrap"><div class="bar" style="height:90%"></div></div>
-        <div class="bar-label">Mei</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">14</div>
-        <div class="bar-wrap"><div class="bar" style="height:70%"></div></div>
-        <div class="bar-label">Jun</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">16</div>
-        <div class="bar-wrap"><div class="bar" style="height:80%"></div></div>
-        <div class="bar-label">Jul</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">13</div>
-        <div class="bar-wrap"><div class="bar" style="height:65%"></div></div>
-        <div class="bar-label">Agu</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">19</div>
-        <div class="bar-wrap"><div class="bar" style="height:95%"></div></div>
-        <div class="bar-label">Sep</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">17</div>
-        <div class="bar-wrap"><div class="bar" style="height:85%"></div></div>
-        <div class="bar-label">Okt</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">15</div>
-        <div class="bar-wrap"><div class="bar" style="height:75%"></div></div>
-        <div class="bar-label">Nov</div>
-      </div>
-      <div class="chart-col">
-        <div class="bar-val">20</div>
-        <div class="bar-wrap"><div class="bar" style="height:100%"></div></div>
-        <div class="bar-label">Des</div>
-      </div>
+      @endforeach
     </div>
   </div>
 
-  <!-- Table -->
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Kode Barang</th>
-          <th>Nama Barang</th>
-          <th>Harga satuan</th>
-          <th>QTY</th>
-          <th>Nilai</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="id-cell">TM-001</td>
-          <td>2025-01-15</td>
-          <td>Laptop Dell Latitude</td>
-          <td>Elektronik</td>
-          <td>10</td>
-          <td class="nilai-cell">Rp 150.000.000</td>
-          <td><span class="status-badge status-diterima">Diterima</span></td>
-        </tr>
-        <tr>
-          <td class="id-cell">TM-002</td>
-          <td>2025-01-14</td>
-          <td>Meja Kerja Executive</td>
-          <td>Furnitur</td>
-          <td>5</td>
-          <td class="nilai-cell">Rp 25.000.000</td>
-          <td><span class="status-badge status-diterima">Diterima</span></td>
-        </tr>
-        <tr>
-          <td class="id-cell">TM-003</td>
-          <td>2025-01-13</td>
-          <td>AC Split 2 PK</td>
-          <td>Elektronik</td>
-          <td>3</td>
-          <td class="nilai-cell" style="color:#F59E0B">Rp 27.000.000</td>
-          <td><span class="status-badge status-pending">Pending</span></td>
-        </tr>
-      </tbody>
-    </table>
+  {{-- TABLE --}}
+  {{-- TABLE --}}
+    <div class="table-card">
+      <div class="table-toolbar">
+        <span style="font-size:13px;color:var(--muted);font-weight:600;">
+          @if($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            {{ $transaksi->firstItem() }}–{{ $transaksi->lastItem() }} dari {{ $transaksi->total() }} data
+          @else
+            {{ $transaksi->count() }} data
+          @endif
+        </span>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Kode Kategori</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Jumlah</th>
+            <th>Harga Satuan</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($transaksi as $item)
+          <tr>
+            <td><strong>{{ $item->tanggal_input_format ?? $item->tanggal_input->format('d/m/Y') }}</strong></td>
+            <td>{{ $item->kode_kategori }}</td>
+            <td class="font-mono"><strong>{{ $item->kode_barang }}</strong></td>
+            <td>{{ Str::limit($item->nama_barang, 35) }}</td>
+            <td class="text-green"><strong>{{ number_format($item->jumlah_masuk) }}</strong></td>
+            <td class="font-mono">{{ isset($item->harga_satuan_format) ? $item->harga_satuan_format : 'Rp ' . number_format($item->harga_satuan ?? 0) }}</td>
+            <td class="font-mono text-green"><strong>{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total ?? 0) }}</strong></td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="7" style="text-align:center; padding:60px; color:var(--muted);">
+              Belum ada data transaksi masuk
+            </td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+
+      <!-- ✅ FOOTER AMAN WEB & PDF -->
+      <div class="table-footer">
+        <span style="font-size:13px;color:var(--muted);font-weight:600;">
+          @if($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            Menampilkan {{ $transaksi->firstItem() }}–{{ $transaksi->lastItem() }} dari {{ $transaksi->total() }} data
+          @else
+            {{ $transaksi->count() }} data lengkap
+          @endif
+        </span>
+        
+        @if($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator)
+          <div>{{ $transaksi->appends(request()->query())->links() }}</div>
+        @endif
+      </div>
+    </div>
   </div>
 </div>
+
 </main>
+
 </body>
 </html>

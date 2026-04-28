@@ -1010,4 +1010,5 @@ public function surveyStore(Request $request)
     {
     return Excel::download(new SurveyExport($request), 'survey.excel-export' . now()->format('d-m-Y') . '.xlsx');
     }
+    
 }

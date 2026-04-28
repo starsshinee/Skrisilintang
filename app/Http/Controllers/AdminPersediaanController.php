@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Validation\Rule;
 use App\Models\{
     Persediaan,
@@ -492,7 +493,198 @@ class AdminPersediaanController extends Controller
         return $pdf->download('surat_permintaan_' . $permintaan->id . '.pdf');
     }
 
-    public function laporanPermintaanPersediaan() { return view('adminpersediian.laporan_permintaan_persediaan'); }
-    public function laporanTransaksiMasuk() { return view('adminpersediian.laporan_transaksi_masuk'); }
-    public function laporanTransaksiKeluar() { return view('adminpersediian.laporan_transaksi_keluar'); }
+    public function laporanPermintaanPersediaan() 
+    { 
+        return view('adminpersediian.laporan_permintaan_persediaan'); 
+    }
+    // LAPORAN TRANSAKSI MASUK
+
+        public function laporanTransaksiMasuk(Request $request)
+    {
+        $query = TransaksiMasukPersediaan::query();
+        
+        // Filters...
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('kode_transaksi', 'like', '%'.$request->search.'%');
+            });
+        }
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
+        }
+
+        $transaksi = $query->latest()->paginate(10);
+
+        return view('adminpersediian.laporan_transaksimasuk', compact('transaksi'));
+    }
+
+    /**
+     * Download Laporan Transaksi Masuk PDF
+     */
+    public function downloadLaporanTransaksiMasuk(Request $request)
+    {
+        $query = TransaksiMasukPersediaan::query();
+
+    // Filter sama persis
+    if ($request->filled('search')) {
+        $query->where(function($q) use ($request) {
+            $q->where('kode_barang', 'like', '%'.$request->search.'%')
+              ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+              ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
+              ->orWhere('kategori', 'like', '%'.$request->search.'%');
+        });
+    }
+
+    if ($request->filled('tanggal_input')) {
+        $query->whereDate('tanggal_input', $request->tanggal_input);
+    }
+
+    if ($request->filled('kode_kategori')) {
+        $query->where('kode_kategori', $request->kode_kategori);
+    }
+
+    $transaksi = $query->latest()->get(); // Semua data untuk PDF
+    
+    $stats = [
+        'total_transaksi' => $transaksi->count(),
+        'total_nilai' => $transaksi->sum('total'),
+        'total_item' => $transaksi->sum('jumlah_masuk'),
+    ];
+
+    // ✅ PAKAI BLADE YANG SUDAH ADA!
+    $pdf = PDF::loadView('adminpersediian.laporan_transaksimasuk_pdf', compact('transaksi', 'stats'));
+    
+    $filename = 'Laporan_Transaksi_Masuk_' . now()->format('d-m-Y_His') . '.pdf';
+    
+    return $pdf->download($filename);
+    }
+    /**
+ * LAPORAN TRANSAKSI KELUAR - Index dengan chart & stats
+ */
+    public function laporanTransaksiKeluar(Request $request)
+    {
+        $query = TransaksiKeluarPersediaan::query();
+        
+        // Filters
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
+                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
+                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            });
+        }
+        
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+        
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
+        }
+
+        $transaksi = $query->latest()->paginate(10);
+        
+        // 📊 CHART & STATS DATA
+        $chartData = [];
+        
+        // 1. Chart: Total Keluar per Bulan (12 bulan terakhir)
+        $startDate = now()->subMonths(11)->startOfMonth();
+        $monthlyData = TransaksiKeluarPersediaan::selectRaw('
+                DATE_FORMAT(tanggal_input, "%Y-%m") as bulan,
+                SUM(jumlah_keluar) as total_jumlah,
+                SUM(total) as total_nilai
+            ')
+            ->where('tanggal_input', '>=', $startDate)
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get()
+            ->keyBy('bulan');
+        
+        $chartData['monthly'] = [
+            'labels' => [],
+            'jumlah_data' => [],
+            'nilai_data' => []
+        ];
+        
+        for($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i)->format('Y-m');
+            $monthName = now()->subMonths($i)->translatedFormat('M Y');
+            
+            $chartData['monthly']['labels'][] = $monthName;
+            $chartData['monthly']['jumlah_data'][] = (int)($monthlyData[$date]->total_jumlah ?? 0);
+            $chartData['monthly']['nilai_data'][] = (int)($monthlyData[$date]->total_nilai ?? 0);
+        }
+        
+        // 2. Top 5 Kategori (berdasarkan jumlah keluar)
+        $chartData['top_kategori'] = TransaksiKeluarPersediaan::selectRaw('
+                kode_kategori, kategori,
+                COUNT(*) as total_transaksi,
+                SUM(jumlah_keluar) as total_jumlah,
+                SUM(total) as total_nilai
+            ')
+            ->where('tanggal_input', '>=', now()->subMonths(3))
+            ->groupBy('kode_kategori', 'kategori')
+            ->orderByDesc('total_jumlah')
+            ->limit(5)
+            ->get();
+        
+        // 3. Summary Stats
+        $chartData['summary'] = [
+            'total_transaksi' => TransaksiKeluarPersediaan::count(),
+            'total_jumlah' => (int)TransaksiKeluarPersediaan::sum('jumlah_keluar'),
+            'total_nilai' => (int)TransaksiKeluarPersediaan::sum('total'),
+            'rata_rata_transaksi' => TransaksiKeluarPersediaan::avg('total'),
+        ];
+
+        return view('adminpersediian.laporan_transaksikeluar', compact('transaksi', 'chartData'));
+    }
+
+    /**
+     * Download Laporan Transaksi Keluar PDF
+     */
+    public function downloadLaporanTransaksiKeluar(Request $request)
+    {
+        $query = TransaksiKeluarPersediaan::query();
+
+        // Filter sama persis
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
+                ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
+                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
+                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
+        }
+
+        $transaksi = $query->latest()->get();
+        
+        $stats = [
+            'total_transaksi' => $transaksi->count(),
+            'total_nilai' => $transaksi->sum('total'),
+            'total_item' => $transaksi->sum('jumlah_keluar'),
+            'periode' => $request->tanggal_input ?? 'Semua Periode'
+        ];
+
+        $pdf = PDF::loadView('adminpersediian.laporan_pdf_transaksi_keluar', compact('transaksi', 'stats'));
+        
+        $filename = 'Laporan_Transaksi_Keluar_' . now()->format('d-m-Y_His') . '.pdf';
+        
+        return $pdf->download($filename);
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\KasubagController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TamuController;
 use App\Http\Controllers\AdminPersediaanController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -209,6 +210,9 @@ Route::middleware('auth')->group(function () {
         //LAPORAN
         Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');
         Route::get('/laporan-transaksi-masuk', [AdminPersediaanController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
+        Route::get('/adminpersediaan/laporan-transaksi-masuk/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiMasuk'])->name('laporan-transaksi-masuk.pdf');
+        Route::get('adminpersediaan/laporan-transaksi-keluar/download', [App\Http\Controllers\AdminPersediaanController::class, 'downloadLaporanTransaksiKeluar'])->name('laporan-transaksi-keluar.download');
+
         Route::get('/laporan-transaksi-keluar', [AdminPersediaanController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
         
 });
@@ -325,7 +329,20 @@ Route::middleware('auth')->group(function () {
             Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');
             Route::get('/survey-kepuasan/export-excel', [AdminAsettetapController::class, 'exportExcel'])->name('survey.excel-export');
             
+            // 📊 LAPORAN & ANALITIK (BARU ⭐)
+            Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+            Route::get('/laporan/filter', [LaporanController::class, 'filter'])->name('laporan.filter');
+
+            // 📥 DOWNLOAD ROUTES (LENGKAP)
+            Route::get('/transaksi-masuk/download', [LaporanController::class, 'downloadTransaksiMasuk'])->name('transaksi-masuk.download');
+            Route::get('/transaksi-keluar/download', [LaporanController::class, 'downloadTransaksiKeluar'])->name('transaksi-keluar.download');
+            Route::get('/pengaduan/download', [LaporanController::class, 'downloadPengaduan'])->name('pengaduan.download');
+            Route::get('/survey/download', [LaporanController::class, 'downloadSurvey'])->name('survey.download');
+            Route::get('/peminjaman/download', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
+            Route::get('/dashboard-summary/download', [LaporanController::class, 'downloadDashboardSummary'])->name('dashboard.download');
+            Route::get('/all/download', [LaporanController::class, 'downloadAll'])->name('all.download');
             
+            });
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -364,4 +381,58 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });
-});
+
+    // 🔥 ADMIN ASET TETAP ⭐ (Dengan LaporanController)
+    // Route::prefix('adminasettetap')
+    //     ->name('adminasettetap.')
+    //     ->middleware('role:adminasettetap,kasubag,superadmin')
+    //     ->group(function () {
+    //         Route::get('/dashboard', [AdminAsettetapController::class, 'dashboard'])->name('dashboard');
+    //         Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
+            
+    //         // 📊 LAPORAN & ANALITIK (BARU ⭐)
+    //         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    //         Route::get('/laporan/filter', [LaporanController::class, 'filter'])->name('laporan.filter');
+            
+    //         // Data & Transaksi
+    //         Route::get('/data-aset-tetap', [AdminAsettetapController::class, 'dataAsetTetap'])->name('data-aset-tetap');
+    //         Route::resource('data-aset-tetap', AdminAsettetapController::class)->except(['index']);
+            
+    //         Route::get('/transaksi-masuk', [AdminAsettetapController::class, 'TransaksiMasuk'])->name('transaksi-masuk');
+    //         Route::resource('transaksi-masuk', AdminAsettetapController::class)->except(['index']);
+            
+    //         Route::get('/transaksi-keluar', [AdminAsettetapController::class, 'TransaksiKeluar'])->name('transaksi-keluar');
+    //         Route::resource('transaksi-keluar', AdminAsettetapController::class)->except(['index']);
+    //         Route::get('/transaksi-keluar/aset/{id}', [AdminAsettetapController::class, 'getAsetKeluarData'])->name('transaksi-keluar.aset-data');
+            
+    //         // Lainnya
+    //         Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
+    //         Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
+    //         Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
+    //         Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
+    //         Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
+    //         Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
+    //         Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');
+            
+    //         // Laporan Existing
+    //         Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
+    //         Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
+    //         Route::get('/laporan-mutasi-barang', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi-barang');
+    //         Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembalian');
+            
+    //         // Pengaduan & Survey
+    //         Route::resource('pengaduan', AdminAsettetapController::class)->only(['show', 'update', 'destroy']);
+    //         Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');
+    //         Route::get('/survey-kepuasan/export-excel', [AdminAsettetapController::class, 'exportExcel'])->name('survey.excel-export');
+
+    //         // 📥 DOWNLOAD ROUTES (LENGKAP)
+    //         Route::get('/transaksi-masuk/download', [LaporanController::class, 'downloadTransaksiMasuk'])->name('transaksi-masuk.download');
+    //         Route::get('/transaksi-keluar/download', [LaporanController::class, 'downloadTransaksiKeluar'])->name('transaksi-keluar.download');
+    //         Route::get('/pengaduan/download', [LaporanController::class, 'downloadPengaduan'])->name('pengaduan.download');
+    //         Route::get('/survey/download', [LaporanController::class, 'downloadSurvey'])->name('survey.download');
+    //         Route::get('/peminjaman/download', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
+    //         Route::get('/dashboard-summary/download', [LaporanController::class, 'downloadDashboardSummary'])->name('dashboard.download');
+    //         Route::get('/all/download', [LaporanController::class, 'downloadAll'])->name('all.download');
+            
+    //         });
+

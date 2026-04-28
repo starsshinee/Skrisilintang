@@ -73,18 +73,18 @@
         ],
         ['href' => route('adminasettetap.pengaduan'), 'label' => 'Pengaduan', 'icon' => 'fas fa-flag', 'route' => 'adminasettetap.pengaduan'],
         ['href' =>route('adminasettetap.survey-kepuasan'), 'label' => 'Survey Kepuasan', 'icon' => 'fas fa-chart-line', 'route' => 'adminasettetap.survey-kepuasan'],
-        
-        [
-          'label' => 'Laporan & Statistik',
-          'icon' => 'fas fa-chart-bar',
-          'route' => 'NONE',
-          'children' => [
-            ['href' => route('adminasettetap.laporan-transaksi-masuk'), 'label' => ' Laporan Transaksi Masuk', 'route' => 'adminasettetap.laporan-transaksi-masuk'],
-            ['href' => route('adminasettetap.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminasettetap.laporan-transaksi-keluar'],
-            ['href' => route('adminasettetap.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminasettetap.laporan-mutasi-barang'],
-            ['href' => route('adminasettetap.laporan-peminjaman-pengembalian'), 'label' => 'Laporan Peminjaman & Pengembalian', 'route' => 'adminasettetap.laporan-peminjaman-pengembalian'],
-          ]
-        ],
+        ['href' => route('adminasettetap.laporan'), 'label' => 'Dashboard Analitik', 'icon' => 'fas fa-chart-pie', 'route' => 'adminasettetap.laporan'],
+        // [
+        //   'label' => 'Laporan & Statistik',
+        //   'icon' => 'fas fa-chart-bar',
+        //   'route' => 'NONE',
+        //   'children' => [
+        //     ['href' => route('adminasettetap.laporan-transaksi-masuk'), 'label' => ' Laporan Transaksi Masuk', 'route' => 'adminasettetap.laporan-transaksi-masuk'],
+        //     ['href' => route('adminasettetap.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminasettetap.laporan-transaksi-keluar'],
+        //     ['href' => route('adminasettetap.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminasettetap.laporan-mutasi-barang'],
+        //     ['href' => route('adminasettetap.laporan-peminjaman-pengembalian'), 'label' => 'Laporan Peminjaman & Pengembalian', 'route' => 'adminasettetap.laporan-peminjaman-pengembalian'],
+        //   ]
+        // ],
         
       ]
     ],
