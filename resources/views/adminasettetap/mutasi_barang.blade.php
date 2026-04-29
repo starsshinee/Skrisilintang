@@ -481,7 +481,7 @@
         <div class="page-top">
             <div>
                 <h1>Mutasi Barang</h1>
-                <p id="dataCount">{{ $mutasiBarang->total() }} data ditemukan</p>
+                <p id="dataCount">{{ $mutasi_barang->total() }} data ditemukan</p>
             </div>
             <button class="btn-tambah" onclick="mutasiManager.openCreateModal()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
@@ -519,24 +519,27 @@
                             <th>Tanggal Input</th>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
-                            <th>Perubahan Lokasi</th>
+                            <th>Lokasi Awal</th>
+                            <th>Lokasi Akhir</th>
                             <th>User</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($mutasiBarang as $index => $item)
+                        @forelse($mutasi_barang as $index => $item)
                         <tr>
                             <td><strong>{{ $item->no_mutasi }}</strong></td>
                             <td>{{ $item->tanggal_mutasi_formatted }}</td>
                             <td>{{ $item->tanggal_input }}</td>
                             <td><strong>{{ $item->kode_barang }}</strong></td>
                             <td>{{ $item->nama_barang }}</td>
-                            <td>
+                            <td>{{ $item->lokasi_awal }}</td>
+                            <td>{{ $item->lokasi_akhir }}</td>
+                            {{-- <td>
                                 <span class="lokasi-change" title="{{ $item->lokasi_perubahan }}">
                                     {{ $item->lokasi_perubahan }}
                                 </span>
-                            </td>
+                            </td> --}}
                             <td>{{ $item->user->name ?? '-' }}</td>
                             <td>
                                 <div style="display: flex; gap: 4px;">
@@ -569,11 +572,11 @@
                 </table>
             </div>
 
-            @if($mutasiBarang->hasPages())
+            @if($mutasi_barang->hasPages())
             <div class="table-footer">
-                <span>Menampilkan {{ $mutasiBarang->firstItem() }}–{{ $mutasiBarang->lastItem() }} dari {{ $mutasiBarang->total() }} data</span>
+                <span>Menampilkan {{ $mutasi_barang->firstItem() }}–{{ $mutasi_barang->lastItem() }} dari {{ $$mutasi_barangarang->total() }} data</span>
                 <div class="pagination" style="display: flex; gap: 6px; align-items: center;">
-                    {!! $mutasiBarang->appends(request()->query())->links() !!}
+                    {!! $$mutasi_barangarang->appends(request()->query())->links() !!}
                 </div>
             </div>
             @endif
@@ -676,7 +679,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-class MutasiBarangManager {
+class  MutasiManager  {
     constructor() {
         this.modal = null;
         this.detailModal = null;
@@ -732,6 +735,7 @@ class MutasiBarangManager {
     async loadAsetData(id) {
         if (!id) {
             this.clearAutoFillFields();
+            document.getElementById('lokasi_awal').value = '';
             return;
         }
 
@@ -741,6 +745,7 @@ class MutasiBarangManager {
             
             document.getElementById('kode_barang').value = data.kode_barang;
             document.getElementById('nama_barang').value = data.nama_barang;
+            document.getElementById('lokasi_awal').value = data.lokasi_sekarang;
         } catch (error) {
             console.error('Error loading aset data:', error);
         }
@@ -786,7 +791,7 @@ class MutasiBarangManager {
             document.getElementById('submitText').textContent = 'Update';
             
             document.getElementById('aset_tetap_id').value = data.aset_tetap_id;
-            this.loadAsetData(data.aset_tetap_id);
+            await this.loadAsetData(data.aset_tetap_id);
             document.getElementById('lokasi_awal').value = data.lokasi_awal;
             document.getElementById('lokasi_akhir').value = data.lokasi_akhir;
             document.getElementById('tanggal_mutasi').value = data.tanggal_mutasi;
@@ -1004,7 +1009,7 @@ class MutasiBarangManager {
 let mutasiManager;
 
 document.addEventListener('DOMContentLoaded', () => {
-    mutasiManager = new MutasiBarangManager();
+    mutasiManager = new MutasiManager();
 
     // Auto-hide session alerts
     document.querySelectorAll('.alert-dismissible').forEach(alert => {

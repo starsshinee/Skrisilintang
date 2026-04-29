@@ -47,20 +47,11 @@ class TransaksiMasukAssetTetap extends Model
     }
 
     // In your Model
-  public function getTanggalInputFormattedAttribute()
+  public function getTanggalInputFormattedAttribute(): string
     {
-        if (!$this->tanggal_input) {
-            return '-';
-        }
-        
-        // Handle both raw dates and formatted strings
-        try {
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $this->tanggal_input);
-            return $date->isValid() ? $date->translatedFormat('d F Y') : $this->tanggal_input;
-        } catch (\Exception $e) {
-            // If it's already formatted or invalid, return as-is
-            return $this->tanggal_input;
-        }
+        return $this->tanggal_input 
+            ? Carbon::parse($this->tanggal_input)->format('d/m/Y') 
+            : '-';
     }
 
     public function getKondisiBadgeAttribute(): array

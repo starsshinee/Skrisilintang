@@ -615,28 +615,43 @@
                             <label class="form-label">Aset Tetap <span style="color:#EF4444;">*</span></label>
                             <select name="aset_tetap_id" id="aset_tetap_id" class="form-select" required>
                                 <option value="">-- Pilih Aset Tetap --</option>
-                                @foreach($asetTetap ?? [] as $aset)
-                                <option value="{{ $aset->id }}"
-                                    data-nup="{{ $aset->nup }}"
-                                    data-kode="{{ $aset->kode_barang }}"
-                                    data-nama="{{ $aset->nama_barang }}"
-                                    data-merek="{{ $aset->merek }}"
-                                    data-tgl="{{ $aset->tanggal_perolehan?->format('Y-m-d') }}"
-                                    data-nilai="{{ $aset->nilai_perolehan }}"
-                                    data-lokasi="{{ $aset->lokasi }}">
-                                    {{ $aset->kode_barang }} - {{ $aset->nama_barang }}
-                                </option>
-                                @endforeach
+                                @forelse($asetTetapOptions ?? [] as $aset)
+                                    <option value="{{ $aset->id }}"
+                                        data-nup="{{ $aset->nup ?? '' }}"
+                                        data-kode="{{ $aset->kode_barang ?? '' }}"
+                                        data-nama="{{ $aset->nama_barang ?? '' }}"
+                                        data-merek="{{ $aset->merek ?? '' }}"
+                                        data-tgl="{{ $aset->tanggal_perolehan?->format('Y-m-d') ?? '' }}"
+                                        data-nilai="{{ $aset->nilai_perolehan ?? 0 }}"
+                                        data-lokasi="{{ $aset->lokasi ?? '' }}">
+                                        {{ $aset->kode_barang ?? 'N/A' }} - {{ $aset->nama_barang ?? 'Tanpa Nama' }}
+                                    </option>
+                                @empty
+                                    <option disabled>Tidak ada aset tersedia</option>
+                                @endforelse
                             </select>
-                            @error('aset_tetap_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            @error('aset_tetap_id') 
+                                <div class="invalid-feedback d-block">{{ $message }}</div> 
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Tanggal Input <span style="color:#EF4444;">*</span></label>
                             <input type="date" name="tanggal_input" id="tanggal_input" class="form-control" required
-                                   value="{{ old('tanggal_input', now()->format('Y-m-d')) }}">
-                            @error('tanggal_input') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                value="{{ old('tanggal_input', now()->format('Y-m-d')) }}">
+                            @error('tanggal_input') 
+                                <div class="invalid-feedback d-block">{{ $message }}</div> 
+                            @enderror
                         </div>
                     </div>
+
+                    {{-- ✅ TAMBAH: Info jika tidak ada data --}}
+                    @if(empty($asetTetap ?? []))
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            Tidak ada aset tetap yang tersedia untuk transaksi keluar. 
+                            <a href="{{ route('adminasettetap.data-aset-tetap') }}" class="alert-link">Kelola Data Aset</a>
+                        </div>
+                    @endif
 
                     {{-- SEKSI 2: Data Barang (otomatis) --}}
                     <div class="modal-section-label">
@@ -794,10 +809,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+let crudModalInstance, detailModalInstance;
 
-// ================================================================
-// MODAL TAMBAH BARU
-// ================================================================
+// Open Create Modal
 window.openCreateModal = function() {
     document.getElementById('crudForm').reset();
     document.getElementById('modalTitle').textContent = 'Tambah Transaksi Keluar Baru';
@@ -808,17 +822,13 @@ window.openCreateModal = function() {
     document.getElementById('tanggal_input').value = new Date().toISOString().split('T')[0];
     clearFields();
 
-    const modal = new bootstrap.Modal(document.getElementById('crudModal'), {
-        backdrop: true,
-        keyboard: true
-    });
-    modal.show();
+    if (!crudModalInstance) {
+        crudModalInstance = new bootstrap.Modal(document.getElementById('crudModal'));
+    }
+    crudModalInstance.show();
 };
 
-
-// ================================================================
-// MODAL EDIT
-// ================================================================
+// Open Edit Modal
 window.openEditModal = function(id) {
     document.getElementById('modalTitle').textContent = 'Edit Transaksi Keluar';
     document.getElementById('submitText').textContent = 'Perbarui Transaksi';
@@ -826,7 +836,7 @@ window.openEditModal = function(id) {
     document.getElementById('crudForm').action = `/adminasettetap/transaksi-keluar/${id}`;
     document.getElementById('modalId').value = id;
 
-    fetch(`/adminasettetap/transaksi-keluar/${id}/edit`, {
+    fetch(`/adminasettetap/transaksi-keluar/${id}/edit-json`, {
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Accept': 'application/json'
@@ -834,49 +844,39 @@ window.openEditModal = function(id) {
     })
     .then(r => r.json())
     .then(data => {
-        if (data.aset_tetap_id) document.getElementById('aset_tetap_id').value = data.aset_tetap_id;
-        if (data.tanggal_input) document.getElementById('tanggal_input').value = data.tanggal_input;
-        if (data.kode_barang) document.getElementById('kode_barang').value = data.kode_barang;
-        if (data.nup) document.getElementById('nup').value = data.nup;
-        if (data.nama_barang) document.getElementById('nama_barang').value = data.nama_barang;
-        if (data.merek) document.getElementById('merek').value = data.merek;
-        if (data.tanggal_perolehan) document.getElementById('tanggal_perolehan').value = data.tanggal_perolehan;
-        if (data.nilai_perolehan) document.getElementById('nilai_perolehan').value = data.nilai_perolehan;
-        if (data.lokasi) document.getElementById('lokasi').value = data.lokasi;
-        if (data.nomor_sk) document.getElementById('nomor_sk').value = data.nomor_sk;
-        if (data.tanggal_sk) document.getElementById('tanggal_sk').value = data.tanggal_sk;
-        if (data.keterangan) document.getElementById('keterangan').value = data.keterangan;
+        if (data.aset_tetap_id) {
+            document.getElementById('aset_tetap_id').value = data.aset_tetap_id;
+            // Trigger change untuk auto-fill
+            document.getElementById('aset_tetap_id').dispatchEvent(new Event('change'));
+        }
+        document.getElementById('tanggal_input').value = data.tanggal_input || '';
+        document.getElementById('nomor_sk').value = data.nomor_sk || '';
+        document.getElementById('tanggal_sk').value = data.tanggal_sk || '';
+        document.getElementById('keterangan').value = data.keterangan || '';
     })
-    .catch(() => {
-        alert('Gagal memuat data. Silakan coba lagi.');
-        return;
-    });
+    .catch(() => alert('Gagal memuat data'));
 
-    const modal = new bootstrap.Modal(document.getElementById('crudModal'), {
-        backdrop: true,
-        keyboard: true
-    });
-    modal.show();
+    if (!crudModalInstance) {
+        crudModalInstance = new bootstrap.Modal(document.getElementById('crudModal'));
+    }
+    crudModalInstance.show();
 };
 
-
-// ================================================================
-// MODAL DETAIL
-// ================================================================
+// ✅ FIXED: Open Detail Modal
 window.openDetailModal = function(id) {
     document.getElementById('detailContent').innerHTML = `
         <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status"></div>
             <p class="mt-2 text-muted">Memuat data...</p>
-        </div>`;
+        </div>
+    `;
 
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'), {
-        backdrop: true,
-        keyboard: true
-    });
-    modal.show();
+    if (!detailModalInstance) {
+        detailModalInstance = new bootstrap.Modal(document.getElementById('detailModal'));
+    }
+    detailModalInstance.show();
 
-    fetch(`/adminasettetap/transaksi-keluar/${id}`, {
+    fetch(`transaksi-keluar/${id}/show-aset`, {
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Accept': 'application/json'
@@ -884,37 +884,45 @@ window.openDetailModal = function(id) {
     })
     .then(r => r.json())
     .then(data => {
+        if (data.error) {
+            document.getElementById('detailContent').innerHTML = `
+                <div class="text-center py-4 text-danger">
+                    <i class="fas fa-exclamation-circle fa-2x mb-2 d-block"></i>
+                    ${data.error}
+                </div>`;
+            return;
+        }
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-section">
                 <div class="detail-section-title"><span>Informasi Aset</span></div>
                 <div class="detail-grid">
                     <div class="detail-item">
                         <label>Kode Barang</label>
-                        <span>${data.kode_barang ?? '-'}</span>
+                        <span>${data.kode_barang}</span>
                     </div>
                     <div class="detail-item">
                         <label>NUP</label>
-                        <span>${data.nup ?? '-'}</span>
+                        <span>${data.nup}</span>
                     </div>
                     <div class="detail-item">
                         <label>Nama Barang</label>
-                        <span>${data.nama_barang ?? '-'}</span>
+                        <span>${data.nama_barang}</span>
                     </div>
                     <div class="detail-item">
                         <label>Merek</label>
-                        <span>${data.merek ?? '-'}</span>
+                        <span>${data.merek}</span>
                     </div>
                     <div class="detail-item">
                         <label>Tanggal Perolehan</label>
-                        <span>${data.tanggal_perolehan_format ?? '-'}</span>
+                        <span>${data.tanggal_perolehan_format}</span>
                     </div>
                     <div class="detail-item">
                         <label>Nilai Perolehan</label>
-                        <span>${data.nilai_format ?? '-'}</span>
+                        <span>${data.nilai_format}</span>
                     </div>
                     <div class="detail-item full">
                         <label>Lokasi</label>
-                        <span>${data.lokasi ?? '-'}</span>
+                        <span>${data.lokasi}</span>
                     </div>
                 </div>
             </div>
@@ -923,19 +931,19 @@ window.openDetailModal = function(id) {
                 <div class="detail-grid">
                     <div class="detail-item">
                         <label>Tanggal Input</label>
-                        <span>${data.tanggal_input_format ?? '-'}</span>
+                        <span>${data.tanggal_input_format}</span>
                     </div>
                     <div class="detail-item">
                         <label>Nomor SK</label>
-                        <span>${data.nomor_sk ?? '-'}</span>
+                        <span>${data.nomor_sk}</span>
                     </div>
                     <div class="detail-item">
                         <label>Tanggal SK</label>
-                        <span>${data.tanggal_sk_format ?? '-'}</span>
+                        <span>${data.tanggal_sk_format}</span>
                     </div>
                     <div class="detail-item full">
                         <label>Keterangan</label>
-                        <span>${data.keterangan ?? '-'}</span>
+                        <span>${data.keterangan}</span>
                     </div>
                 </div>
             </div>`;
@@ -949,71 +957,104 @@ window.openDetailModal = function(id) {
     });
 };
 
-
-// ================================================================
-// DELETE ITEM
-// ================================================================
-window.deleteItem = function(id) {
-    if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
-
-    fetch(`/adminasettetap/transaksi-keluar/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        }
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success || data.message) {
-            location.reload();
-        } else {
-            alert('Gagal menghapus data.');
-        }
-    })
-    .catch(() => alert('Terjadi kesalahan. Silakan coba lagi.'));
-};
-
-
-// ================================================================
-// AUTO-FILL FIELD DARI PILIHAN ASET
-// ================================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const asetSelect = document.getElementById('aset_tetap_id');
-    if (asetSelect) {
-        asetSelect.addEventListener('change', function() {
-            if (!this.value) {
-                clearFields();
-                return;
-            }
-            fetch(`/transaksi-keluar/aset/${this.value}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
+// ✅ FIXED: Auto-fill dari select aset
+// ✅ AUTO-FILL YANG BENAR
+    document.addEventListener('DOMContentLoaded', function() {
+        const asetSelect = document.getElementById('aset_tetap_id');
+        
+        if (asetSelect) {
+            asetSelect.addEventListener('change', function() {
+                console.log('Aset dipilih:', this.value); // DEBUG
+                
+                if (!this.value) {
+                    clearFields();
+                    return;
                 }
-            })
-            .then(r => r.json())
-            .then(data => fillFields(data))
-            .catch(() => clearFields());
+
+                // Show loading
+                showLoading(true);
+                
+                // ✅ ROUTE BENAR
+               fetch(`/adminasettetap/aset-tetap/${this.value}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status); // DEBUG
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data diterima:', data); // DEBUG
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        clearFields();
+                        return;
+                    }
+                    fillFields(data);
+                    showLoading(false);
+                })
+                .catch(error => {
+                    console.error('AJAX Error:', error);
+                    alert('Gagal memuat data aset. Periksa console untuk detail.');
+                    clearFields();
+                    showLoading(false);
+                });
+            });
+        }
+    });
+
+    function fillFields(data) {
+        document.getElementById('kode_barang').value = data.kode_barang || '';
+        document.getElementById('nup').value = data.nup || '';
+        document.getElementById('nama_barang').value = data.nama_barang || '';
+        document.getElementById('merek').value = data.merek || '';
+        document.getElementById('tanggal_perolehan').value = data.tanggal_perolehan || '';
+        document.getElementById('nilai_perolehan').value = data.nilai_perolehan || 0;
+        document.getElementById('lokasi').value = data.lokasi || '';
+    }
+
+    function clearFields() {
+        const fields = ['kode_barang', 'nup', 'nama_barang', 'merek', 'tanggal_perolehan', 'nilai_perolehan', 'lokasi'];
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
         });
     }
 
-    // Loading spinner saat form submit
+    function showLoading(show) {
+        const fields = document.querySelectorAll('.form-control[readonly]');
+        fields.forEach(field => {
+            field.style.background = show ? '#f3f4f6' : '';
+            field.placeholder = show ? 'Memuat...' : '';
+        });
+    }
+    // Form submit loading
     const crudForm = document.getElementById('crudForm');
     if (crudForm) {
         crudForm.addEventListener('submit', function() {
-            document.getElementById('loadingSpinner').classList.remove('d-none');
-            document.getElementById('submitBtn').disabled = true;
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
         });
     }
-});
+
 
 function fillFields(data) {
-    const fields = ['kode_barang', 'nup', 'nama_barang', 'merek', 'tanggal_perolehan', 'nilai_perolehan', 'lokasi'];
-    fields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = data[id] || '';
-    });
+    document.getElementById('kode_barang').value = data.kode_barang || '';
+    document.getElementById('nup').value = data.nup || '';
+    document.getElementById('nama_barang').value = data.nama_barang || '';
+    document.getElementById('merek').value = data.merek || '';
+    document.getElementById('tanggal_perolehan').value = data.tanggal_perolehan || '';
+    document.getElementById('nilai_perolehan').value = data.nilai_perolehan || '';
+    document.getElementById('lokasi').value = data.lokasi || '';
 }
 
 function clearFields() {
@@ -1023,6 +1064,42 @@ function clearFields() {
         if (el) el.value = '';
     });
 }
+
+// ✅ DELETE FUNCTION - TAMBAHAN BARU
+window.deleteItem = function(id) {
+    if (!confirm('⚠️ Apakah Anda yakin ingin menghapus transaksi keluar ini?\n\nAset akan dikembalikan ke status "Tersedia".\nOperasi ini tidak dapat dibatalkan.')) {
+        return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/adminasettetap/transaksi-keluar/${id}`;
+    form.style.display = 'none';
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const methodInput = document.createElement('input');
+    methodInput.type = 'hidden';
+    methodInput.name = '_method';
+    methodInput.value = 'DELETE';
+    
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = csrfToken;
+    
+    form.appendChild(methodInput);
+    form.appendChild(csrfInput);
+    document.body.appendChild(form);
+    
+    // Show loading di tombol delete
+    const deleteBtn = event.target.closest('.action-btn.danger');
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:12px;"></i>';
+        deleteBtn.disabled = true;
+    }
+    
+    form.submit();
+};
 
 </script>
 

@@ -303,6 +303,13 @@
     .form-row { grid-template-columns: 1fr; }
     .page-top { flex-direction: column; gap: 16px; align-items: stretch; }
   }
+
+  .status-badge {
+  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  text-transform: capitalize; letter-spacing: .3px;
+  display: inline-flex; align-items: center; gap: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
 </style>
 </head>
 <body>
@@ -392,6 +399,7 @@
             <th>Kondisi</th>
             <th>Lokasi</th>
             <th>Jumlah</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -415,6 +423,21 @@
               </td>
               <td>{{ $aset->lokasi ?? '-' }}</td>
               <td><strong>{{ $aset->jumlah ?? 0 }}</strong></td>
+              <td>
+                @php 
+                  $status = $aset->status ?? 'Tersedia';
+                  $statusColors = [
+                    'Tersedia' => ['bg' => '#ECFDF5', 'text' => '#10B981', 'icon' => '🟢'],
+                    'Dipinjam' => ['bg' => '#DBEAFE', 'text' => '#3B82F6', 'icon' => '🔵'],
+                    'Keluar' => ['bg' => '#FEF3C7', 'text' => '#F59E0B', 'icon' => '🟡'],
+                    'Rusak' => ['bg' => '#FEF2F2', 'text' => '#EF4444', 'icon' => '🔴']
+                  ];
+                  $color = $statusColors[$status] ?? $statusColors['Tersedia'];
+                @endphp
+                <span class="status-badge" style="background: {{ $color['bg'] }}; color: {{ $color['text'] }};">
+                  {{ $color['icon'] }} {{ $status }}
+                </span>
+              </td>
               <td>
                 <a href="#modal-detail-{{ $aset->id }}" class="action-btn" onclick="openModal('modal-detail-{{ $aset->id }}')" title="Detail">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8">
@@ -489,7 +512,6 @@
                     </div>
                   </div>
                 </div>
-                
                 <div class="form-row">
                   <div class="form-group">
                     <div class="form-label">Nilai Perolehan</div>
@@ -594,6 +616,20 @@
                       <option value="rusak berat" {{ old('kondisi', $aset->kondisi) == 'rusak berat' ? 'selected' : '' }}>Rusak Berat</option>
                     </select>
                     @error('kondisi') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Status <span class="text-red-500">*</span></label>
+                    <select name="status" class="form-select @error('status') border-red-300 @enderror" required>
+                      <option value="">Pilih Status</option>
+                      <option value="Tersedia" {{ old('status', $aset->status) == 'Tersedia' ? 'selected' : '' }}>🟢 Tersedia</option>
+                      <option value="Dipinjam" {{ old('status', $aset->status) == 'Dipinjam' ? 'selected' : '' }}>🔵 Dipinjam</option>
+                      <option value="Keluar" {{ old('status', $aset->status) == 'Keluar' ? 'selected' : '' }}>🟡 Keluar</option>
+                      <option value="Rusak" {{ old('status', $aset->status) == 'Rusak' ? 'selected' : '' }}>🔴 Rusak</option>
+                    </select>
+                    @error('status') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
                   </div>
                 </div>
                 
@@ -722,7 +758,20 @@
           @error('kondisi') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
         </div>
       </div>
-
+      {{-- Tambahkan SEBELUM <div class="btn-group"> --}}
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Status <span class="text-red-500">*</span></label>
+          <select name="status" class="form-select @error('status') border-red-300 @enderror" required>
+            <option value="">Pilih Status</option>
+            <option value="Tersedia" {{ old('status') == 'Tersedia' ? 'selected' : '' }}>🟢 Tersedia</option>
+            <option value="Dipinjam" {{ old('status') == 'Dipinjam' ? 'selected' : '' }}>🔵 Dipinjam</option>
+            <option value="Keluar" {{ old('status') == 'Keluar' ? 'selected' : '' }}>🟡 Keluar</option>
+            <option value="Rusak" {{ old('status') == 'Rusak' ? 'selected' : '' }}>🔴 Rusak</option>
+          </select>
+          @error('status') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Nilai Perolehan (Rp)</label>

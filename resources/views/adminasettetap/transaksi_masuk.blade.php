@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>SIPANDU - Data Aset Tetap</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -303,6 +304,23 @@
     .form-row { grid-template-columns: 1fr; }
     .page-top { flex-direction: column; gap: 16px; align-items: stretch; }
   }
+  /* MODAL HEADER & BODY */
+.modal-header { padding: 0 0 20px; }
+.modal-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.modal-subtitle { font-size: 13px; color: var(--muted); }
+.modal-body { padding-bottom: 24px; }
+.detail-content { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.detail-label { font-size: 13px; font-weight: 600; color: var(--muted); min-width: 140px; }
+.detail-value { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; text-align: right; }
+.badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: capitalize; }
+.badge-success { background: #ECFDF5; color: var(--success); }
+.badge-warning { background: #FEF3C7; color: var(--warning); }
+.badge-danger { background: #FEF2F2; color: var(--danger); }
+.btn-modal { padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .2s; font-family: inherit; }
+.modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+.status-baikk { background: #ECFDF5; color: var(--success); }
+.status-rusak { background: #FEF2F2; color: var(--danger); }
+.status-perawatan { background: #FEF3C7; color: var(--warning); }
 </style>
 </head>
 <body>
@@ -419,15 +437,21 @@
             <td><strong>{{ $item->jumlah }}</strong></td>
             <td>
               <div class="action-buttons">
-                <button onclick="openDetail({{ $item->id }})" class="action-btn btn-detail" title="Detail">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button onclick="openEdit({{ $item->id }})" class="action-btn btn-edit" title="Edit">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button onclick="confirmDelete({{ $item->id }})" class="action-btn btn-delete" title="Hapus">
-                  <i class="fas fa-trash"></i>
-                </button>
+                  <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                  </button>
+                  <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                  </button>
+                  <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                  </button>
               </div>
             </td>
           </tr>
@@ -585,129 +609,181 @@
 
 
 {{-- MODAL DETAIL --}}
+{{-- MODAL DETAIL --}}
 <div id="detailModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 class="modal-title"><i class="fas fa-eye text-info me-2"></i>Detail Transaksi</h3>
-      <p class="modal-subtitle" id="detailSubtitle"></p>
-    </div>
-    <div class="modal-body">
-      <div id="detailContent"></div>
-    </div>
-    <div class="btn-group">
-      <button type="button" class="btn-modal btn-cancel" onclick="closeModal('detailModal')">Tutup</button>
+  <div class="modal" style="max-width: 550px;">
+    <div style="padding: 28px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin: 0;">Detail Transaksi</h3>
+            <p style="font-size: 13px; color: var(--muted); margin: 4px 0 0;" id="detailSubtitle">Lihat detail lengkap transaksi</p>
+          </div>
+        </div>
+        <button onclick="closeModal('detailModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); transition: all .15s;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div id="detailContent" style="padding: 8px 0;"></div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+        <button onclick="closeModal('detailModal')" class="btn btn-cancel" style="padding: 12px 28px;">
+          Tutup
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
 {{-- MODAL EDIT --}}
 <div id="editModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 class="modal-title"><i class="fas fa-edit text-warning me-2"></i>Edit Transaksi</h3>
-      <p class="modal-subtitle" id="editSubtitle"></p>
-    </div>
-    <form id="editForm" method="POST">
-      @method('PUT')
-      <div class="modal-body">
+  <div class="modal" style="max-width: 620px;">
+    <div style="padding: 0; display: flex; flex-direction: column; max-height: 92vh; overflow: hidden; border-radius: 20px;">
+      <div style="padding: 24px 28px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #F8FAFF, #EEF2FF); flex-shrink: 0;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #F59E0B, #FBBF24); display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">Edit Transaksi Masuk</h3>
+              <p style="font-size: 12px; color: var(--muted); margin: 2px 0 0;" id="editSubtitle">Update data transaksi aset tetap</p>
+            </div>
+          </div>
+          <button onclick="closeModal('editModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <form id="editForm" method="POST" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+        @csrf @method('PUT')
         <input type="hidden" name="id" id="editId">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Kode Barang *</label>
-            <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" required>
+        
+        <div style="padding: 24px 28px; overflow-y: auto; flex: 1;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tanggal Input <span style="color: var(--danger);">*</span></label>
+              <input type="date" name="tanggal_input" id="editTanggalInput" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kode Barang <span style="color: var(--danger);">*</span></label>
+              <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" required>
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">NUP *</label>
-            <input type="text" name="nup" id="editNup" class="form-input" required>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">NUP <span style="color: var(--danger);">*</span></label>
+              <input type="text" name="nup" id="editNup" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jumlah <span style="color: var(--danger);">*</span></label>
+              <input type="number" name="jumlah" id="editJumlah" class="form-input" min="1" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Jumlah *</label>
-            <input type="number" name="jumlah" id="editJumlah" class="form-input" min="1" required>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nama Barang <span style="color: var(--danger);">*</span></label>
+              <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Merek</label>
+              <input type="text" name="merek" id="editMerek" class="form-input">
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nama Barang *</label>
-            <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" required>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Kategori <span style="color: var(--danger);">*</span></label>
+              <input type="text" name="kategori" id="editKategori" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kondisi <span style="color: var(--danger);">*</span></label>
+              <select name="kondisi" id="editKondisi" class="form-select" required>
+                <option value="">Pilih Kondisi</option>
+                @foreach($kondisiOptions as $kondisi)
+                <option value="{{ $kondisi }}">{{ ucwords(str_replace('_', ' ', $kondisi)) }}</option>
+                @endforeach
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Merek</label>
-            <input type="text" name="merek" id="editMerek" class="form-input">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Lokasi <span style="color: var(--danger);">*</span></label>
+              <input type="text" name="lokasi" id="editLokasi" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal Perolehan</label>
+              <input type="date" name="tanggal_perolehan" id="editTanggalPerolehan" class="form-input">
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Kategori *</label>
-            <select name="kategori" id="editKategori" class="form-select" required>
-              <option value="">Pilih Kategori</option>
-              @foreach($kategoriOptions as $kategori)
-              <option value="{{ $kategori }}">{{ $kategori }}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Kondisi *</label>
-            <select name="kondisi" id="editKondisi" class="form-select" required>
-              <option value="">Pilih Kondisi</option>
-              @foreach($kondisiOptions as $kondisi)
-              <option value="{{ $kondisi }}">{{ ucwords(str_replace('_', ' ', $kondisi)) }}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Tanggal Perolehan</label>
-            <input type="date" name="tanggal_perolehan" id="editTanggalPerolehan" class="form-input">
-          </div>
+          
           <div class="form-group">
             <label class="form-label">Nilai Perolehan</label>
-            <input type="number" name="nilai_perolehan" id="editNilaiPerolehan" class="form-input" step="0.01" min="0">
+            <div style="position: relative;">
+              <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--muted); pointer-events: none;">Rp</span>
+              <input type="number" name="nilai_perolehan" id="editNilaiPerolehan" class="form-input" step="0.01" min="0" style="padding-left: 48px;">
+            </div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Lokasi *</label>
-            <input type="text" name="lokasi" id="editLokasi" class="form-input" required>
-          </div>
-      </div>
-      <div class="btn-group">
-        <button type="button" class="btn-modal btn-cancel" onclick="closeModal('editModal')">Batal</button>
-        <button type="submit" class="btn-modal btn-confirm">
-          <i class="fas fa-save me-2"></i>Update Transaksi
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
-{{-- MODAL DELETE --}}
-<div id="deleteModal" class="modal-overlay">
-  <div class="modal">
-    <h3><i class="fas fa-exclamation-triangle text-warning me-2"></i>Hapus Transaksi?</h3>
-    <p>Data transaksi masuk aset tetap ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
-    <div class="modal-buttons">
-      <button class="btn-modal btn-cancel" onclick="closeModal('deleteModal')">Batal</button>
-      <form id="deleteForm" method="POST" style="display: inline;">
-        @csrf @method('DELETE')
-        <button type="submit" class="btn-modal btn-confirm">Hapus</button>
+        <div style="padding: 20px 28px; border-top: 1px solid var(--border); background: #FAFBFF; display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Batal</button>
+          <button type="submit" class="btn btn-primary">Update Transaksi</button>
+        </div>
       </form>
     </div>
   </div>
 </div>
 
+{{-- MODAL DELETE --}}
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal" style="max-width: 450px;">
+    <div style="padding: 32px 28px 24px;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #FEF2F2, #FECACA); display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#EF4444">
+            <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+          </svg>
+        </div>
+        <div style="text-align: center;">
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin: 0 0 8px;">Hapus Transaksi?</h3>
+          <p style="font-size: 14px; color: var(--text); margin: 0; max-width: 320px;">Data transaksi masuk aset tetap ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button onclick="closeModal('deleteModal')" class="btn btn-cancel">Batal</button>
+        <form id="deleteForm" method="POST" style="display: contents;">
+          @csrf @method('DELETE')
+          <button type="submit" class="btn btn-danger" style="padding: 12px 28px;">Hapus Transaksi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// Data transaksi untuk modal detail dan edit (akan diisi via AJAX atau dari server)
+// Data transaksi untuk modal
 let transaksiData = {};
 
-// Fungsi untuk membuka modal
 function openModal(modalId) {
   document.getElementById(modalId).classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 
-// Fungsi untuk menutup modal
 function closeModal(modalId = null) {
   if (!modalId) {
     document.querySelectorAll('.modal-overlay.show').forEach(modal => {
@@ -716,171 +792,163 @@ function closeModal(modalId = null) {
   } else {
     document.getElementById(modalId).classList.remove('show');
   }
-  // Reset form edit
-  if (modalId === 'editModal') {
-    document.getElementById('editForm').reset();
-  }
+  document.body.style.overflow = 'auto';
 }
 
-// Open Detail Modal
+// DETAIL - Menggunakan data dari table (tidak perlu AJAX)
 function openDetail(id) {
-  // Simulasi data - ganti dengan AJAX call ke show route
-  fetch(`/admin/transaksi-masuk/${id}`)
-    .then(response => response.json())
-    .then(data => {
-      transaksiData = data;
-      populateDetailModal(data);
-      openModal('detailModal');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Gagal memuat data detail');
-    });
-}
-
-// Populate Detail Modal
-function populateDetailModal(data) {
+  // Cari row yang sesuai dengan ID
+  const row = document.querySelector(`button[onclick="openDetail(${id})"]`).closest('tr');
+  const cells = row.querySelectorAll('td');
   
-  const kondisiColors = {
-    'baik': 'success',
-    'rusak_ringan': 'warning', 
-    'rusak_berat': 'danger'
+  const data = {
+    id: id,
+    tanggal_input: cells[1].textContent.trim(),
+    kode_barang: cells[2].textContent.trim(),
+    nup: cells[3].textContent.trim(),
+    nama_barang: cells[4].textContent.trim(),
+    merek: cells[5].textContent.trim(),
+    kategori: cells[6].textContent.trim(),
+    tanggal_perolehan: cells[7].textContent.trim(),
+    nilai_perolehan: cells[8].textContent.replace(/[^\d]/g, ''),
+    kondisi: cells[9].querySelector('.status-badge')?.className.match(/status-(\w+)/)?.[1] || 'baik',
+    lokasi: cells[10].textContent.trim(),
+    jumlah: cells[11].textContent.trim()
   };
   
+  populateDetailModal(data);
+  openModal('detailModal');
+}
+
+function populateDetailModal(data) {
+  const kondisiColors = {
+    'baikk': { color: 'success', text: 'Baik' },
+    'rusak': { color: 'danger', text: 'Rusak' },
+    'perawatan': { color: 'warning', text: 'Perawatan' }
+  };
+  
+  const kondisi = kondisiColors[data.kondisi] || { color: 'info', text: data.kondisi };
+  
   document.getElementById('detailContent').innerHTML = `
-    <div class="detail-content">
-      <div class="detail-label">Kode Barang</div>
-      <div class="detail-value">${data.kode_barang || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">NUP</div>
-      <div class="detail-value">${data.nup || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Nama Barang</div>
-      <div class="detail-value">${data.nama_barang || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Merek</div>
-      <div class="detail-value">${data.merek || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Kategori</div>
-      <div class="detail-value">${data.kategori || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Kondisi</div>
-      <div class="detail-value">
-        <span class="badge badge-${kondisiColors[data.kondisi] || 'info'}">
-          <i class="fas fa-circle me-1"></i>
-          ${data.kondisi ? ucwords(str_replace('_', ' ', data.kondisi)) : '-'}
-        </span>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+      <div>
+        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Identifikasi</div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div><strong>Kode Barang:</strong> <span style="color: var(--blue); font-weight: 700;">${data.kode_barang}</span></div>
+          <div><strong>NUP:</strong> ${data.nup}</div>
+          <div><strong>Tanggal Input:</strong> ${data.tanggal_input}</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Data Barang</div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div><strong>Nama Barang:</strong> ${data.nama_barang}</div>
+          <div><strong>Merek:</strong> ${data.merek || '-'}</div>
+          <div><strong>Kategori:</strong> ${data.kategori}</div>
+          <div><strong>Jumlah:</strong> <span style="color: var(--blue); font-weight: 700;">${data.jumlah}</span></div>
+        </div>
       </div>
     </div>
-    <div class="detail-content">
-      <div class="detail-label">Jumlah</div>
-      <div class="detail-value">${data.jumlah || 0}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Lokasi</div>
-      <div class="detail-value">${data.lokasi || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Tanggal Perolehan</div>
-      <div class="detail-value">${data.tanggal_perolehan ? new Date(data.tanggal_perolehan).toLocaleDateString('id-ID') : '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Nilai Perolehan</div>
-      <div class="detail-value">Rp ${data.nilai_perolehan ? parseFloat(data.nilai_perolehan).toLocaleString('id-ID') : '0'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Tanggal Input</div>
-      <div class="detail-value">${data.tanggal_input ? new Date(data.tanggal_input).toLocaleDateString('id-ID') : '-'}</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div>
+        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Lokasi & Kondisi</div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div><strong>Lokasi:</strong> ${data.lokasi}</div>
+          <div><strong>Kondisi:</strong> 
+            <span class="status-badge status-${kondisi.color}" style="margin-left: 8px;">
+              ${kondisi.text}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Perolehan</div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div><strong>Tanggal Perolehan:</strong> ${data.tanggal_perolehan}</div>
+          <div><strong>Nilai Perolehan:</strong> <span style="color: var(--success); font-weight: 700;">Rp ${parseInt(data.nilai_perolehan || 0).toLocaleString('id-ID')}</span></div>
+        </div>
+      </div>
     </div>
   `;
 }
 
-// Open Edit Modal
+// EDIT - Menggunakan data dari table
 function openEdit(id) {
-  fetch(`/admin/transaksi-masuk/${id}/edit`)
-    .then(response => response.json())
-    .then(data => {
-      populateEditModal(data);
-      document.getElementById('editForm').action = `/admin/transaksi-masuk/${id}`;
-      openModal('editModal');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Gagal memuat data edit');
-    });
+  const row = document.querySelector(`button[onclick="openEdit(${id})"]`).closest('tr');
+  const cells = row.querySelectorAll('td');
+  
+  const data = {
+    id: id,
+    tanggal_input: cells[1].textContent.trim(),
+    kode_barang: cells[2].textContent.trim(),
+    nup: cells[3].textContent.trim(),
+    nama_barang: cells[4].textContent.trim(),
+    merek: cells[5].textContent.trim(),
+    kategori: cells[6].textContent.trim(),
+    tanggal_perolehan: cells[7].textContent.trim(),
+    nilai_perolehan: cells[8].textContent.replace(/[^\d]/g, ''),
+    kondisi: cells[9].querySelector('.status-badge')?.className.match(/status-(\w+)/)?.[1] || 'baik',
+    lokasi: cells[10].textContent.trim(),
+    jumlah: cells[11].textContent.trim()
+  };
+  
+  populateEditModal(data);
+  document.getElementById('editForm').action = `/adminasettetap/transaksi-masuk/${id}`;
+  openModal('editModal');
 }
 
-// Populate Edit Modal
 function populateEditModal(data) {
   document.getElementById('editId').value = data.id;
-  document.getElementById('editKodeBarang').value = data.kode_barang || '';
-  document.getElementById('editNup').value = data.nup || '';
-  document.getElementById('editNamaBarang').value = data.nama_barang || '';
-  document.getElementById('editMerek').value = data.merek || '';
-  document.getElementById('editKategori').value = data.kategori || '';
-  document.getElementById('editKondisi').value = data.kondisi || '';
-  document.getElementById('editJumlah').value = data.jumlah || '';
-  document.getElementById('editLokasi').value = data.lokasi || '';
-  document.getElementById('editTanggalPerolehan').value = data.tanggal_perolehan || '';
+  document.getElementById('editTanggalInput').value = data.tanggal_input.split('/').reverse().join('-') || '';
+  document.getElementById('editKodeBarang').value = data.kode_barang;
+  document.getElementById('editNup').value = data.nup;
+  document.getElementById('editNamaBarang').value = data.nama_barang;
+  document.getElementById('editMerek').value = data.merek;
+  document.getElementById('editKategori').value = data.kategori;
+  document.getElementById('editKondisi').value = data.kondisi;
+  document.getElementById('editJumlah').value = data.jumlah;
+  document.getElementById('editLokasi').value = data.lokasi;
+  
+  // Format tanggal untuk input date
+  const [day, month, year] = data.tanggal_perolehan.split('/');
+  document.getElementById('editTanggalPerolehan').value = year && month && day ? `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}` : '';
   document.getElementById('editNilaiPerolehan').value = data.nilai_perolehan || '';
-  document.getElementById('editSubtitle').textContent = `Edit Transaksi #${data.id}`;
-  // document.getElementById('editSubtitle').textContent = `Edit Transaksi #${data.nomor_transaksi}`;
+  
+  document.getElementById('editSubtitle').textContent = `Edit #${data.kode_barang}`;
 }
 
-// Delete confirmation
+// DELETE - Form biasa tanpa JS
 function confirmDelete(id) {
-  const modal = document.getElementById('deleteModal');
-  const form = document.getElementById('deleteForm');
-  form.action = `/admin/transaksi-masuk/${id}`;
-  modal.classList.add('show');
+  document.getElementById('deleteForm').action = `/adminasettetap/transaksi-masuk/${id}`;
+  openModal('deleteModal');
 }
 
-// Close modal on outside click
-document.querySelectorAll('.modal-overlay').forEach(modal => {
-  modal.addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Close on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
   });
-});
 
-// Escape key to close modal
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeModal();
+  // Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Edit form submit
+  const editForm = document.getElementById('editForm');
+  if (editForm) {
+    editForm.addEventListener('submit', function(e) {
+      if (!confirm('Yakin ingin menyimpan perubahan?')) {
+        e.preventDefault();
+        return;
+      }
+      // Form akan submit normal ke server
+    });
   }
 });
-
-// Form submit handlers
-document.getElementById('editForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const formData = new FormData(this);
-  const actionUrl = this.action;
-  
-  fetch(actionUrl, {
-    method: 'PUT',
-    body: formData,
-    headers: {
-      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      location.reload();
-    } else {
-      alert('Gagal update data');
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Terjadi kesalahan');
-  });
-});
-
 </script>
 
 </body>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('jumlah')->default(1);
             $table->string('lokasi');
             $table->enum('kondisi', ['baik', 'rusak ringan', 'rusak berat'])->default('Baik');
+            $table->enum('status', ['Tersedia', 'Keluar', 'Rusak', 'Dipinjam'])->nullable()->default('Tersedia');
             $table->timestamps();
             
             $table->index(['kode_barang', 'nup', 'nama_barang']);

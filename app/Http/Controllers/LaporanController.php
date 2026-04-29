@@ -140,7 +140,7 @@ class LaporanController extends Controller
             TransaksiMasukAssetTetap::where('tanggal_perolehan', '>=', $startDate)
                 ->latest('tanggal_perolehan')
                 ->limit(2)
-                ->get(['id', 'tanggal_perolehan', 'keterangan', 'nama_barang'])
+                ->get(['id', 'tanggal_perolehan', 'nama_barang'])
                 ->map(function($item) {
                     return [
                         'type' => 'transaksi_masuk',
@@ -158,7 +158,7 @@ class LaporanController extends Controller
             TransaksiKeluarAssetTetap::where('tanggal_input', '>=', $startDate)
                 ->latest('tanggal_input')
                 ->limit(2)
-                ->get(['id', 'tanggal_input', 'keterangan', 'nama_barang'])
+                ->get(['id', 'tanggal_input', 'nama_barang'])
                 ->map(function($item) {
                     return [
                         'type' => 'transaksi_keluar',

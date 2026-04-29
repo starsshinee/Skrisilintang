@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('transaksi_masuk_aset_tetap', function (Blueprint $table) {
             $table->id();
             $table->foreignId('aset_tetap_id')->nullable()->constrained('aset_tetap')->onDelete('set null');
-            $table->date('tanggal_input')->default(now()->format('Y-m-d'));
+            $table->date('tanggal_input')->nullable();
             $table->string('kode_barang');
             $table->string('nup')->unique();
             $table->string('nama_barang');

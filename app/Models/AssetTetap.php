@@ -19,6 +19,7 @@ class AssetTetap extends Model
         'kondisi',
         'lokasi',
         'jumlah',
+        'status'
 
     ];
 
@@ -44,4 +45,36 @@ class AssetTetap extends Model
     {
         return $this->hasMany(PeminjamanKendaraan::class, 'aset_tetap_id');
     }
+    public function pengembalianKendaraan()
+    {
+        return $this->hasMany(PengembalianKendaraan::class, 'aset_tetap_id');
+    }
+
+    public function peminjamanBarang()
+    {
+        return $this->hasMany(PeminjamanBarang::class, 'aset_tetap_id');
+    }
+
+    public function pengembalianBarang()
+    {
+        return $this->hasMany(PengembalianBarang::class, 'aset_tetap_id');
+    }
+
+
+    public function mutasiBarang()
+    {
+        return $this->hasMany(MutasiBarang::class, 'aset_tetap_id');
+    }
+
+    public function pengaduan()
+    {
+        return $this->hasMany(Pengaduan::class, 'aset_tetap_id');
+    }
+
+    public function surveyKepuasan()
+    {     
+        return $this->hasMany(SurveyKepuasan::class, 'aset_tetap_id');
+    }
+
+
 }

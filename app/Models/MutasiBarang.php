@@ -29,7 +29,7 @@ class MutasiBarang extends Model
     // Relasi
     public function asetTetap(): BelongsTo
     {
-        return $this->belongsTo(AssetTetap::class);
+        return $this->belongsTo(AssetTetap::class, 'asset_tetap_id');
     }
 
     public function user(): BelongsTo

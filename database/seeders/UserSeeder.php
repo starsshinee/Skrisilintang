@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
 
             // ── Admin Aset Tetap ─────────────────────────────────────────
             [
-                'name'     => 'Bagas Pratama, S.Ak.',
+                'name'     => 'Lintang Cahyani Putri, S.Kom.',
                 'username' => 'adminasettetap',
                 'email'    => 'asettetap@bpmpgorontalo.id',
                 'password' => Hash::make('aset123'),
