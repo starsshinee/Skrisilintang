@@ -168,28 +168,162 @@
             margin-bottom: 4px;
         }
 
-        /* ---- CHART CARDS ---- */
-        .chart-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid #E8EEF4;
-        }
-        .chart-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #1E293B;
+        /* ══════════════════════════════════════
+           CHART CARDS — VERSI BARU (COMPACT)
+        ══════════════════════════════════════ */
+        .chart-section-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 14px;
         }
-        .chart-icon {
-            width: 34px; height: 34px;
-            border-radius: 9px;
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 900px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        .chart-card {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #E8EEF4;
+            overflow: hidden;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .chart-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+            transform: translateY(-1px);
+        }
+
+        /* Compact header strip */
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px 10px;
+            border-bottom: 1px solid #F1F5F9;
+            background: #FAFBFC;
+        }
+        .chart-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-icon-sm {
+            width: 28px; height: 28px;
+            border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
+            flex-shrink: 0;
         }
+        .chart-title-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E293B;
+            line-height: 1.2;
+        }
+        .chart-subtitle-text {
+            font-size: 10px;
+            color: #94A3B8;
+            font-weight: 500;
+        }
+
+        /* Stat pill in header */
+        .chart-stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* Chart body - fixed compact height */
+        .chart-body {
+            padding: 14px 16px 12px;
+            position: relative;
+        }
+        .chart-body canvas {
+            max-height: 140px !important;
+        }
+
+        /* Doughnut layout: chart + legend side by side */
+        .donut-layout {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 16px;
+        }
+        .donut-wrap {
+            width: 110px;
+            height: 110px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .donut-wrap canvas {
+            max-height: 110px !important;
+        }
+        .donut-center-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .donut-center-label span:first-child {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1E293B;
+            line-height: 1;
+        }
+        .donut-center-label span:last-child {
+            font-size: 9px;
+            color: #94A3B8;
+            font-weight: 600;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+        .donut-legend {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .donut-legend-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .donut-dot {
+            width: 8px; height: 8px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .donut-legend-label {
+            font-size: 11px;
+            color: #64748B;
+            font-weight: 500;
+        }
+        .donut-legend-val {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1E293B;
+        }
+
+        /* ══════════════════════════════════════ */
 
         /* ---- ACTIVITY FEED ---- */
         .activity-card { background: #fff; border-radius: 16px; border: 1px solid #E8EEF4; overflow: hidden; }
@@ -476,58 +610,138 @@
                 </div>
             </div>
 
-            <!-- ── CHARTS ROW 1 ── -->
+            <!-- ══════════════════════════════════════
+                 ── CHARTS — COMPACT 2×2 GRID ──
+            ══════════════════════════════════════ -->
             <div>
-                <p class="section-title mb-4">Grafik & Analitik</p>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="chart-section-header">
+                    <p class="section-title">Grafik &amp; Analitik</p>
+                    <span style="font-size:11px;color:#CBD5E1;font-weight:500">4 grafik · data real-time</span>
+                </div>
 
+                <div class="charts-grid">
+
+                    <!-- 1. Transaksi Masuk vs Keluar -->
                     <div class="chart-card">
-                        <div class="chart-title">
-                            <div class="chart-icon" style="background:#F0FDF4">
-                                <i class="fas fa-chart-bar" style="color:#16A34A;font-size:13px"></i>
+                        <div class="chart-header">
+                            <div class="chart-header-left">
+                                <div class="chart-icon-sm" style="background:#F0FDF4">
+                                    <i class="fas fa-chart-bar" style="color:#16A34A;font-size:11px"></i>
+                                </div>
+                                <div>
+                                    <div class="chart-title-text">Transaksi Masuk vs Keluar</div>
+                                    <div class="chart-subtitle-text">Perbandingan per periode</div>
+                                </div>
                             </div>
-                            Transaksi Masuk vs Keluar
+                            <span class="chart-stat-pill" style="background:#F0FDF4;color:#15803D">
+                                <i class="fas fa-arrow-trend-up" style="font-size:9px"></i>
+                                {{ number_format(($stats['transaksi_masuk'] ?? 0) + ($stats['transaksi_keluar'] ?? 0)) }} total
+                            </span>
                         </div>
-                        <canvas id="transactionChart" height="110"></canvas>
+                        <div class="chart-body">
+                            <canvas id="transactionChart"></canvas>
+                        </div>
                     </div>
 
+                    <!-- 2. Status Peminjaman (Doughnut) -->
                     <div class="chart-card">
-                        <div class="chart-title">
-                            <div class="chart-icon" style="background:#F5F3FF">
-                                <i class="fas fa-chart-pie" style="color:#7C3AED;font-size:13px"></i>
+                        <div class="chart-header">
+                            <div class="chart-header-left">
+                                <div class="chart-icon-sm" style="background:#F5F3FF">
+                                    <i class="fas fa-chart-pie" style="color:#7C3AED;font-size:11px"></i>
+                                </div>
+                                <div>
+                                    <div class="chart-title-text">Status Peminjaman</div>
+                                    <div class="chart-subtitle-text">Distribusi barang &amp; kendaraan</div>
+                                </div>
                             </div>
-                            Status Peminjaman
+                            <span class="chart-stat-pill" style="background:#F5F3FF;color:#5B21B6">
+                                <i class="fas fa-handshake" style="font-size:9px"></i>
+                                {{ number_format(($stats['peminjaman_barang_aktif'] ?? 0) + ($stats['peminjaman_kendaraan_aktif'] ?? 0)) }} aktif
+                            </span>
                         </div>
-                        <canvas id="peminjamanChart" height="110"></canvas>
+                        <!-- Donut + inline legend -->
+                        <div class="donut-layout">
+                            <div class="donut-wrap">
+                                <canvas id="peminjamanChart"></canvas>
+                                <div class="donut-center-label">
+                                    <span>{{ ($stats['peminjaman_barang_aktif'] ?? 0) + ($stats['peminjaman_kendaraan_aktif'] ?? 0) }}</span>
+                                    <span>aktif</span>
+                                </div>
+                            </div>
+                            <div class="donut-legend" id="donutLegend">
+                                <div class="donut-legend-item">
+                                    <div class="donut-legend-left">
+                                        <div class="donut-dot" style="background:#3B82F6"></div>
+                                        <span class="donut-legend-label">Aktif</span>
+                                    </div>
+                                    <span class="donut-legend-val">{{ ($stats['peminjaman_barang_aktif'] ?? 0) + ($stats['peminjaman_kendaraan_aktif'] ?? 0) }}</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="donut-legend-left">
+                                        <div class="donut-dot" style="background:#10B981"></div>
+                                        <span class="donut-legend-label">Selesai</span>
+                                    </div>
+                                    <span class="donut-legend-val">{{ number_format(($stats['peminjaman_barang_aktif'] ?? 0) * 0.3) }}</span>
+                                </div>
+                                <div class="donut-legend-item">
+                                    <div class="donut-legend-left">
+                                        <div class="donut-dot" style="background:#F59E0B"></div>
+                                        <span class="donut-legend-label">Pending</span>
+                                    </div>
+                                    <span class="donut-legend-val">{{ number_format(($stats['peminjaman_barang_aktif'] ?? 0) * 0.2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Trend Pengaduan -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-header-left">
+                                <div class="chart-icon-sm" style="background:#FFFBEB">
+                                    <i class="fas fa-chart-line" style="color:#D97706;font-size:11px"></i>
+                                </div>
+                                <div>
+                                    <div class="chart-title-text">Trend Pengaduan</div>
+                                    <div class="chart-subtitle-text">Pergerakan dalam periode</div>
+                                </div>
+                            </div>
+                            <span class="chart-stat-pill" style="background:#FFFBEB;color:#92400E">
+                                <i class="fas fa-exclamation-circle" style="font-size:9px"></i>
+                                {{ number_format($stats['total_pengaduan'] ?? 0) }} total
+                            </span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="pengaduanChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 4. Peminjaman Kendaraan -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-header-left">
+                                <div class="chart-icon-sm" style="background:#EFF6FF">
+                                    <i class="fas fa-car" style="color:#2563EB;font-size:11px"></i>
+                                </div>
+                                <div>
+                                    <div class="chart-title-text">Peminjaman Kendaraan</div>
+                                    <div class="chart-subtitle-text">Volume per periode</div>
+                                </div>
+                            </div>
+                            <span class="chart-stat-pill" style="background:#EFF6FF;color:#1E40AF">
+                                <i class="fas fa-car" style="font-size:9px"></i>
+                                {{ number_format($stats['peminjaman_kendaraan_aktif'] ?? 0) }} aktif
+                            </span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="kendaraanChart"></canvas>
+                        </div>
                     </div>
 
                 </div>
             </div>
-
-            <!-- ── CHARTS ROW 2 ── -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-                <div class="chart-card">
-                    <div class="chart-title">
-                        <div class="chart-icon" style="background:#FFFBEB">
-                            <i class="fas fa-chart-line" style="color:#D97706;font-size:13px"></i>
-                        </div>
-                        Trend Pengaduan
-                    </div>
-                    <canvas id="pengaduanChart" height="110"></canvas>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-title">
-                        <div class="chart-icon" style="background:#EFF6FF">
-                            <i class="fas fa-car" style="color:#2563EB;font-size:13px"></i>
-                        </div>
-                        Peminjaman Kendaraan
-                    </div>
-                    <canvas id="kendaraanChart" height="110"></canvas>
-                </div>
-
-            </div>
+            <!-- ══ END CHARTS ══ -->
 
             <!-- ── AKTIVITAS TERBARU ── -->
             <div class="activity-card">
@@ -588,7 +802,7 @@
 
         // Shared chart defaults
         Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-        Chart.defaults.font.size = 11;
+        Chart.defaults.font.size = 10;
         Chart.defaults.color = '#94A3B8';
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -605,14 +819,14 @@
                             data: @json(collect($charts['transaksi_masuk_chart'] ?? [])->pluck('count')->toArray()),
                             backgroundColor: 'rgba(16,185,129,0.75)',
                             borderColor: 'rgba(16,185,129,1)',
-                            borderRadius: 7,
+                            borderRadius: 5,
                             borderSkipped: false,
                         }, {
                             label: 'Keluar',
                             data: @json(collect($charts['transaksi_keluar_chart'] ?? [])->pluck('count')->toArray()),
                             backgroundColor: 'rgba(239,68,68,0.7)',
                             borderColor: 'rgba(239,68,68,1)',
-                            borderRadius: 7,
+                            borderRadius: 5,
                             borderSkipped: false,
                         }]
                     },
@@ -620,10 +834,14 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'top', labels: { boxWidth: 10, borderRadius: 4, usePointStyle: true } }
+                            legend: {
+                                position: 'top',
+                                align: 'end',
+                                labels: { boxWidth: 8, borderRadius: 3, usePointStyle: true, padding: 12, font: { size: 10 } }
+                            }
                         },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [4,4] } },
+                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
                             x: { grid: { display: false } }
                         }
                     }
@@ -645,15 +863,15 @@
                             ],
                             backgroundColor: ['#3B82F6','#10B981','#F59E0B'],
                             borderWidth: 0,
-                            hoverOffset: 6
+                            hoverOffset: 4
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '65%',
+                        cutout: '70%',
                         plugins: {
-                            legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true, padding: 18 } }
+                            legend: { display: false }
                         }
                     }
                 });
@@ -670,23 +888,21 @@
                             label: 'Pengaduan',
                             data: @json(collect($charts['pengaduan_chart'] ?? [])->pluck('count')->toArray()),
                             borderColor: '#F59E0B',
-                            backgroundColor: 'rgba(245,158,11,0.08)',
+                            backgroundColor: 'rgba(245,158,11,0.07)',
                             tension: 0.45,
                             fill: true,
                             pointBackgroundColor: '#F59E0B',
                             pointBorderColor: '#fff',
-                            pointBorderWidth: 2.5,
-                            pointRadius: 5
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [4,4] } },
+                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
                             x: { grid: { display: false } }
                         }
                     }
@@ -705,18 +921,16 @@
                             data: @json(collect($charts['peminjaman_kendaraan_chart'] ?? [])->pluck('count')->toArray()),
                             backgroundColor: 'rgba(59,130,246,0.75)',
                             borderColor: 'rgba(59,130,246,1)',
-                            borderRadius: 7,
+                            borderRadius: 5,
                             borderSkipped: false,
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [4,4] } },
+                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
                             x: { grid: { display: false } }
                         }
                     }

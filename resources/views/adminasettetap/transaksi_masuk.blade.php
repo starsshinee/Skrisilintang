@@ -364,7 +364,7 @@
       <div class="table-toolbar">
         <form method="GET" class="search-wrap" style="max-width: 400px;">
           <i class="fas fa-search"></i>
-          <input type="text" name="search" placeholder="Cari nomor transaksi, kode barang, NUP..." 
+          <input type="text" name="search" placeholder="Cari kode barang, NUP..." 
                  value="{{ request('search') }}">
         </form>
         <div class="filter-group">
@@ -383,20 +383,17 @@
         <thead>
           <tr>
             <th>No</th>
-            {{-- <th>Nomor Transaksi</th> --}}
             <th>Tanggal Input</th>
             <th>Kode Barang</th>
             <th>NUP</th>
             <th>Nama Barang</th>
             <th>Merek</th>
+            <th>Kategori</th>
             <th>Tanggal Perolehan</th>
             <th>Nilai Perolehan</th>
             <th>Kondisi</th>
             <th>Lokasi</th>
             <th>Jumlah</th>
-            {{-- <th>Supplier</th>
-            <th>Nomor Referensi</th>
-            <th>Keterangan</th> --}}
             <th>Aksi</th>
           </tr>
         </thead>
@@ -404,15 +401,14 @@
           @forelse($transaksi as $index => $item)
           <tr>
             <td><strong>{{ $transaksi->firstItem() + $index }}</strong></td>
-            <td><strong>{{ $item->nomor_transaksi }}</strong></td>
-            <td>{{ $item->tanggal_input }}</td>
-            <td>{{ $item->kode_barang }}</td>
-            <td>{{ $item->nup }}</td>
-            <td>{{ $item->nama_barang }}</td>
-            <td>{{ $item->merek ?? '-' }}</td>
-            <td>{{ $item->kategori }}</td>
-            <td>{{ $item->tanggal_perolehan?->format('d/m/Y') }}</td>
-            <td class="nilai">{{ $item->nilai_format }}</td>
+            <td>{{ $item?->tanggal_input_formatted }}</td>
+            <td>{{ $item->kode_barang}}</td>
+            <td>{{ $item->nup}}</td>
+            <td>{{ $item->nama_barang}}</td>
+            <td>{{ $item->merek }}</td>
+            <td>{{ $item->kategori}}</td>
+            <td>{{ $item->tanggal_perolehan_formatted}}</td>
+            <td class="nilai">{{ $item->nilai_format}}</td>
             <td>
               <span class="badge badge-{{ $item->kondisi_badge['color'] }}">
                 <i class="fas {{ $item->kondisi_badge['icon'] }} me-1"></i>
@@ -421,9 +417,6 @@
             </td>
             <td>{{ $item->lokasi }}</td>
             <td><strong>{{ $item->jumlah }}</strong></td>
-            <td>{{ $item->supplier ?? '-' }}</td>
-            <td>{{ $item->nomor_referensi ?? '-' }}</td>
-            <td>{{ Str::limit($item->keterangan ?? '-', 30) }}</td>
             <td>
               <div class="action-buttons">
                 <button onclick="openDetail({{ $item->id }})" class="action-btn btn-detail" title="Detail">
@@ -497,8 +490,8 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nomor_transaksi" class="form-input" placeholder="Contoh: TRX-2026-001" required>
+            <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
+            <input type="date" name="tanggal_input" class="form-input" value="{{ now()->format('Y-m-d') }}" required>
           </div>
           <div class="form-group">
             <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
@@ -528,6 +521,10 @@
           <div class="form-group">
             <label class="form-label">Merek <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
             <input type="text" name="merek" class="form-input" placeholder="Merek / brand aset">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kategori" class="form-input" placeholder="Contoh: Aset Tetap" required>
           </div>
         </div>
         <div class="form-row">
@@ -563,21 +560,6 @@
             </div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Supplier <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
-            <input type="text" name="supplier" class="form-input" placeholder="Nama supplier / vendor">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nomor Referensi <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
-            <input type="text" name="nomor_referensi" class="form-input" placeholder="Nomor BAST / SPK / dokumen">
-          </div>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label class="form-label">Keterangan <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
-          <textarea name="keterangan" class="form-input" rows="3" placeholder="Masukkan keterangan tambahan jika diperlukan..." style="resize:vertical; min-height:80px; line-height:1.5;"></textarea>
-        </div>
-
       </div>
 
       {{-- FOOTER --}}
@@ -630,10 +612,6 @@
       <div class="modal-body">
         <input type="hidden" name="id" id="editId">
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nomor Transaksi *</label>
-            <input type="text" name="nomor_transaksi" id="editNomorTransaksi" class="form-input" required>
-          </div>
           <div class="form-group">
             <label class="form-label">Kode Barang *</label>
             <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" required>
@@ -694,19 +672,6 @@
             <label class="form-label">Lokasi *</label>
             <input type="text" name="lokasi" id="editLokasi" class="form-input" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Supplier</label>
-            <input type="text" name="supplier" id="editSupplier" class="form-input">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nomor Referensi</label>
-          <input type="text" name="nomor_referensi" id="editNomorReferensi" class="form-input">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Keterangan</label>
-          <textarea name="keterangan" id="editKeterangan" class="form-textarea" placeholder="Masukkan keterangan tambahan..."></textarea>
-        </div>
       </div>
       <div class="btn-group">
         <button type="button" class="btn-modal btn-cancel" onclick="closeModal('editModal')">Batal</button>
@@ -775,7 +740,6 @@ function openDetail(id) {
 
 // Populate Detail Modal
 function populateDetailModal(data) {
-  document.getElementById('detailSubtitle').textContent = `Transaksi #${data.nomor_transaksi}`;
   
   const kondisiColors = {
     'baik': 'success',
@@ -784,10 +748,6 @@ function populateDetailModal(data) {
   };
   
   document.getElementById('detailContent').innerHTML = `
-    <div class="detail-content">
-      <div class="detail-label">Nomor Transaksi</div>
-      <div class="detail-value">${data.nomor_transaksi || '-'}</div>
-    </div>
     <div class="detail-content">
       <div class="detail-label">Kode Barang</div>
       <div class="detail-value">${data.kode_barang || '-'}</div>
@@ -834,18 +794,6 @@ function populateDetailModal(data) {
       <div class="detail-value">Rp ${data.nilai_perolehan ? parseFloat(data.nilai_perolehan).toLocaleString('id-ID') : '0'}</div>
     </div>
     <div class="detail-content">
-      <div class="detail-label">Supplier</div>
-      <div class="detail-value">${data.supplier || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Nomor Referensi</div>
-      <div class="detail-value">${data.nomor_referensi || '-'}</div>
-    </div>
-    <div class="detail-content">
-      <div class="detail-label">Keterangan</div>
-      <div class="detail-value">${data.keterangan || '-'}</div>
-    </div>
-    <div class="detail-content">
       <div class="detail-label">Tanggal Input</div>
       <div class="detail-value">${data.tanggal_input ? new Date(data.tanggal_input).toLocaleDateString('id-ID') : '-'}</div>
     </div>
@@ -870,7 +818,6 @@ function openEdit(id) {
 // Populate Edit Modal
 function populateEditModal(data) {
   document.getElementById('editId').value = data.id;
-  document.getElementById('editNomorTransaksi').value = data.nomor_transaksi || '';
   document.getElementById('editKodeBarang').value = data.kode_barang || '';
   document.getElementById('editNup').value = data.nup || '';
   document.getElementById('editNamaBarang').value = data.nama_barang || '';
@@ -881,10 +828,8 @@ function populateEditModal(data) {
   document.getElementById('editLokasi').value = data.lokasi || '';
   document.getElementById('editTanggalPerolehan').value = data.tanggal_perolehan || '';
   document.getElementById('editNilaiPerolehan').value = data.nilai_perolehan || '';
-  document.getElementById('editSupplier').value = data.supplier || '';
-  document.getElementById('editNomorReferensi').value = data.nomor_referensi || '';
-  document.getElementById('editKeterangan').value = data.keterangan || '';
-  document.getElementById('editSubtitle').textContent = `Edit Transaksi #${data.nomor_transaksi}`;
+  document.getElementById('editSubtitle').textContent = `Edit Transaksi #${data.id}`;
+  // document.getElementById('editSubtitle').textContent = `Edit Transaksi #${data.nomor_transaksi}`;
 }
 
 // Delete confirmation

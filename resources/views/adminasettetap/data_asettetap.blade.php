@@ -410,7 +410,7 @@
               <td>
                 @php $kondisi = $aset->kondisi ?? 'baik'; @endphp
                 <span class="status-badge status-{{ str_replace(' ', '-', $kondisi) }}">
-                  {{ ucwords(str_replace(['rusak ringan', 'rusak berat'], ['Rusak Ringan', 'Rusak Berat'], $kondisi)) }}
+                  {{ ucwords(str_replace(['rusak ringan', 'rusak berat'], ['rusak ringan', 'rusak berat'], $kondisi)) }}
                 </span>
               </td>
               <td>{{ $aset->lokasi ?? '-' }}</td>
@@ -426,7 +426,7 @@
                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
                   </svg>
                 </a>
-                <form action="{{ route('admin.data-aset-tetap.destroy', $aset->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus aset tetap ini?')">
+                <form action="{{ route('adminasettetap.data-aset-tetap.destroy', $aset->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus aset tetap ini?')">
                   @csrf
                   @method('DELETE')
                   <button type="submit" class="action-btn danger" title="Hapus">
@@ -484,7 +484,7 @@
                     <div>
                       @php $kondisi = $aset->kondisi ?? 'baik'; @endphp
                       <span class="status-badge status-{{ str_replace(' ', '-', $kondisi) }}">
-                        {{ ucwords(str_replace(['rusak ringan', 'rusak berat'], ['Rusak Ringan', 'Rusak Berat'], $kondisi)) }}
+                        {{ ucwords(str_replace(['rusak ringan', 'rusak berat'], ['rusak ringan', 'rusak berat'], $kondisi)) }}
                       </span>
                     </div>
                   </div>
@@ -534,6 +534,14 @@
                 @method('PUT')
                 
                 <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Tanggal Input <span class="text-red-500">*</span></label>
+                    <input type="date" name="tanggal_input" class="form-input @error('tanggal_input') border-red-300 @enderror" 
+                          value="{{ old('tanggal_input', $aset->tanggal_input) }}" required>
+                    @error('tanggal_input')
+                      <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                    @enderror
+                  </div>
                   <div class="form-group">
                     <label class="form-label">Kode Barang <span class="text-red-500">*</span></label>
                     <input type="text" name="kode_barang" class="form-input @error('kode_barang') border-red-300 @enderror" 
@@ -655,6 +663,11 @@
       @csrf
       
       <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tanggal Input <span class="text-red-500">*</span></label>
+          <input type="date" name="tanggal_input" class="form-input  @error('tanggal_input') border-red-300 @enderror"
+                value="{{ old('tanggal_input') }}" required>
+        </div>
         <div class="form-group">
           <label class="form-label">Kode Barang <span class="text-red-500">*</span></label>
           <input type="text" name="kode_barang" class="form-input @error('kode_barang') border-red-300 @enderror" 

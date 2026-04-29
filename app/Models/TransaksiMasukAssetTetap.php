@@ -15,10 +15,9 @@ class TransaksiMasukAssetTetap extends Model
     protected $table = 'transaksi_masuk_aset_tetap';
     
     protected $fillable = [
-        'nomor_transaksi', 'aset_tetap_id', 'user_id', 'kode_barang', 'nup',
+        'aset_tetap_id', 'kode_barang', 'nup',
         'nama_barang', 'merek', 'kategori', 'tanggal_perolehan', 
-        'nilai_perolehan', 'kondisi', 'lokasi', 'jumlah', 'supplier',
-        'nomor_referensi', 'keterangan', 'tanggal_input'
+        'nilai_perolehan', 'kondisi', 'lokasi',  'tanggal_input', 'jumlah'
     ];
 
     protected $casts = [
@@ -47,9 +46,21 @@ class TransaksiMasukAssetTetap extends Model
             : '-';
     }
 
-    public function getTanggalInputAttribute(): ?string
+    // In your Model
+  public function getTanggalInputFormattedAttribute()
     {
-        return $this->created_at?->format('d/m/Y H:i') ?? '-';
+        if (!$this->tanggal_input) {
+            return '-';
+        }
+        
+        // Handle both raw dates and formatted strings
+        try {
+            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $this->tanggal_input);
+            return $date->isValid() ? $date->translatedFormat('d F Y') : $this->tanggal_input;
+        } catch (\Exception $e) {
+            // If it's already formatted or invalid, return as-is
+            return $this->tanggal_input;
+        }
     }
 
     public function getKondisiBadgeAttribute(): array
@@ -58,7 +69,6 @@ class TransaksiMasukAssetTetap extends Model
             'baik' => ['text' => 'Baik', 'color' => 'success', 'icon' => 'fa-check-circle'],
             'rusak_ringan' => ['text' => 'Rusak Ringan', 'color' => 'warning', 'icon' => 'fa-exclamation-triangle'],
             'rusak_berat' => ['text' => 'Rusak Berat', 'color' => 'danger', 'icon' => 'fa-wrench'],
-            'tidak_layak_operasi' => ['text' => 'Tidak Layak', 'color' => 'dark', 'icon' => 'fa-ban'],
             default => ['text' => 'Unknown', 'color' => 'secondary', 'icon' => 'fa-question']
         };
     }
@@ -67,11 +77,10 @@ class TransaksiMasukAssetTetap extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where(function($q) use ($search) {
-            $q->where('nomor_transaksi', 'like', "%{$search}%")
+            $q
               ->orWhere('kode_barang', 'like', "%{$search}%")
               ->orWhere('nup', 'like', "%{$search}%")
-              ->orWhere('nama_barang', 'like', "%{$search}%")
-              ->orWhere('supplier', 'like', "%{$search}%");
+              ->orWhere('nama_barang', 'like', "%{$search}%");
         });
     }
 

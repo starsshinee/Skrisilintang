@@ -11,22 +11,18 @@ return new class extends Migration
     {
         Schema::create('transaksi_masuk_aset_tetap', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_transaksi')->unique();
             $table->foreignId('aset_tetap_id')->nullable()->constrained('aset_tetap')->onDelete('set null');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('tanggal_input')->default(now()->format('Y-m-d'));
             $table->string('kode_barang');
             $table->string('nup')->unique();
             $table->string('nama_barang');
             $table->string('merek')->nullable();
             $table->string('kategori');
-            $table->date('tanggal_perolehan');
-            $table->decimal('nilai_perolehan', 15, 2);
-            $table->enum('kondisi', ['baik', 'rusak_ringan', 'rusak_berat', 'tidak_layak_operasi'])->default('baik');
+            $table->date('tanggal_perolehan')->nullable();
+            $table->decimal('nilai_perolehan', 15, 2)->nullable();
+            $table->enum('kondisi', ['baik', 'rusak_ringan', 'rusak_berat'])->default('baik');
             $table->string('lokasi');
             $table->integer('jumlah')->default(1);
-            $table->string('supplier')->nullable();
-            $table->string('nomor_referensi')->nullable();
-            $table->text('keterangan')->nullable();
             $table->timestamps();
             
             // Index untuk performa

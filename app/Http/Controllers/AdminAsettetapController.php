@@ -73,18 +73,19 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.data_asettetap_create');
     }
 
-    // ========== STORE ==========
-    public function store(Request $request)
+    // ========== STORE DATA ASET TETAP (Method yang hilang) ==========
+    public function storeDataAsetTetap(Request $request)
     {
         $validated = $request->validate([
+            'tanggal_input' => 'required|date|before_or_equal:today',
             'kode_barang' => 'required|string|max:50|unique:aset_tetap,kode_barang',
             'nup' => 'nullable|string|max:50',
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
-            'kategori' => 'nullable|string|max:100',
-            'tanggal_peroleh' => 'nullable|date',
-            'nilai_perolehan' => 'nullable|numeric|min:0',
-            'kondisi' => 'required|in:Baik,Rusak,Perawatan',
+            'kategori' => 'required|string|max:100',
+            'tanggal_perolehan' => 'nullable|date',
+            'nilai_perolehan' => 'required|numeric|min:0',
+            'kondisi' => 'required|in:baik,rusak ringan,rusak berat',
             'lokasi' => 'required|string|max:100',
             'jumlah' => 'required|integer|min:1',
         ]);
@@ -93,10 +94,10 @@ class AdminAsettetapController extends Controller
 
         return redirect()->route('adminasettetap.data-aset-tetap')
             ->with('success', 'Aset tetap berhasil ditambahkan!');
-        }
+    }
 
         // ========== SHOW (Detail) ==========
-    public function show(AssetTetap $aset)
+    public function showDataAsetTetap(AssetTetap $aset)
     {
         return view('adminasettetap.data_asettetap_show', compact('aset'));
     }
@@ -108,17 +109,18 @@ class AdminAsettetapController extends Controller
     }
 
     // ========== UPDATE ==========
-    public function update(Request $request, AssetTetap $aset)
+    public function updateDataAsetTetap(Request $request, AssetTetap $aset)
     {
         $validated = $request->validate([
+            'tanggal_input' => 'required|date|before_or_equal:today',
             'kode_barang' => 'required|string|max:50|unique:aset_tetap,kode_barang,' . $aset->id,
             'nup' => 'nullable|string|max:50',
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
-            'kategori' => 'nullable|string|max:100',
-            'tanggal_peroleh' => 'nullable|date',
-            'nilai_perolehan' => 'nullable|numeric|min:0',
-            'kondisi' => 'required|in:Baik,Rusak,Perawatan',
+            'kategori' => 'required|string|max:100',
+            'tanggal_perolehan' => 'nullable|date',
+            'nilai_perolehan' => 'required|numeric|min:0',
+            'kondisi' => 'required|in:baik,rusak ringan,rusak berat',
             'lokasi' => 'required|string|max:100',
             'jumlah' => 'required|integer|min:1',
         ]);
@@ -138,53 +140,76 @@ class AdminAsettetapController extends Controller
             ->with('success', 'Aset tetap berhasil dihapus!');
     }
 
-    // ========== TRANSAKSI MASUK ==========
-    // public function TransaksiMasuk(Request $request)
-    // {
-    //     $query = TransaksiMasukAsetTetap::with(['aset', 'pemasok'])
-    //         ->when($request->search, function($q, $search) {
-    //             $q->where('no_transaksi', 'like', "%{$search}%")
-    //               ->orWhereHas('aset', fn($q) => $q->where('nama', 'like', "%{$search}%"))
-    //               ->orWhereHas('pemasok', fn($q) => $q->where('nama', 'like', "%{$search}%"));
-    //         })
-    //         ->when($request->status, fn($q, $s) => $q->where('status', $s));
 
-    //     $transaksiMasuk = $query->paginate(15)->withQueryString();
-        
-    //     return view('adminasettetap.transaksi_masuk', compact('transaksiMasuk'));
-    // }
-
-    // Tambahkan di AdminAsettetapController
-
-// ========== TRANSAKSI MASUK ASET TETAP ==========
+     // ========== TRANSAKSI MASUK ✅ FIXED ==========
     public function TransaksiMasuk(Request $request)
     {
-    $kondisiOptions = ['baik', 'rusak_ringan', 'rusak_berat', 'tidak_layak_operasi'];
-    $kategoriOptions = AssetTetap::select('kategori')->distinct()->pluck('kategori')->filter()->values();
+        $kondisiOptions = ['baik', 'rusak_ringan', 'rusak_berat', 'tidak_layak_operasi'];
+        $kategoriOptions = AssetTetap::select('kategori')
+            ->distinct()
+            ->whereNotNull('kategori')
+            ->pluck('kategori')
+            ->filter()
+            ->values();
 
-    $query = TransaksiMasukAssetTetap::with(['user', 'asetTetap'])
-        ->when($request->filled('search'), function($q) use ($request) {
-            $q->search($request->search);
-        })
-        ->when($request->filled('kondisi'), function($q) use ($request) {
-            $q->kondisi($request->kondisi);
-        })
-        ->when($request->filled('kategori'), function($q) use ($request) {
-            $q->kategori($request->kategori);
-        })
-        ->orderBy('created_at', 'desc');
+        // ✅ FIXED: Filter null + eager loading + whereNotNull
+        $query = TransaksiMasukAssetTetap::with(['user'])
+            ->whereNotNull('id') // Pastikan ada data
+            ->when($request->filled('search'), function($q) use ($request) {
+                $q->where(function($subQ) use ($request) {
+                    $subQ->where('kode_barang', 'like', "%{$request->search}%")
+                         ->orWhere('nup', 'like', "%{$request->search}%")
+                         ->orWhere('nama_barang', 'like', "%{$request->search}%");
+                });
+            })
+            ->when($request->filled('kondisi'), function($q) use ($request) {
+                $q->where('kondisi', $request->kondisi);
+            })
+            ->when($request->filled('kategori'), function($q) use ($request) {
+                $q->where('kategori', 'like', "%{$request->kategori}%");
+            })
+            ->orderBy('created_at', 'desc');
 
-    $transaksi = $query->paginate(15)->withQueryString();
+        $transaksi = $query->paginate(15)->withQueryString();
 
-    // Format untuk view
-    $transaksi->getCollection()->transform(function ($item) {
-        $item->tanggal_input = $item->created_at?->format('d/m/Y');
-        return $item;
-    });
+        // ✅ FIXED: Transform dengan null safety
+        $transaksi->getCollection()->transform(function ($item) {
+            if (!$item) return null;
+            
+            $tanggalInput = $item->tanggal_input ?? $item->created_at;
+            $item->tanggal_input_formatted = $tanggalInput 
+            ? Carbon::parse($tanggalInput)->format('d/m/Y') 
+            : '-';
+            
+            try {
+                $item->tanggal_perolehan_formatted = $item->tanggal_perolehan 
+                    ? Carbon::parse($item->tanggal_perolehan)->format('d/m/Y')
+                    : '-';
+            } catch (\Exception $e) {
+                $item->tanggal_perolehan_formatted = '-';
+                Log::warning("Error parsing tanggal_perolehan: " . $item->id, ['error' => $e->getMessage()]);
+            }
+            
+            $item->nilai_format = $item->nilai_perolehan 
+                ? 'Rp ' . number_format($item->nilai_perolehan, 0, ',', '.')
+                : '-';
+            
+            // Kondisi badge
+            $kondisi = $item->kondisi ?? 'unknown';
+            $item->kondisi_badge = match($kondisi) {
+                'baik' => ['color' => 'success', 'icon' => 'fa-check-circle', 'text' => 'Baik'],
+                'rusak_ringan' => ['color' => 'warning', 'icon' => 'fa-exclamation-triangle', 'text' => 'Rusak Ringan'],
+                'rusak_berat' => ['color' => 'danger', 'icon' => 'fa-times-circle', 'text' => 'Rusak Berat'],
+                default => ['color' => 'secondary', 'icon' => 'fa-question-circle', 'text' => 'Tidak Diketahui']
+            };
+            
+            return $item;
+        })->reject(fn($item) => is_null($item)); // ✅ Remove null items
 
-    return view('adminasettetap.transaksi_masuk', compact('transaksi', 'kondisiOptions', 'kategoriOptions'));
+        return view('adminasettetap.transaksi_masuk', compact('transaksi', 'kondisiOptions', 'kategoriOptions'));
     }
 
+    // CRUD Transaksi Masuk
     public function createTransaksiMasuk()
     {
         return view('adminasettetap.transaksi_masuk_create');
@@ -193,22 +218,19 @@ class AdminAsettetapController extends Controller
     public function storeTransaksiMasuk(Request $request)
     {
         $validated = $request->validate([
-            'nomor_transaksi' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nomor_transaksi',
+            
             'kode_barang' => 'required|string|max:100',
             'nup' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nup',
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
             'kategori' => 'required|string|max:100',
-            'tanggal_perolehan' => 'required|date',
-            'nilai_perolehan' => 'required|numeric|min:0',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,tidak_layak_operasi',
+            'tanggal_perolehan' => 'nullable|date',
+            'nilai_perolehan' => 'nullable|numeric|min:0',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'lokasi' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
-            'supplier' => 'nullable|string|max:255',
-            'nomor_referensi' => 'nullable|string|max:100',
-            'keterangan' => 'nullable|string',
         ]);
-
+        
         TransaksiMasukAssetTetap::create($validated);
 
         return redirect()->route('adminasettetap.transaksi-masuk')
@@ -228,20 +250,16 @@ class AdminAsettetapController extends Controller
     public function updateTransaksiMasuk(Request $request, TransaksiMasukAssetTetap $transaksi)
     {
         $validated = $request->validate([
-            'nomor_transaksi' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nomor_transaksi,' . $transaksi->id,
             'kode_barang' => 'required|string|max:100',
             'nup' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nup,' . $transaksi->id,
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
             'kategori' => 'required|string|max:100',
-            'tanggal_perolehan' => 'required|date',
-            'nilai_perolehan' => 'required|numeric|min:0',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,tidak_layak_operasi',
+            'tanggal_perolehan' => 'nullable|date',
+            'nilai_perolehan' => 'nullable|numeric|min:0',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'lokasi' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
-            'supplier' => 'nullable|string|max:255',
-            'nomor_referensi' => 'nullable|string|max:100',
-            'keterangan' => 'nullable|string',
         ]);
 
         $transaksi->update($validated);
@@ -256,8 +274,8 @@ class AdminAsettetapController extends Controller
 
         return redirect()->route('adminasettetap.transaksi-masuk')
             ->with('success', 'Transaksi masuk aset tetap berhasil dihapus!');
+
     }
-    
     // ========== TRANSAKSI KELUAR ASET TETAP ==========
     public function TransaksiKeluar(Request $request)
     {

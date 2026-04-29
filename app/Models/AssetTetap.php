@@ -7,23 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class AssetTetap extends Model
 {
     protected $table = 'aset_tetap';
-    protected $guarded = [
-        'tanggal input',
+    protected $fillable = [
+        'tanggal_input',
         'kode_barang',
         'nup',
         'nama_barang',
         'merek',
-        'tanggal_peroleh',
+        'kategori',
+        'tanggal_perolehan',
         'nilai_perolehan',
         'kondisi',
         'lokasi',
         'jumlah',
-        'kondisi',
+
     ];
 
     protected $casts = [
-        'tanggal_peroleh' => 'date',
+        'tanggal_input' => 'date',
+        'tanggal_perolehan' => 'date',
         'nilai_perolehan' => 'decimal:2',
+        'jumlah' => 'integer'
     ];
 
 
