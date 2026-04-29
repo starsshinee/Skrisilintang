@@ -384,31 +384,31 @@
           </tr>
         </thead>
         <tbody>
-          @forelse($pengaduan as $index => $pengaduan)
-            <tr>
-              <td><strong>{{ $pengaduan->firstItem() + $index }}</strong></td>
-              <td>{{ $pengaduan->created_at?->format('d-m-Y H:i') ?? '-' }}</td>
-              <td><strong>{{ $pengaduan->nama_lengkap ?? '-' }}</strong></td>
-              <td>{{ $pengaduan->email ?? '-' }}</td>
-              <td>{{ $pengaduan->telepon ?? '-' }}</td>
-              <td>{{ ucwords(str_replace('-', ' ', $pengaduan->kategori ?? '-')) }}</td>
+          @forelse($pengaduan as $index => $item)
+          <tr>
+            <td><strong>{{ $pengaduan->firstItem() + $index }}</strong></td>
+            <td>{{ $item->created_at?->format('d-m-Y H:i') ?? '-' }}</td>
+            <td><strong>{{ $item->nama_lengkap ?? '-' }}</strong></td>
+            <td>{{ $item->email ?? '-' }}</td>
+            <td>{{ $item->telepon ?? '-' }}</td>
+            <td>{{ ucwords(str_replace('_', ' ', $item->kategori_label ?? $item->kategori ?? '-')) }}</td>
+            <td>
+              <span class="status-badge status-{{ $item->status_badge ?? 'status-baru' }}">
+                {{ ucwords(str_replace('_', ' ', $item->status ?? 'baru')) }}
+              </span>
+            </td>
               <td>
-                <span class="status-badge status-{{ $pengaduan->status ?? 'baru' }}">
-                  {{ ucwords($pengaduan->status ?? 'baru') }}
-                </span>
-              </td>
-              <td>
-                <a href="#modal-detail-{{ $pengaduan->id }}" class="action-btn" onclick="openModal('modal-detail-{{ $pengaduan->id }}')" title="Detail">
+                <a href="#modal-detail-{{ $item->id }}" class="action-btn" onclick="openModal('modal-detail-{{ $item->id }}')" title="Detail">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8">
                     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                   </svg>
                 </a>
-                <a href="#modal-edit-{{ $pengaduan->id }}" class="action-btn" onclick="openModal('modal-edit-{{ $pengaduan->id }}')" title="Ubah Status">
+                <a href="#modal-edit-{{ $item->id }}" class="action-btn" onclick="openModal('modal-edit-{{ $item->id }}')" title="Ubah Status">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8">
                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm18-11.5c0-.41-.17-.79-.44-1.06l-2.25-2.25a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.27-.27.44-.65.44-1.06z"/>
                   </svg>
                 </a>
-                <form action="{{ route('admin.pengaduan.destroy', $pengaduan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus pengaduan ini?')">
+                <form action="{{ route('adminasettetap.pengaduanDestroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus pengaduan ini?')">
                   @csrf
                   @method('DELETE')
                   <button type="submit" class="action-btn danger" title="Hapus">
@@ -421,42 +421,42 @@
             </tr>
 
             <!-- MODAL DETAIL -->
-            <div id="modal-detail-{{ $pengaduan->id }}" class="modal-overlay">
+            <div id="modal-detail-{{ $item->id }}" class="modal-overlay">
               <div class="modal">
                 <h2 class="modal-title">Detail Pengaduan</h2>
                 
                 <div class="form-row">
                   <div class="form-group">
                     <div class="form-label">Nama Lengkap</div>
-                    <div><strong>{{ $pengaduan->nama_lengkap ?? '-' }}</strong></div>
+                    <div><strong>{{ $item->nama_lengkap ?? '-' }}</strong></div>
                   </div>
                   <div class="form-group">
                     <div class="form-label">Tanggal Pengaduan</div>
-                    <div>{{ $pengaduan->created_at?->format('d F Y H:i') ?? '-' }}</div>
+                    <div>{{ $item->created_at?->format('d F Y H:i') ?? '-' }}</div>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <div class="form-label">Email</div>
-                    <div>{{ $pengaduan->email ?? '-' }}</div>
+                    <div>{{ $item->email ?? '-' }}</div>
                   </div>
                   <div class="form-group">
                     <div class="form-label">Telepon</div>
-                    <div><strong>{{ $pengaduan->telepon ?? '-' }}</strong></div>
+                    <div><strong>{{ $item->telepon ?? '-' }}</strong></div>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <div class="form-label">Kategori</div>
-                  <div>{{ ucwords(str_replace('-', ' ', $pengaduan->kategori ?? '-')) }}</div>
+                  <div>{{ ucwords(str_replace('-', ' ', $item->kategori ?? '-')) }}</div>
                 </div>
 
                 <div class="form-group">
                   <div class="form-label">Status</div>
                   <div>
-                    <span class="status-badge status-{{ $pengaduan->status ?? 'baru' }}">
-                      {{ ucwords($pengaduan->status ?? 'baru') }}
+                    <span class="status-badge status-{{ $item->status ?? 'baru' }}">
+                      {{ ucwords($item->status ?? 'baru') }}
                     </span>
                   </div>
                 </div>
@@ -464,44 +464,44 @@
                 <div class="form-group">
                   <div class="form-label">Deskripsi Pengaduan</div>
                   <div class="form-textarea" style="border: none; background: transparent; padding: 0; min-height: auto;">
-                    {{ $pengaduan->deskripsi ?? '-' }}
+                    {{ $item->deskripsi ?? '-' }}
                   </div>
                 </div>
 
                 <div class="form-group">
                   <div class="form-label">Dibuat</div>
-                  <div>{{ $pengaduan->created_at?->format('d F Y H:i') ?? '-' }}</div>
+                  <div>{{ $item->created_at?->format('d F Y H:i') ?? '-' }}</div>
                 </div>
 
                 <div class="form-group">
                   <div class="form-label">Diupdate</div>
-                  <div>{{ $pengaduan->updated_at?->format('d F Y H:i') ?? '-' }}</div>
+                  <div>{{ $item->updated_at?->format('d F Y H:i') ?? '-' }}</div>
                 </div>
 
                 <div class="btn-group">
-                  <a href="#modal-edit-{{ $pengaduan->id }}" class="btn btn-primary" onclick="openModal('modal-edit-{{ $pengaduan->id }}')">
+                  <a href="#modal-edit-{{ $item->id }}" class="btn btn-primary" onclick="openModal('modal-edit-{{ $item->id }}')">
                     Ubah Status
                   </a>
-                  <button class="btn btn-secondary" onclick="closeModal('modal-detail-{{ $pengaduan->id }}')">Tutup</button>
+                  <button class="btn btn-secondary" onclick="closeModal('modal-detail-{{ $item->id }}')">Tutup</button>
                 </div>
               </div>
             </div>
 
             <!-- MODAL EDIT STATUS -->
-            <div id="modal-edit-{{ $pengaduan->id }}" class="modal-overlay">
+            <div id="modal-edit-{{ $item->id }}" class="modal-overlay">
               <div class="modal">
                 <h2 class="modal-title">Ubah Status Pengaduan</h2>
-                <form action="{{ route('admin.pengaduan.update', $pengaduan->id) }}" method="POST">
+                <form action="{{ route('adminasettetap.pengaduanUpdate', $item->id) }}" method="POST">
                   @csrf
                   @method('PUT')
                   
                   <div class="form-group">
                     <label class="form-label">Status <span class="text-red-500">*</span></label>
                     <select name="status" class="form-select @error('status') border-red-300 @enderror" required>
-                      <option value="baru" {{ old('status', $pengaduan->status) == 'baru' ? 'selected' : '' }}>Baru</option>
-                      <option value="diproses" {{ old('status', $pengaduan->status) == 'diproses' ? 'selected' : '' }}>Diproses</option>
-                      <option value="selesai" {{ old('status', $pengaduan->status) == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                      <option value="ditolak" {{ old('status', $pengaduan->status) == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                      <option value="baru" {{ old('status', $item->status) == 'baru' ? 'selected' : '' }}>Baru</option>
+                      <option value="diproses" {{ old('status', $item->status) == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                      <option value="selesai" {{ old('status', $item->status) == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                      <option value="ditolak" {{ old('status', $item->status) == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                     </select>
                     @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                   </div>
@@ -509,12 +509,12 @@
                   <div class="form-group">
                     <label class="form-label">Catatan Admin</label>
                     <textarea name="catatan_admin" class="form-textarea @error('catatan_admin') border-red-300 @enderror" 
-                              placeholder="Catatan tambahan dari admin (opsional)">{{ old('catatan_admin', $pengaduan->catatan_admin) }}</textarea>
+                              placeholder="Catatan tambahan dari admin (opsional)">{{ old('catatan_admin', $item->catatan_admin) }}</textarea>
                     @error('catatan_admin') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                   </div>
 
                   <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-{{ $pengaduan->id }}')">Batal</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-{{ $item->id }}')">Batal</button>
                     <button type="submit" class="btn btn-primary">Update Status</button>
                   </div>
                 </form>
@@ -549,34 +549,56 @@
 </main>
 
 <script>
-function openModal(modalId) {
-  document.getElementById(modalId).classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
+(function() {
+  'use strict';
+  
+  window.openModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
+    }
+  };
 
-function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('show');
-  document.body.style.overflow = 'auto';
-}
+  window.closeModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  };
 
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove('show');
-      document.body.style.overflow = 'auto}
-  });
-});
+  // Initialize event listeners when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModals);
+  } else {
+    initModals();
+  }
 
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.show').forEach(overlay => {
-      overlay.classList.remove('show');
-      document.body.style.overflow = 'auto';
+  function initModals() {
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          const modalId = overlay.id;
+          closeModal(modalId);
+        }
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.show').forEach(overlay => {
+          const modalId = overlay.id;
+          closeModal(modalId);
+        });
+      }
     });
   }
-});
+})();
 </script>
 
 </body>

@@ -325,17 +325,11 @@ Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 
             Route::get('/mutasi-barang/{id}', [AdminAsettetapController::class, 'mutasiBarangShow']);
             Route::get('/mutasi-barang/{id}/edit', [AdminAsettetapController::class, 'mutasiBarangEdit']);
             Route::get('/mutasi-barang/aset/{id}', [AdminAsettetapController::class, 'getAsetTetapData'])->name('mutasi-barang.aset');
-            // Route::get('/aset-tetap/mutasi-barang/create', [AdminAsetTetapController::class, 'createMutasi'])->name('mutasi-barang.create');
-            // Route::post('/aset-tetap/mutasi-barang', [AdminAsetTetapController::class, 'storeMutasi'])->name('mutasi-barang.store');
-            // Route::get('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'showMutasi'])->name('mutasi-barang.show');
-            // Route::get('/aset-tetap/mutasi-barang/{mutasi}/edit', [AdminAsetTetapController::class, 'editMutasi'])->name('mutasi-barang.edit');
-            // Route::put('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'updateMutasi'])->name('mutasi-barang.update');
-            // Route::delete('/aset-tetap/mutasi-barang/{mutasi}', [AdminAsetTetapController::class, 'destroyMutasi'])->name('mutasi-barang.destroy');
             
             //CRUD PENGADUAN
             Route::get('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanShow'])->name('pengaduan.show');
-            Route::put('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanUpdate'])->name('pengaduan.update');
-            Route::delete('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanDestroy'])->name('pengaduan.destroy');
+            Route::put('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanUpdate'])->name('pengaduanUpdate');
+    Route::delete('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanDestroy'])->name('pengaduanDestroy');
 
             //DELET SURVEY KEPUASAN
             Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');

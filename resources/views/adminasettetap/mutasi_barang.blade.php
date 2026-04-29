@@ -574,7 +574,7 @@
 
             @if($mutasi_barang->hasPages())
             <div class="table-footer">
-                <span>Menampilkan {{ $mutasi_barang->firstItem() }}–{{ $mutasi_barang->lastItem() }} dari {{ $$mutasi_barangarang->total() }} data</span>
+                <span>Menampilkan {{ $mutasi_barang->firstItem() }}–{{ $mutasi_barang->lastItem() }} dari {{ $mutasi_barang->total() }} data</span>
                 <div class="pagination" style="display: flex; gap: 6px; align-items: center;">
                     {!! $$mutasi_barangarang->appends(request()->query())->links() !!}
                 </div>
@@ -740,7 +740,7 @@ class  MutasiManager  {
         }
 
         try {
-            const response = await fetch(`/mutasi-barang/aset/${id}`);
+            const response = await fetch(`/adminasettetap/mutasi-barang/aset/${id}`);
             const data = await response.json();
             
             document.getElementById('kode_barang').value = data.kode_barang;
@@ -771,11 +771,11 @@ class  MutasiManager  {
 
     async openEditModal(id) {
         try {
-            const response = await fetch(`/mutasi-barang/${id}/edit`);
+            const response = await fetch(`/adminasettetap/mutasi-barang/${id}/edit`);
             const data = await response.json();
             
             document.getElementById('crudModalLabel').textContent = 'Edit Mutasi Barang';
-            document.getElementById('crudForm').action = `/mutasi-barang/${id}`;
+            document.getElementById('crudForm').action = `/adminasettetap/mutasi-barang/${id}`;
             document.getElementById('modalId').value = id;
             
             let methodInput = document.getElementById('_method');
@@ -807,7 +807,7 @@ class  MutasiManager  {
 
     async openDetailModal(id) {
         try {
-            const response = await fetch(`/mutasi-barang/${id}`);
+            const response = await fetch(`/adminasettetap/mutasi-barang/${id}`);
             const data = await response.json();
             this.renderDetailModal(data);
             if (this.detailModal) {
@@ -920,6 +920,12 @@ class  MutasiManager  {
 
         try {
             const formData = new FormData(form);
+
+            // ✅ FIXED: Handle PUT method properly
+            if (form.querySelector('input[name="_method"]')) {
+                formData.append('_method', 'PUT');
+            }
+            
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -953,7 +959,7 @@ class  MutasiManager  {
         if (!confirm('Apakah Anda yakin ingin menghapus mutasi barang ini?')) return;
 
         try {
-            const response = await fetch(`/mutasi-barang/${id}`, {
+            const response = await fetch(`/adminasettetap/mutasi-barang/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

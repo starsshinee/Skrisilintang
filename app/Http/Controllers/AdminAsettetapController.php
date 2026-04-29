@@ -566,83 +566,117 @@ class AdminAsettetapController extends Controller
     }
 
     // ========== MUTASI BARANG ==========
-    // ========== MUTASI BARANG ==========
-public function mutasiBarang(Request $request)
-{
-    $query = MutasiBarang::with(['asetTetap', 'user'])
-        ->when($request->filled('search'), function($q) use ($request) {
-            $q->where(function($subQ) use ($request) {
-                $subQ->where('no_mutasi', 'like', "%{$request->search}%")
-                     ->orWhereHas('asetTetap', function($asetQ) use ($request) {
-                         $asetQ->where('kode_barang', 'like', "%{$request->search}%")
-                               ->orWhere('nama_barang', 'like', "%{$request->search}%");
-                     })
-                     ->orWhere('lokasi_awal', 'like', "%{$request->search}%")
-                     ->orWhere('lokasi_akhir', 'like', "%{$request->search}%");
-            });
-        })
-        ->orderBy('tanggal_mutasi', 'desc');
+    public function mutasiBarang(Request $request)
+    {
+        $query = MutasiBarang::with(['asetTetap', 'user'])
+            ->when($request->filled('search'), function($q) use ($request) {
+                $q->where(function($subQ) use ($request) {
+                    $subQ->where('no_mutasi', 'like', "%{$request->search}%")
+                        ->orWhereHas('asetTetap', function($asetQ) use ($request) {
+                            $asetQ->where('kode_barang', 'like', "%{$request->search}%")
+                                ->orWhere('nama_barang', 'like', "%{$request->search}%");
+                        })
+                        ->orWhere('lokasi_awal', 'like', "%{$request->search}%")
+                        ->orWhere('lokasi_akhir', 'like', "%{$request->search}%");
+                });
+            })
+            ->orderBy('tanggal_mutasi', 'desc');
 
-    $mutasi_barang = $query->paginate(15)->withQueryString();
+        $mutasi_barang = $query->paginate(15)->withQueryString();
 
-    // Transform data untuk view
-    $mutasi_barang->getCollection()->transform(function ($item) {
-        $item->tanggal_mutasi_formatted = $item->tanggal_mutasi?->format('d/m/Y');
-        $item->tanggal_input = $item->created_at?->format('d/m/Y H:i');
-        $item->lokasi_perubahan = $item->lokasi_awal . ' → ' . $item->lokasi_akhir;
-        
-        return $item;
-    });
+        // Transform data untuk view
+        $mutasi_barang->getCollection()->transform(function ($item) {
+            $item->tanggal_mutasi_formatted = $item->tanggal_mutasi?->format('d/m/Y');
+            $item->tanggal_input = $item->created_at?->format('d/m/Y H:i');
+            return $item;
+        });
 
-    // Aset tetap untuk dropdown (hanya yang tersedia)
-    $asetTetap = AssetTetap::select('id', 'kode_barang', 'nama_barang')
-        ->where(function($q) {
-            $q->where('status', 'Tersedia')
-              ->orWhereNull('status');
-        })
-        ->orderBy('nama_barang', 'asc')
-        ->orderBy('kode_barang', 'asc')
-        ->get();
+        // Aset tetap untuk dropdown
+        $asetTetap = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'lokasi')
+            ->orderBy('nama_barang', 'asc')
+            ->orderBy('kode_barang', 'asc')
+            ->get();
 
-    return view('adminasettetap.mutasi_barang', compact('mutasi_barang', 'asetTetap'));
-}
+        return view('adminasettetap.mutasi_barang', compact('mutasi_barang', 'asetTetap'));
+    }
 
-    // CREATE: Menyimpan data mutasi baru
-  // CREATE: Menyimpan data mutasi baru
+    // ✅ FIXED: Store (POST /mutasi-barang)
     public function mutasiBarangStore(Request $request)
     {
         $validated = $request->validate([
             'aset_tetap_id' => 'required|exists:aset_tetap,id',
             'lokasi_awal' => 'required|string|max:255',
-            'lokasi_akhir' => 'required|string|max:255', // Changed from lokasi_tujuan
+            'lokasi_akhir' => 'required|string|max:255',
             'tanggal_mutasi' => 'required|date',
             'keterangan' => 'nullable|string|max:1000'
         ]);
 
-        $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
+        DB::beginTransaction();
+        try {
+            $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
+            
+            $noMutasi = 'MUT-' . now()->format('Ymd') . '-' . str_pad(MutasiBarang::count() + 1, 4, '0', STR_PAD_LEFT);
+            
+            MutasiBarang::create([
+                'no_mutasi' => $noMutasi,
+                'aset_tetap_id' => $validated['aset_tetap_id'],
+                'kode_barang' => $aset->kode_barang,
+                'nama_barang' => $aset->nama_barang,
+                'lokasi_awal' => $validated['lokasi_awal'],
+                'lokasi_akhir' => $validated['lokasi_akhir'],
+                'tanggal_mutasi' => $validated['tanggal_mutasi'],
+                'keterangan' => $validated['keterangan'],
+                'user_id' => Auth::id(),
+            ]);
+
+            // Update lokasi aset
+            $aset->update(['lokasi' => $validated['lokasi_akhir']]);
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Mutasi barang berhasil disimpan!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Mutasi store error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan mutasi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ✅ FIXED: Show/Detail (GET /mutasi-barang/{id})
+    public function mutasiBarangShow($id)
+    {
+        $mutasi = MutasiBarang::with(['asetTetap', 'user'])->findOrFail($id);
         
-        MutasiBarang::create([
-            'no_mutasi' => 'MUT-' . now()->format('Ymd') . '-' . str_pad(MutasiBarang::count() + 1, 4, '0', STR_PAD_LEFT),
-            'aset_tetap_id' => $validated['aset_tetap_id'],
-            'kode_barang' => $aset->kode_barang,
-            'nama_barang' => $aset->nama_barang,
-            'lokasi_awal' => $validated['lokasi_awal'],
-            'lokasi_akhir' => $validated['lokasi_akhir'],
-            'tanggal_mutasi' => $validated['tanggal_mutasi'],
-            'keterangan' => $validated['keterangan'],
-            'user_id' => Auth::id(),
-        ]);
+        $mutasi->tanggal_mutasi_formatted = $mutasi->tanggal_mutasi?->format('d/m/Y');
+        $mutasi->tanggal_input = $mutasi->created_at?->format('d/m/Y H:i');
+        
+        return response()->json($mutasi);
+    }
 
-        // Update lokasi aset tetap
-        $aset->update(['lokasi' => $validated['lokasi_akhir']]);
-
+    // ✅ FIXED: Edit (GET /mutasi-barang/{id}/edit)
+    public function mutasiBarangEdit($id)
+    {
+        $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
+        
         return response()->json([
-            'success' => true,
-            'message' => 'Mutasi barang berhasil disimpan!'
+            'id' => $mutasi->id,
+            'aset_tetap_id' => $mutasi->aset_tetap_id,
+            'lokasi_awal' => $mutasi->lokasi_awal,
+            'lokasi_akhir' => $mutasi->lokasi_akhir,
+            'tanggal_mutasi' => $mutasi->tanggal_mutasi?->format('Y-m-d'),
+            'keterangan' => $mutasi->keterangan ?? '',
+            'kode_barang' => $mutasi->kode_barang,
+            'nama_barang' => $mutasi->nama_barang
         ]);
     }
 
-    // UPDATE
+    // ✅ FIXED: Update (PUT /mutasi-barang/{id})
     public function mutasiBarangUpdate(Request $request, $id)
     {
         $validated = $request->validate([
@@ -653,103 +687,78 @@ public function mutasiBarang(Request $request)
             'keterangan' => 'nullable|string|max:1000'
         ]);
 
-        $mutasi = MutasiBarang::findOrFail($id);
-        $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
-        
-        $mutasi->update([
-            'aset_tetap_id' => $validated['aset_tetap_id'],
-            'kode_barang' => $aset->kode_barang,
-            'nama_barang' => $aset->nama_barang,
-            'lokasi_awal' => $validated['lokasi_awal'],
-            'lokasi_akhir' => $validated['lokasi_akhir'],
-            'tanggal_mutasi' => $validated['tanggal_mutasi'],
-            'keterangan' => $validated['keterangan'],
-        ]);
-
-        // Update lokasi aset tetap
-        $aset->update(['lokasi' => $validated['lokasi_akhir']]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Mutasi barang berhasil diupdate!'
-        ]);
-    }
-
-        // ✅ DETAIL/SHOW
-    public function mutasiBarangShow($id)
-    {
+        DB::beginTransaction();
         try {
-            $mutasi = MutasiBarang::with(['asetTetap', 'user'])->findOrFail($id);
+            $mutasi = MutasiBarang::findOrFail($id);
+            $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
             
-            $mutasi->tanggal_mutasi_formatted = $mutasi->tanggal_mutasi?->format('d/m/Y');
-            $mutasi->tanggal_input = $mutasi->created_at?->format('d/m/Y H:i');
+            $mutasi->update([
+                'aset_tetap_id' => $validated['aset_tetap_id'],
+                'kode_barang' => $aset->kode_barang,
+                'nama_barang' => $aset->nama_barang,
+                'lokasi_awal' => $validated['lokasi_awal'],
+                'lokasi_akhir' => $validated['lokasi_akhir'],
+                'tanggal_mutasi' => $validated['tanggal_mutasi'],
+                'keterangan' => $validated['keterangan'],
+            ]);
+
+            // Update lokasi aset
+            $aset->update(['lokasi' => $validated['lokasi_akhir']]);
             
-            return response()->json($mutasi);
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Mutasi barang berhasil diupdate!'
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate mutasi'
+            ], 500);
         }
     }
 
-    // ✅ EDIT
-    public function mutasiBarangEdit($id)
+    // ✅ FIXED: Delete (DELETE /mutasi-barang/{id})
+    public function mutasiBarangDestroy($id)
     {
+        DB::beginTransaction();
         try {
             $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
             
-            return response()->json([
-                'id' => $mutasi->id,
-                'aset_tetap_id' => $mutasi->aset_tetap_id,
-                'lokasi_awal' => $mutasi->lokasi_awal,
-                'lokasi_akhir' => $mutasi->lokasi_akhir,
-                'tanggal_mutasi' => $mutasi->tanggal_mutasi?->format('Y-m-d'),
-                'keterangan' => $mutasi->keterangan ?? '',
-                'kode_barang' => $mutasi->asetTetap->kode_barang ?? '',
-                'nama_barang' => $mutasi->asetTetap->nama_barang ?? ''
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
-        }
-    }
-
-    // ✅ DELETE (sudah ada, tapi perbaiki)
-    public function mutasiBarangDestroy($id)
-    {
-        try {
-            $mutasi = MutasiBarang::findOrFail($id);
-            
-            // Rollback lokasi aset jika perlu
+            // Rollback lokasi aset ke lokasi awal
             if ($mutasi->asetTetap) {
                 $mutasi->asetTetap->update(['lokasi' => $mutasi->lokasi_awal]);
             }
             
             $mutasi->delete();
             
+            DB::commit();
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Mutasi barang berhasil dihapus!'
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data'
+                'message' => 'Gagal menghapus mutasi'
             ], 500);
         }
     }
 
-    // ✅ GET ASET DATA (perbaiki)
+    // ✅ FIXED: Get Aset Data (GET /mutasi-barang/aset/{id})
     public function getAsetTetapData($id)
     {
-        try {
-            $aset = AssetTetap::select(['id', 'kode_barang', 'nama_barang', 'lokasi'])->findOrFail($id);
-            
-            return response()->json([
-                'kode_barang' => $aset->kode_barang,
-                'nama_barang' => $aset->nama_barang,
-                'lokasi_sekarang' => $aset->lokasi
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Aset tidak ditemukan'], 404);
-        }
+        $aset = AssetTetap::select(['id', 'kode_barang', 'nama_barang', 'lokasi'])->findOrFail($id);
+        
+        return response()->json([
+            'kode_barang' => $aset->kode_barang,
+            'nama_barang' => $aset->nama_barang,
+            'lokasi_sekarang' => $aset->lokasi
+        ]);
     }
     
 
@@ -1023,7 +1032,14 @@ public function mutasiBarang(Request $request)
         return view('adminasettetap.pengaduan_show', compact('pengaduan'));
     }
 
-    public function pengaduanUpdate(Request $request, Pengaduan $pengaduan)
+    public function pengaduanDestroy(Pengaduan $pengaduan)  // ✅ Changed name
+    {
+        $pengaduan->delete();
+        return redirect()->route('adminasettetap.pengaduan')
+            ->with('success', 'Pengaduan berhasil dihapus!');
+    }
+
+    public function pengaduanUpdate(Request $request, Pengaduan $pengaduan)  // ✅ Changed name
     {
         $validated = $request->validate([
             'status' => 'required|in:baru,diproses,selesai,ditolak',
@@ -1034,14 +1050,6 @@ public function mutasiBarang(Request $request)
 
         return redirect()->route('adminasettetap.pengaduan')
             ->with('success', 'Status pengaduan #' . $pengaduan->id . ' berhasil diupdate!');
-    }
-
-    public function pengaduanDestroy(Pengaduan $pengaduan)
-    {
-        $pengaduan->delete();
-
-        return redirect()->route('adminasettetap.pengaduan')
-            ->with('success', 'Pengaduan berhasil dihapus!');
     }
     
     //=======PENGADUAN STORE FRONDEND-=====
