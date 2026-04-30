@@ -36,12 +36,12 @@ class PermintaanPersediaan extends Model
     // Relasi
     public function persediaan(): BelongsTo
     {
-        return $this->belongsTo(Persediaan::class);
+        return $this->belongsTo(Persediaan::class, 'persediaan_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function reviewedBy(): BelongsTo

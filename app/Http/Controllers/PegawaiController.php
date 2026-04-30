@@ -136,7 +136,8 @@ class PegawaiController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Permintaan berhasil dikirim! Menunggu persetujuan Admin Persediaan.');
+        return redirect()->route('pegawai.permintaan_persediaan')
+                ->with('success', 'Permintaan berhasil dikirim! Menunggu persetujuan Admin Persediaan.');
     }
 
      /**
@@ -149,6 +150,7 @@ class PegawaiController extends Controller
                                    ->latest();
 
         $riwayat = $query->paginate(10);
+        
         return view('pegawai.permintaan_persediaan', compact('riwayat'));
     }
 

@@ -455,6 +455,10 @@ class AdminPersediaanController extends Controller
         $query->where('status', $request->status);
     }
 
+    $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
+                    ->latest()
+                    ->get();
+
     $permintaan = $query->paginate(10);
     return view('adminpersediian.permintaan_persediaan', compact('permintaan'));
     }
