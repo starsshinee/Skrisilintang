@@ -295,7 +295,11 @@
         <div class="chart-col">
           <div class="bar-val">{{ $chartData['monthly']['jumlah_data'][$index] }}</div>
           <div class="bar-wrap">
-            <div class="bar" style="height: {{ max(10, ($chartData['monthly']['jumlah_data'][$index] / max($chartData['monthly']['jumlah_data']) * 100)) }}%"></div>
+            @php
+                $maxData = max($chartData['monthly']['jumlah_data']);
+                $height = $maxData > 0 ? max(10, ($chartData['monthly']['jumlah_data'][$index] / $maxData * 100)) : 0;
+            @endphp
+            <div class="bar" style="height: {{ $height }}%"></div>
           </div>
           <div class="bar-label">{{ $label }}</div>
         </div>

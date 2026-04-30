@@ -152,16 +152,24 @@ class KasubagController extends Controller
         return view('kasubag.persetujuan_peminjaman_kendaraan');
     }
 
-     //PERMINTAAN PERSEDIAAN
+     
+    //PERMINTAAN PERSEDIAAN
     public function persetujuanPermintaanPersediaan()
     {
-        $query = PermintaanPersediaan::with(['user', 'persediaan', 'reviewedBy'])
-                                   ->whereIn('status', ['dalam_review', 'disetujui_kasubag'])
-                                   ->latest();
+        $stats = [
+            'menunggu' => PermintaanPersediaan::where('status', 'dalam_review')->count(),
+            'disetujui' => PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
+            'total' => PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])->count()
+        ];
 
-        $permintaan = $query->paginate(15);
+        $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
+                    ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
+                    ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") // Yang belum direview ditaruh paling atas
+                    ->latest()
+                    ->get();
 
-        return view('kasubag.persetujuan_permintaan_persediaan');
+        // BENAR: Gunakan compact('permintaan') untuk mengirim data
+        return view('kasubag.persetujuan_permintaan_persediaan', compact('permintaan', 'stats'));
     }
 
     public function approvePermintaan(Request $request, PermintaanPersediaan $permintaan)
@@ -183,6 +191,18 @@ class KasubagController extends Controller
         }
 
         return back()->with('success', 'Permintaan berhasil diproses!');
+    }
+
+    /**
+     * Menampilkan Detail Permintaan Persediaan untuk Kasubag
+     */
+    public function showPermintaan($id)
+    {
+        // Ambil data beserta relasinya
+        $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
+                        ->findOrFail($id);
+
+        return view('kasubag.detail_permintaan_persediaan', compact('permintaan'));
     }
 
     public function pengaturanAkun()

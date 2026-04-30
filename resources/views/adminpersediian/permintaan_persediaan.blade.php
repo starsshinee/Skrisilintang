@@ -117,8 +117,9 @@ th {
   font-weight: 600; color: var(--text-secondary); 
   font-size: 12px; text-transform: uppercase; 
   letter-spacing: 0.5px; border-bottom: 2px solid #f1f5f9;
+  white-space: nowrap;
 }
-td { padding: 20px 32px; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
+td { padding: 20px 32px; border-bottom: 1px solid #f8fafc; vertical-align: middle; white-space: nowrap;}
 tr:hover { background: #f8fafc; }
 
 .status-badge {
@@ -178,6 +179,11 @@ tr:hover { background: #f8fafc; }
   .search-wrap { min-width: auto; }
   th, td { padding: 16px 12px; font-size: 13px; }
   .page-top { flex-direction: column; gap: 16px; text-align: center; }
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto; /* Ini yang memunculkan scrollbar horizontal */
+  -webkit-overflow-scrolling: touch;
 }
 </style>
 </head>

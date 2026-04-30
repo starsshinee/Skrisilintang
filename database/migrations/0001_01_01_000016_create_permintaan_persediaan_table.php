@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('permintaan_persediaan', function (Blueprint $table) {
             $table->id();
             $table->string('nama_lengkap');
+            $table->string('kode_barang');
             $table->string('nama_barang');
             $table->foreignId('persediaan_id')->constrained('persediaan')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
@@ -22,7 +23,7 @@ return new class extends Migration
             // Workflow fields
             $table->foreignId('reviewed_by_adminpersediaan_id')->nullable()->constrained('users');
             $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
-            $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');
+            $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak' , 'dibatalkan'])->default('pending');
             
             $table->timestamps();
         });

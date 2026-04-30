@@ -463,6 +463,14 @@ class AdminPersediaanController extends Controller
     return view('adminpersediian.permintaan_persediaan', compact('permintaan'));
     }
 
+    public function showPermintaan($id)
+    {
+        $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
+                        ->findOrFail($id);
+
+        return view('adminpersediian.detail_permintaan', compact('permintaan'));
+    }
+
     public function reviewPermintaan(Request $request, PermintaanPersediaan $permintaan)
     {
         if (!in_array($permintaan->status, ['pending'])) {
@@ -493,13 +501,58 @@ class AdminPersediaanController extends Controller
         }
 
         // Generate PDF atau download template surat
-        $pdf = \PDF::loadView('adminpersediian.surat_permintaan', compact('permintaan'));
+        $pdf = PDF::loadView('surat.peminjaman_gedung', compact('permintaan'));
         return $pdf->download('surat_permintaan_' . $permintaan->id . '.pdf');
     }
 
-    public function laporanPermintaanPersediaan() 
-    { 
-        return view('adminpersediian.laporan_permintaan_persediaan'); 
+    public function laporanPermintaanPersediaan()
+    {
+        // 1. Ambil SEMUA data permintaan
+        $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])->latest()->get();
+
+        // 2. Statistik Keseluruhan
+        $stats = [
+            'total' => $permintaan->count(),
+            'diproses' => $permintaan->whereIn('status', ['pending', 'dalam_review'])->count(),
+            'ditolak' => $permintaan->whereIn('status', ['ditolak', 'ditolak_kasubag'])->count(),
+            'disetujui' => $permintaan->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
+        ];
+
+        // 3. Statistik Bulan Ini
+        $bulanIni = $permintaan->filter(fn($item) => $item->created_at->isCurrentMonth());
+        $statsBulanIni = [
+            'total' => $bulanIni->count(),
+            'disetujui' => $bulanIni->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
+            'pending' => $bulanIni->whereIn('status', ['pending', 'dalam_review'])->count(),
+            'ditolak' => $bulanIni->whereIn('status', ['ditolak', 'ditolak_kasubag'])->count(),
+        ];
+
+        // 4. Perhitungan Lanjutan (Rata-rata & Persentase)
+        $approvalRate = $stats['total'] > 0 ? round(($stats['disetujui'] / $stats['total']) * 100) : 0;
+        $avgItems = $stats['total'] > 0 ? round($permintaan->avg('jumlah_diminta')) : 0;
+
+        // 5. Data Grafik Bulanan (Januari - Desember Tahun Ini)
+        $monthlyData = [];
+        $maxMonth = 1; // Untuk rasio tinggi diagram batang
+        for ($i = 1; $i <= 12; $i++) {
+            $count = $permintaan->filter(fn($item) => $item->created_at->month == $i && $item->created_at->year == date('Y'))->count();
+            $monthlyData[$i] = $count;
+            if ($count > $maxMonth) $maxMonth = $count;
+        }
+
+        // 6. Data Tab Gabungan (Dikelompokkan berdasarkan Pemohon)
+        $summaryData = $permintaan->groupBy('nama_lengkap')->map(function($group) {
+            return [
+                'total' => $group->count(),
+                'disetujui' => $group->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
+                'pending' => $group->whereIn('status', ['pending', 'dalam_review'])->count(),
+                'ditolak' => $group->whereIn('status', ['ditolak', 'ditolak_kasubag'])->count(),
+            ];
+        });
+
+        return view('adminpersediian.laporan_permintaan_persediaan', compact(
+            'permintaan', 'stats', 'statsBulanIni', 'approvalRate', 'avgItems', 'monthlyData', 'maxMonth', 'summaryData'
+        ));
     }
     // LAPORAN TRANSAKSI MASUK
 

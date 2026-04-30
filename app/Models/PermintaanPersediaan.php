@@ -14,6 +14,7 @@ class PermintaanPersediaan extends Model
     
     protected $fillable = [
         'nama_lengkap',
+        'kode_barang',
         'nama_barang',
         'persediaan_id',
         'user_id',
@@ -79,6 +80,7 @@ class PermintaanPersediaan extends Model
             'disetujui_kasubag' => ['text' => 'Disetujui Kasubag', 'color' => 'success', 'icon' => 'fa-check-circle'],
             'disetujui' => ['text' => 'Disetujui', 'color' => 'success', 'icon' => 'fa-thumbs-up'],
             'ditolak' => ['text' => 'Ditolak', 'color' => 'danger', 'icon' => 'fa-times-circle'],
+            'dibatalkan' => ['text' => 'Dibatalkan', 'color' => 'secondary', 'icon' => 'fa-ban'],
             default => ['text' => 'Unknown', 'color' => 'secondary']
         };
     }

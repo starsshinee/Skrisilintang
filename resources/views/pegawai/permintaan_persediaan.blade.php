@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-{{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPANDU - Permintaan Persediaan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1189,8 +1189,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Hide loading, show content
     setTimeout(() => {
-      loading.style.display = 'none';
-      content.style.display = 'block';
+      const loadingElement = document.getElementById('detailLoading');
+      const contentElement = document.getElementById('detailContent');
+      
+      if (loadingElement) loadingElement.style.display = 'none';
+      if (contentElement) contentElement.style.display = 'block';
     }, 300);
   };
 

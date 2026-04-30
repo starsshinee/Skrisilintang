@@ -105,9 +105,7 @@ class PegawaiController extends Controller
     {
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
-            'nama_barang' => 'required|string|max:255',
             'kode_barang' => 'required|string|max:50', 
-            'persediaan_id' => 'required|exists:persediaan,id',
             'jumlah_diminta' => 'required|integer|min:1',
             'tanggal_permintaan' => 'required|date',
             'tanggal_dibutuhkan' => 'required|date|after_or_equal:tanggal_permintaan',
@@ -126,7 +124,7 @@ class PegawaiController extends Controller
             PermintaanPersediaan::create([
             'nama_lengkap' => $request->nama_lengkap,
             'kode_barang' => $request->kode_barang,           // ✅ GUNAKAN INI
-            'nama_barang' => $request->nama_barang,
+            'nama_barang' => $persediaan->nama_barang,
             'persediaan_id' => $persediaan->id,               // ✅ AMBIL ID
             'user_id' => Auth::id(),
             'jumlah_diminta' => $request->jumlah_diminta,
@@ -136,7 +134,7 @@ class PegawaiController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('pegawai.permintaan_persediaan')
+        return redirect()->route('pegawai.permintaan-persediaan')
                 ->with('success', 'Permintaan berhasil dikirim! Menunggu persetujuan Admin Persediaan.');
     }
 
@@ -154,52 +152,72 @@ class PegawaiController extends Controller
         return view('pegawai.permintaan_persediaan', compact('riwayat'));
     }
 
+    /**
+     * LIHAT DETAIL PERMINTAAN (AJAX)
+     */
     public function detailPermintaanPersediaan($id)
     {
-        $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
-                                        ->findOrFail($id);
+        try {
+            $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
+                                            ->findOrFail($id);
 
-        if ($permintaan->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
+            // Pastikan hanya pemilik akun yang bisa melihat detailnya
+            if ($permintaan->user_id !== Auth::id()) {
+                return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses ke data ini.']);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $permintaan->id,
+                    'kode' => 'REQ-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT),
+                    'nama_lengkap' => $permintaan->nama_lengkap,
+                    'nama_barang' => $permintaan->nama_barang ?? '-',
+                    'persediaan' => $permintaan->persediaan ? [
+                        'nama_barang' => $permintaan->persediaan->nama_barang,
+                        'kode_barang' => $permintaan->persediaan->kode_barang,
+                        'kategori' => $permintaan->persediaan->kategori,
+                        'jumlah' => $permintaan->persediaan->jumlah,
+                    ] : null,
+                    'jumlah_diminta' => $permintaan->jumlah_diminta,
+                    
+                    // Pengecekan aman agar tidak crash jika tanggal kosong
+                    'tanggal_permintaan' => $permintaan->tanggal_permintaan ? \Carbon\Carbon::parse($permintaan->tanggal_permintaan)->format('d M Y') : '-',
+                    'tanggal_dibutuhkan' => $permintaan->tanggal_dibutuhkan ? \Carbon\Carbon::parse($permintaan->tanggal_dibutuhkan)->format('d M Y') : '-',
+                    'tujuan_penggunaan' => $permintaan->tujuan_penggunaan,
+                    'status' => $permintaan->status,
+                    
+                    'status_label' => isset($permintaan->status_badge['text']) ? $permintaan->status_badge['text'] : ucfirst($permintaan->status),
+                    'created_at' => $permintaan->created_at ? $permintaan->created_at->format('d M Y H:i') : '-',
+                    
+                    // Kita gunakan ->name (default Laravel), bukan ->nama
+                    'admin_approved_by' => $permintaan->reviewedBy?->name ?? null,
+                    'kasubag_approved_by' => $permintaan->approvedByKasubag?->name ?? null,
+                    
+                    'komentar_admin' => $permintaan->komentar ?? null,
+                    'surat_path' => $permintaan->surat_url ? asset('storage/' . $permintaan->surat_url) : null,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Ubah response code ke 200 agar pesan error ditangkap oleh Javascript dan dimunculkan di Toast Notifikasi
+            return response()->json([
+                'success' => false, 
+                'message' => 'Error: ' . $e->getMessage() . ' (Baris: ' . $e->getLine() . ' di ' . basename($e->getFile()) . ')'
+            ], 200); 
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $permintaan->id,
-                'kode' => 'REQ-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT),
-                'nama_lengkap' => $permintaan->nama_lengkap,
-                'nama_barang' => $permintaan->nama_barang,
-                'persediaan' => $permintaan->persediaan ? [
-                    'nama_barang' => $permintaan->persediaan->nama_barang,
-                    'kode_barang' => $permintaan->persediaan->kode_barang,
-                    'kategori' => $permintaan->persediaan->kategori,
-                    'jumlah' => $permintaan->persediaan->jumlah,
-                    'satuan' => $permintaan->persediaan->satuan ?? 'unit'
-                ] : null,
-                'jumlah_diminta' => $permintaan->jumlah_diminta,
-                'tanggal_permintaan' => $permintaan->tanggal_permintaan->format('d M Y'),
-                'tanggal_dibutuhkan' => $permintaan->tanggal_dibutuhkan->format('d M Y'),
-                'tujuan_penggunaan' => $permintaan->tujuan_penggunaan,
-                'status' => $permintaan->status,
-                'status_label' => $permintaan->status_badge['text'],
-                'created_at' => $permintaan->created_at->format('d M Y H:i'),
-                'reviewed_by' => $permintaan->reviewedBy?->name ?? '-',
-                'approved_by_kasubag' => $permintaan->approvedByKasubag?->name ?? '-',
-                'komentar' => $permintaan->komentar ?? null,
-                'surat_url' => $permintaan->surat_url ? asset('storage/' . $permintaan->surat_url) : null,
-            ]
-        ]);
     }
 
+    /**
+     * BATALKAN / HAPUS PERMINTAAN (AJAX)
+     */
     public function cancelPermintaanPersediaan($id)
     {
         $permintaan = PermintaanPersediaan::where('user_id', Auth::id())
-                                        ->whereIn('status', ['pending'])
+                                        ->whereIn('status', ['pending']) // Hanya bisa batal jika status masih pending
                                         ->findOrFail($id);
 
         $permintaan->update([
-            'status' => 'dibatalkan_pengguna',
+            'status' => 'dibatalkan', // Status diubah menjadi dibatalkan
             'updated_at' => now()
         ]);
 
