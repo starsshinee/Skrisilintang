@@ -109,8 +109,8 @@ class PegawaiController extends Controller
             'kode_barang' => 'required|string|max:50', 
             'persediaan_id' => 'required|exists:persediaan,id',
             'jumlah_diminta' => 'required|integer|min:1',
-            'tanggal_permintaan' => 'required|date|after_or_equal:today',
-            'tanggal_dibutuhkan' => 'required|date|after:tanggal_permintaan',
+            'tanggal_permintaan' => 'required|date',
+            'tanggal_dibutuhkan' => 'required|date|after_or_equal:tanggal_permintaan',
             'tujuan_penggunaan' => 'required|string|max:1000',
         ]);
 

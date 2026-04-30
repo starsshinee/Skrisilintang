@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="csrf-token" content="{{ csrf_token() }}">
+{{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPANDU - Permintaan Persediaan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -403,10 +403,9 @@
                   <option value="{{ $item->kode_barang }}" 
                           data-nama="{{ $item->nama_barang }}" 
                           data-kategori="{{ $item->kategori ?? 'Umum' }}"
-                          data-stok="{{ $item->jumlah ?? 0 }}"
-                          {{ old('kode_barang') == $item->kode_barang ? 'selected' : '' }}>
-                    {{ $item->kode_barang }} - {{ $item->nama_barang }} 
-                    <span style="opacity:0.7;font-size:12px">(Stok: {{ number_format($item->jumlah) }})</span>
+                          data-stok="{{ $item->jumlah}}">{{ $item->nama_barang }}</option>
+                          {{ $item->kode_barang }} - {{ $item->nama_barang }} 
+                  <span style="opacity:0.7;font-size:12px">(Stok: {{ number_format($item->jumlah) }})</span>
                   </option>
                 @endforeach
               </select>
@@ -838,28 +837,57 @@ function updateJumlahMax() {
 }
 
 // VALIDASI - dengan extra debug
-document.getElementById('permintaanForm').addEventListener('submit', function(e) {
-  console.log('📋 FORM SUBMIT DEBUG:');
-  console.log('- currentStok:', currentStok);
-  console.log('- jumlahInput.value:', document.getElementById('jumlahInput').value);
+// document.getElementById('permintaanForm').addEventListener('submit', function(e) {
+//   console.log('📋 FORM SUBMIT DEBUG:');
+//   console.log('- currentStok:', currentStok);
+//   console.log('- jumlahInput.value:', document.getElementById('jumlahInput').value);
   
-  const persediaanSelect = document.getElementById('persediaanSelect');
-  const jumlahInput = document.getElementById('jumlahInput');
-  const jumlah = parseInt(jumlahInput.value) || 0;
+//   const persediaanSelect = document.getElementById('persediaanSelect');
+//   const jumlahInput = document.getElementById('jumlahInput');
+//   const jumlah = parseInt(jumlahInput.value) || 0;
   
-  if (!persediaanSelect.value) {
-    e.preventDefault();
-    showToast('❌ Pilih barang terlebih dahulu!', 'error');
-    return;
-  }
+//   if (!persediaanSelect.value) {
+//     e.preventDefault();
+//     showToast('❌ Pilih barang terlebih dahulu!', 'error');
+//     return;
+//   }
   
-  if (jumlah > currentStok || currentStok === 0) {
-    e.preventDefault();
-    showToast(`❌ Jumlah ${jumlah} > Stok ${currentStok}`, 'error');
-    return;
-  }
+//   if (jumlah > currentStok || currentStok === 0) {
+//     e.preventDefault();
+//     showToast(`❌ Jumlah ${jumlah} > Stok ${currentStok}`, 'error');
+//     return;
+//   }
   
-  console.log('✅ VALIDASI LULUS!');
+//   console.log('✅ VALIDASI LULUS!');
+// });
+
+document.querySelector('form').addEventListener('submit', function(e) {
+    let persediaanSelect = document.getElementById('persediaan_id');
+    
+    // Pastikan user sudah memilih opsi barang
+    if (persediaanSelect.selectedIndex === 0 || persediaanSelect.value === "") {
+        return; // Biarkan validasi HTML default berjalan
+    }
+
+    let selectedOption = persediaanSelect.options[persediaanSelect.selectedIndex];
+    
+    // Ambil nilai data-stok dan ubah menjadi integer
+    let currentStok = parseInt(selectedOption.getAttribute('data-stok')) || 0;
+    let jumlahInput = document.getElementById('jumlah'); // sesuaikan ID input jumlahmu
+    let jumlahPermintaan = parseInt(jumlahInput.value) || 0;
+
+    // Console log untuk memastikan nilai sudah masuk
+    console.log('FORM SUBMIT DEBUG:');
+    console.log('- currentStok:', currentStok);
+    console.log('- jumlahInput:', jumlahPermintaan);
+
+    // Validasi stok
+    if (jumlahPermintaan > currentStok) {
+        e.preventDefault(); // Hentikan form agar tidak terkirim
+        
+        // Munculkan alert error
+        alert('Stok Tidak Mencukupi! Jumlah permintaan melebihi stok yang tersedia.');
+    }
 });
 
 function showToast(msg, type = 'success') {
