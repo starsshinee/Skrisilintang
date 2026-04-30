@@ -801,95 +801,97 @@
 <script>
 let currentStok = 0;
 
+// ✅ EVENT LISTENER PILIH BARANG
 document.getElementById('persediaanSelect').addEventListener('change', function() {
   const preview = document.getElementById('facilityPreview');
-  const selected = this.options[this.selectedIndex];
+  const selectedOption = this.options[this.selectedIndex];
+  const jumlahInput = document.getElementById('jumlahInput');
+  const stokWarning = document.getElementById('stokWarning');
   
-  console.log('🔍 SELECTED:', selected.value);
-  console.log('📦 data-stok:', selected.getAttribute('data-stok'));
+  console.log('🔍 Pilihan berubah:', selectedOption.value);
   
-  if (selected.value) {
-    // ✅ DIRECT PARSING - Sudah terbukti data-stok="5"
-    currentStok = parseInt(selected.getAttribute('data-stok')) || 0;
+  if (selectedOption.value) {
+    // Ambil data dari option yang dipilih
+    currentStok = parseInt(selectedOption.getAttribute('data-stok')) || 0;
     
-    console.log('✅ FINAL STOK:', currentStok);
+    console.log('✅ Stok ditemukan:', currentStok);
     
     // Update preview
-    document.getElementById('fpName').textContent = selected.dataset.nama || 'N/A';
-    document.getElementById('fpKode').textContent = 'Kode: ' + selected.value;
+    document.getElementById('fpName').textContent = selectedOption.dataset.nama || 'N/A';
+    document.getElementById('fpKode').textContent = 'Kode: ' + selectedOption.value;
     document.getElementById('fpStok').textContent = 'Stok: ' + currentStok.toLocaleString();
-    document.getElementById('fpIcon').innerHTML = '<i class="fas fa-box"></i>';
     preview.classList.add('show');
 
-    updateJumlahMax();
+    // Update max jumlah
+    jumlahInput.max = currentStok;
+    jumlahInput.title = `Maksimum ${currentStok.toLocaleString()}`;
+    
+    // Validasi jumlah saat ini
+    validateJumlahInput();
+    
   } else {
+    // Reset jika tidak ada pilihan
     preview.classList.remove('show');
     currentStok = 0;
-    updateJumlahMax();
+    jumlahInput.max = 999999;
+    jumlahInput.title = '';
+    stokWarning.style.display = 'none';
+    jumlahInput.style.borderColor = 'var(--border)';
   }
 });
 
-function updateJumlahMax() {
-  const jumlahInput = document.getElementById('jumlahInput');
-  jumlahInput.max = currentStok;
-  jumlahInput.title = currentStok > 0 ? `Maks ${currentStok.toLocaleString()}` : '';
-  console.log('🔢 MAX SET TO:', jumlahInput.max);
-}
-
-// VALIDASI - dengan extra debug
-// document.getElementById('permintaanForm').addEventListener('submit', function(e) {
-//   console.log('📋 FORM SUBMIT DEBUG:');
-//   console.log('- currentStok:', currentStok);
-//   console.log('- jumlahInput.value:', document.getElementById('jumlahInput').value);
-  
-//   const persediaanSelect = document.getElementById('persediaanSelect');
-//   const jumlahInput = document.getElementById('jumlahInput');
-//   const jumlah = parseInt(jumlahInput.value) || 0;
-  
-//   if (!persediaanSelect.value) {
-//     e.preventDefault();
-//     showToast('❌ Pilih barang terlebih dahulu!', 'error');
-//     return;
-//   }
-  
-//   if (jumlah > currentStok || currentStok === 0) {
-//     e.preventDefault();
-//     showToast(`❌ Jumlah ${jumlah} > Stok ${currentStok}`, 'error');
-//     return;
-//   }
-  
-//   console.log('✅ VALIDASI LULUS!');
-// });
-
-document.querySelector('form').addEventListener('submit', function(e) {
-    let persediaanSelect = document.getElementById('persediaan_id');
-    
-    // Pastikan user sudah memilih opsi barang
-    if (persediaanSelect.selectedIndex === 0 || persediaanSelect.value === "") {
-        return; // Biarkan validasi HTML default berjalan
-    }
-
-    let selectedOption = persediaanSelect.options[persediaanSelect.selectedIndex];
-    
-    // Ambil nilai data-stok dan ubah menjadi integer
-    let currentStok = parseInt(selectedOption.getAttribute('data-stok')) || 0;
-    let jumlahInput = document.getElementById('jumlah'); // sesuaikan ID input jumlahmu
-    let jumlahPermintaan = parseInt(jumlahInput.value) || 0;
-
-    // Console log untuk memastikan nilai sudah masuk
-    console.log('FORM SUBMIT DEBUG:');
-    console.log('- currentStok:', currentStok);
-    console.log('- jumlahInput:', jumlahPermintaan);
-
-    // Validasi stok
-    if (jumlahPermintaan > currentStok) {
-        e.preventDefault(); // Hentikan form agar tidak terkirim
-        
-        // Munculkan alert error
-        alert('Stok Tidak Mencukupi! Jumlah permintaan melebihi stok yang tersedia.');
-    }
+// ✅ VALIDASI JUMLAH REAL-TIME
+document.getElementById('jumlahInput').addEventListener('input', function() {
+  validateJumlahInput();
 });
 
+function validateJumlahInput() {
+  const jumlahInput = document.getElementById('jumlahInput');
+  const stokWarning = document.getElementById('stokWarning');
+  const jumlah = parseInt(this.value) || 0;
+  
+  if (currentStok > 0 && jumlah > currentStok) {
+    jumlahInput.style.borderColor = 'var(--danger)';
+    stokWarning.style.display = 'block';
+    stokWarning.textContent = `⚠️ Stok hanya ${currentStok.toLocaleString()} unit!`;
+  } else {
+    jumlahInput.style.borderColor = 'var(--border)';
+    stokWarning.style.display = 'none';
+  }
+}
+
+// ✅ VALIDASI FORM SUBMIT - DIPERBAIKI
+document.getElementById('permintaanForm').addEventListener('submit', function(e) {
+  console.log('📋 FORM SUBMIT - VALIDASI');
+  
+  const persediaanSelect = document.getElementById('persediaanSelect');
+  const jumlahInput = document.getElementById('jumlahInput');
+  const jumlah = parseInt(jumlahInput.value) || 0;
+  
+  // Cek apakah barang sudah dipilih
+  if (!persediaanSelect.value) {
+    e.preventDefault();
+    showToast('❌ Silakan pilih barang terlebih dahulu!', 'error');
+    persediaanSelect.focus();
+    return false;
+  }
+  
+  // Cek validasi stok
+  if (jumlah > currentStok || currentStok === 0) {
+    e.preventDefault();
+    showToast(`❌ Jumlah ${jumlah.toLocaleString()} melebihi stok ${currentStok.toLocaleString()}!`, 'error');
+    jumlahInput.focus();
+    return false;
+  }
+  
+  console.log('✅ VALIDASI LULUS - Form dikirim');
+  // Ubah tombol jadi loading
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+  submitBtn.disabled = true;
+});
+
+// ✅ TOAST NOTIFICATION
 function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   const icon = document.getElementById('toastIcon');
@@ -898,9 +900,39 @@ function showToast(msg, type = 'success') {
   msgEl.textContent = msg;
   icon.className = type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-circle-check';
   icon.style.color = type === 'error' ? '#ef4444' : '#10b981';
+  
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 4000);
 }
+
+// Filter riwayat
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    
+    const filter = this.dataset.filter;
+    document.querySelectorAll('.req-card').forEach(card => {
+      if (filter === 'all' || card.dataset.status === filter) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+console.log('✅ Script loaded successfully!');
 </script>
+
+<!-- CSS ANIMATIONS tetap sama -->
+<style>
+/* Tambahan untuk loading button */
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+</style>
 </body>
 </html>
