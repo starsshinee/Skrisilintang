@@ -204,6 +204,17 @@
         Demikian berita acara ini ditanda tangani dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
     </div>
 
+    <!-- TANGGAL SURAT -->
+    @php
+        $tgl = $permintaan->created_at ?? now();
+        $tanggal = \Carbon\Carbon::parse($tgl)->format('j');
+        $bulan = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('F');
+        $tahun = \Carbon\Carbon::parse($tgl)->format('Y');
+    @endphp
+    <div style="text-align: right; margin-bottom: 5px; margin-right: 15px;">
+        Gorontalo, {{ $tanggal }} {{ $bulan }} {{ $tahun }}
+    </div>
+
     <!-- TANDA TANGAN (DIBUNGKUS SATU TABEL) -->
     <table class="ttd-table">
         <tr>

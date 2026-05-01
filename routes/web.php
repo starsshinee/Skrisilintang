@@ -149,6 +149,8 @@ Route::middleware('auth')->group(function () {
            
             //PEMINJAMAN KENDARAAN
             Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');   
+            Route::post('/peminjaman-kendaraan/{id}/approve', [App\Http\Controllers\KasubagController::class, 'approveKendaraan'])->name('peminjaman-kendaraan.approve');
+            Route::get('/peminjaman-kendaraan/{id}/json', [App\Http\Controllers\KasubagController::class, 'showJsonKendaraan']);
             
             //PERMINTAAN PERSEDIAAN
             Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
@@ -287,6 +289,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::post('/peminjaman-kendaraan/{id}/review', [AdminAsettetapController::class, 'reviewPeminjamanKendaraan']);
             Route::post('/peminjaman-kendaraan/{id}/upload', [AdminAsettetapController::class, 'uploadBastKendaraan']);
+            Route::get('/peminjaman-kendaraan/{peminjaman}/print', [AdminAsettetapController::class, 'generateSuratPeminjamanKendaraan'])->name('peminjaman-kendaraan.print');
+            Route::get('/peminjaman-kendaraan/{id}/json', [AdminAsettetapController::class, 'showJsonKendaraan']);
             
             
             Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');  
@@ -397,6 +401,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::post('/peminjaman-kendaraan/store', [PegawaiController::class, 'storePeminjamanKendaraan'])->name('peminjaman-kendaraan.store');
             Route::delete('/peminjaman-kendaraan/{id}/cancel', [PegawaiController::class, 'cancelPeminjamanKendaraan']);
+            Route::get('/peminjaman-kendaraan/{id}/show', [PegawaiController::class, 'showPeminjamanKendaraan'])->name('peminjaman-kendaraan.show');
             
             Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');

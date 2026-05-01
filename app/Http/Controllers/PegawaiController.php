@@ -317,12 +317,14 @@ class PegawaiController extends Controller
     public function storePeminjamanKendaraan(Request $request)
     {
         $request->validate([
-            'kode_barang' => 'required|exists:aset_tetap,kode_barang',
-            'tanggal_peminjaman' => 'required|date|after_or_equal:today',
-            'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+            'kode_barang' => 'required',
+            'jumlah' => 'required|integer|min:1',
+            'tanggal_peminjaman' => 'required|date',
+            'tanggal_pengembalian' => 'required|date',
             'deskripsi_peruntukan' => 'required|string',
         ]);
 
+        // Ambil detail aset dari database berdasarkan kode_barang yang dipilih
         $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();
 
         PeminjamanKendaraan::create([
@@ -331,17 +333,26 @@ class PegawaiController extends Controller
             'kode_barang' => $aset->kode_barang,
             'nup' => $aset->nup,
             'merek' => $aset->merek,
-            'jumlah' => 1, // Kendaraan biasanya unit tunggal per request
-            'request_date' => now(),
+            'jumlah' => $request->jumlah,
             'tanggal_peminjaman' => $request->tanggal_peminjaman,
             'tanggal_pengembalian' => $request->tanggal_pengembalian,
             'deskripsi_peruntukan' => $request->deskripsi_peruntukan,
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Permintaan peminjaman kendaraan berhasil dikirim.');
+        return back()->with('success', 'Permintaan peminjaman berhasil dikirim.');
     }
 
+    public function showPeminjamanKendaraan($id)
+    {
+        // Mengambil data peminjaman beserta informasi user terkait
+        $data = PeminjamanKendaraan::with('user')->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
     public function cancelPeminjamanKendaraan($id)
     {
         $data = PeminjamanKendaraan::where('id', $id)

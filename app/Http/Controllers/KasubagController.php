@@ -209,23 +209,61 @@ class KasubagController extends Controller
      //PEMINJAMAN KENDARAAN
     public function persetujuanPeminjamanKendaraan()
     {
-        $peminjaman = PeminjamanKendaraan::whereIn('status', ['dalam_review', 'disetujui', 'ditolak'])
-            ->with('user')
-            ->latest()
+        // Mengambil data peminjaman kendaraan yang relevan untuk Kasubag
+        // (yang sedang direview, sudah disetujui, atau ditolak)
+        $peminjaman = PeminjamanKendaraan::with('user')
+            ->whereIn('status', ['dalam_review', 'disetujui', 'ditolak'])
+            ->orderByRaw("FIELD(status, 'dalam_review', 'disetujui', 'ditolak')")
+            ->orderBy('created_at', 'desc')
             ->get();
-            
-        return view('kasubag.persetujuan_peminjaman_kendaraan', compact('peminjaman'));
+
+        // Menghitung statistik untuk ringkasan kartu di tampilan
+        $stats = [
+            'menunggu' => PeminjamanKendaraan::where('status', 'dalam_review')->count(),
+            'disetujui' => PeminjamanKendaraan::where('status', 'disetujui')->count(),
+            'total' => $peminjaman->count(),
+        ];
+
+        return view('kasubag.persetujuan_peminjaman_kendaraan', compact('peminjaman', 'stats'));
     }
 
     public function approveKendaraan(Request $request, $id)
     {
+        $request->validate([
+            'action' => 'required|in:setuju,tolak'
+        ]);
+
         $peminjaman = PeminjamanKendaraan::findOrFail($id);
-        $peminjaman->status = ($request->action == 'setuju') ? 'disetujui' : 'ditolak';
+
+        if ($request->action === 'setuju') {
+            $peminjaman->status = 'disetujui';
+            $pesan = 'Peminjaman kendaraan berhasil disetujui.';
+        } else {
+            $peminjaman->status = 'ditolak';
+            $pesan = 'Peminjaman kendaraan telah ditolak.';
+        }
+
+        // Menyimpan jejak persetujuan Kasubag
         $peminjaman->approved_by_kasubag_id = auth()->id();
         $peminjaman->approved_by_kasubag_date = now();
         $peminjaman->save();
 
-        return back()->with('success', 'Status peminjaman kendaraan diperbarui.');
+        return back()->with('success', $pesan);
+    }
+
+    public function showJsonKendaraan($id)
+    {
+        // Mengambil data beserta relasi user
+        $data = PeminjamanKendaraan::with('user')->find($id);
+
+        if (!$data) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
      

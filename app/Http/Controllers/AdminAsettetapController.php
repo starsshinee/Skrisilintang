@@ -957,6 +957,68 @@ class AdminAsettetapController extends Controller
         return back()->with('success', 'Surat persetujuan berhasil diunggah.');
     }
 
+    public function generateSuratPeminjamanKendaraan(PeminjamanKendaraan $peminjaman)
+    {
+        // 1. Ambil data pihak terkait
+        // Data peminjam sudah otomatis terambil dari relasi (jika sudah diset di model)
+        $peminjam = $peminjaman->user; 
+        $admin = auth()->user(); // Admin yang sedang login dan mencetak surat
+        $kasubag = User::where('role', 'kasubag')->first(); 
+        $kepala = User::where('role', 'kepalabpmp')->first(); // Pastikan rolenya sesuai dengan database Anda
+
+        // 2. Fungsi bantuan untuk mengubah tanda tangan (lokal) menjadi Base64 agar bisa dirender DomPDF
+        $getBase64 = function ($path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                $type = pathinfo(storage_path('app/public/' . $path), PATHINFO_EXTENSION);
+                $data = Storage::disk('public')->get($path);
+                return 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            return null;
+        };
+
+        // 3. Siapkan gambar tanda tangan (Signature) masing-masing pihak
+        $ttdPeminjam = $peminjam ? $getBase64($peminjam->signature) : null;
+        $ttdAdmin = $admin ? $getBase64($admin->signature) : null;
+        $ttdKasubag = $kasubag ? $getBase64($kasubag->signature) : null;
+        $ttdKepala = $kepala ? $getBase64($kepala->signature) : null;
+
+        // 4. Load View khusus untuk Surat Peminjaman Kendaraan
+        // Sesuaikan path 'surat.peminjaman_kendaraan' dengan lokasi file blade Berita Acara Anda
+        $pdf = Pdf::loadView('surat.peminjaman_kendaraan', compact(
+            'peminjaman', 
+            'peminjam', 
+            'admin', 
+            'kasubag', 
+            'kepala',
+            'ttdPeminjam', 
+            'ttdAdmin', 
+            'ttdKasubag', 
+            'ttdKepala'
+        ))->setPaper('a4', 'portrait');
+
+        // 5. Tampilkan PDF (Stream) atau Download Otomatis
+        $fileName = 'BA_Pinjam_Kendaraan_' . ($peminjaman->kode_barang ?? $peminjaman->id) . '_' . time() . '.pdf';
+        
+        // Gunakan ->stream() jika ingin melihat preview di browser dulu
+        // Gunakan ->download() jika ingin file langsung terunduh ke komputer
+        return $pdf->stream($fileName); 
+    }
+
+    public function showJsonKendaraan($id)
+    {
+        // Mengambil data peminjaman beserta nama user
+        $data = PeminjamanKendaraan::with('user')->find($id);
+
+        if (!$data) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
     
     // ========== PENGEMBALIAN KENDARAAN ==========
     public function PengembalianKendaraan(Request $request)
