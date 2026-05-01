@@ -28,22 +28,22 @@ class AdminAsettetapController extends Controller
     // ========== DASHBOARD ==========
     public function dashboard()
     {
-        return view('adminasettetap.dashbord');
-        // $stats = [
-        //     'totalAset' => AssetTetap::count(),
-        //     'transaksiMasuk' => TransaksiMasukAsetTetap::count(),
-        //     'peminjamanBarangAktif' => PeminjamanBarang::where('status', 'disetujui')->count(),
-        //     'pengembalianPending' => PengembalianBarang::where('status_verifikasi', 'pending')->count(),
-        //     'kendaraanDipinjam' => PeminjamanKendaraan::where('status', 'disetujui')->count(),
-        // ];
+        // return view('adminasettetap.dashbord');
+        $stats = [
+            'totalAset' => AssetTetap::count(),
+            'transaksiMasuk' => TransaksiMasukAssetTetap::count(),
+            'peminjamanBarangAktif' => PeminjamanBarang::where('status', 'disetujui')->count(),
+            'pengembalianPending' => PengembalianBarang::where('status_verifikasi', 'pending')->count(),
+            'kendaraanDipinjam' => PeminjamanKendaraan::where('status', 'disetujui')->count(),
+        ];
 
-        // $recentPengembalian = PengembalianBarang::with('peminjamanBarang.barang', 'user')
-        //     ->where('status_verifikasi', 'pending')
-        //     ->latest()
-        //     ->limit(5)
-        //     ->get();
+        $recentPengembalian = PengembalianBarang::with('peminjamanBarang.barang', 'user')
+            ->where('status_verifikasi', 'pending')
+            ->latest()
+            ->limit(5)
+            ->get();
 
-        // return view('adminasettetap.dashbord', compact('stats', 'recentPengembalian'));
+        return view('adminasettetap.dashbord', compact('stats', 'recentPengembalian'));
     }
 
     // ========== DATA ASET TETAP - INDEX (sudah ada, update query) ==========

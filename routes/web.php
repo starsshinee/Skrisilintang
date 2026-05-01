@@ -10,6 +10,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TamuController;
 use App\Http\Controllers\AdminPersediaanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -71,7 +72,7 @@ Route::middleware('checkrole')->group(function () {
 
     // Role-specific dashboards
     Route::middleware('checkrole:superadmin')->group(function () {
-        Route::get('/superadmin/dashboard', fn() => view('superadmin.dashboard'))->name('superadmin.dashboard');
+        Route::get('/superadmin/dashbord', fn() => view('superadmin.dashbord'))->name('superadmin.dashbord');
     });
     Route::middleware('checkrole:kepalabpmp')->group(function () {
         Route::get('/kepalabpmp/dashboard', fn() => view('kepalabpmp.dashboard'))->name('kepalabpmp.dashboard');
@@ -109,10 +110,12 @@ Route::middleware('auth')->group(function () {
         ->name('superadmin.')
         ->middleware('role:superadmin')
         ->group(function () {
-            Route::get('/dashboard',      fn () => view('superadmin.dashbord'))->name('dashboard');
-            Route::get('/manajemen-user', fn () => view('superadmin.manajemen_user'))->name('manajemen-user');
-            Route::post('/register', [AuthController::class, 'register'])->name('register');
-            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
+            Route::get('/dashboard', [SuperadminController::class, 'dashboard'])->name('dashboard');
+            Route::get('manajemen-user', [SuperadminController::class, 'manajemenUser'])->name('manajemen-user');
+            Route::post('/pengguna', [SuperadminController::class, 'storePengguna'])->name('pengguna.store');
+            Route::put('/pengguna/{user}', [SuperadminController::class, 'updatePengguna'])->name('pengguna.update');
+            Route::delete('/pengguna/{user}', [SuperadminController::class, 'destroyPengguna'])->name('pengguna.destroy');
+            Route::patch('/pengguna/{user}/toggle-status', [SuperadminController::class, 'toggleStatus'])->name('pengguna.toggle-status');
         });
 
     // ──────────────────────────────────────────────────────────────────
@@ -207,6 +210,7 @@ Route::middleware('auth')->group(function () {
         
         Route::post('/permintaan/{permintaan}/review', [AdminPersediaanController::class, 'reviewPermintaan'])->name('review-permintaan');
         Route::get('/surat/{permintaan}', [AdminPersediaanController::class, 'generateSuratPermintaan'])->name('surat-permintaan');
+        Route::post('/permintaan/{permintaan}/upload-bast', [AdminPersediaanController::class, 'uploadSuratBast'])->name('upload-bast');
 
         //LAPORAN
         Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');

@@ -130,11 +130,13 @@
     font-size: 11px; font-weight: 700;
     color: var(--blue); letter-spacing: .8px; text-transform: uppercase;
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
   td {
     padding: 14px 20px;
     font-size: 13.5px; color: var(--text);
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
   
   tr:last-child td { border-bottom: none; }
@@ -696,7 +698,7 @@ function getRawNumber(selector) {
 function formatCurrency(number) {
   return new Intl.NumberFormat('id-ID', {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 0
   }).format(number);
 }
 

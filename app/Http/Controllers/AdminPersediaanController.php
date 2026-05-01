@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\{
+    User,
     Persediaan,
     PermintaanPersediaan,
     TransaksiKeluarPersediaan,
@@ -19,7 +21,43 @@ class AdminPersediaanController extends Controller
 {
     public function dashboard()
     {
-        return view('adminpersediian.dashbord');
+        
+        $bulanIni = now()->month;
+        $tahunIni = now()->year;
+
+        // 1. Hitung Total & Nilai Persediaan
+        $totalPersediaan = \App\Models\Persediaan::count();
+        $totalNilaiPersediaan = \App\Models\Persediaan::sum('harga_total') ?? 0;
+
+        // 2. Transaksi Bulan Ini
+        $masukBulanIni = \App\Models\TransaksiMasukPersediaan::whereMonth('tanggal_input', $bulanIni)
+                            ->whereYear('tanggal_input', $tahunIni)->count();
+        $keluarBulanIni = \App\Models\TransaksiKeluarPersediaan::whereMonth('tanggal_input', $bulanIni)
+                            ->whereYear('tanggal_input', $tahunIni)->count();
+
+        // 3. Status Permintaan Persediaan
+        $permintaanPending = \App\Models\PermintaanPersediaan::whereIn('status', ['pending', 'dalam_review'])->count();
+        $permintaanDisetujui = \App\Models\PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count();
+        $permintaanDitolak = \App\Models\PermintaanPersediaan::whereIn('status', ['ditolak', 'ditolak_kasubag'])->count();
+        $totalPermintaan = \App\Models\PermintaanPersediaan::count();
+
+        // 4. Data Grafik: Tren Transaksi Keluar Bulanan (Tahun ini)
+        $chartData = [];
+        $maxChart = 1; // Mencegah division by zero
+        for ($i = 1; $i <= 12; $i++) {
+            $count = \App\Models\TransaksiKeluarPersediaan::whereMonth('tanggal_input', $i)
+                        ->whereYear('tanggal_input', $tahunIni)->count();
+            $chartData[$i] = $count;
+            if ($count > $maxChart) {
+                $maxChart = $count;
+            }
+        }
+
+        return view('adminpersediian.dashbord', compact(
+            'totalPersediaan', 'totalNilaiPersediaan', 'masukBulanIni', 'keluarBulanIni',
+            'permintaanPending', 'permintaanDisetujui', 'permintaanDitolak', 'totalPermintaan',
+            'chartData', 'maxChart', 'tahunIni'
+        ));
     }
 
     // 📋 DATA PERSEDIAAN
@@ -51,6 +89,10 @@ class AdminPersediaanController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'harga_satuan' => str_replace('.', '', $request->harga_satuan)
+        ]);
+
         $request->validate([
             'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
@@ -81,6 +123,10 @@ class AdminPersediaanController extends Controller
 
     public function update(Request $request, Persediaan $persediaan)
     {
+        $request->merge([
+            'harga_satuan' => str_replace('.', '', $request->harga_satuan)
+        ]);
+
         $request->validate([
             'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
@@ -494,15 +540,65 @@ class AdminPersediaanController extends Controller
         return back()->with('success', 'Permintaan ditolak!');
     }
 
+    // 1. FUNGSI GENERATE SURAT (Dilengkapi TTD Base64)
     public function generateSuratPermintaan(PermintaanPersediaan $permintaan)
     {
-        if (!in_array($permintaan->status, ['dalam_review', 'disetujui_kasubag'])) {
-            return back()->with('error', 'Surat hanya bisa digenerate untuk permintaan yang sudah direview!');
+        // Ambil data user terkait
+        $peminjam = $permintaan->user;
+        $admin = Auth::user(); 
+        $kasubag = User::where('role', 'kasubag')->first(); // Ambil akun kasubag
+        $kepala = User::where('role', 'kepalabpmp')->first(); // Ambil akun kepala
+
+        // Fungsi bantuan untuk mengubah gambar lokal menjadi Base64
+        $getBase64 = function ($path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                $type = pathinfo(storage_path('app/public/' . $path), PATHINFO_EXTENSION);
+                $data = Storage::disk('public')->get($path);
+                return 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            return null;
+        };
+
+        // Siapkan TTD (Gunakan properti ->signature sesuai nama di db mu)
+        $ttdPeminjam = $peminjam ? $getBase64($peminjam->signature) : null;
+        $ttdAdmin = $getBase64($admin->signature);
+        $ttdKasubag = $kasubag ? $getBase64($kasubag->signature) : null;
+        $ttdKepala = $kepala ? $getBase64($kepala->signature) : null;
+
+        // Load View PDF
+        $pdf = PDF::loadView('surat.permintaan_persediaan', compact(
+            'permintaan', 'peminjam', 'admin', 'kasubag', 'kepala',
+            'ttdPeminjam', 'ttdAdmin', 'ttdKasubag', 'ttdKepala'
+        ));
+
+        return $pdf->download('Berita_Acara_Permintaan_' . $permintaan->id . '.pdf');
+    }
+
+    // 2. FUNGSI UPLOAD SURAT BAST FINAL OLEH ADMIN
+    public function uploadSuratBast(Request $request, PermintaanPersediaan $permintaan)
+    {
+        $request->validate([
+            'surat_bast' => 'required|mimes:pdf|max:2048' // Wajib PDF, max 2MB
+        ]);
+
+        if ($request->hasFile('surat_bast')) {
+            // Hapus file lama jika admin mengupload ulang
+            if ($permintaan->surat_bast_path && Storage::disk('public')->exists($permintaan->surat_bast_path)) {
+                Storage::disk('public')->delete($permintaan->surat_bast_path);
+            }
+
+            $filename = 'BAST_Persediaan_' . $permintaan->id . '_' . time() . '.pdf';
+            $path = $request->file('surat_bast')->storeAs('surat_bast', $filename, 'public');
+
+            $permintaan->update([
+                'surat_bast_path' => $path,
+                // 'status' => 'selesai' // Opsional, update status menjadi selesai
+            ]);
+
+            return back()->with('success', 'Surat Persetujuan Final berhasil diunggah!');
         }
 
-        // Generate PDF atau download template surat
-        $pdf = PDF::loadView('surat.peminjaman_gedung', compact('permintaan'));
-        return $pdf->download('surat_permintaan_' . $permintaan->id . '.pdf');
+        return back()->with('error', 'Gagal mengunggah surat.');
     }
 
     public function laporanPermintaanPersediaan()

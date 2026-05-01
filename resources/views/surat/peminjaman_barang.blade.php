@@ -2,365 +2,275 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berita Acara Pinjam Pakai - {{ $request->user->nama_lengkap ?? 'Peminjam' }}</title>
+<title>Berita Acara Pinjam Pakai</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* 1. PENGATURAN MARGIN KERTAS PDF (Tetap Atas/Bawah 4cm, Kiri/Kanan 3cm) */
+    @page {
+        size: A4 portrait;
+        margin-top: 4cm;
+        margin-bottom: 4cm;
+        margin-left: 3cm;
+        margin-right: 3cm;
+    }
 
-  body {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 12pt;
-    background: #e0e0e0;
-    display: flex;
-    justify-content: center;
-    padding: 30px 10px;
-  }
+    /* 2. RESET BODY & PEMADATAN TYPOGRAPHY */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 9.5pt; /* Diperkecil lagi agar pasti muat 1 halaman */
+        line-height: 1.2; /* Jarak antar baris dirapatkan */
+        color: #000;
+        background-color: transparent;
+    }
 
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    background: #fff;
-    padding: 0 25mm 20mm 25mm;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-  }
+    /* 3. KOP SURAT */
+    .kop-surat {
+        margin-bottom: 5px; /* Jarak kop ke judul diperkecil */
+        width: 100%;
+    }
+    .kop-surat img {
+        width: 100%; 
+        height: auto;
+        display: block;
+    }
 
-  /* KOP SURAT IMAGE */
-  .kop-surat {
-    text-align: center;
-    margin-bottom: 8px;
-    padding-bottom: 0;
-  }
+    /* 4. TIPOGRAFI & SPACING (DIPADATKAN EKSTREM) */
+    .text-center { text-align: center; }
+    .text-justify { text-align: justify; }
+    .font-bold { font-weight: bold; }
+    .italic { font-style: italic; }
+    .underline { text-decoration: underline; }
+    
+    .mb-5 { margin-bottom: 3px; } /* Spasi sangat kecil */
+    .mb-10 { margin-bottom: 6px; } /* Spasi diperkecil */
 
-  .kop-surat img {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
+    .judul-surat {
+        font-size: 10.5pt; /* Judul sedikit disesuaikan */
+        margin-bottom: 1px;
+        text-decoration: underline;
+        font-weight: bold;
+    }
 
-  /* JUDUL */
-  .judul-section {
-    text-align: center;
-    margin: 8px 0 6px 0;
-  }
+    /* 5. TABEL IDENTITAS & BARANG */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 6px; /* Spasi bawah tabel diperkecil */
+    }
+    td {
+        vertical-align: top;
+        padding: 1px 0; /* Jarak antar baris tabel dirapatkan */
+    }
+    .td-label { width: 110px; }
+    .td-titikdua { width: 15px; text-align: center; }
 
-  .judul-section h2 {
-    font-size: 14pt;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-family: "Times New Roman", serif;
-    text-decoration: underline;
-  }
+    /* 6. CATATAN PENTING */
+    .catatan-container {
+        margin-top: 5px;
+        margin-bottom: 10px; /* Spasi bawah catatan diperkecil */
+    }
+    .catatan-item {
+        font-style: italic;
+        margin-bottom: 1px;
+        text-align: justify;
+    }
 
-  .nomor-surat {
-    font-size: 11pt;
-    font-family: "Times New Roman", serif;
-    margin-top: 2px;
-  }
+    /* 7. TABEL TANDA TANGAN */
+    .ttd-table {
+        width: 100%;
+        text-align: center;
+        margin-top: 5px; /* Spasi sebelum TTD diperkecil drastis */
+        page-break-inside: avoid; 
+    }
+    .ttd-table td {
+        width: 50%;
+        padding: 0;
+        vertical-align: bottom;
+    }
+    .ttd-img-container {
+        height: 45px; /* Area gambar TTD sangat diperkecil */
+        margin: 1px 0; /* Margin atas/bawah TTD dirapatkan */
+    }
+    .ttd-img-container img {
+        max-height: 45px; /* Tinggi maksimal gambar TTD diperkecil */
+        max-width: 100px;
+    }
+    .ttd-nama {
+        font-weight: bold;
+        text-decoration: underline;
+        margin-bottom: 1px;
+    }
 
-  /* PEMBUKA */
-  .pembuka {
-    margin: 10px 0 6px 0;
-    font-size: 11.5pt;
-    line-height: 1.6;
-    text-align: justify;
-  }
-
-  /* TABEL IDENTITAS */
-  .identitas-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 6px 0 8px 8px;
-    font-size: 11.5pt;
-  }
-
-  .identitas-table td {
-    padding: 1.5px 0;
-    vertical-align: top;
-  }
-
-  .identitas-table td:first-child {
-    width: 110px;
-  }
-
-  .identitas-table td:nth-child(2) {
-    width: 18px;
-    text-align: center;
-  }
-
-  .identitas-table td:last-child {
-    font-weight: normal;
-  }
-
-  .identitas-table td.bold-val {
-    font-weight: bold;
-  }
-
-  /* PARAGRAF TENGAH */
-  .paragraf {
-    font-size: 11.5pt;
-    line-height: 1.6;
-    text-align: justify;
-    margin: 8px 0;
-  }
-
-  .paragraf .highlight {
-    font-weight: bold;
-  }
-
-  /* BARANG TABLE */
-  .barang-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 4px 0 4px 8px;
-    font-size: 11.5pt;
-  }
-
-  .barang-table td {
-    padding: 1.5px 0;
-    vertical-align: top;
-  }
-
-  .barang-table td:first-child {
-    width: 130px;
-  }
-
-  .barang-table td:nth-child(2) {
-    width: 18px;
-    text-align: center;
-  }
-
-  .barang-table td.bval {
-    font-weight: bold;
-  }
-
-  /* CATATAN */
-  .catatan-title {
-    font-size: 11.5pt;
-    font-style: italic;
-    font-weight: bold;
-    margin: 10px 0 2px 0;
-    text-decoration: underline;
-  }
-
-  .catatan-list {
-    font-size: 11pt;
-    line-height: 1.65;
-    font-style: italic;
-    text-align: justify;
-    list-style: none;
-    padding: 0;
-    margin-left: 2px;
-  }
-
-  .catatan-list li {
-    margin-bottom: 3px;
-  }
-
-  /* TTD SECTION */
-  .ttd-section {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 14px;
-    gap: 20px;
-  }
-
-  .ttd-block {
-    text-align: center;
-    flex: 1;
-    font-size: 11.5pt;
-  }
-
-  .ttd-block .peran {
-    margin-bottom: 55px;
-    font-weight: bold;
-  }
-
-  .ttd-block .nama {
-    font-weight: bold;
-    text-decoration: underline;
-    margin-bottom: 2px;
-  }
-
-  .ttd-block .nip {
-    font-size: 11pt;
-  }
-
-  .ttd-block .ttd-area {
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .ttd-mengetahui {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 11.5pt;
-  }
-
-  .ttd-mengetahui .peran-label {
-    font-weight: normal;
-  }
-
-  .ttd-mengetahui .sub-label {
-    font-weight: bold;
-    margin-bottom: 55px;
-  }
-
-  .ttd-mengetahui .nama {
-    font-weight: bold;
-    text-decoration: underline;
-  }
-
-  .ttd-mengetahui .nip {
-    font-size: 11pt;
-  }
-
-  @media print {
-    body { background: none; padding: 0; }
-    .page { box-shadow: none; margin: 0; padding: 0 20mm 15mm 20mm; }
-  }
+    /* 8. FOOTER */
+    .footer {
+        position: fixed;
+        bottom: -3cm; 
+        left: 0;
+        right: 0;
+        font-size: 8pt; 
+        color: #555;
+        text-align: center;
+        border-top: 1px solid #ccc;
+        padding-top: 4px;
+    }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- KOP SURAT (IMAGE) -->
-  <div class="kop-surat">
-    <img src="{{ asset('storage/kop_surat.png') }}" alt="Kop Surat BPMP Provinsi Gorontalo">
-  </div>
-
-  <!-- JUDUL -->
-  <div class="judul-section">
-    <h2>Berita Acara Pinjam Pakai</h2>
-    <div class="nomor-surat">No: &nbsp;/BPMP.GTLO/KPA/{{ date('Y') }}</div>
-  </div>
-
-  <!-- PEMBUKA -->
-  <div class="pembuka">
-    @php
-      $tgl = $request->created_at ?? now();
-      $hari = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('l');
-      $tanggal = \Carbon\Carbon::parse($tgl)->translatedFormat('j');
-      $bulan = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('F');
-      $tahun = \Carbon\Carbon::parse($tgl)->translatedFormat('Y');
-    @endphp
-    Pada &nbsp;hari &nbsp;ini &nbsp;<strong><em>{{ $hari }}</em></strong>, &nbsp;tanggal <strong><em>{{ $tanggal }}</em></strong> &nbsp;Bulan &nbsp;<strong><em>{{ $bulan }}</em></strong> &nbsp;Tahun &nbsp;<strong><em>{{ $tahun }}</em></strong> &nbsp;yang bertanda tangan dibawah ini :
-  </div>
-
-  <!-- IDENTITAS PEMINJAM -->
-  <table class="identitas-table">
-    <tr>
-      <td>Nama</td>
-      <td>:</td>
-      <td>{{ $request->user->nama_lengkap ?? '-' }}</td>
-    </tr>
-    <tr>
-      <td>NIP</td>
-      <td>:</td>
-      <td>{{ $request->user->nip ?? '-' }}</td>
-    </tr>
-    <tr>
-      <td>Jabatan</td>
-      <td>:</td>
-      <td>{{ $request->user->jabatan ?? 'Pelaksana' }}</td>
-    </tr>
-    <tr>
-      <td>Alamat</td>
-      <td>:</td>
-      <td class="bold-val">{{ $request->user->alamat ?? '-' }}</td>
-    </tr>
-  </table>
-
-  <!-- PARAGRAF REFERENSI PMK -->
-  <div class="paragraf">
-    Sesuai dengan &nbsp;<span class="highlight">PMK Nomor:115/PMK.06/2020 Tentang &nbsp;Pemanfaatan Barang Milik Negara</span>. Maka demi untuk tertibnya administrasi Berita Acara Pinjam Pakai ini &nbsp;sebagai berikut:
-  </div>
-
-  <!-- DATA BARANG -->
-  <table class="barang-table">
-    <tr>
-      <td>Nama Barang</td>
-      <td>:</td>
-      <td class="bval">{{ $request->nama_barang ?? '-' }}</td>
-    </tr>
-    <tr>
-      <td>Merk/Type</td>
-      <td>:</td>
-      <td>{{ $request->merek ?? '-' }}</td>
-    </tr>
-    <tr>
-      <td>Jumlah</td>
-      <td>:</td>
-      <td>{{ $request->jumlah ?? 1 }} unit</td>
-    </tr>
-    <tr>
-      <td>Jangka waktu</td>
-      <td>:</td>
-      <td>
-        @if($request->tanggal_peminjaman && $request->tanggal_pengembalian)
-          {{ \Carbon\Carbon::parse($request->tanggal_peminjaman)->locale('id')->translatedFormat('d F Y') }}
-          s/d
-          {{ \Carbon\Carbon::parse($request->tanggal_pengembalian)->locale('id')->translatedFormat('d F Y') }}
-        @else
-          -
-        @endif
-      </td>
-    </tr>
-    <tr>
-      <td>Untuk Keperluan</td>
-      <td>:</td>
-      <td>{{ $request->deskripsi_peruntukan ?? 'operasional kepala BPMP' }}</td>
-    </tr>
-  </table>
-
-  <!-- PARAGRAF TANGGUNG JAWAB -->
-  <div class="paragraf">
-    Dengan penuh tanggung jawab, dan apabila dikemudian hari barang tersebut hilang maka sebagai Peminjam bertanggung jawab atas kerugian Aset Negara, sesuai dengan ketentuan <strong>Pasal 1740 KUHPerdata</strong>
-  </div>
-
-  <!-- PENUTUP -->
-  <div class="paragraf">
-    Demikian berita acara ini ditanda tangani dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
-  </div>
-
-  <!-- CATATAN PENTING -->
-  <div class="catatan-title">Catatan Penting :</div>
-  <ol class="catatan-list">
-    <li>1.<em>barang bisa ditarik sewaktu-waktu apabila terjadi penyimpangan Penyalahgunaan atau dibutuhkan untuk kepentingan Lembaga/Kantor</em></li>
-    <li>2.<em>Kerusakan yang di akibatkan karena &nbsp;kelalaian pengguna maka kerusakan tersebut menjadi &nbsp;tanggung jawab pihak peminjam</em></li>
-  </ol>
-
-  <!-- TANDA TANGAN KIRI DAN KANAN -->
-  <div class="ttd-section">
-    <div class="ttd-block">
-      <div class="peran">Pengadministrasi BMN</div>
-      <div class="nama">Wiwin Suriadi Bokingo</div>
-      <div class="nip">NIP. 198001122008101002</div>
+    {{-- KOP SURAT --}}
+    <div class="kop-surat">
+        <img src="{{ storage_path('app/public/kop_surat.png') }}" alt="Kop Surat BPMP"> 
     </div>
-    <div class="ttd-block">
-      <div class="peran">Peminjam</div>
-      <div class="ttd-area">
-        @if(!empty($ttdBase64))
-          <img src="{{ $ttdBase64 }}" alt="Tanda Tangan" style="max-width: 100px; max-height: 50px;">
-        @endif
-      </div>
-      <div class="nama">{{ $request->user->nama_lengkap ?? '........................' }}</div>
-      <div class="nip">NIP. {{ $request->user->nip ?? '........................' }}</div>
+
+    <!-- JUDUL -->
+    <div class="text-center mb-10">
+        <div class="judul-surat">BERITA ACARA PINJAM PAKAI</div>
+        <div>No: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/BPMP.GTLO/KPA/{{ date('Y') }}</div>
     </div>
-  </div>
 
-  <!-- MENGETAHUI -->
-  <div class="ttd-mengetahui">
-    <div class="peran-label">Mengetahui,</div>
-    <div class="sub-label">Kuasa Pengguna Barang</div>
-    <div class="nama">Rudi Syaifullah, S. SI,M,M.</div>
-    <div class="nip">NIP. 157606272003121002</div>
-  </div>
+    <!-- PEMBUKA -->
+    <div class="text-justify mb-10">
+        @php
+          $tgl = $request->created_at ?? now();
+          $hari = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('l');
+          
+          $tanggal_angka = \Carbon\Carbon::parse($tgl)->format('j');
+          $tanggal_teks = match($tanggal_angka) {
+              '1' => 'Satu', '2' => 'Dua', '3' => 'Tiga', '4' => 'Empat', '5' => 'Lima',
+              '6' => 'Enam', '7' => 'Tujuh', '8' => 'Delapan', '9' => 'Sembilan', '10' => 'Sepuluh',
+              '11' => 'Sebelas', '12' => 'Dua Belas', '13' => 'Tiga Belas', '14' => 'Empat Belas',
+              '15' => 'Lima Belas', '16' => 'Enam Belas', '17' => 'Tujuh Belas', '18' => 'Delapan Belas',
+              '19' => 'Sembilan Belas', '20' => 'Dua Puluh', '21' => 'Dua Puluh Satu', 
+              '22' => 'Dua Puluh Dua', '23' => 'Dua Puluh Tiga', '24' => 'Dua Puluh Empat',
+              '25' => 'Dua Puluh Lima', '26' => 'Dua Puluh Enam', '27' => 'Dua Puluh Tujuh',
+              '28' => 'Dua Puluh Delapan', '29' => 'Dua Puluh Sembilan', '30' => 'Tiga Puluh',
+              '31' => 'Tiga Puluh Satu', default => $tanggal_angka
+          };
+          
+          $bulan = \Carbon\Carbon::parse($tgl)->locale('id')->translatedFormat('F');
+          $tahun_teks = 'Dua Ribu Dua Puluh Enam'; 
+        @endphp
+        Pada hari ini <span class="font-bold italic">{{ $hari }}</span> tanggal <span class="font-bold italic">{{ $tanggal_teks }}</span> Bulan <span class="font-bold italic">{{ $bulan }} Tahun {{ $tahun_teks }}</span> yang bertanda tangan dibawah ini:
+    </div>
 
-</div>
+    <!-- IDENTITAS PEMINJAM -->
+    <table>
+        <tr>
+            <td class="td-label">Nama</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->user->nama_lengkap ?? 'Sri Rahayu Pakaya' }}</td>
+        </tr>
+        <tr>
+            <td>NIP</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->user->nip ?? '197801292003122001' }}</td>
+        </tr>
+        <tr>
+            <td>Jabatan</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->user->jabatan ?? 'Pelaksana' }}</td>
+        </tr>
+        <tr>
+            <td>Alamat</td>
+            <td class="td-titikdua">:</td>
+            <td class="font-bold">{{ $request->user->alamat ?? 'Perumahan Toto Permai Kabila Bonbol' }}</td>
+        </tr>
+    </table>
+
+    <!-- PARAGRAF REFERENSI -->
+    <div class="text-justify mb-10">
+        Sesuai dengan <span class="font-bold">PMK Nomor: 115/PMK.06/2020 Tentang Pemanfaatan Barang Milik Negara</span>. Maka demi untuk tertibnya administrasi Berita Acara Pinjam Pakai ini sebagai berikut:
+    </div>
+
+    <!-- DATA BARANG -->
+    <table>
+        <tr>
+            <td class="td-label">Nama Barang</td>
+            <td class="td-titikdua">:</td>
+            <td class="font-bold">{{ $request->nama_barang ?? 'SEPEDA MOTOR DM 6910 E' }}</td>
+        </tr>
+        <tr>
+            <td>Merk/Type</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->merek ?? 'YAMAHA FINO 125 CC WARNA PUTIH' }}</td>
+        </tr>
+        <tr>
+            <td>Jumlah</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->jumlah ?? '1 unit' }}</td>
+        </tr>
+        <tr>
+            <td>Jangka waktu</td>
+            <td class="td-titikdua">:</td>
+            <td>1 tahun s/d 31 Des {{ date('Y') }}</td>
+        </tr>
+        <tr>
+            <td>Untuk Keperluan</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ $request->deskripsi_peruntukan ?? 'Operasional kepala BPMP Provinsi Gorontalo' }}</td>
+        </tr>
+    </table>
+        
+    <div class="text-justify mb-5">
+        Dengan penuh tanggung jawab, dan apabila dikemudian hari barang tersebut hilang maka sebagai Peminjam bertanggung jawab atas kerugian Aset Negara, sesuai dengan ketentuan <span class="font-bold">Pasal 1740 KUHPerdata.</span>
+    </div>
+
+    <div class="text-justify mb-5" style="text-indent: 40px;">
+        Demikian berita acara ini ditanda tangani dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
+    </div>
+
+    <!-- CATATAN PENTING -->
+    <div class="catatan-container">
+        <div class="font-bold italic underline mb-5">Catatan Penting :</div>
+        <div class="catatan-item">1. Barang bisa ditarik sewaktu-waktu apabila terjadi penyimpangan/penyalahgunaan atau dibutuhkan untuk kepentingan Lembaga/Kantor.</div>
+        <div class="catatan-item">2. Kerusakan yang diakibatkan karena kelalaian pengguna maka kerusakan tersebut menjadi tanggung jawab pihak peminjam.</div>
+    </div>
+
+    <!-- TANDA TANGAN -->
+    <table class="ttd-table">
+        <tr>
+            <td>
+                <div>Pengadministrasi BMN,</div>
+                <div class="ttd-img-container">
+                    @if(!empty($ttdAdmin))
+                        <img src="{{ $ttdAdmin }}" alt="TTD Admin">
+                    @endif
+                </div>
+                <div class="ttd-nama">{{ $admin->nama_lengkap ?? 'Wiwin Suriadi Bokingo' }}</div>
+                <div>NIP. {{ $admin->nip ?? '198001122008101002' }}</div>
+            </td>
+            <td>
+                <div>Peminjam,</div>
+                <div class="ttd-img-container">
+                    @if(!empty($ttdPeminjam))
+                        <img src="{{ $ttdPeminjam }}" alt="TTD Peminjam">
+                    @endif
+                </div>
+                <div class="ttd-nama">{{ $request->user->nama_lengkap ?? 'Sri Rahayu Pakaya' }}</div>
+                <div>NIP. {{ $request->user->nip ?? '197801292003122001' }}</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="padding-top: 10px;"> <!-- Spasi atas untuk TTD Kepala dikurangi -->
+                <div>Mengetahui,</div>
+                <div class="font-bold">Kuasa Pengguna Barang</div>
+                <div class="ttd-img-container">
+                    @if(!empty($ttdKepala))
+                        <img src="{{ $ttdKepala }}" alt="TTD Kepala">
+                    @endif
+                </div>
+                <div class="ttd-nama">{{ $kepala->nama_lengkap ?? 'Rudi Syaifullah, S. SI,M,M.' }}</div>
+                <div>NIP. {{ $kepala->nip ?? '157606272003121002' }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Dokumen ini digenerate secara otomatis oleh Sistem Inventaris BPMP Provinsi Gorontalo<br>
+        Dicetak pada: {{ $tanggalCetak ?? now()->translatedFormat('d F Y, H:i') }} WITA
+    </div>
+
 </body>
 </html>

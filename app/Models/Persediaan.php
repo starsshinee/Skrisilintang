@@ -31,6 +31,7 @@ class Persediaan extends Model
     ];
 
     // Accessor untuk format harga satuan
+    // Accessor untuk format harga satuan
     protected function hargaSatuan(): Attribute
     {
         return Attribute::make(
@@ -38,7 +39,7 @@ class Persediaan extends Model
         );
     }
 
-    // Accessor untuk format harga total
+    // Accessor untuk format harga total 
     protected function hargaTotal(): Attribute
     {
         return Attribute::make(

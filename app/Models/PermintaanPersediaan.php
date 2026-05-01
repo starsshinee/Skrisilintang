@@ -22,10 +22,13 @@ class PermintaanPersediaan extends Model
         'tanggal_permintaan',
         'tanggal_dibutuhkan',
         'tujuan_penggunaan',
+        'surat_bast_path',
+        
         // Workflow
         'reviewed_by_adminpersediaan_id',
         'approved_by_kasubag_id',
-        'status'
+        'status',
+        
     ];
 
     protected $casts = [

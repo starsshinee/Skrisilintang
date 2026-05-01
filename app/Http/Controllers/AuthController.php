@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
@@ -134,10 +135,19 @@ class AuthController extends Controller
         }
 
         // Handle signature upload
-        if ($request->hasFile('signature')) {
-            $path = $request->file('signature')->store('signatures', 'public');
-            $user->signature = $path;
+       if ($request->hasFile('signature')) {
+        // Hapus signature lama jika ada
+        if ($user->signature && Storage::disk('public')->exists($user->signature)) {
+            Storage::disk('public')->delete($user->signature);
         }
+        
+        // Simpan signature baru
+        $path = $request->file('signature')->store('signatures', 'public');
+        
+        // Simpan path ke kolom 'signature' sesuai database kamu
+        $user->signature = $path; 
+        $user->save();
+    }
 
         $user->save();
 

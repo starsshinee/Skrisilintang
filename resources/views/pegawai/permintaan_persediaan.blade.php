@@ -50,7 +50,6 @@
     .history-header { flex-direction: column; gap: 12px; align-items: stretch; }
   }
 
-  /* Sidebar dari partial */
   /* MAIN */
   .main { margin-left: 260px; flex: 1; padding: 0 32px 40px; }
 
@@ -289,11 +288,14 @@
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     transition: all .2s;
+    text-decoration: none;
   }
   .card-btn.detail { background: rgba(37,99,235,0.08); color: var(--primary); }
   .card-btn.detail:hover { background: rgba(37,99,235,0.15); }
   .card-btn.cancel { background: rgba(239,68,68,0.08); color: var(--danger); }
   .card-btn.cancel:hover { background: rgba(239,68,68,0.15); }
+  .card-btn.surat { background: rgba(16,185,129,0.08); color: var(--success); }
+  .card-btn.surat:hover { background: rgba(16,185,129,0.15); }
 
   .empty-state {
     text-align: center; padding: 60px 20px;
@@ -381,7 +383,7 @@
         <div class="form-header-sub">Pilih barang dari persediaan yang tersedia</div>
       </div>
       
-      <form method="POST" action="{{ route('pegawai.permintaan-persediaan.store') }}" method="POST" id="permintaanForm">
+      <form method="POST" action="{{ route('pegawai.permintaan-persediaan.store') }}" id="permintaanForm">
         @csrf
         <div class="form-body">
           <div class="form-group">
@@ -551,14 +553,24 @@
                   <div class="meta-value">{{ Str::limit($item->tujuan_penggunaan, 40) }}</div>
                 </div>
               </div>
+
+              <!-- FOOTER KARTU (TOMBOL AKSI & BAST) -->
               <div class="req-card-footer">
                 <button class="card-btn detail" onclick="showDetail({{ $item->id }})">
                   <i class="fas fa-eye"></i> Detail
                 </button>
+                
                 @if($item->status == 'pending')
                 <button class="card-btn cancel" onclick="cancelRequest({{ $item->id }})">
                   <i class="fas fa-xmark"></i> Batalkan
                 </button>
+                @endif
+                
+                <!-- TOMBOL DOWNLOAD SURAT BAST -->
+                @if(!empty($item->surat_bast_path))
+                <a href="{{ asset('storage/' . $item->surat_bast_path) }}" target="_blank" class="card-btn surat" title="Lihat Surat Persetujuan BAST">
+                  <i class="fas fa-file-contract"></i> Surat BAST
+                </a>
                 @endif
               </div>
             </div>
@@ -782,15 +794,18 @@
           <span id="detailCreatedAt">-</span>
         </div>
         <div style="display: flex; gap: 8px;">
+          
+          <!-- TOMBOL SURAT BAST MODAL (DIPERBARUI) -->
           <a id="detailSuratLink" href="#" style="
-            display: none; padding: 10px 20px; background: rgba(37,99,235,0.08); 
-            color: var(--primary); border: 1px solid rgba(37,99,235,0.2); 
+            display: none; padding: 10px 20px; background: rgba(16,185,129,0.08); 
+            color: var(--success); border: 1px solid rgba(16,185,129,0.2); 
             border-radius: 8px; font-size: 13px; font-weight: 600; 
-            text-decoration: none; display: flex; align-items: center; gap: 6px;
+            text-decoration: none; align-items: center; gap: 6px;
             transition: all .2s;
           " target="_blank">
-            <i class="fas fa-file-pdf"></i> Lihat Surat
+            <i class="fas fa-file-contract"></i> Lihat Surat BAST
           </a>
+
           <button onclick="closeModal()" style="
             padding: 10px 20px; background: transparent; 
             color: var(--text-secondary); border: 1px solid var(--border); 
@@ -1100,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // 4. POPULATE DETAIL MODAL ✅
+  // 4. POPULATE DETAIL MODAL ✅ (DIPERBARUI UNTUK SURAT BAST)
   window.populateDetailModal = function(data) {
     console.log('📋 Memuat data:', data);
     
@@ -1115,7 +1130,8 @@ document.addEventListener('DOMContentLoaded', () => {
       'disetujui': { text: 'Disetujui Admin', icon: 'fas fa-check-circle', color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
       'disetujui_kasubag': { text: 'Disetujui Kasubag', icon: 'fas fa-thumbs-up', color: '#8b5cf6', bg: 'rgba(139,92,246,0.15)' },
       'rejected': { text: 'Ditolak', icon: 'fas fa-times-circle', color: '#ef4444', bg: 'rgba(239,68,68,0.15)' },
-      'cancelled': { text: 'Dibatalkan', icon: 'fas fa-ban', color: '#64748b', bg: 'rgba(148,163,184,0.15)' }
+      'cancelled': { text: 'Dibatalkan', icon: 'fas fa-ban', color: '#64748b', bg: 'rgba(148,163,184,0.15)' },
+      'selesai': { text: 'Selesai', icon: 'fas fa-check-double', color: '#10b981', bg: 'rgba(16,185,129,0.15)' }
     };
     
     const status = statusConfig[data.status] || statusConfig['pending'];
@@ -1178,11 +1194,13 @@ document.addEventListener('DOMContentLoaded', () => {
         minute: '2-digit'
       }) : '-';
     
-    // Surat link (jika ada)
+    // Cek Dokumen BAST Final
     const suratLink = document.getElementById('detailSuratLink');
-    if (data.surat_path) {
-      suratLink.href = data.surat_path;
+    if (data.surat_bast_path) {
+      // Jika path dari database sudah valid, kita tempelkan di aset Storage
+      suratLink.href = '/storage/' + data.surat_bast_path;
       suratLink.style.display = 'flex';
+      suratLink.innerHTML = '<i class="fas fa-file-contract"></i> Lihat Surat BAST';
     } else {
       suratLink.style.display = 'none';
     }
@@ -1212,8 +1230,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ✅ UPDATE TOAST FUNCTION di PermintaanController
-// Tambahkan method ini ke class PermintaanController
-// Atau buat global function
 function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   const icon = document.getElementById('toastIcon');
