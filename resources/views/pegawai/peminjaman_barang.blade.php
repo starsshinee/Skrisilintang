@@ -1212,15 +1212,73 @@
     }
   }
 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; overflow-x: hidden; }
+  .main { margin-left: 260px; flex: 1; padding: 0 32px 40px; width: calc(100% - 260px); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 24px; position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid transparent; flex-wrap: wrap; gap: 16px; }
+  .breadcrumb { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .breadcrumb span { color: var(--primary); font-weight: 600; }
+  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; white-space: nowrap; }
+  .content-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 28px; }
+  .form-card, .history-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+  .form-card { position: sticky; top: 90px; height: fit-content; }
+  .form-header { padding: 24px 28px 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); position: relative; overflow: hidden; color: #fff; }
+  .form-header-icon { width: 46px; height: 46px; background: rgba(255,255,255,0.2); border-radius: 13px; display: grid; place-items: center; font-size: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.2); }
+  .form-header-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
+  .form-header-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+  .form-body { padding: 24px 28px; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+  .form-label i { color: var(--primary); font-size: 11px; }
+  .form-label .req { color: var(--danger); }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); outline: none; transition: .2s; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .submit-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--primary), #3b82f6); color: #fff; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: .2s; margin-top: 8px; }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+  
+  /* Preview Styling */
+  .facility-preview { display: none; margin-top: 8px; padding: 12px 14px; border-radius: 10px; background: #eff4ff; border: 1px solid #c7d7ff; align-items: center; gap: 12px; }
+  .fp-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--primary); display: grid; place-items: center; color: #fff; font-size: 15px; }
+  .fp-name { font-size: 13px; font-weight: 700; }
+  .fp-details { display: flex; gap: 10px; margin-top: 3px; }
+  .fp-tag { font-size: 10px; background: rgba(37,99,235,0.1); color: var(--primary); padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+
+  /* History Cards */
+  .history-header { padding: 22px 28px 18px; border-bottom: 1px solid var(--border); }
+  .history-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .req-list { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .req-card { border: 1.5px solid var(--border); border-radius: 14px; transition: .2s; }
+  .req-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .req-card-top { padding: 16px 18px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .req-card-icon { width: 42px; height: 42px; border-radius: 11px; background: rgba(37,99,235,0.1); color: #2563eb; display: grid; place-items: center; font-size: 17px; }
+  .req-card-name { font-size: 14px; font-weight: 700; }
+  .status-badge { font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 7px; display: flex; align-items: center; gap: 5px; }
+  .status-badge.pending { background: rgba(245,158,11,0.1); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+  .status-badge.approved { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+  .status-badge.rejected { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+  .req-card-meta { padding: 12px 18px; background: #f8faff; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eef1ff; }
+  .meta-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 3px; }
+  .meta-value { font-size: 12px; font-weight: 600; }
+  .req-card-footer { padding: 12px 18px; display: flex; gap: 8px; border-top: 1px solid #eef1ff; }
+  .card-btn { flex: 1; padding: 9px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; transition: .2s; }
+  .card-btn.detail { background: rgba(37,99,235,0.08); color: var(--primary); }
+  .card-btn.detail:hover { background: rgba(37,99,235,0.15); }
+  .empty-state { text-align: center; padding: 60px 20px; }
+  .empty-icon { font-size: 56px; color: #dde5f9; margin-bottom: 14px; }
+
+  @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } .form-card { position: static; } .main { margin-left: 260px; width: calc(100% - 260px); } }
+  @media (max-width: 768px) { .main { margin-left: 200px; width: calc(100% - 200px); padding: 0 20px 40px; } }
+  @media (max-width: 480px) { .main { margin-left: 0; width: 100%; padding: 60px 16px 40px; } .input-row { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-@include ('partials.sidebar')
+@include('partials.sidebar')
 
-<!-- MAIN -->
 <main class="main">
+  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
       <div>
@@ -1229,203 +1287,327 @@
           <i class="fas fa-chevron-right" style="font-size:10px"></i>
           <span>Peminjaman Barang</span>
         </div>
-        <div class="topbar-title">Peminjaman Barang</div>
+        <div class="topbar-title">Peminjaman Aset Tetap</div>
       </div>
-    </div>
-    <div class="topbar-right">
-      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>
 
-  <!-- FORM + RIWAYAT -->
   <div class="content-grid">
-    <!-- FORM -->
-    <div class="form-card animate d2" id="formCard">
+    <!-- FORM PEMINJAMAN -->
+    <div class="form-card">
       <div class="form-header">
         <div class="form-header-icon"><i class="fas fa-box"></i></div>
-        <div class="form-header-title">Buat Permintaan</div>
+        <div class="form-header-title">Buat Permintaan Peminjaman</div>
         <div class="form-header-sub">Isi formulir peminjaman aset di bawah ini</div>
       </div>
-      <div class="form-body">
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-user"></i> *Nama Lengkap <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda" id="namaInput">
-        </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-building"></i> Kode Barang <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Masukkan kode barang" id="kodBarangInput">
-        </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-barcode"></i> NUP <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="W11" id="nupInput">
-        </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-tag"></i> Merek <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Yamaha" id="merekInput">
-        </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-cubes"></i> Jumlah Barang <span class="req">*</span></div>
-          <input type="number" class="form-input" placeholder="Masukkan jumlah barang" id="jumlahBarangInput">
-        </div>
-        <div class="input-row">
+
+      <form action="{{ route('pegawai.peminjaman-barang.store') }}" method="POST" id="peminjamanForm">
+        @csrf
+        <div class="form-body">
+
+          <!-- Menampilkan Pesan Sukses/Error -->
+          @if(session('success'))
+            <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(16,185,129,0.2);">
+              <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+          @endif
+          @if($errors->any())
+            <div style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(239,68,68,0.2);">
+              <i class="fas fa-exclamation-triangle"></i> Gagal menyimpan permintaan. Mohon periksa kembali form Anda.
+            </div>
+          @endif
+
           <div class="form-group">
-            <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span class="req">*</span></div>
-            <input type="date" class="form-input">
+            <div class="form-label"><i class="fas fa-search"></i> Pilih Aset <span class="req">*</span></div>
+            <!-- Menggunakan data-attributes untuk menangkap nup & kategori -->
+            <select class="form-select" name="kode_barang" id="asetSelect" required onchange="updateDetailAset()">
+              <option value="">-- Pilih Barang yang Tersedia --</option>
+              @foreach($asetTetap as $aset)
+                <option value="{{ $aset->kode_barang }}" 
+                        data-nama="{{ $aset->nama_barang }}" 
+                        data-merek="{{ $aset->merek }}" 
+                        data-stok="{{ $aset->jumlah }}"
+                        data-kategori="{{ $aset->kategori }}"
+                        data-nup="{{ $aset->nup }}">
+                  {{ $aset->kode_barang }} - {{ $aset->nama_barang }}
+                </option>
+              @endforeach
+            </select>
           </div>
+
+          <!-- Preview Barang Muncul Otomatis -->
+          <div class="facility-preview" id="previewBarang">
+            <div class="fp-icon"><i class="fas fa-box-open"></i></div>
+            <div>
+              <div class="fp-name" id="previewNama">-</div>
+              <div class="fp-details">
+                <span class="fp-tag" id="previewMerek">-</span>
+                <span class="fp-tag" style="background:rgba(16,185,129,0.1);color:var(--success)" id="previewStok">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BARIS BARU: KATEGORI & NUP OTOMATIS (READ ONLY) -->
+          <div class="input-row" style="margin-top: 14px;">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-tags"></i> Kategori Barang</div>
+              <input type="text" class="form-input" id="kategoriInput" placeholder="Otomatis terisi..." readonly style="background: #f8fafc; cursor: not-allowed; color: var(--text-secondary);">
+            </div>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-barcode"></i> Nomor Urut Pendaftaran (NUP)</div>
+              <input type="text" class="form-input" id="nupInput" placeholder="Otomatis terisi..." readonly style="background: #f8fafc; cursor: not-allowed; color: var(--text-secondary);">
+            </div>
+          </div>
+
           <div class="form-group">
-            <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span class="req">*</span></div>
-            <input type="date" class="form-input">
+            <div class="form-label"><i class="fas fa-cubes"></i> Jumlah Diminta <span class="req">*</span></div>
+            <input type="number" class="form-input" name="jumlah" id="inputJumlah" min="1" placeholder="Masukkan jumlah barang" required>
           </div>
+
+          <div class="input-row">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span class="req">*</span></div>
+              <input type="date" class="form-input" name="tanggal_peminjaman" min="{{ date('Y-m-d') }}" required>
+            </div>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span class="req">*</span></div>
+              <input type="date" class="form-input" name="tanggal_pengembalian" min="{{ date('Y-m-d') }}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span class="req">*</span></div>
+            <textarea class="form-textarea" name="deskripsi_peruntukan" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..." required></textarea>
+          </div>
+          
+          <button type="submit" class="submit-btn" id="btnSubmit">
+            <i class="fas fa-paper-plane"></i> Kirim Permintaan Peminjaman
+          </button>
         </div>
-        <div class="form-group">
-          <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span class="req">*</span></div>
-          <textarea class="form-textarea" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..."></textarea>
-        </div>
-        
-        <button class="submit-btn" onclick="submitForm()">
-          <i class="fas fa-paper-plane"></i> Kirim Permintaan
-        </button>
-      </div>
+      </form>
     </div>
 
     <!-- RIWAYAT -->
     <div>
-      <div class="history-card animate d3">
+      <div class="history-card">
         <div class="history-header">
-          <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Permintaan</div>
-          <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterTab(this,'all')">Semua</button>
-            <button class="filter-tab" onclick="filterTab(this,'pending')">Pending</button>
-            <button class="filter-tab" onclick="filterTab(this,'approved')">Disetujui</button>
-            <button class="filter-tab" onclick="filterTab(this,'rejected')">Ditolak</button>
+          <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Peminjaman Saya</div>
+        </div>
+        <div class="req-list">
+          
+          @forelse($riwayat as $item)
+          <div class="req-card">
+            <div class="req-card-top">
+              <div style="display:flex;align-items:center;gap:12px;flex:1;">
+                <div class="req-card-icon"><i class="fas fa-boxes"></i></div>
+                <div>
+                  <div class="req-card-name">{{ $item->nama_barang }}</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                    Kode: {{ $item->kode_barang }} | NUP: {{ $item->nup ?? '-' }}
+                  </div>
+                </div>
+              </div>
+
+              @php
+                $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Menunggu Admin';
+                if($item->status == 'disetujui' || $item->status == 'disetujui_admin') { $badgeClass = 'approved'; $icon = 'fa-check'; $statusText = 'Disetujui'; }
+                elseif($item->status == 'ditolak') { $badgeClass = 'rejected'; $icon = 'fa-times'; $statusText = 'Ditolak'; }
+                elseif($item->status == 'diteruskan_kasubag') { $badgeClass = 'pending'; $icon = 'fa-eye'; $statusText = 'Review Kasubag'; }
+              @endphp
+
+              <div class="status-badge {{ $badgeClass }}"><i class="fas {{ $icon }}"></i> {{ $statusText }}</div>
+            </div>
+
+            <div class="req-card-meta">
+              <div class="meta-item"><div class="meta-label">Kategori</div><div class="meta-value">{{ $item->kategori ?? 'Umum' }}</div></div>
+              <div class="meta-item"><div class="meta-label">Jumlah</div><div class="meta-value">{{ $item->jumlah }} Unit</div></div>
+              <div class="meta-item"><div class="meta-label">Tgl Pengajuan</div><div class="meta-value">{{ \Carbon\Carbon::parse($item->request_date)->format('d M Y') }}</div></div>
+              <div class="meta-item"><div class="meta-label">Durasi</div><div class="meta-value">{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d M') }} – {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d M Y') }}</div></div>
+            </div>
+
+            <div class="req-card-footer">
+              <button class="card-btn detail" onclick="showDetail({{ $item->id }})">
+                <i class="fas fa-eye"></i> Detail
+              </button>
+              
+              <!-- Tombol Cancel (Hanya muncul jika status masih 'pending') -->
+              @if($item->status == 'pending')
+              <button class="card-btn cancel" onclick="cancelPeminjaman({{ $item->id }}, this)">
+                <i class="fas fa-xmark"></i> Batalkan
+              </button>
+              @endif
+              
+              <!-- TOMBOL UNDUH BAST JIKA TERSEDIA -->
+              @if(!empty($item->surat_bast_path))
+                <a href="{{ asset('storage/' . $item->surat_bast_path) }}" target="_blank" class="card-btn" style="background: rgba(16,185,129,0.1); color: var(--success); text-decoration: none;">
+                  <i class="fas fa-file-contract"></i> Unduh BAST
+                </a>
+              @endif
+            </div>
+          </div>
+          @empty
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+              <div class="empty-text">Belum ada riwayat peminjaman</div>
+              <div class="empty-sub">Ajukan peminjaman aset di form sebelah kiri.</div>
+            </div>
+          @endforelse
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DETAIL PEMINJAMAN -->
+    <div class="modal-overlay" id="detailModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+      <div class="modal-content" style="background: #fff; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <div style="padding: 20px 24px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin: 0; font-size: 16px;"><i class="fas fa-box"></i> Detail Peminjaman</h3>
+          <i class="fas fa-times" style="cursor: pointer;" onclick="document.getElementById('detailModal').style.display='none'"></i>
+        </div>
+        <div style="padding: 24px;" id="detailBody">
+          <!-- Loading Spinner -->
+          <div id="detailLoading" style="text-align: center; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Memuat...</p></div>
+          
+          <!-- Konten Detail (Disembunyikan awalnya) -->
+          <div id="detailContent" style="display: none;">
+            <table style="width: 100%; font-size: 13px; line-height: 2;">
+              <tr><td style="color: var(--text-secondary); width: 40%;">Barang</td><td style="font-weight: bold;" id="detBarang">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Kode / NUP</td><td id="detKode">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Merek</td><td id="detMerek">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Jumlah</td><td id="detJumlah">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Tgl Pinjam - Kembali</td><td id="detTanggal">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Tujuan</td><td id="detTujuan">-</td></tr>
+              <tr><td style="color: var(--text-secondary);">Status</td><td style="font-weight: bold;" id="detStatus">-</td></tr>
+            </table>
           </div>
         </div>
-        <div class="req-list" id="riwayatList">
-          <!-- Sample data -->
-          <div class="req-card" data-status="approved">
-            <div class="req-card-top">
-              <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-                <div class="req-card-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><i class="fas fa-chalkboard-user"></i></div>
-                <div style="min-width:0">
-                  <div class="req-card-name">Aula Serbaguna</div>
-                  <div class="req-card-code">REQ-TAM-001</div>
-                </div>
-              </div>
-              <div class="status-badge approved"><i class="fas fa-circle"></i> Disetujui</div>
-            </div>
-            <div class="req-card-meta">
-              <div class="meta-item"><div class="meta-label">Instansi</div><div class="meta-value">Dinas Pendidikan</div></div>
-              <div class="meta-item"><div class="meta-label">Tujuan</div><div class="meta-value">Seminar Pendidikan</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Permintaan</div><div class="meta-value">15 Jan 2025</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Pinjam - Kembali</div><div class="meta-value">20 Jan – 21 Jan 2025</div></div>
-            </div>
-            <div class="req-card-footer">
-              <button class="card-btn detail"><i class="fas fa-eye"></i> Detail</button>
-            </div>
-          </div>
-
-          <div class="req-card" data-status="pending">
-            <div class="req-card-top">
-              <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-                <div class="req-card-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4"><i class="fas fa-desktop"></i></div>
-                <div style="min-width:0">
-                  <div class="req-card-name">Lab Komputer</div>
-                  <div class="req-card-code">REQ-TAM-002</div>
-                </div>
-              </div>
-              <div class="status-badge pending"><i class="fas fa-circle"></i> Menunggu</div>
-            </div>
-            <div class="req-card-meta">
-              <div class="meta-item"><div class="meta-label">Instansi</div><div class="meta-value">LPMP Sulut</div></div>
-              <div class="meta-item"><div class="meta-label">Tujuan</div><div class="meta-value">Pelatihan IT</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Permintaan</div><div class="meta-value">12 Jan 2025</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Pinjam - Kembali</div><div class="meta-value">18 Jan – 18 Jan 2025</div></div>
-            </div>
-            <div class="req-card-footer">
-              <button class="card-btn detail"><i class="fas fa-eye"></i> Detail</button>
-              <button class="card-btn cancel"><i class="fas fa-xmark"></i> Batalkan</button>
-            </div>
-          </div>
-
-          <div class="req-card" data-status="rejected">
-            <div class="req-card-top">
-              <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-                <div class="req-card-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6"><i class="fas fa-people-group"></i></div>
-                <div style="min-width:0">
-                  <div class="req-card-name">Ruang Rapat VIP</div>
-                  <div class="req-card-code">REQ-TAM-003</div>
-                </div>
-              </div>
-              <div class="status-badge rejected"><i class="fas fa-circle"></i> Ditolak</div>
-            </div>
-            <div class="req-card-meta">
-              <div class="meta-item"><div class="meta-label">Instansi</div><div class="meta-value">Dinas Pendidikan Gorontalo</div></div>
-              <div class="meta-item"><div class="meta-label">Tujuan</div><div class="meta-value">Workshop Guru</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Permintaan</div><div class="meta-value">10 Jan 2025</div></div>
-              <div class="meta-item"><div class="meta-label">Tgl Pinjam - Kembali</div><div class="meta-value">15 Jan – 15 Jan 2025</div></div>
-            </div>
-            <div class="req-card-footer">
-              <button class="card-btn detail"><i class="fas fa-eye"></i> Detail</button>
-            </div>
-          </div>
+        <div style="padding: 16px 24px; background: #f8fafc; text-align: right; border-top: 1px solid var(--border);">
+          <button onclick="document.getElementById('detailModal').style.display='none'" style="padding: 8px 16px; border: 1px solid var(--border); background: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Tutup</button>
         </div>
       </div>
     </div>
   </div>
 </main>
 
-<!-- TOAST NOTIFICATION -->
-<div id="toast">
-  <i class="fas fa-circle-check" style="color:#10b981;font-size:16px"></i>
-  <span id="toastMsg">Permintaan berhasil dikirim!</span>
-</div>
-
 <script>
-// Toggle Sidebar di Mobile
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('active');
+// JS Untuk Preview & Autofill Barang Saat Select Option Berubah
+function updateDetailAset() {
+  const select = document.getElementById('asetSelect');
+  const selected = select.options[select.selectedIndex];
+  const previewBox = document.getElementById('previewBarang');
+  const inputJumlah = document.getElementById('inputJumlah');
+  
+  // Field Autofill
+  const kategoriInput = document.getElementById('kategoriInput');
+  const nupInput = document.getElementById('nupInput');
+
+  if(select.value !== "") {
+    // 1. Tampilkan Box Info Kecil
+    document.getElementById('previewNama').innerText = selected.getAttribute('data-nama');
+    document.getElementById('previewMerek').innerText = "Merek: " + (selected.getAttribute('data-merek') || '-');
+    document.getElementById('previewStok').innerText = "Stok Tersedia: " + selected.getAttribute('data-stok');
+    
+    // 2. Set max jumlah sesuai stok asli di DB
+    inputJumlah.max = selected.getAttribute('data-stok');
+    
+    // 3. AUTO FILL NUP dan Kategori!
+    kategoriInput.value = selected.getAttribute('data-kategori') || 'Umum';
+    nupInput.value = selected.getAttribute('data-nup') || '-';
+    
+    previewBox.style.display = 'flex';
+  } else {
+    previewBox.style.display = 'none';
+    kategoriInput.value = '';
+    nupInput.value = '';
+    inputJumlah.max = '';
+  }
 }
 
-// Tutup sidebar saat klik di luar
-document.addEventListener('click', function(event) {
-  const sidebar = document.getElementById('sidebar');
-  const toggleBtn = document.getElementById('sidebarToggle');
-  
-  if (window.innerWidth <= 480) {
-    if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
-      sidebar.classList.remove('active');
-    }
-  }
+// Pencegahan double submit agar UX lebih smooth
+document.getElementById('peminjamanForm').addEventListener('submit', function() {
+  const btn = document.getElementById('btnSubmit');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
 });
 
-// Utility Functions
-function submitForm() {
-  showToast('Permintaan berhasil dikirim! Menunggu persetujuan.', 'success');
+// Fungsi Menampilkan Modal Detail via AJAX
+function showDetail(id) {
+  const modal = document.getElementById('detailModal');
+  const loading = document.getElementById('detailLoading');
+  const content = document.getElementById('detailContent');
+  
+  modal.style.display = 'flex';
+  loading.style.display = 'block';
+  content.style.display = 'none';
+
+  fetch(`/pegawai/peminjaman-barang/${id}/detail`)
+    .then(response => response.json())
+    .then(res => {
+      if(res.success) {
+        let data = res.data;
+        document.getElementById('detBarang').innerText = data.nama_barang;
+        document.getElementById('detKode').innerText = data.kode_barang + ' / ' + (data.nup || '-');
+        document.getElementById('detMerek').innerText = data.merek || '-';
+        document.getElementById('detJumlah').innerText = data.jumlah + ' Unit';
+        
+        let tglPinjam = new Date(data.tanggal_peminjaman).toLocaleDateString('id-ID');
+        let tglKembali = new Date(data.tanggal_pengembalian).toLocaleDateString('id-ID');
+        document.getElementById('detTanggal').innerText = tglPinjam + ' s/d ' + tglKembali;
+        
+        document.getElementById('detTujuan').innerText = data.deskripsi_peruntukan;
+        document.getElementById('detStatus').innerText = data.status.toUpperCase().replace('_', ' ');
+
+        loading.style.display = 'none';
+        content.style.display = 'block';
+      }
+    })
+    .catch(err => {
+      alert("Gagal mengambil data detail.");
+      modal.style.display = 'none';
+    });
 }
 
-function showToast(msg, type='success') {
-  const toast = document.getElementById('toast');
-  const icon = toast.querySelector('i');
-  document.getElementById('toastMsg').textContent = msg;
-  if(type === 'error') icon.style.color = '#ef4444';
-  else icon.style.color = '#10b981';
-  toast.style.transform = 'translateY(0)';
-  toast.style.opacity = '1';
-  setTimeout(() => {
-    toast.style.transform = 'translateY(80px)';
-    toast.style.opacity = '0';
-  }, 3500);
-}
+// Fungsi Membatalkan Peminjaman via AJAX
+function cancelPeminjaman(id, btnElement) {
+  if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman barang ini? Data akan dihapus.')) return;
 
-function filterTab(el, filter) {
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.req-card').forEach(card => {
-    if (filter === 'all' || card.dataset.status === filter) card.style.display = '';
-    else card.style.display = 'none';
+  const originalText = btnElement.innerHTML;
+  btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Batal...';
+  btnElement.disabled = true;
+
+  fetch(`/pegawai/peminjaman-barang/${id}/cancel`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Hapus Card dari layar dengan efek fade
+      const card = btnElement.closest('.req-card');
+      card.style.opacity = '0.5';
+      setTimeout(() => card.remove(), 500);
+      
+      // Tampilkan toast notifikasi bawaan kamu (jika ada fungsi showToast)
+      if(typeof showToast === 'function') showToast('Peminjaman berhasil dibatalkan!', 'success');
+      else alert('Peminjaman berhasil dibatalkan!');
+    } else {
+      alert(data.message);
+      btnElement.innerHTML = originalText;
+      btnElement.disabled = false;
+    }
+  })
+  .catch(error => {
+    alert('Gagal membatalkan peminjaman.');
+    btnElement.innerHTML = originalText;
+    btnElement.disabled = false;
   });
 }
 </script>
+
 </body>
 </html>

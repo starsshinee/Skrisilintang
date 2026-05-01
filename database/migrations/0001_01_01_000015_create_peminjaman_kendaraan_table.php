@@ -19,6 +19,7 @@ Schema::create('peminjaman_kendaraan', function (Blueprint $table) {
     $table->string('merek')->nullable();
     $table->integer('jumlah');
     $table->text('deskripsi_peruntukan');
+    $table->string('surat_bast_path')->nullable();
     
     $table->dateTime('request_date')->nullable();
     $table->date('tanggal_peminjaman')->nullable();

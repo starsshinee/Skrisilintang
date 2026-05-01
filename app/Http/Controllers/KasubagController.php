@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\{
     PeminjamanGedung,
     PermintaanPersediaan,
+    PeminjamanBarang,
+    PengembalianBarang,
+    PeminjamanKendaraan,
+    PengembalianKendaraan
 };
 
 class KasubagController extends Controller
@@ -139,17 +143,89 @@ class KasubagController extends Controller
     }
 
     //PEMINJAMAN BARANG
-    public function persetujuanPeminjamanBarang()
+    // ====================================================================
+    // PEMINJAMAN BARANG (ASET TETAP)
+    // ====================================================================
+    
+    public function persetujuanPeminjamanBarang(Request $request)
     {
-        // Logika untuk menampilkan halaman persetujuan peminjaman barang
-        return view('kasubag.persetujuan_peminjaman_barang');
+        // 1. Hitung Statistik Ringkasan
+        $stats = [
+            'menunggu'  => \App\Models\PeminjamanBarang::where('status', 'diteruskan_kasubag')->count(),
+            'disetujui' => \App\Models\PeminjamanBarang::where('status', 'disetujui')->count(),
+            'total'     => \App\Models\PeminjamanBarang::whereIn('status', ['diteruskan_kasubag', 'disetujui', 'ditolak'])->count()
+        ];
+
+        // 2. Tampilkan semua data yang sudah sampai ke tahap Kasubag
+        $query = \App\Models\PeminjamanBarang::with('user')
+            ->whereIn('status', ['diteruskan_kasubag', 'disetujui', 'ditolak'])
+            ->orderByRaw("FIELD(status, 'diteruskan_kasubag') DESC") // Prioritaskan yang butuh review di atas
+            ->orderBy('diteruskan_ke_kasubag_date', 'desc');
+
+        $peminjaman = $query->paginate(15);
+
+        return view('kasubag.persetujuan_peminjaman_barang', compact('peminjaman', 'stats'));
+    }
+
+    // FITUR BARU: Ambil Detail Peminjaman Barang via AJAX
+    public function detailPeminjamanBarang($id)
+    {
+        $peminjaman = \App\Models\PeminjamanBarang::with('user')->findOrFail($id);
+        
+        return response()->json([
+            'success' => true, 
+            'data' => $peminjaman
+        ]);
+    }
+
+    public function approvePeminjamanBarang(Request $request, $id)
+    {
+        // Temukan data peminjaman
+        $peminjaman = \App\Models\PeminjamanBarang::findOrFail($id);
+
+        if ($request->action == 'setuju') {
+            // 🔥 GUNAKAN CARA MANUAL (FORCE SAVE)
+            $peminjaman->status = 'disetujui';
+            $peminjaman->approved_by_kasubag_id = auth()->id();
+            $peminjaman->approved_by_kasubag_date = now();
+            $peminjaman->save(); // Simpan paksa mengabaikan fillable/guarded
+
+            $pesan = 'Peminjaman berhasil disetujui.';
+            
+        } elseif ($request->action == 'tolak') {
+            // 🔥 CARA MANUAL UNTUK TOLAK
+            $peminjaman->status = 'ditolak';
+            $peminjaman->approved_by_kasubag_id = auth()->id();
+            $peminjaman->approved_by_kasubag_date = now();
+            $peminjaman->komentar = $request->komentar;
+            $peminjaman->save(); // Simpan paksa mengabaikan fillable/guarded
+
+            $pesan = 'Peminjaman berhasil ditolak.';
+        }
+
+        return back()->with('success', $pesan);
     }
 
      //PEMINJAMAN KENDARAAN
     public function persetujuanPeminjamanKendaraan()
     {
-        // Logika untuk menampilkan halaman persetujuan peminjaman kendaraan
-        return view('kasubag.persetujuan_peminjaman_kendaraan');
+        $peminjaman = PeminjamanKendaraan::whereIn('status', ['dalam_review', 'disetujui', 'ditolak'])
+            ->with('user')
+            ->latest()
+            ->get();
+            
+        return view('kasubag.persetujuan_peminjaman_kendaraan', compact('peminjaman'));
+    }
+
+    public function approveKendaraan(Request $request, $id)
+    {
+        $peminjaman = PeminjamanKendaraan::findOrFail($id);
+        $peminjaman->status = ($request->action == 'setuju') ? 'disetujui' : 'ditolak';
+        $peminjaman->approved_by_kasubag_id = auth()->id();
+        $peminjaman->approved_by_kasubag_date = now();
+        $peminjaman->save();
+
+        return back()->with('success', 'Status peminjaman kendaraan diperbarui.');
     }
 
      

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Peminjaman Barang - Dashboard Kasubag</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -12,154 +13,223 @@
     --orange: #f59e0b; --orange-light: #fffbeb;
     --green: #10b981; --green-light: #ecfdf5;
     --red: #ef4444; --red-light: #fef2f2;
-    --purple: #8b5cf6; --purple-light: #f5f3ff;
     --gray-50: #f8fafc; --gray-100: #f1f5f9;
     --gray-200: #e2e8f0; --gray-400: #94a3b8;
     --gray-600: #475569; --gray-800: #1e293b;
     --sidebar-w: 240px;
   }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); display: flex; min-height: 100vh; }
+  
+  .main { margin-left: var(--sidebar-w); padding: 32px; flex: 1; }
+  
+  .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; }
+  .page-header p { font-size: 13.5px; color: var(--gray-400); margin-top: 4px; }
 
-  /* SIDEBAR */
-  .sidebar { width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--gray-200); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
-  .sidebar-brand { padding: 20px 20px 16px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; gap: 12px; }
-  .brand-icon { width: 40px; height: 40px; background: var(--blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-  .brand-icon svg { width: 22px; height: 22px; fill: #fff; }
-  .brand-text h2 { font-size: 14px; font-weight: 700; }
-  .brand-text p { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
-  .nav { padding: 12px; flex: 1; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--gray-600); cursor: pointer; text-decoration: none; transition: all .15s; margin-bottom: 2px; }
-  .nav-item:hover { background: var(--gray-100); }
-  .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
-  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .nav-section-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: .06em; padding: 12px 12px 6px; display: flex; align-items: center; justify-content: space-between; }
-  .nav-section-label svg { width: 14px; height: 14px; }
-  .badge { margin-left: auto; background: var(--orange-light); color: var(--orange); font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+  /* STATS CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+  .stat-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .stat-icon.yellow { background: var(--orange-light); color: var(--orange); }
+  .stat-icon.green { background: var(--green-light); color: var(--green); }
+  .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
+  .stat-label { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .stat-value { font-size: 24px; font-weight: 800; color: var(--gray-800); }
 
-  /* TOPBAR */
-  .topbar { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: flex-end; padding: 0 28px; gap: 16px; z-index: 9; }
-  .notif-btn { width: 38px; height: 38px; border-radius: 10px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; border: none; }
-  .notif-btn svg { width: 18px; height: 18px; stroke: var(--gray-600); fill: none; stroke-width: 2; }
-  .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
-  .user-chip { display: flex; align-items: center; gap: 10px; background: var(--gray-100); border-radius: 10px; padding: 6px 12px 6px 6px; }
-  .user-avatar { width: 30px; height: 30px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
-  .user-info strong { font-size: 13px; font-weight: 600; display: block; }
-  .user-info span { font-size: 11px; color: var(--gray-400); }
-
-  /* MAIN */
-  .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; }
-
-  /* PAGE HEADER */
-  .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
-  .page-header-icon { width: 48px; height: 48px; background: var(--blue-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-  .page-header-icon svg { width: 24px; height: 24px; stroke: var(--blue); fill: none; stroke-width: 2; }
-  .page-header-text h1 { font-size: 22px; font-weight: 700; }
-  .page-header-text p { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
-
-  /* SECTION LABEL */
-  .section-label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--orange); margin-bottom: 16px; }
-  .section-label svg { width: 16px; height: 16px; stroke: var(--orange); fill: none; stroke-width: 2; }
-
-  /* REQUEST CARD */
-  .req-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; transition: box-shadow .15s; }
-  .req-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
-  .req-card.highlighted { border: 2px solid var(--blue); }
-  .req-info { flex: 1; }
+  .section-label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--gray-600); margin-bottom: 16px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px; }
+  
+  .req-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; margin-bottom: 14px; display: flex; justify-content: space-between; gap: 16px; }
   .req-tags { display: flex; gap: 8px; margin-bottom: 8px; }
   .tag { font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
-  .tag.id { background: var(--gray-100); color: var(--gray-600); }
-  .tag.pending { background: var(--orange-light); color: var(--orange); }
+  .tag.pending { background: #fffbeb; color: var(--orange); }
+  .tag.approved { background: #ecfdf5; color: var(--green); }
+  .tag.rejected { background: #fef2f2; color: var(--red); }
   .req-name { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
   .req-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; font-size: 12.5px; color: var(--gray-600); margin-bottom: 6px; }
-  .req-meta span strong { color: var(--gray-800); }
-  .req-purpose { font-size: 12.5px; color: var(--gray-600); }
-  .req-purpose span { color: var(--gray-800); font-weight: 500; }
-  .req-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
-  .btn { display: flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; }
-  .btn-detail { background: var(--gray-100); color: var(--gray-600); }
-  .btn-detail:hover { background: var(--gray-200); }
-  .btn-detail svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
-  .btn-approve { background: var(--green-light); color: var(--green); }
-  .btn-approve:hover { background: #bbf7d0; }
-  .btn-approve svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-  .btn-reject { background: var(--red-light); color: var(--red); }
-  .btn-reject:hover { background: #fecaca; }
-  .btn-reject svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+  .req-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: flex-start; }
+  
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: .15s; font-family: inherit; }
+  .btn-detail { background: var(--gray-100); color: var(--gray-600); width: 100%; } .btn-detail:hover { background: var(--gray-200); }
+  .btn-approve { background: var(--green-light); color: var(--green); width: 100%; } .btn-approve:hover { background: #bbf7d0; }
+  .btn-reject { background: var(--red-light); color: var(--red); width: 100%; } .btn-reject:hover { background: #fecaca; }
+
+  /* MODAL DETAIL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+  .modal-box { background: #fff; width: 450px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--blue); }
+  .detail-row { display: flex; flex-direction: column; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--gray-200); }
+  .detail-label { font-size: 11px; color: var(--gray-400); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+  .detail-value { font-size: 14px; font-weight: 600; color: var(--gray-800); }
 </style>
 </head>
 <body>
 
 @include('partials.sidebar')
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <button class="notif-btn">
-    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    <div class="notif-badge">8</div>
-  </button>
-  <div class="user-chip">
-    <div class="user-avatar">K</div>
-    <div class="user-info"><strong>Kasubag</strong><span>Kepala Sub Bagian</span></div>
+<main class="main">
+  <div class="page-header">
+    <div class="page-header-text">
+      <h1>Persetujuan Peminjaman Barang</h1>
+      <p>Kelola dan tinjau seluruh permintaan peminjaman aset dari pegawai yang telah diteruskan admin.</p>
+    </div>
+  </div>
+
+  <!-- STATS CARDS (Seperti pada gambar) -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+      <div>
+        <div class="stat-label">Menunggu Review</div>
+        <div class="stat-value">{{ $stats['menunggu'] }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+      <div>
+        <div class="stat-label">Telah Disetujui</div>
+        <div class="stat-value">{{ $stats['disetujui'] }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+      <div>
+        <div class="stat-label">Total Permintaan</div>
+        <div class="stat-value">{{ $stats['total'] }}</div>
+      </div>
+    </div>
+  </div>
+
+  @if(session('success'))
+    <div style="background:#DCFCE7;color:#16A34A;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-check-circle"></i> {{ session('success') }}
+    </div>
+  @endif
+
+  <div class="section-label">Daftar Pengajuan</div>
+
+  @forelse($peminjaman as $item)
+  <div class="req-card">
+    <div class="req-info">
+      <div class="req-tags">
+        <span class="tag" style="background:#f1f5f9;">REQ-{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}</span>
+        @if($item->status == 'diteruskan_kasubag') <span class="tag pending"><i class="fas fa-clock"></i> Menunggu Review</span>
+        @elseif($item->status == 'disetujui') <span class="tag approved"><i class="fas fa-check"></i> Telah Disetujui</span>
+        @else <span class="tag rejected"><i class="fas fa-times"></i> Ditolak</span> @endif
+      </div>
+      <div class="req-name">{{ $item->nama_barang }} ({{ $item->jumlah }} Unit)</div>
+      <div class="req-meta">
+        <span>Pemohon: <strong>{{ $item->user->name }}</strong></span>
+        <span>Kategori: <strong>{{ $item->kategori ?? 'Umum' }}</strong></span>
+        <span>Durasi: <strong>{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d M') }} - {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d M Y') }}</strong></span>
+        <span>Tujuan: <strong>{{ Str::limit($item->deskripsi_peruntukan, 50) }}</strong></span>
+      </div>
+    </div>
+    
+    <div class="req-actions">
+      <!-- Tombol Detail (Selalu Muncul) -->
+      <button class="btn btn-detail" onclick="openDetailModal({{ $item->id }})"><i class="fas fa-eye"></i> Detail</button>
+      
+      <!-- Tombol Aksi (Hanya muncul jika status Menunggu) -->
+      @if($item->status == 'diteruskan_kasubag')
+        <div style="display: flex; gap: 8px; width: 100%;">
+          <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" style="flex:1;">
+            @csrf <input type="hidden" name="action" value="setuju">
+            <button type="submit" class="btn btn-approve" onclick="return confirm('Setujui peminjaman ini?')"><i class="fas fa-check"></i> Setuju</button>
+          </form>
+          <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" onsubmit="return submitTolak(this)" style="flex:1;">
+            @csrf <input type="hidden" name="action" value="tolak">
+            <input type="hidden" name="komentar" class="alasanTolak">
+            <button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Tolak</button>
+          </form>
+        </div>
+      @endif
+    </div>
+  </div>
+  @empty
+    <div style="text-align:center; padding: 60px 20px; background: #fff; border: 1px dashed var(--gray-400); border-radius: 14px;">
+      <i class="fas fa-check-circle" style="font-size: 48px; color: var(--gray-200); margin-bottom: 16px;"></i>
+      <h3 style="font-size: 16px; color: var(--gray-800); margin-bottom: 4px;">Semua Beres!</h3>
+      <p style="font-size: 13px; color: var(--gray-400);">Belum ada riwayat permintaan peminjaman barang di sistem.</p>
+    </div>
+  @endforelse
+  
+  <div style="margin-top: 20px;">
+    {{ $peminjaman->links() }}
+  </div>
+</main>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fas fa-box"></i> Detail Peminjaman</div>
+    
+    <div id="modalLoading" style="text-align: center; padding: 20px; color: var(--gray-400);">
+      <i class="fas fa-spinner fa-spin fa-2x"></i>
+      <p style="margin-top: 10px; font-size: 12px;">Memuat data...</p>
+    </div>
+
+    <div id="modalContent" style="display: none;">
+      <div class="detail-row">
+        <span class="detail-label">Nama Pemohon</span>
+        <span class="detail-value" id="detPemohon">-</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Barang (Kode / NUP)</span>
+        <span class="detail-value" id="detBarang">-</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Jumlah / Durasi</span>
+        <span class="detail-value" id="detDurasi">-</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Tujuan Peminjaman</span>
+        <span class="detail-value" style="font-weight: 500;" id="detTujuan">-</span>
+      </div>
+      <div style="text-align: right; margin-top: 20px;">
+        <button class="btn btn-detail" style="width: auto; padding: 8px 24px;" onclick="document.getElementById('detailModal').style.display='none'">Tutup</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<main class="main">
-  <div class="page-header">
-    <div class="page-header-icon">
-      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-    </div>
-    <div class="page-header-text">
-      <h1>Peminjaman Barang</h1>
-      <p>2 permintaan menunggu verifikasi</p>
-    </div>
-  </div>
+<script>
+// Fungsi untuk Submit Tolak dengan Alasan
+function submitTolak(form) {
+  let alasan = prompt("Masukkan alasan penolakan (Opsional):");
+  if(alasan !== null) {
+    form.querySelector('.alasanTolak').value = alasan;
+    return true;
+  }
+  return false;
+}
 
-  <div class="section-label">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    Menunggu Verifikasi
-  </div>
+// Fungsi Buka Modal Detail
+function openDetailModal(id) {
+  document.getElementById('detailModal').style.display = 'flex';
+  document.getElementById('modalLoading').style.display = 'block';
+  document.getElementById('modalContent').style.display = 'none';
 
-  <!-- REQ001 -->
-  <div class="req-card">
-    <div class="req-info">
-      <div class="req-tags"><span class="tag id">REQ001</span><span class="tag pending">Menunggu</span></div>
-      <div class="req-name">Proyektor Epson EB-X51</div>
-      <div class="req-meta">
-        <span>Pemohon: <strong>Budi Santoso</strong></span>
-        <span>Tanggal Ajuan: <strong>2024-12-10</strong></span>
-        <span>Mulai: <strong>2024-12-15</strong></span>
-        <span>Selesai: <strong>2024-12-16</strong></span>
-      </div>
-      <div class="req-purpose">Tujuan: <span>Presentasi rapat bulanan divisi keuangan</span></div>
-    </div>
-    <div class="req-actions">
-      <button class="btn btn-detail"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Detail</button>
-      <button class="btn btn-approve"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Setuju</button>
-      <button class="btn btn-reject"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tolak</button>
-    </div>
-  </div>
+  // Fetch Data menggunakan AJAX
+  fetch(`/kasubag/peminjaman-barang/${id}/detail`)
+    .then(response => response.json())
+    .then(res => {
+      if(res.success) {
+        let data = res.data;
+        document.getElementById('detPemohon').innerText = data.user.name;
+        document.getElementById('detBarang').innerText = `${data.nama_barang} (${data.kode_barang} / ${data.nup || '-'})`;
+        
+        let tglPinjam = new Date(data.tanggal_peminjaman).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'});
+        let tglKembali = new Date(data.tanggal_pengembalian).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'});
+        
+        document.getElementById('detDurasi').innerText = `${data.jumlah} Unit | ${tglPinjam} - ${tglKembali}`;
+        document.getElementById('detTujuan').innerText = data.deskripsi_peruntukan;
 
-  <!-- REQ005 -->
-  <div class="req-card">
-    <div class="req-info">
-      <div class="req-tags"><span class="tag id">REQ005</span><span class="tag pending">Menunggu</span></div>
-      <div class="req-name">Laptop Lenovo ThinkPad</div>
-      <div class="req-meta">
-        <span>Pemohon: <strong>Rudi Hartono</strong></span>
-        <span>Tanggal Ajuan: <strong>2024-12-12</strong></span>
-        <span>Mulai: <strong>2024-12-14</strong></span>
-        <span>Selesai: <strong>2024-12-21</strong></span>
-      </div>
-      <div class="req-purpose">Tujuan: <span>Kerja lapangan audit internal</span></div>
-    </div>
-    <div class="req-actions">
-      <button class="btn btn-detail"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Detail</button>
-      <button class="btn btn-approve"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Setuju</button>
-      <button class="btn btn-reject"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tolak</button>
-    </div>
-  </div>
-</main>
+        document.getElementById('modalLoading').style.display = 'none';
+        document.getElementById('modalContent').style.display = 'block';
+      }
+    });
+}
+</script>
 
 </body>
 </html>

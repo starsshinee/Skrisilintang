@@ -142,7 +142,11 @@ Route::middleware('auth')->group(function () {
 
             //PEMINJAMAN BARANG
             Route::get('/persetujuan-peminjaman-barang', [KasubagController::class, 'persetujuanPeminjamanBarang'])->name('persetujuan-peminjaman-barang');
-
+            Route::get('/peminjaman-barang', [KasubagController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
+            Route::post('/peminjaman-barang/{id}/approve', [KasubagController::class, 'approvePeminjamanBarang'])->name('peminjaman-barang.approve');
+            Route::get('/peminjaman-barang/{id}/detail', [KasubagController::class, 'detailPeminjamanBarang'])->name('peminjaman-barang.detail');
+            
+           
             //PEMINJAMAN KENDARAAN
             Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');   
             
@@ -276,12 +280,24 @@ Route::middleware('auth')->group(function () {
             Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
             Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
             Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
-            Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
+         
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
+
+            //PEMINJAMAN KENDARAAN
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
+            Route::post('/peminjaman-kendaraan/{id}/review', [AdminAsettetapController::class, 'reviewPeminjamanKendaraan']);
+            Route::post('/peminjaman-kendaraan/{id}/upload', [AdminAsettetapController::class, 'uploadBastKendaraan']);
+            
+            
             Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');  
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');            
             
+            //PEMINJAMAN BARANG
+            Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
+            Route::post('/peminjaman-barang/{id}/review', [AdminAsettetapController::class, 'reviewPeminjaman'])->name('peminjaman-barang.review');
+            Route::post('/peminjaman-barang/{id}/upload-bast', [AdminAsettetapController::class, 'uploadSuratBast'])->name('peminjaman-barang.upload-bast');
+            Route::get('/peminjaman-barang/{peminjaman}/generate-surat', [AdminAsettetapController::class, 'generateSuratPeminjaman'])->name('peminjaman-barang.print');
+
             // Laporan 
             Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
             Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
@@ -312,7 +328,7 @@ Route::middleware('auth')->group(function () {
             Route::get('transaksi-keluar/{id}/edit-json', [AdminAsettetapController::class, 'editJson'])->name('transaksi-keluar.edit-json');
             
             // ✅ DELETE ROUTE - TAMBAHAN BARU
-Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
+            Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
 
             // ========== CRUD TRANSAKSI MASUK ASET TETAP ==========
             Route::get('/transaksi-masuk/create', [AdminAsettetapController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
@@ -334,7 +350,7 @@ Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 
             //CRUD PENGADUAN
             Route::get('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanShow'])->name('pengaduan.show');
             Route::put('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanUpdate'])->name('pengaduanUpdate');
-    Route::delete('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanDestroy'])->name('pengaduanDestroy');
+            Route::delete('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanDestroy'])->name('pengaduanDestroy');
 
             //DELET SURVEY KEPUASAN
             Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');
@@ -367,9 +383,21 @@ Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 
         ->middleware('role:pegawai,superadmin')
         ->group(function () {
             Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
+
+            //PEMINJAMAN BARANG
             Route::get('/peminjaman-barang', [PegawaiController::class, 'peminjamanBarang'])->name('peminjaman-barang');
+            Route::post('/peminjaman-barang', [PegawaiController::class, 'storePeminjamanBarang'])->name('peminjaman-barang.store');
+            Route::get('/peminjaman-barang/{id}/detail', [PegawaiController::class, 'detailPeminjaman'])->name('peminjaman-barang.detail');
+            Route::delete('/peminjaman-barang/{id}/cancel', [PegawaiController::class, 'cancelPeminjaman'])->name('peminjaman-barang.cancel');
+
+
             Route::get('/pengembalian-barang', [PegawaiController::class, 'pengembalianBarang'])->name('pengembalian-barang');
+
+
             Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
+            Route::post('/peminjaman-kendaraan/store', [PegawaiController::class, 'storePeminjamanKendaraan'])->name('peminjaman-kendaraan.store');
+            Route::delete('/peminjaman-kendaraan/{id}/cancel', [PegawaiController::class, 'cancelPeminjamanKendaraan']);
+            
             Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
 
@@ -378,9 +406,7 @@ Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 
             Route::post('/permintaan-persediaan', [PegawaiController::class, 'storePermintaanPersediaan'])->name('permintaan-persediaan.store');
             Route::get('/permintaan-persediaan/{id}', [PegawaiController::class, 'detailPermintaanPersediaan'])->name('permintaan_persediaan.detail');
             Route::post('/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancelPermintaanPersediaan'])->name('permintaan_persediaan.cancel');
-            // web.php atau routes/pegawai.php
-            // Route::get('/permintaan-persediaan/{id}', [PegawaiController::class, 'showDetail'])->name('detail');
-            // Route::post('/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancel'])->name('cancel');
+            
         });
 
     // ──────────────────────────────────────────────────────────────────

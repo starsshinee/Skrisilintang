@@ -17,9 +17,9 @@ return new class extends Migration
             // Data Barang
             $table->string('nama_barang');
             $table->string('kode_barang')->unique();
+            $table->string('nup')->nullable();
             $table->string('kategori');
             $table->string('merek')->nullable();
-            $table->string('ruangan');
             $table->integer('jumlah');
             $table->text('deskripsi_peruntukan');
             

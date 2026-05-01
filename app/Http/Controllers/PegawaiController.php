@@ -48,16 +48,85 @@ class PegawaiController extends Controller
      */
     public function peminjamanBarang(Request $request)
     {
-        $query = PeminjamanBarang::with(['user'])
-            ->latest();
+        $asetTetap = AssetTetap::where('status', 'Tersedia')
+            ->where('kondisi', '!=', 'rusak berat')
+            ->orderBy('nama_barang', 'asc')
+            ->get();
 
-        if ($request->search) {
-            $query->where('kode_peminjaman', 'like', '%'.$request->search.'%')
-                  ->orWhereHas('user', fn($q) => $q->where('nama', 'like', '%'.$request->search.'%'));
+        // Ambil riwayat peminjaman khusus user yang sedang login
+        $riwayat = PeminjamanBarang::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pegawai.peminjaman_barang', compact('asetTetap', 'riwayat'));
+    }
+
+    public function storePeminjamanBarang(Request $request)
+    {
+        $request->validate([
+            'kode_barang' => 'required|exists:aset_tetap,kode_barang',
+            'jumlah' => 'required|integer|min:1',
+            'tanggal_peminjaman' => 'required|date|after_or_equal:today',
+            'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+            'deskripsi_peruntukan' => 'required|string',
+        ]);
+
+        // Ambil detail aset dari database berdasarkan kode_barang yang dipilih
+        $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();
+
+        // Simpan ke database
+        PeminjamanBarang::create([
+            'user_id' => Auth::id(),
+            'nama_barang' => $aset->nama_barang,
+            'kode_barang' => $aset->kode_barang,
+            'nup' => $aset->nup,               // Otomatis tersimpan dari tabel aset
+            'kategori' => $aset->kategori,     // Otomatis tersimpan dari tabel aset
+            'merek' => $aset->merek,
+            'jumlah' => $request->jumlah,
+            'request_date' => now(),
+            'tanggal_peminjaman' => $request->tanggal_peminjaman,
+            'tanggal_pengembalian' => $request->tanggal_pengembalian,
+            'deskripsi_peruntukan' => $request->deskripsi_peruntukan,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Permintaan peminjaman aset berhasil dikirim dan sedang menunggu persetujuan Admin.');
+    }
+
+    // 3. AJAX Detail Peminjaman (Opsional untuk Modal Detail)
+    public function detailPeminjaman($id)
+    {
+        $peminjaman = PeminjamanBarang::with('user')->findOrFail($id);
+        
+        // Pastikan user hanya bisa melihat datanya sendiri
+        if ($peminjaman->user_id !== Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $peminjamanBarang = $query->paginate(15);
-        return view('pegawai.peminjaman_barang', compact('peminjamanBarang'));
+        return response()->json(['success' => true, 'data' => $peminjaman]);
+    }
+
+    // Fungsi Membatalkan Peminjaman Barang
+    public function cancelPeminjaman($id)
+    {
+        // Cari data berdasarkan ID dan pastikan itu milik User yang sedang Login
+        $peminjaman = \App\Models\PeminjamanBarang::where('id', $id)
+            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->first();
+
+        if (!$peminjaman) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+        }
+
+        // Hanya peminjaman yang masih PENDING yang boleh dibatalkan
+        if ($peminjaman->status !== 'pending') {
+            return response()->json(['success' => false, 'message' => 'Permintaan sudah diproses, tidak bisa dibatalkan.'], 400);
+        }
+
+        // Hapus data
+        $peminjaman->delete();
+
+        return response()->json(['success' => true, 'message' => 'Peminjaman berhasil dibatalkan.']);
     }
 
     /**
@@ -231,20 +300,57 @@ class PegawaiController extends Controller
     /**
      * Peminjaman Kendaraan - Daftar & Verifikasi
      */
-    public function peminjamanKendaraan(Request $request)
+    public function peminjamanKendaraan()
     {
-        $query = PeminjamanKendaraan::with(['user', 'assetTetap']) // ✅ assetTetap BUKAN kendaraan
-            ->latest();
+        // Ambil data kendaraan dari aset tetap (Kategori Kendaraan)
+        $kendaraan = AssetTetap::where('kategori', 'Kendaraan')
+            ->where('status', 'Tersedia')
+            ->get();
 
-        if ($request->search) {
-            $query->where('nama_kendaraan', 'like', '%'.$request->search.'%')
-                  ->orWhereHas('assetTetap', fn($q) => $q->where('nopol', 'like', '%'.$request->search.'%'))
-                  ->orWhereHas('user', fn($q) => $q->where('nama', 'like', '%'.$request->search.'%'));
-        }
+        $riwayat = PeminjamanKendaraan::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $peminjamanKendaraan = $query->paginate(15);
+        return view('pegawai.peminjaman_kendaraan', compact('kendaraan', 'riwayat'));
+    }
 
-        return view('pegawai.peminjaman_kendaraan', compact('peminjamanKendaraan'));
+    public function storePeminjamanKendaraan(Request $request)
+    {
+        $request->validate([
+            'kode_barang' => 'required|exists:aset_tetap,kode_barang',
+            'tanggal_peminjaman' => 'required|date|after_or_equal:today',
+            'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+            'deskripsi_peruntukan' => 'required|string',
+        ]);
+
+        $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();
+
+        PeminjamanKendaraan::create([
+            'user_id' => auth()->id(),
+            'nama_barang' => $aset->nama_barang,
+            'kode_barang' => $aset->kode_barang,
+            'nup' => $aset->nup,
+            'merek' => $aset->merek,
+            'jumlah' => 1, // Kendaraan biasanya unit tunggal per request
+            'request_date' => now(),
+            'tanggal_peminjaman' => $request->tanggal_peminjaman,
+            'tanggal_pengembalian' => $request->tanggal_pengembalian,
+            'deskripsi_peruntukan' => $request->deskripsi_peruntukan,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Permintaan peminjaman kendaraan berhasil dikirim.');
+    }
+
+    public function cancelPeminjamanKendaraan($id)
+    {
+        $data = PeminjamanKendaraan::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->where('status', 'pending')
+            ->firstOrFail();
+        
+        $data->delete();
+        return response()->json(['success' => true]);
     }
 
     /**

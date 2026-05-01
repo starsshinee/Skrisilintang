@@ -7,19 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+
 class PeminjamanBarang extends Model
 {
     protected $table = 'peminjaman_barang';
     protected $guarded = [
         'id',
-        'user_id',
-        'reviewed_by_adminasettetap_id',
-        'approved_by_adminasettetap_id', 
-        'approved_by_kasubag_id',
-        'status',
-        'created_at',
-        'updated_at'
     ];
+
     
     // ✅ TAMBAH: Field yang boleh diisi mass assignment
     protected $fillable = [
@@ -27,13 +22,15 @@ class PeminjamanBarang extends Model
         'nama_barang',
         'kode_barang',
         'nup',
+        'kategori',
         'merek',
         'jumlah',
         'deskripsi_peruntukan',
         'request_date',
         'tanggal_peminjaman',
         'tanggal_pengembalian',
-        'komentar'
+        'komentar',
+        'surat_bast_path'
     ];
 
     protected $casts = [

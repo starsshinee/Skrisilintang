@@ -3,238 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPANDU - Peminjaman Kendaraan Masuk</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>SIPANDU - Peminjaman Kendaraan</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root {
-    --blue: #4F6FFF;
-    --sidebar-w: 240px;
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --accent: #06b6d4;
+    --accent2: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --bg: #f0f4ff;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #94a3b8;
+    --sidebar-width: 260px;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border: #e2e8f0;
     --radius: 16px;
-    --bg: #F4F6FB;
-    --surface: #FFFFFF;
-    --text: #1E293B;
-    --muted: #94A3B8;
-    --border: #E8EDF5;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(37,99,235,0.08);
+    --shadow-lg: 0 8px 40px rgba(37,99,235,0.14);
+    --topbar-height: 80px;
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-w);
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-  }
-  .sidebar-logo {
-    display: flex; align-items: center; gap: 10px;
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .logo-icon {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--blue), #7C3AED);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .logo-icon svg { width: 20px; height: 20px; fill: white; }
-  .logo-text strong { font-size: 15px; font-weight: 800; color: var(--text); display: block; }
-  .logo-text span { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 1px; }
+  /* SIDEBAR di-include dari partials */
+  .main { margin-left: var(--sidebar-width); flex: 1; padding: 0 28px 40px; min-width: 0; transition: margin-left 0.3s cubic-bezier(.4,0,.2,1); }
 
-  .sidebar-section { padding: 16px 16px 4px; }
-  .sidebar-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; padding: 0 4px 8px; }
+  /* TOPBAR */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 20px; position: sticky; top: 0; z-index: 50; background: var(--bg); }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .breadcrumb { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .breadcrumb span { color: var(--primary); font-weight: 600; }
+  .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .notif-btn { width: 40px; height: 40px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: grid; place-items: center; cursor: pointer; position: relative; color: var(--text-secondary); transition: all .2s; }
 
-  .role-badge {
-    background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
-    border: 1px solid #C7D2FE;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 12px; font-weight: 700; color: var(--blue);
-    margin: 0 16px 16px;
-  }
+  /* CONTENT GRID */
+  .content-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; align-items: start; }
 
-  .nav { flex: 1; overflow-y: auto; padding: 4px 12px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    font-size: 13.5px; font-weight: 500;
-    color: #64748B;
-    cursor: pointer; transition: all .15s;
-    margin-bottom: 2px;
-  }
-  .nav-item:hover { background: var(--bg); color: var(--text); }
-  .nav-item.active { background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: var(--blue); font-weight: 700; }
-  .nav-item svg { width: 17px; height: 17px; flex-shrink: 0; }
-  .nav-item .chevron { margin-left: auto; width: 14px; height: 14px; }
+  /* FORM CARD */
+  .form-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; position: sticky; top: 90px; }
+  .form-header { padding: 24px 24px 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; }
+  .form-header-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
+  .form-body { padding: 20px 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--primary); }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .submit-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
 
-  .sidebar-footer { border-top: 1px solid var(--border); padding: 14px 16px; }
-  .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .user-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue), #7C3AED);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 13px; font-weight: 700;
-  }
-  .user-detail strong { font-size: 13px; font-weight: 700; display: block; }
-  .user-detail span { font-size: 11px; color: var(--muted); }
-  .btn-logout {
-    width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 8px; border-radius: 8px;
-    border: 1px solid var(--border);
-    background: transparent; color: #64748B;
-    font-size: 13px; font-weight: 600; font-family: inherit;
-    cursor: pointer; transition: all .15s;
-  }
-  .btn-logout:hover { background: #FEF2F2; color: #EF4444; border-color: #FECACA; }
+  /* HISTORY CARD */
+  .history-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .history-header { padding: 20px 22px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .history-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
+  .req-list { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .req-card { border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; transition: all .2s; }
+  .req-card-top { padding: 15px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .status-badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 7px; text-transform: uppercase; }
+  .status-badge.disetujui { background: rgba(16,185,129,0.1); color: var(--success); }
+  .status-badge.pending { background: rgba(245,158,11,0.1); color: var(--warning); }
+  .status-badge.ditolak { background: rgba(239,68,68,0.1); color: var(--danger); }
+  .req-card-meta { padding: 11px 16px; background: #f8faff; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eef1ff; }
+  .meta-label { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+  .meta-value { font-size: 12px; font-weight: 600; }
+  .req-card-footer { padding: 11px 16px; display: flex; gap: 8px; border-top: 1px solid #eef1ff; }
+  .card-btn { flex: 1; padding: 9px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;}
+  .card-btn.detail { background: rgba(37,99,235,0.08); color: var(--primary); }
+  .card-btn.cancel { background: rgba(239,68,68,0.08); color: var(--danger); }
+  .card-btn.download { background: var(--primary); color: #fff; }
 
-  /* MAIN */
-  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 28px;
-    height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 50;
-  }
-  .topbar-title { font-size: 16px; font-weight: 700; }
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .notif-btn {
-    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
-    background: var(--surface); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; position: relative;
-  }
-  .notif-dot { width: 8px; height: 8px; background: #EF4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
-  .date-text { font-size: 13px; color: #64748B; font-weight: 500; }
-  .btn-keluar {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface); color: #64748B;
-    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s;
-  }
-  .btn-keluar:hover { background: #FEF2F2; color: #EF4444; }
-
-  .content { padding: 28px; flex: 1; }
-
-  /* PAGE HEADER */
-  .page-top {
-    display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px;
-  }
-  .page-top h1 { font-size: 22px; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
-  .page-top p { font-size: 13px; color: var(--muted); }
-  .btn-tambah {
-    display: flex; align-items: center; gap: 7px;
-    padding: 10px 18px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--blue), #7C3AED);
-    color: white; font-size: 13.5px; font-weight: 700;
-    font-family: inherit; border: none; cursor: pointer;
-    box-shadow: 0 4px 14px rgba(79,111,255,.35);
-    transition: all .2s;
-  }
-  .btn-tambah:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,111,255,.45); }
-
-  /* TABLE CARD */
-  .table-card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .table-toolbar {
-    display: flex; align-items: center; gap: 12px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-  .search-wrap {
-    flex: 1; display: flex; align-items: center; gap: 8px;
-    border: 1.5px solid var(--border); border-radius: 10px;
-    padding: 8px 14px; background: var(--bg);
-    transition: border-color .15s;
-  }
-  .search-wrap:focus-within { border-color: var(--blue); }
-  .search-wrap input {
-    border: none; background: none; outline: none;
-    font-family: inherit; font-size: 13.5px; color: var(--text); width: 100%;
-  }
-  .search-wrap input::placeholder { color: var(--muted); }
-
-  .filter-select {
-    padding: 8px 14px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: var(--bg);
-    font-family: inherit; font-size: 13px; color: var(--text);
-    cursor: pointer; outline: none;
-  }
-  .filter-select:focus { border-color: var(--blue); }
-
-  .btn-filter {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: var(--bg);
-    font-family: inherit; font-size: 13px; color: #64748B; cursor: pointer;
-    transition: all .15s;
-  }
-  .btn-filter:hover { border-color: var(--blue); color: var(--blue); }
-
-  table { width: 100%; border-collapse: collapse; }
-  thead tr { background: #F8FAFF; }
-  th {
-    padding: 12px 20px;
-    text-align: left;
-    font-size: 11px; font-weight: 700;
-    color: var(--blue); letter-spacing: .8px; text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 14px 20px;
-    font-size: 13.5px; color: var(--text);
-    border-bottom: 1px solid var(--border);
-  }
-  tr:last-child td { border-bottom: none; }
-  tbody tr { transition: background .15s; }
-  tbody tr:hover { background: #F8FAFF; }
-
-  .status-badge {
-    display: inline-block; padding: 4px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 700;
-  }
-  .status-diterima { background: #DCFCE7; color: #16A34A; }
-  .status-pending { background: #FEF3C7; color: #D97706; }
-  .status-ditolak { background: #FEE2E2; color: #DC2626; }
-
-  .action-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .15s; margin-left: 4px;
-  }
-  .action-btn:hover { background: #EEF2FF; border-color: var(--blue); }
-  .action-btn.danger:hover { background: #FEF2F2; border-color: #EF4444; }
-
-  /* PAGINATION */
-  .table-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
-    font-size: 13px; color: var(--muted);
-  }
-  .pagination { display: flex; align-items: center; gap: 6px; }
-  .page-btn {
-    padding: 6px 12px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-family: inherit; font-size: 13px; color: #64748B;
-    cursor: pointer; transition: all .15s;
-  }
-  .page-btn:hover { border-color: var(--blue); color: var(--blue); }
-  .page-btn.active {
-    background: var(--blue); border-color: var(--blue);
-    color: white; font-weight: 700;
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 0 16px 40px; }
+    .content-grid { grid-template-columns: 1fr; }
+    .form-card { position: static; }
   }
 </style>
 </head>
@@ -244,168 +93,132 @@
 
 <main class="main">
   <div class="topbar">
-    <span class="topbar-title">Peminjaman Kendaraan</span>
-    <div class="topbar-right">
-      <div class="notif-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-        <span class="notif-dot"></span>
+    <div class="topbar-left">
+      <div class="breadcrumb">
+        <a href="#" style="text-decoration:none;color:var(--text-secondary)">Pegawai</a>
+        <i class="fas fa-chevron-right" style="font-size:9px"></i>
+        <span>Peminjaman Kendaraan</span>
       </div>
-      <span class="date-text">Jumat, 17 April 2026</span>
-      <button class="btn-keluar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
-        Keluar
-      </button>
+      <div class="topbar-title">Peminjaman Kendaraan</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn"><i class="fas fa-bell"></i></div>
     </div>
   </div>
 
-  <div class="content">
-    <div class="page-top">
-      <div>
-        <h1>Peminjaman Kendaraan</h1>
-        <p id="dataCount">{{ $peminjamanKendaraan->total() }} data ditemukan</p>
+  <div class="content-grid">
+    <!-- FORM INPUT -->
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-title"><i class="fas fa-car-side"></i> Pinjam Kendaraan</div>
+        <div style="font-size: 11px; opacity: 0.8;">Ajukan penggunaan kendaraan dinas</div>
       </div>
-      {{-- <button class="btn-tambah">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        Tambah Baru
-      </button> --}}
+      <div class="form-body">
+        <form action="{{ route('pegawai.peminjaman-kendaraan.store') }}" method="POST">
+          @csrf
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-truck-pickup"></i> Kendaraan Tersedia</div>
+            <select name="kode_barang" class="form-select" required>
+              <option value="">-- Pilih Kendaraan --</option>
+              @foreach($kendaraan as $k)
+                <option value="{{ $k->kode_barang }}">{{ $k->nama_barang }} ({{ $k->merek }})</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="input-row">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-calendar-alt"></i> Tgl Pinjam</div>
+              <input type="date" name="tanggal_peminjaman" class="form-input" id="tglPinjam" required>
+            </div>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali</div>
+              <input type="date" name="tanggal_pengembalian" class="form-input" id="tglKembali" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-map-marked-alt"></i> Tujuan Penggunaan</div>
+            <textarea name="deskripsi_peruntukan" class="form-textarea" placeholder="Contoh: Operasional Monev ke Gorontalo Utara" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Kirim Permintaan</button>
+        </form>
+      </div>
     </div>
 
-    <div class="table-card">
-      <div class="table-toolbar">
-        <div class="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" placeholder="Cari...">
-        </div>
-        <select class="filter-select">
-          <option>Semua Status</option>
-          <option>Diterima</option>
-          <option>Pending</option>
-          <option>Ditolak</option>
-        </select>
-        <button class="btn-filter">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39A1 1 0 0018.95 4H5.04a1 1 0 00-.79 1.61z"/></svg>
-          Filter
-        </button>
+    <!-- RIWAYAT LIST -->
+    <div class="history-card">
+      <div class="history-header">
+        <div class="history-title"><i class="fas fa-history"></i> Riwayat Anda</div>
       </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          {{-- <th>Kode Barang</th>
-          <th>NUP</th> --}}
-          <th>Nama Barang</th>
-          <th>Merek</th>
-          <th>Jumlah</th>
-          <th>Deskripsi Peruntukan</th>
-          <th>Peminjam</th>
-          <th>Tgl Pinjam - Kembali</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($peminjamanKendaraan as $index => $item)
-          <tr>
-            <td><strong>{{ $index + 1 }}</strong></td>
-            <td>{{ $item->kode_barang }}</td>
-            <td>{{ $item->nup ?? '-' }}</td>
-            <td>{{ $item->nama_barang }}</td>
-            <td>{{ $item->merek ?? '-' }}</td>
-            <td><strong>{{ $item->jumlah }}</strong></td>
-            <td style="max-width: 200px;">
-              <div style="font-size:12px; line-height:1.4;">{{ Str::limit($item->deskripsi_peruntukan, 80) }}</div>
-            </td>
-            <td>{{ $item->user->name }}</td>
-            <td>
-              {{ $item->tanggal_peminjaman ? \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') : '-' }} 
-              <br><small style="color:#64748B;">{{ $item->tanggal_pengembalian ? \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') : '-' }}</small>
-            </td>
-            <td>
-              @php $status = strtolower($item->status) @endphp
-              @switch($status)
-                @case('pending')
-                  <span class="status-badge status-pending">
-                    <i class="fas fa-clock" style="font-size:10px; margin-right:3px;"></i>
-                    Pending
-                  </span>
-                  @break
-                @case('dalam_review')
-                  <span class="status-badge status-pending">
-                    <i class="fas fa-eye" style="font-size:10px; margin-right:3px;"></i>
-                    Dalam Review
-                  </span>
-                  @break
-                @case('disetujui_admin')
-                  <span class="status-badge status-diterima">
-                    <i class="fas fa-check-circle" style="font-size:10px; margin-right:3px;"></i>
-                    Disetujui Admin
-                  </span>
-                  @break
-                @case('disetujui')
-                  <span class="status-badge status-diterima">
-                    <i class="fas fa-thumbs-up" style="font-size:10px; margin-right:3px;"></i>
-                    Disetujui
-                  </span>
-                  @break
-                @case('ditolak')
-                  <span class="status-badge status-ditolak">
-                    <i class="fas fa-times-circle" style="font-size:10px; margin-right:3px;"></i>
-                    Ditolak
-                  </span>
-                  @break
-                @default
-                  <span class="status-badge status-pending">{{ ucfirst($status) }}</span>
-              @endswitch
-            </td>
-            <td>
-              <a href="{{ route('admin.peminjaman-barang.show', $item->id) }}" class="action-btn" title="Detail">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                  <circle cx="12" cy="12" r="3.25"/>
-                  <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                </svg>
-              </a>
+      <div class="req-list">
+        @forelse($riwayat as $item)
+          <div class="req-card">
+            <div class="req-card-top">
+              <div style="display:flex; gap:12px">
+                <div style="width:40px; height:40px; background:rgba(37,99,235,0.1); border-radius:10px; display:grid; place-items:center; color:var(--primary)">
+                  <i class="fas fa-car"></i>
+                </div>
+                <div>
+                  <div class="req-card-name">{{ $item->nama_barang }}</div>
+                  <div style="font-size:11px; color:var(--text-secondary)">{{ $item->merek }} | {{ $item->kode_barang }}</div>
+                </div>
+              </div>
+              <div class="status-badge {{ $item->status }}">
+                {{ str_replace('_', ' ', $item->status) }}
+              </div>
+            </div>
+            <div class="req-card-meta">
+              <div class="meta-item">
+                <div class="meta-label">Jadwal</div>
+                <div class="meta-value">{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d M') }} - {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d M Y') }}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Tujuan</div>
+                <div class="meta-value">{{ Str::limit($item->deskripsi_peruntukan, 25) }}</div>
+              </div>
+            </div>
+            <div class="req-card-footer">
+              <button class="card-btn detail" onclick="showDetail({{ $item->id }})"><i class="fas fa-eye"></i> Detail</button>
               
-              @if($item->status == 'pending' || $item->status == 'dalam_review')
-                <a href="{{ route('admin.peminjaman-barang.edit', $item->id) }}" class="action-btn" title="Edit">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#94A3B8">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a1.5 1.5 0 0 0-2.12 0l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41z"/>
-                  </svg>
-                </a>
-                <form action="{{ route('admin.peminjaman-barang.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus?')">
-                  @csrf @method('DELETE')
-                  <button type="submit" class="action-btn danger" title="Hapus">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#EF4444">
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                    </svg>
-                  </button>
-                </form>
+              @if($item->status == 'pending')
+                <button class="card-btn cancel" onclick="cancelRequest({{ $item->id }})"><i class="fas fa-xmark"></i> Batalkan</button>
               @endif
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="11" style="text-align:center; padding:40px; color:var(--muted);">
-              <i class="fas fa-inbox" style="font-size:48px; margin-bottom:12px; opacity:.5;"></i>
-              <div style="font-size:15px; font-weight:600; margin-bottom:4px;">Belum ada data peminjaman</div>
-              <div style="font-size:13px;">Mulai dengan menambah peminjaman baru</div>
-            </td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
 
-      <div class="table-footer">
-        <span>Menampilkan 1–3 dari 3 data</span>
-        <div class="pagination">
-          <button class="page-btn">Prev</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">Next</button>
-        </div>
+              @if($item->surat_bast_path)
+                <a href="{{ asset('storage/'.$item->surat_bast_path) }}" target="_blank" class="card-btn download"><i class="fas fa-file-download"></i> Surat</a>
+              @endif
+            </div>
+          </div>
+        @empty
+          <div style="text-align:center; padding: 40px; color:var(--text-secondary)">
+            <i class="fas fa-inbox fa-3x" style="opacity:0.2"></i>
+            <p style="margin-top:10px">Belum ada riwayat peminjaman.</p>
+          </div>
+        @endforelse
       </div>
     </div>
   </div>
 </main>
 
+<script>
+  function cancelRequest(id) {
+    if(confirm('Yakin ingin membatalkan permintaan ini?')) {
+      fetch(`/pegawai/peminjaman-kendaraan/${id}/cancel`, {
+        method: 'DELETE',
+        headers: { 
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        }
+      }).then(() => location.reload());
+    }
+  }
+
+  // Set min date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tglPinjam').min = today;
+  document.getElementById('tglKembali').min = today;
+  document.getElementById('tglPinjam').addEventListener('change', function() {
+    document.getElementById('tglKembali').min = this.value;
+  });
+</script>
 </body>
 </html>

@@ -8,9 +8,12 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log; // ✅ ADD
 use Illuminate\Support\Facades\DB;
 use App\Models\{
+    User,
     AssetTetap,
     TransaksiMasukAssetTetap,
     TransaksiKeluarAssetTetap,
@@ -763,21 +766,134 @@ class AdminAsettetapController extends Controller
     
 
     // ========== PEMINJAMAN BARANG ==========
+    // Tampilan Peminjaman Barang Admin
     public function PeminjamanBarang(Request $request)
     {
-        $query = PeminjamanBarang::with(['barang', 'user'])
-            ->when($request->status, function($q, $status) {
-                $q->where('status', $status);
-            })
+        $query = PeminjamanBarang::with(['user'])
             ->when($request->search, function($q, $search) {
-                $q->where('kode_peminjaman', 'like', "%{$search}%")
-                  ->orWhereHas('barang', fn($qb) => $qb->where('nama_barang', 'like', "%{$search}%"))
+                $q->where('kode_barang', 'like', "%{$search}%")
+                  ->orWhere('nama_barang', 'like', "%{$search}%")
                   ->orWhereHas('user', fn($qb) => $qb->where('name', 'like', "%{$search}%"));
             });
 
-        $peminjamanBarang = $query->paginate(15)->withQueryString();
+        // Filter status (contoh: Semua Status, Diterima, Pending, Ditolak)
+        if ($request->status && $request->status !== 'Semua Status') {
+            $statusMap = [
+                'Diterima' => ['disetujui', 'disetujui_admin'],
+                'Pending'  => ['pending', 'dalam_review', 'diteruskan_kasubag'],
+                'Ditolak'  => ['ditolak']
+            ];
+            $selectedStatuses = $statusMap[$request->status] ?? [];
+            if (!empty($selectedStatuses)) {
+                $query->whereIn('status', $selectedStatuses);
+            }
+        }
+
+        $peminjamanBarang = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         
         return view('adminasettetap.peminjaman_barang', compact('peminjamanBarang'));
+    }
+
+    // Aksi: Teruskan / Tolak Permintaan
+    public function reviewPeminjaman(Request $request, $id)
+    {
+        $peminjaman = PeminjamanBarang::findOrFail($id);
+        
+        if ($request->action == 'teruskan') {
+            // 🔥 KITA UBAH CARANYA JADI MANUAL SEPERTI INI (Pasti Tembus)
+            $peminjaman->status = 'diteruskan_kasubag';
+            $peminjaman->reviewed_by_adminasettetap_id = auth()->id();
+            $peminjaman->diteruskan_ke_kasubag_date = now();
+            $peminjaman->save(); // Simpan paksa ke database
+
+            $pesan = 'Peminjaman diteruskan ke Kasubag untuk persetujuan.';
+            
+        } elseif ($request->action == 'tolak') {
+            // 🔥 CARA MANUAL UNTUK TOLAK
+            $peminjaman->status = 'ditolak';
+            $peminjaman->reviewed_by_adminasettetap_id = auth()->id();
+            $peminjaman->komentar = $request->komentar;
+            $peminjaman->save(); // Simpan paksa ke database
+
+            $pesan = 'Peminjaman berhasil ditolak.';
+        }
+
+        return back()->with('success', $pesan);
+    }
+
+    // Aksi: Upload Surat BAST
+    public function uploadSuratBast(Request $request, $id)
+    {
+        $request->validate([
+            'surat_bast' => 'required|mimes:pdf|max:2048', // Maksimal 2MB, hanya PDF
+        ]);
+
+        $peminjaman = PeminjamanBarang::findOrFail($id);
+
+        if ($request->hasFile('surat_bast')) {
+            // Hapus file lama jika ada
+            if ($peminjaman->surat_bast_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($peminjaman->surat_bast_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($peminjaman->surat_bast_path);
+            }
+
+            $file = $request->file('surat_bast');
+            $filename = 'BAST_Pinjam_' . $peminjaman->kode_barang . '_' . time() . '.pdf';
+            
+            // Simpan ke storage/app/public/surat_peminjaman
+            $path = $file->storeAs('surat_peminjaman', $filename, 'public');
+
+            $peminjaman->update([
+                'surat_bast_path' => $path
+            ]);
+
+            return back()->with('success', 'Surat BAST berhasil diunggah! Dokumen dapat diunduh oleh peminjam.');
+        }
+
+        return back()->withErrors(['error' => 'Gagal mengunggah surat.']);
+    }
+
+    // Method untuk Generate/Print Surat Peminjaman
+    public function generateSuratPeminjaman(PeminjamanBarang $peminjaman)
+    {
+        // 1. Ambil data pihak terkait
+        $peminjam = $peminjaman->user; // Pegawai yang meminjam
+        $admin = auth()->user(); // Admin yang sedang login dan memproses
+        $kasubag = User::where('role', 'kasubag')->first(); // Akun Kasubag untuk tanda tangan
+        $kepala = User::where('role', 'kepalabpmp')->first(); // Akun Kepala BPMP
+
+        // 2. Fungsi bantuan untuk mengubah tanda tangan (lokal) menjadi Base64 agar tampil di PDF
+        $getBase64 = function ($path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                $type = pathinfo(storage_path('app/public/' . $path), PATHINFO_EXTENSION);
+                $data = Storage::disk('public')->get($path);
+                return 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            return null;
+        };
+
+        // 3. Siapkan gambar tanda tangan (Signature) masing-masing pihak
+        $ttdPeminjam = $peminjam ? $getBase64($peminjam->signature) : null;
+        $ttdAdmin = $admin ? $getBase64($admin->signature) : null;
+        $ttdKasubag = $kasubag ? $getBase64($kasubag->signature) : null;
+        $ttdKepala = $kepala ? $getBase64($kepala->signature) : null;
+
+        // 4. Load View khusus untuk Surat Peminjaman Barang
+        // Pastikan file view ini ada di resources/views/surat/peminjaman_barang.blade.php
+        $pdf = Pdf::loadView('surat.peminjaman_barang', compact(
+            'peminjaman', 
+            'peminjam', 
+            'admin', 
+            'kasubag', 
+            'kepala',
+            'ttdPeminjam', 
+            'ttdAdmin', 
+            'ttdKasubag', 
+            'ttdKepala'
+        ))->setPaper('a4', 'portrait');
+
+        // 5. Download otomatis dengan nama file yang rapi
+        $fileName = 'Berita_Acara_Peminjaman_' . $peminjaman->kode_barang . '_' . time() . '.pdf';
+        return $pdf->download($fileName);
     }
 
     // ========== PENGEMBALIAN BARANG ==========
@@ -799,40 +915,49 @@ class AdminAsettetapController extends Controller
     }
 
     // ========== PEMINJAMAN KENDARAAN ==========
-     public function peminjamanKendaraan(Request $request)
+     public function PeminjamanKendaraan(Request $request)
     {
-        $query = PeminjamanKendaraan::with(['user', 'reviewedBy'])
-            ->when($request->filled('search'), fn($q, $search) => $q->search($search))
-            ->when($request->filled('status'), fn($q, $status) => $q->where('status', $status))
-            ->orderBy('created_at', 'desc');
-
-        $peminjamanKendaraan = $query->paginate(15)->withQueryString();
-
+        $peminjamanKendaraan = PeminjamanKendaraan::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        
         return view('adminasettetap.peminjaman_kendaraan', compact('peminjamanKendaraan'));
     }
 
-    // Approval workflow
-    public function reviewPeminjaman(Request $request, PeminjamanKendaraan $peminjaman)
+    public function reviewPeminjamanKendaraan(Request $request, $id)
     {
-        $request->validate([
-            'action' => 'required|in:review,approve,reject',
-            'komentar' => 'nullable|string|max:500'
-        ]);
+        $peminjaman = PeminjamanKendaraan::findOrFail($id);
+        
+        if ($request->action == 'teruskan') {
+            $peminjaman->status = 'dalam_review';
+            $peminjaman->reviewed_by_adminasettetap_id = auth()->id();
+            $peminjaman->diteruskan_ke_kasubag_date = now();
+            $peminjaman->save();
+            $msg = 'Permintaan diteruskan ke Kasubag.';
+        } else {
+            $peminjaman->status = 'ditolak';
+            $peminjaman->komentar = $request->komentar;
+            $peminjaman->save();
+            $msg = 'Permintaan ditolak.';
+        }
 
-        $statusMap = [
-            'review' => 'dalam_review',
-            'approve' => 'disetujui_admin', 
-            'reject' => 'ditolak'
-        ];
-
-        $peminjaman->update([
-            'status' => $statusMap[$request->action],
-            'reviewed_by_adminasettetap_id' => Auth::id(),
-            'komentar' => $request->komentar
-        ]);
-
-        return back()->with('success', 'Status peminjaman diperbarui!');
+        return back()->with('success', $msg);
     }
+
+    public function uploadBastKendaraan(Request $request, $id)
+    {
+        $request->validate(['surat_bast' => 'required|mimes:pdf|max:2048']);
+        $peminjaman = PeminjamanKendaraan::findOrFail($id);
+
+        if ($request->hasFile('surat_bast')) {
+            $path = $request->file('surat_bast')->store('surat_peminjaman_kendaraan', 'public');
+            $peminjaman->update(['surat_bast_path' => $path]);
+        }
+
+        return back()->with('success', 'Surat persetujuan berhasil diunggah.');
+    }
+
+    
     // ========== PENGEMBALIAN KENDARAAN ==========
     public function PengembalianKendaraan(Request $request)
     {
