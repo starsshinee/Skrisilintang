@@ -282,8 +282,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
             Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
             Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
-         
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');  
+
+            //PENGEMBALIAN BARANG
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
+            Route::post('/pengembalian-barang/{id}/verifikasi', [AdminAsettetapController::class, 'verifikasiPengembalianBarang'])->name('pengembalian-barang.verifikasi');
+            Route::get('/pengembalian-barang/{id}/json', [AdminAsettetapController::class, 'showPengembalianJsonAdmin']);
+            Route::get('/pengembalian-barang/{id}/cetak', [AdminAsettetapController::class, 'cetakSuratPengembalianBarang'])->name('pengembalian-barang.cetak');
+
 
             //PEMINJAMAN KENDARAAN
             Route::get('/peminjaman-kendaraan', [AdminAsettetapController::class, 'PeminjamanKendaraan'])->name('peminjaman-kendaraan');
@@ -292,9 +298,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-kendaraan/{peminjaman}/print', [AdminAsettetapController::class, 'generateSuratPeminjamanKendaraan'])->name('peminjaman-kendaraan.print');
             Route::get('/peminjaman-kendaraan/{id}/json', [AdminAsettetapController::class, 'showJsonKendaraan']);
             
-            
+            //PENGAMBLIAN KENDARAAN
             Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');  
-            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');            
+            Route::post('/pengembalian-kendaraan/{id}/verifikasi', [AdminAsettetapController::class, 'verifikasiPengembalianKendaraan'])->name('pengembalian-kendaraan.verifikasi');
+            Route::get('/pengembalian-kendaraan/{id}/json', [AdminAsettetapController::class, 'showPengembalianKendaraanJsonAdmin']);
+            Route::get('/pengembalian-kendaraan/{id}/cetak', [AdminAsettetapController::class, 'cetakSuratPengembalianKendaraan'])->name('pengembalian-kendaraan.cetak');        
             
             //PEMINJAMAN BARANG
             Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
@@ -387,6 +395,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:pegawai,superadmin')
         ->group(function () {
             Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
+            Route::get('/info-mutasi', [PegawaiController::class, 'infoMutasi'])->name('info-mutasi');
 
             //PEMINJAMAN BARANG
             Route::get('/peminjaman-barang', [PegawaiController::class, 'peminjamanBarang'])->name('peminjaman-barang');
@@ -395,16 +404,26 @@ Route::middleware('auth')->group(function () {
             Route::delete('/peminjaman-barang/{id}/cancel', [PegawaiController::class, 'cancelPeminjaman'])->name('peminjaman-barang.cancel');
 
 
+            //PENGEMBALIAN BARANG
             Route::get('/pengembalian-barang', [PegawaiController::class, 'pengembalianBarang'])->name('pengembalian-barang');
+            Route::post('/pengembalian-barang', [PegawaiController::class, 'storePengembalianBarang'])->name('pengembalian-barang.store');
+            Route::get('/pengembalian-barang/{id}/json', [PegawaiController::class, 'showPengembalianJson']);
+            Route::get('/peminjaman-barang/{id}/json', [PegawaiController::class, 'getPeminjamanJson']); // Untuk auto-fill preview
+            Route::delete('/pengembalian-barang/{id}', [PegawaiController::class, 'cancelPengembalian'])->name('pengembalian-barang.cancel');
 
-
+            //PEMINJAMAN KENDARAAN
             Route::get('/peminjaman-kendaraan', [PegawaiController::class, 'peminjamanKendaraan'])->name('peminjaman-kendaraan');
             Route::post('/peminjaman-kendaraan/store', [PegawaiController::class, 'storePeminjamanKendaraan'])->name('peminjaman-kendaraan.store');
             Route::delete('/peminjaman-kendaraan/{id}/cancel', [PegawaiController::class, 'cancelPeminjamanKendaraan']);
             Route::get('/peminjaman-kendaraan/{id}/show', [PegawaiController::class, 'showPeminjamanKendaraan'])->name('peminjaman-kendaraan.show');
             
-            Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan'); 
-            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
+
+            //PENGEMBALIAN KENDARAAN
+            Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan');
+            Route::post('/pengembalian-kendaraan', [PegawaiController::class, 'storePengembalianKendaraan'])->name('pengembalian-kendaraan.store');
+            Route::delete('/pengembalian-kendaraan/{id}', [PegawaiController::class, 'cancelPengembalianKendaraan'])->name('pengembalian-kendaraan.cancel');
+            Route::get('/pengembalian-kendaraan/{id}/json', [PegawaiController::class, 'showPengembalianKendaraanJson']);
+            Route::get('/peminjaman-kendaraan/{id}/json', [PegawaiController::class, 'getPeminjamanKendaraanJson']);
 
             //PERMINTAAN PERSEDIAAN
             Route::get('/permintaan-persediaan', [PegawaiController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
@@ -412,6 +431,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/permintaan-persediaan/{id}', [PegawaiController::class, 'detailPermintaanPersediaan'])->name('permintaan_persediaan.detail');
             Route::post('/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancelPermintaanPersediaan'])->name('permintaan_persediaan.cancel');
             
+            //PENGATURAN AKUN
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────

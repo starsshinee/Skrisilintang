@@ -19,6 +19,7 @@
       'badgeColor' => 'bg-blue-500/20 text-blue-300',
       'navItems' => [
         ['href' => route('pegawai.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-home', 'route' => 'pegawai.dashboard'],
+        ['href' => route('pegawai.info-mutasi'), 'label' => 'Info Mutasi Barang', 'icon' => 'fas fa-map-marker-alt', 'route' => 'pegawai.info-mutasi'],
         ['href' => route('pegawai.peminjaman-barang'), 'label' => 'Peminjaman Barang', 'icon' => 'fas fa-box', 'route' => 'pegawai.peminjaman-barang'],
         ['href' => route('pegawai.peminjaman-kendaraan'), 'label' => 'Peminjaman Kendaraan', 'icon' => 'fas fa-car', 'route' => 'pegawai.peminjaman-kendaraan'],
         ['href' =>route ('pegawai.permintaan-persediaan'), 'label' => 'Permintaan Persediaan', 'icon' => 'fas fa-boxes', 'route' => 'pegawai.permintaan-persediaan'],

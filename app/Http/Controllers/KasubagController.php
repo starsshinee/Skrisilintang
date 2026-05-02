@@ -18,8 +18,49 @@ class KasubagController extends Controller
 {
     public function dashboard()
     {
-        // Logika untuk menampilkan dashboard kasubag
-        return view('kasubag.dashbord');
+        // 1. Hitung Statistik Barang (Contoh asumsi status kasubag = 'diteruskan_kasubag')
+        $barangTotal = PeminjamanBarang::count();
+        $barangPending = PeminjamanBarang::where('status', 'diteruskan_kasubag')->count();
+        $barangSetuju = PeminjamanBarang::where('status', 'disetujui')->count();
+        $barangTolak = PeminjamanBarang::where('status', 'ditolak')->count();
+
+        // 2. Hitung Statistik Kendaraan
+        $kendaraanTotal = PeminjamanKendaraan::count();
+        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count(); // Sesuaikan dengan alur status kendaraan
+        $kendaraanSetuju = PeminjamanKendaraan::where('status', 'disetujui')->count();
+        $kendaraanTolak = PeminjamanKendaraan::where('status', 'ditolak')->count();
+
+        // (Lakukan hal yang sama untuk Gedung & Persediaan jika modelnya sudah ada)
+        $gedungTotal = 0; $gedungPending = 0; $gedungSetuju = 0; $gedungTolak = 0;
+        $persediaanTotal = 0; $persediaanPending = 0; $persediaanSetuju = 0; $persediaanTolak = 0;
+
+        // 3. Gabungkan Total Keseluruhan
+        $totalPending = $barangPending + $kendaraanPending + $gedungPending + $persediaanPending;
+        $totalDisetujui = $barangSetuju + $kendaraanSetuju + $gedungSetuju + $persediaanSetuju;
+        $totalDitolak = $barangTolak + $kendaraanTolak + $gedungTolak + $persediaanTolak;
+        $totalPermintaan = $barangTotal + $kendaraanTotal + $gedungTotal + $persediaanTotal;
+
+        // 4. Ambil Data Pending Terbaru untuk di List (Manual mapping jadi array seragam)
+        $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function($item) {
+            return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name, 'tanggal' => $item->created_at];
+        });
+
+        $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function($item) {
+            return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name, 'tanggal' => $item->created_at];
+        });
+
+        // Gabungkan dan urutkan 5 terbaru
+        $recentPending = collect($recentBarang)->merge($recentKendaraan)->sortByDesc('tanggal')->take(5);
+
+        // 5. Kirim data ke View
+        return view('kasubag.dashbord', compact(
+            'totalPending', 'totalDisetujui', 'totalDitolak', 'totalPermintaan',
+            'barangTotal', 'barangPending',
+            'kendaraanTotal', 'kendaraanPending',
+            'gedungTotal', 'gedungPending',
+            'persediaanTotal', 'persediaanPending',
+            'recentPending'
+        ));
     }
 
     public function persetujuanPeminjamanGedung(Request $request)

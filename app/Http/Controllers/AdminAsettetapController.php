@@ -40,11 +40,11 @@ class AdminAsettetapController extends Controller
             'kendaraanDipinjam' => PeminjamanKendaraan::where('status', 'disetujui')->count(),
         ];
 
-        $recentPengembalian = PengembalianBarang::with('peminjamanBarang.barang', 'user')
-            ->where('status_verifikasi', 'pending')
-            ->latest()
-            ->limit(5)
-            ->get();
+        $recentPengembalian = PengembalianBarang::with('peminjamanBarang', 'user')
+        ->where('status_verifikasi', 'pending')
+        ->latest()
+        ->limit(5)
+        ->get();
 
         return view('adminasettetap.dashbord', compact('stats', 'recentPengembalian'));
     }
@@ -900,7 +900,7 @@ class AdminAsettetapController extends Controller
         public function PengembalianBarang(Request $request)
     {
         $query = PengembalianBarang::with([
-                'peminjamanBarang.barang', 
+                'peminjamanBarang', 
                 'user', 
                 'adminVerifier'
             ])
@@ -912,6 +912,62 @@ class AdminAsettetapController extends Controller
         $pengembalianbarang = $query->paginate(10)->withQueryString();
         
         return view('adminasettetap.pengembalian_barang', compact('pengembalianbarang'));
+    }
+
+
+    public function verifikasiPengembalianBarang(Request $request, $id)
+    {
+        $pengembalian = PengembalianBarang::findOrFail($id);
+        
+        $request->validate([
+            'status_verifikasi' => 'required|in:diterima,ditolak',
+            'komentar_admin' => 'nullable|string'
+        ]);
+
+        $pengembalian->update([
+            'status_verifikasi' => $request->status_verifikasi,
+            'komentar_admin' => $request->komentar_admin,
+            'verified_by_adminAsetTetap_id' => auth()->id(),
+            'verified_at' => now()
+        ]);
+
+        // Update status tabel peminjaman utama
+        if ($request->status_verifikasi === 'diterima') {
+            $pengembalian->peminjamanBarang->update(['status' => 'dikembalikan']);
+            
+            // Kembalikan stok jika diperlukan
+            $aset = $pengembalian->peminjamanBarang->barang;
+            if($aset) {
+                $aset->status = 'Tersedia'; // Sesuaikan dengan alur bisnis Anda
+                $aset->save();
+            }
+        } else {
+            // Jika ditolak, kembalikan status ke disetujui agar pegawai merevisi pengembalian
+            $pengembalian->peminjamanBarang->update(['status' => 'disetujui']);
+        }
+
+        return back()->with('success', 'Verifikasi pengembalian berhasil disimpan!');
+    }
+
+    public function showPengembalianJsonAdmin($id)
+    {
+        $data = PengembalianBarang::with(['peminjamanBarang', 'user'])->find($id);
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    public function cetakSuratPengembalianBarang($id)
+    {
+        $pengembalian = PengembalianBarang::with(['peminjamanBarang', 'user', 'adminVerifier'])->findOrFail($id);
+        
+        // Pastikan status sudah diterima agar bisa dicetak
+        if ($pengembalian->status_verifikasi !== 'diterima') {
+            abort(403, 'Hanya pengembalian yang disetujui yang dapat dicetak.');
+        }
+
+        $pdf = Pdf::loadView('surat.pengembalian_barang', compact('pengembalian'))->setPaper('a4', 'portrait');
+        
+        $fileName = 'Surat_Pengembalian_' . $pengembalian->peminjamanBarang->kode_barang . '.pdf';
+        return $pdf->stream($fileName);
     }
 
     // ========== PEMINJAMAN KENDARAAN ==========
@@ -1024,7 +1080,7 @@ class AdminAsettetapController extends Controller
     public function PengembalianKendaraan(Request $request)
     {
         $query = PengembalianKendaraan::with([
-                'peminjamanKendaraan.kendaraan', 
+                'peminjamanKendaraan', 
                 'peminjamanKendaraan.user',
                 'user',
                 'admin' // verified_by_admin_id
@@ -1052,6 +1108,61 @@ class AdminAsettetapController extends Controller
         $pengembalianKendaraan = $query->paginate(10)->withQueryString();
         
         return view('adminasettetap.pengembalian_kendaraan', compact('pengembalianKendaraan'));
+    }
+
+
+    public function verifikasiPengembalianKendaraan(Request $request, $id)
+    {
+        $pengembalian = PengembalianKendaraan::findOrFail($id);
+        
+        $request->validate([
+            'status_pengembalian' => 'required|in:diterima,ditolak',
+            'komentar_admin' => 'nullable|string'
+        ]);
+
+        $pengembalian->update([
+            'status_pengembalian' => $request->status_pengembalian,
+            'komentar_admin' => $request->komentar_admin,
+            'verified_by_admin_id' => auth()->id(),
+            'verified_at' => now()
+        ]);
+
+        if ($request->status_verifikasi === 'diterima') {
+            $pengembalian->peminjamanKendaraan()->update(['status' => 'dikembalikan']);
+            
+            // Kembalikan stok jika diperlukan
+            $aset = $pengembalian->peminjamanKendaraan()->barang;
+            if($aset) {
+                $aset->status = 'Tersedia'; // Sesuaikan dengan alur bisnis Anda
+                $aset->save();
+            }
+        } else {
+            // Jika ditolak, kembalikan status ke disetujui agar pegawai merevisi pengembalian
+            $pengembalian->peminjamanKendaraan->update(['status' => 'disetujui']);
+        }
+
+        return back()->with('success', 'Verifikasi pengembalian kendaraan berhasil disimpan!');
+    }
+
+    public function showPengembalianKendaraanJsonAdmin($id)
+    {
+        $data = PengembalianKendaraan::with(['peminjamanKendaraan', 'user'])->find($id);
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    public function cetakSuratPengembalianKendaraan($id)
+    {
+        $pengembalian = PengembalianKendaraan::with(['peminjamanKendaraan', 'user', 'admin'])->findOrFail($id);
+        
+        // Ambil data user admin dan kepala dari tabel users
+        $admin = auth()->user();
+        $kepala = \App\Models\User::where('role', 'kepalabpmp')->first();
+
+        $pdf = Pdf::loadView('surat.pengembalian_kendaraan', compact('pengembalian', 'admin', 'kepala'))
+                ->setPaper('a4', 'portrait');
+        
+        $kodeBarang = $pengembalian->peminjamanKendaraan->nama_barang ?? 'Kendaraan';
+        return $pdf->stream('Surat_Pengembalian_' . $kodeBarang . '.pdf');
     }
 
     // ========== LAPORAN PEMINJAMAN KENDARAAN ==========
@@ -1120,32 +1231,6 @@ class AdminAsettetapController extends Controller
         return back()->with('success', 'Status berhasil diperbarui!');
     }
 
-    // ========== VERIFIKASI PENGEMBALIAN KENDARAAN ==========
-    public function verifikasiPengembalianKendaraan(Request $request, $id)
-    {
-        $pengembalian = PengembalianKendaraan::findOrFail($id);
-        
-        $request->validate([
-            'status_pengembalian' => 'required|in:diterima,ditolak',
-            'komentar_admin' => 'nullable|string|max:500',
-            'biaya_denda' => 'nullable|numeric|min:0'
-        ]);
-
-        $pengembalian->update([
-            'status_pengembalian' => $request->status_pengembalian,
-            'komentar_admin' => $request->komentar_admin,
-            'biaya_denda' => $request->biaya_denda ?? 0,
-            'verified_at' => now(),
-            'verified_by_admin_id' => Auth::id() ?? null,
-        ]);
-
-        // Update status peminjaman kendaraan
-        $pengembalian->peminjamanKendaraan->update([
-            'status' => $request->status_pengembalian === 'diterima' ? 'dikembalikan' : 'ditolak'
-        ]);
-
-        return back()->with('success', 'Pengembalian kendaraan berhasil diverifikasi!');
-    }
 
     // ========== LAPORAN ==========
     public function laporanPeminjamanBarang(Request $request)

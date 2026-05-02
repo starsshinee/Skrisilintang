@@ -25,22 +25,59 @@ class PegawaiController extends Controller
      */
     public function dashboard()
     {
-        return view('pegawai.dashbord');
-        // $stats = [
-        //     'total_peminjaman_barang' => PeminjamanBarang::count(),
-        //     'total_pengembalian_barang' => PengembalianBarang::count(),
-        //     'total_peminjaman_kendaraan' => PeminjamanKendaraan::count(),
-        //     'total_pengembalian_kendaraan' => PengembalianKendaraan::count() ?? 0,
-        //     'peminjaman_hari_ini' => PeminjamanBarang::whereDate('created_at', today())->count() +
-        //                            PeminjamanKendaraan::whereDate('created_at', today())->count(),
-        // ];
+        $userId = Auth::id();
 
-        // $recentPeminjaman = PeminjamanKendaraan::with('user', 'assetTetap')
-        //     ->latest()
-        //     ->limit(10)
-        //     ->get();
+        // 1. Ambil Statistik Peminjaman Barang (Milik Pegawai)
+        $statBarang = PeminjamanBarang::where('user_id', $userId)->count();
+        $barangPending = PeminjamanBarang::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'diteruskan_kasubag'])->count();
+        $barangSetuju = PeminjamanBarang::where('user_id', $userId)->where('status', 'disetujui')->count();
 
-        // return view('pegawai.dashboard', compact('stats', 'recentPeminjaman'));
+        // 2. Ambil Statistik Peminjaman Kendaraan
+        $statKendaraan = PeminjamanKendaraan::where('user_id', $userId)->count();
+        $kendaraanPending = PeminjamanKendaraan::where('user_id', $userId)->where('status', 'pending')->count();
+        $kendaraanSetuju = PeminjamanKendaraan::where('user_id', $userId)->where('status', 'disetujui')->count();
+
+        // 3. (Gedung & Persediaan diset 0 atau sesuaikan dengan model Anda nanti)
+        $statGedung = 0; $gedungPending = 0; $gedungSetuju = 0;
+        $statPersediaan = 0; $persediaanPending = 0; $persediaanSetuju = 0;
+
+        // 4. Riwayat Terbaru (Hanya 5 Terakhir)
+        $riwayatBarang = PeminjamanBarang::where('user_id', $userId)
+            ->latest()->take(5)->get()->map(function($item) {
+                return [
+                    'tipe' => 'Barang',
+                    'nama_item' => $item->nama_barang, // Asumsi nama kolomnya nama_barang
+                    'status' => $item->status,
+                    'tanggal' => $item->created_at
+                ];
+            });
+
+        
+        $riwayatKendaraan = PeminjamanKendaraan::where('user_id', $userId)
+            ->latest()->take(5)->get()->map(function($item) {
+                return [
+                    'tipe' => 'Kendaraan',
+                    'nama_item' => $item->merek ?? $item->nama_barang ?? 'Kendaraan Dinas', // Ambil langsung
+                    'status' => $item->status,
+                    'tanggal' => $item->created_at
+                ];
+            });
+
+        // Gabungkan riwayat, lalu urutkan dari yang terbaru, dan ambil 5 teratas
+        $riwayatTerbaru = collect($riwayatBarang)
+            ->merge($riwayatKendaraan)
+            ->sortByDesc('tanggal')
+            ->take(5);
+
+        return view('pegawai.dashbord', compact(
+            'statBarang', 'barangPending', 'barangSetuju',
+            'statKendaraan', 'kendaraanPending', 'kendaraanSetuju',
+            'statGedung', 'gedungPending', 'gedungSetuju',
+            'statPersediaan', 'persediaanPending', 'persediaanSetuju',
+            'riwayatTerbaru'
+        ));
+    
     }
 
     /**
@@ -132,21 +169,91 @@ class PegawaiController extends Controller
     /**
      * Pengembalian Barang
      */
-    public function pengembalianBarang(Request $request)
+
+    public function pengembalianBarang()
     {
-        $peminjamanBelumKembali = PeminjamanBarang::whereDoesntHave('pengembalianBarang')
-            ->orWhereHas('pengembalianBarang', fn($q) => $q->where('status', 'diproses'))
-            ->with('user')
+        // Mengambil barang yang sedang dipinjam dan disetujui (Belum dikembalikan sepenuhnya)
+        $peminjamanAktif = PeminjamanBarang::where('user_id', auth()->id())
+            ->whereIn('status', ['disetujui', 'disetujui_admin', 'disetujui_kasubag'])
             ->get();
 
-        $pengembalianBarang = PengembalianBarang::with(['peminjamanBarang.user'])
-            ->latest()
-            ->paginate(10);
+        // Mengambil riwayat pengembalian pegawai
+        $riwayat = PengembalianBarang::with('peminjamanBarang')
+            ->where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('pegawai.pengembalian_barang', compact(
-            'peminjamanBelumKembali',
-            'pengembalianBarang'
-        ));
+        return view('pegawai.pengembalian_barang', compact('peminjamanAktif', 'riwayat'));
+    }
+
+    public function getPeminjamanJson($id)
+    {
+        $peminjaman = PeminjamanBarang::with('barang')->find($id);
+        return response()->json($peminjaman);
+    }
+
+    public function storePengembalianBarang(Request $request)
+    {
+        $request->validate([
+            'peminjaman_barang_id' => 'required|exists:peminjaman_barang,id',
+            'tanggal_pengembalian_aktual' => 'required|date',
+            'jumlah_dikembalikan' => 'required|integer|min:1',
+            'kondisi_barang' => 'required|string',
+            'foto_sesudah' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $peminjaman = PeminjamanBarang::findOrFail($request->peminjaman_barang_id);
+
+        // Upload Foto
+        $fotoPath = null;
+        if ($request->hasFile('foto_sesudah')) {
+            $fotoPath = $request->file('foto_sesudah')->store('foto_pengembalian', 'public');
+        }
+
+        // Mapping Kondisi ke enum status_pengembalian
+        $statusMap = [
+            'baik' => 'lengkap',
+            'rusak-ringan' => 'rusak_ringan',
+            'rusak-berat' => 'rusak_berat',
+            'hilang' => 'hilang'
+        ];
+
+        PengembalianBarang::create([
+            'peminjaman_barang_id' => $request->peminjaman_barang_id,
+            'user_id' => auth()->id(),
+            'tanggal_pengembalian_aktual' => $request->tanggal_pengembalian_aktual . ' ' . ($request->jam_pengembalian ?? '00:00:00'),
+            'jumlah_dikembalikan' => $request->jumlah_dikembalikan,
+            'kondisi_barang' => $request->kondisi_barang,
+            'status_pengembalian' => $statusMap[$request->kondisi_barang] ?? 'lengkap',
+            'catatan' => $request->catatan,
+            'foto_sesudah' => $fotoPath,
+            'status_verifikasi' => 'pending',
+        ]);
+
+        // Ubah status peminjaman agar tidak bisa dikembalikan 2x jika jumlah penuh
+        if ($request->jumlah_dikembalikan >= $peminjaman->jumlah) {
+            $peminjaman->update(['status' => 'proses_pengembalian']);
+        }
+
+        return back()->with('success', 'Laporan pengembalian berhasil dikirim dan menunggu verifikasi Admin!');
+    }
+
+    public function showPengembalianJson($id)
+    {
+        $data = PengembalianBarang::with('peminjamanBarang')->find($id);
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    public function cancelPengembalian($id)
+    {
+        $pengembalian = PengembalianBarang::findOrFail($id);
+        if ($pengembalian->status_verifikasi === 'pending') {
+            // Kembalikan status peminjaman
+            $pengembalian->peminjamanBarang->update(['status' => 'disetujui']);
+            $pengembalian->delete();
+            return back()->with('success', 'Laporan pengembalian berhasil dibatalkan.');
+        }
+        return back()->with('error', 'Laporan yang sudah diverifikasi tidak dapat dibatalkan.');
     }
 
     /**
@@ -367,74 +474,78 @@ class PegawaiController extends Controller
     /**
      * Pengembalian Kendaraan - FORM + RIWAYAT (FIXED!)
      */
-    public function pengembalianKendaraan(Request $request)
+
+    public function pengembalianKendaraan()
     {
-        // ✅ GUNAKAN RELASI PENGEMBALIAN() & ASSETTETAP
-        $peminjamanKendaraan = PeminjamanKendaraan::with([
-                'user', 
-                'assetTetap',           // ✅ BUKAN kendaraan
-                'pengembalian'          // ✅ NAMA RELASI ANDA
-            ])
-            ->whereDoesntHave('pengembalian') // ✅ NAMA RELASI ANDA
-            ->orWhereHas('pengembalian', function($q) {
-                $q->where('status_pengembalian', 'diproses');
-            })
+        // 1. Ambil peminjaman langsung tanpa with('kendaraan')
+        $peminjamanKendaraan = \App\Models\PeminjamanKendaraan::where('user_id', auth()->id())
+            ->whereIn('status', ['disetujui']) // Sesuaikan status peminjaman yang bisa dikembalikan
             ->get();
 
-        // ✅ RIWAYAT PENGEMBALIAN
-        $pengembalianKendaraan = PengembalianKendaraan::with([
-                'peminjamanKendaraan.user', 
-                'peminjamanKendaraan.assetTetap'  // ✅ assetTetap
-            ])
-            ->latest()
-            ->paginate(10);
+        // 2. Ambil riwayat pengembalian, cukup panggil 'peminjamanKendaraan'
+        $pengembalianKendaraan = \App\Models\PengembalianKendaraan::with('peminjamanKendaraan')
+            ->where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('pegawai.pengembalian_kendaraan', compact(
-            'peminjamanKendaraan',
-            'pengembalianKendaraan'
-        ));
+        return view('pegawai.pengembalian_kendaraan', compact('peminjamanKendaraan', 'pengembalianKendaraan'));
     }
 
-    /**
-     * Simpan Pengembalian Kendaraan (POST)
-     */
+    public function getPeminjamanKendaraanJson($id)
+    {
+        $peminjaman = PeminjamanKendaraan::find($id);
+        return response()->json($peminjaman);
+    }
+
     public function storePengembalianKendaraan(Request $request)
     {
         $request->validate([
-            'peminjaman_kendaraan_id' => 'required|exists:peminjaman_kendaraan,id', // ✅ table name benar
+            'peminjaman_kendaraan_id' => 'required|exists:peminjaman_kendaraan,id',
             'tanggal_pengembalian_aktual' => 'required|date',
-            'kondisi_kendaraan' => 'required|in:baik,rusak-ringan,rusak-berat,hilang',
-            'foto_sebelum' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'foto_sesudah' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'catatan' => 'nullable|string|max:1000',
-            'status_pengembalian' => 'required|in:diproses,diterima,ditolak',
+            'kondisi_kendaraan' => 'required|string',
+            'foto_sebelum' => 'required|image|max:2048',
+            'foto_sesudah' => 'required|image|max:2048',
         ]);
 
-        // Upload foto
-        $fotoSebelum = $request->file('foto_sebelum')->store('pengembalian/kendaraan/sebelum', 'public');
-        $fotoSesudah = $request->file('foto_sesudah')->store('pengembalian/kendaraan/sesudah', 'public');
+        $peminjaman = PeminjamanKendaraan::findOrFail($request->peminjaman_kendaraan_id);
 
-        // Hitung denda
-        $peminjaman = PeminjamanKendaraan::with('assetTetap')->findOrFail($request->peminjaman_kendaraan_id);
-        $biayaDenda = $this->hitungDendaKendaraan($peminjaman, $request->kondisi_kendaraan);
+        // Upload Foto
+        $fotoSebelum = $request->file('foto_sebelum')->store('pengembalian_kendaraan/sebelum', 'public');
+        $fotoSesudah = $request->file('foto_sesudah')->store('pengembalian_kendaraan/sesudah', 'public');
 
-        // Simpan pengembalian
         PengembalianKendaraan::create([
             'peminjaman_kendaraan_id' => $request->peminjaman_kendaraan_id,
+            'user_id' => auth()->id(),
             'tanggal_pengembalian_aktual' => $request->tanggal_pengembalian_aktual,
             'kondisi_kendaraan' => $request->kondisi_kendaraan,
+            'catatan' => $request->catatan,
             'foto_sebelum' => $fotoSebelum,
             'foto_sesudah' => $fotoSesudah,
-            'catatan' => $request->catatan,
-            'status_pengembalian' => $request->status_pengembalian,
-            'biaya_denda' => $biayaDenda,
-            'pegawai_id' => Auth::id(),
+            'status_pengembalian' => 'diproses',
+            'biaya_denda' => 0 // Bisa disesuaikan logikanya nanti
         ]);
 
-        // Update status peminjaman
-        $peminjaman->update(['status' => 'dikembalikan']);
+        // Ubah status agar tidak bisa dilapor 2x
+        $peminjaman->update(['status' => 'proses_pengembalian']);
 
-        return redirect()->back()->with('success', 'Pengembalian kendaraan berhasil dilaporkan!');
+        return back()->with('success', 'Laporan pengembalian kendaraan berhasil dikirim!');
+    }
+
+    public function showPengembalianKendaraanJson($id)
+    {
+        $data = PengembalianKendaraan::with('peminjamanKendaraan')->find($id);
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    public function cancelPengembalianKendaraan($id)
+    {
+        $pengembalian = PengembalianKendaraan::findOrFail($id);
+        if ($pengembalian->status_pengembalian === 'diproses') {
+            $pengembalian->peminjamanKendaraan->update(['status' => 'disetujui']);
+            $pengembalian->delete();
+            return back()->with('success', 'Laporan pengembalian berhasil dibatalkan.');
+        }
+        return back()->with('error', 'Laporan yang sudah diverifikasi tidak dapat dibatalkan.');
     }
 
     /**
@@ -461,17 +572,14 @@ class PegawaiController extends Controller
         // return redirect()->back()->with('success', 'Profile berhasil diupdate!');
     }
 
-    /**
-     * Hitung Denda
-     */
-    private function hitungDendaKendaraan($peminjaman, $kondisi)
+    public function infoMutasi()
     {
-        $dendaBase = 0;
-        switch ($kondisi) {
-            case 'rusak-ringan': $dendaBase = 50000; break;
-            case 'rusak-berat': $dendaBase = 250000; break;
-            case 'hilang': $dendaBase = 5000000; break;
-        }
-        return $dendaBase;
+        // Mengambil data mutasi barang yang statusnya sudah disetujui/selesai
+        // Disertai dengan informasi barang terkait
+        $mutasiBarang = \App\Models\MutasiBarang::with(['barang'])
+            ->orderBy('tanggal_mutasi', 'desc')
+            ->paginate(10);
+
+        return view('pegawai.info_mutasibarang', compact('mutasiBarang'));
     }
 }
