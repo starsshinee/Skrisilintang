@@ -1347,15 +1347,11 @@ class AdminAsettetapController extends Controller
     try {
         Pengaduan::create($validated);
         
-        return response()->json([
-            'success' => true,
-            'message' => 'Pengaduan berhasil dikirim! Kami akan memproses dalam 24 jam.'
-        ]);
+        return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! Kami akan memproses dalam 24 jam.');
+
     } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal menyimpan pengaduan. Silakan coba lagi.'
-        ], 500);
+        // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
+        return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
     }
 
     }
@@ -1417,15 +1413,11 @@ public function surveyStore(Request $request)
             'user_agent' => $request->userAgent(),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Terima kasih atas feedback Anda! Survey berhasil dikirim.'
-        ]);
+       return redirect()->back()->with('success', 'Terima kasih atas feedback Anda! Survey berhasil dikirim.');
+
     } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal menyimpan survey. Silakan coba lagi.'
-        ], 500);
+        // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
+        return redirect()->back()->with('error', 'Gagal menyimpan survey. Silakan coba lagi.')->withInput();
     }
     }
 

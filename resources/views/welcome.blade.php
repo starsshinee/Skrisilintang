@@ -443,325 +443,298 @@
   <section id="pengaduan-survey" class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-2 gap-12 mb-16">
-      <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0  0-3.42 0z"/>
-              <line x1="12" x2="12" y1="9" y2="13"/>
-              <line x1="12" x2="12.01" y1="17" y2="17"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold text-navy-900">Formulir Pengaduan</h3>
-            <p class="text-slate-500 text-sm">Sampaikan keluhan atau masalah Anda</p>
-          </div>
-        </div>
-
-        <!-- ALERT SUCCESS/ERROR -->
-        @if(session('success'))
-          <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
-            {{ session('success') }}
-          </div>
-        @endif
-
-        @if(session('error'))
-          <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
-            {{ session('error') }}
-          </div>
-        @endif
-
-        <form id="pengaduanForm" class="space-y-4" method="POST" action="{{ route('pengaduan.store') }}">
-          @csrf
-          
-          <div>
-            <label class="block text-sm font-semibold text-navy-900 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
-            <input 
-              type="text" 
-              name="nama_lengkap" 
-              placeholder="Masukkan nama lengkap Anda" 
-              required 
-              value="{{ old('nama_lengkap') }}"
-              class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('nama_lengkap') border-red-500 ring-red-500/30 @enderror"
-            />
-            @error('nama_lengkap')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
-              <input 
-                type="email" 
-                name="email" 
-                placeholder="email@example.com" 
-                required 
-                value="{{ old('email') }}"
-                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('email') border-red-500 ring-red-500/30 @enderror"
-              />
-              @error('email')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-              @enderror
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-navy-900 mb-2">No. Telepon <span class="text-red-500">*</span></label>
-              <input 
-                type="tel" 
-                name="telepon" 
-                placeholder="08xxxxxxxxx" 
-                required 
-                value="{{ old('telepon') }}"
-                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('telepon') border-red-500 ring-red-500/30 @enderror"
-              />
-              @error('telepon')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-              @enderror
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-navy-900 mb-2">Kategori Pengaduan <span class="text-red-500">*</span></label>
-            <select 
-              name="kategori" 
-              required 
-              class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition bg-white @error('kategori') border-red-500 ring-red-500/30 @enderror"
-            >
-              <option value="">-- Pilih Kategori --</option>
-              <option value="peminjaman_barang" {{ old('kategori') == 'peminjaman_barang' ? 'selected' : '' }}>Masalah Peminjaman Barang</option>
-              <option value="pengembalian_barang" {{ old('kategori') == 'pengembalian_barang' ? 'selected' : '' }}>Masalah Pengembalian Barang</option>
-              <option value="peminjaman_kendaraan" {{ old('kategori') == 'peminjaman_kendaraan' ? 'selected' : '' }}>Masalah Peminjaman Kendaraan</option>
-              <option value="pengembalian_kendaraan" {{ old('kategori') == 'pengembalian_kendaraan' ? 'selected' : '' }}>Masalah Pengembalian Kendaraan</option>
-              <option value="peminjaman_gedung" {{ old('kategori') == 'peminjaman_gedung' ? 'selected' : '' }}>Masalah Peminjaman Gedung</option>
-              <option value="pengembalian_gedung" {{ old('kategori') == 'pengembalian_gedung' ? 'selected' : '' }}>Masalah Pengembalian Gedung</option>
-              <option value="persediaan" {{ old('kategori') == 'persediaan' ? 'selected' : '' }}>Masalah Permintaan Persediaan</option>
-              <option value="sistem" {{ old('kategori') == 'sistem' ? 'selected' : '' }}>Kendala Sistem/Aplikasi</option>
-              <option value="layanan" {{ old('kategori') == 'layanan' ? 'selected' : '' }}>Kualitas Layanan</option>
-              <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
-            </select>
-            @error('kategori')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-navy-900 mb-2">Deskripsi Pengaduan <span class="text-red-500">*</span></label>
-            <textarea 
-              name="deskripsi" 
-              placeholder="Jelaskan secara detail masalah yang Anda alami..." 
-              rows="5" 
-              required 
-              class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition resize-none @error('deskripsi') border-red-500 ring-red-500/30 @enderror"
-            >{{ old('deskripsi') }}</textarea>
-            @error('deskripsi')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
-
-          <div>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="setuju_kebijakan" required class="w-4 h-4 accent-red-500 rounded cursor-pointer" />
-              <span class="text-sm text-slate-600">Saya setuju dengan <a href="#" class="text-red-600 hover:underline">kebijakan privasi</a> dan penggunaan data</span>
-            </label>
-            @error('setuju_kebijakan')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
-
-          <button 
-            type="submit" 
-            id="submitBtn"
-            class="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-2.5 rounded-lg hover:shadow-lg hover:from-red-600 hover:to-rose-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
-            </svg>
-            <span id="submitText">Kirim Pengaduan</span>
-          </button>
-        </form>
-      </div>
-
-      <!-- STATISTIK PENGADUAN (Opsional) -->
-      {{-- <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-8 border border-red-100 shadow-sm">
-        <h3 class="text-xl font-bold text-navy-900 mb-8">Status Pengaduan</h3>
-        <div class="space-y-4">
-          <div class="flex items-center justify-between p-4 bg-white/50 rounded-xl backdrop-blur-sm">
-            <div>
-              <p class="text-sm text-slate-600">Sedang Diproses</p>
-              <p class="text-2xl font-bold text-red-600">12</p>
-            </div>
-            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-              <div class="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            </div> --}}
-          {{-- </div>
-          <div class="flex items-center justify-between p-4 bg-white/50 rounded-xl backdrop-blur-sm">
-            <div>
-              <p class="text-sm text-slate-600">Selesai</p>
-              <p class="text-2xl font-bold text-green-600">156</p>
-            </div>
-            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0  0-3.42 0z"/>
+                <line x1="12" x2="12" y1="9" y2="13"/>
+                <line x1="12" x2="12.01" y1="17" y2="17"/>
               </svg>
             </div>
-          </div>
-        </div>
-      </div> --}}
-
-        <!-- SURVEY KEPUASAN -->
-          <div class="grid lg:grid-cols-2 gap-8 mb-16"></div>
-            <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
-              <div class="flex items-center gap-3 mb-6">
-                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-navy-900">Survey Kepuasan Layanan</h3>
-                  <p class="text-slate-500 text-sm">Bantu kami meningkatkan kualitas layanan SIPANDU</p>
-                </div>
-              </div>
-
-              <!-- ALERT SUCCESS/ERROR -->
-              @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
-                  {{ session('success') }}
-                </div>
-              @endif
-
-              @if(session('error'))
-                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
-                  {{ session('error') }}
-                </div>
-              @endif
-
-              <form id="surveyForm" class="space-y-4" method="POST" action="{{ route('survey.store') }}">
-                @csrf
-                
-                <div>
-                  <label class="block text-sm font-semibold text-navy-900 mb-2">Nama/Identitas <span class="text-red-500">*</span></label>
-                  <input 
-                    type="text" 
-                    name="nama" 
-                    placeholder="Masukkan nama atau NIP Anda" 
-                    required 
-                    value="{{ old('nama') }}"
-                    class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('nama') border-red-500 ring-red-500/30 @enderror"
-                  />
-                  @error('nama')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
-                  <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="email@example.com" 
-                    required 
-                    value="{{ old('email') }}"
-                    class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('email') border-red-500 ring-red-500/30 @enderror"
-                  />
-                  @error('email')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-                
-                <div class="space-y-3">
-                  <label class="block text-sm font-semibold text-navy-900 mb-3">Tingkat Kepuasan Anda terhadap Layanan SIPANDU <span class="text-red-500">*</span></label>
-                  <div class="space-y-2">
-                    <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                      <input type="radio" name="kepuasan" value="sangat_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'sangat_puas' ? 'checked' : '' }} />
-                      <div class="flex items-center gap-2">
-                        <span class="text-2xl text-amber-500">★★★★★</span>
-                        <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Sangat Puas</span>
-                      </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                      <input type="radio" name="kepuasan" value="puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'puas' ? 'checked' : '' }} />
-                      <div class="flex items-center gap-2">
-                        <span class="text-2xl text-amber-500">★★★★</span>
-                        <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Puas</span>
-                      </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                      <input type="radio" name="kepuasan" value="cukup" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'cukup' ? 'checked' : '' }} />
-                      <div class="flex items-center gap-2">
-                        <span class="text-2xl text-amber-500">★★★</span>
-                        <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Cukup Puas</span>
-                      </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                      <input type="radio" name="kepuasan" value="kurang_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'kurang_puas' ? 'checked' : '' }} />
-                      <div class="flex items-center gap-2">
-                        <span class="text-2xl text-amber-500">★★</span>
-                        <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Kurang Puas</span>
-                      </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                      <input type="radio" name="kepuasan" value="tidak_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'tidak_puas' ? 'checked' : '' }} />
-                      <div class="flex items-center gap-2">
-                        <span class="text-2xl text-amber-500">★</span>
-                        <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Tidak Puas</span>
-                      </div>
-                    </label>
-                  </div>
-                  @error('kepuasan')
-                    <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-navy-900 mb-2">Aspek yang Paling Memuaskan</label>
-                  <textarea 
-                    name="aspek_memuaskan" 
-                    placeholder="Sebutkan hal-hal yang Anda sukai dari layanan SIPANDU (fasilitas, kemudahan, pelayanan, dll)..." 
-                    rows="3" 
-                    class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('aspek_memuaskan') border-red-500 ring-red-500/30 @enderror"
-                  >{{ old('aspek_memuaskan') }}</textarea>
-                  @error('aspek_memuaskan')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-navy-900 mb-2">Saran Perbaikan</label>
-                  <textarea 
-                    name="saran" 
-                    placeholder="Bagikan saran dan masukan untuk peningkatan layanan SIPANDU..." 
-                    rows="3" 
-                    class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('saran') border-red-500 ring-red-500/30 @enderror"
-                  >{{ old('saran') }}</textarea>
-                  @error('saran')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <div>
-                  <label class="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all border border-slate-200 hover:border-slate-300">
-                    <input type="checkbox" name="setuju_kebijakan" required class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
-                    <span class="text-sm text-slate-700">Saya setuju dengan <a href="#" class="text-amber-600 hover:underline font-semibold">kebijakan privasi</a> dan penggunaan data untuk perbaikan layanan</span>
-                  </label>
-                  @error('setuju_kebijakan')
-                    <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <button 
-                  type="submit" 
-                  id="submitBtn"
-                  class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:from-amber-600 hover:to-yellow-700 transition-all duration-200 flex items-center justify-center gap-2 text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  </svg>
-                  <span>Kirim Survey & Bantu Kami Berkembang</span>
-                </button>
-              </form>
+            <div>
+              <h3 class="text-xl font-bold text-navy-900">Formulir Pengaduan</h3>
+              <p class="text-slate-500 text-sm">Sampaikan keluhan atau masalah Anda</p>
             </div>
           </div>
+
+          <!-- ALERT SUCCESS/ERROR -->
+          @if(session('success'))
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
+              {{ session('success') }}
+            </div>
+          @endif
+
+          @if(session('error'))
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
+              {{ session('error') }}
+            </div>
+          @endif
+
+          <form id="pengaduanForm" class="space-y-4" method="POST" action="{{ route('pengaduan.store') }}">
+            @csrf
+            
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                name="nama_lengkap" 
+                placeholder="Masukkan nama lengkap Anda" 
+                required 
+                value="{{ old('nama_lengkap') }}"
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('nama_lengkap') border-red-500 ring-red-500/30 @enderror"
+              />
+              @error('nama_lengkap')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  placeholder="email@example.com" 
+                  required 
+                  value="{{ old('email') }}"
+                  class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('email') border-red-500 ring-red-500/30 @enderror"
+                />
+                @error('email')
+                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-navy-900 mb-2">No. Telepon <span class="text-red-500">*</span></label>
+                <input 
+                  type="tel" 
+                  name="telepon" 
+                  placeholder="08xxxxxxxxx" 
+                  required 
+                  value="{{ old('telepon') }}"
+                  class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition @error('telepon') border-red-500 ring-red-500/30 @enderror"
+                />
+                @error('telepon')
+                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Kategori Pengaduan <span class="text-red-500">*</span></label>
+              <select 
+                name="kategori" 
+                required 
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition bg-white @error('kategori') border-red-500 ring-red-500/30 @enderror"
+              >
+                <option value="">-- Pilih Kategori --</option>
+                <option value="peminjaman_barang" {{ old('kategori') == 'peminjaman_barang' ? 'selected' : '' }}>Masalah Peminjaman Barang</option>
+                <option value="pengembalian_barang" {{ old('kategori') == 'pengembalian_barang' ? 'selected' : '' }}>Masalah Pengembalian Barang</option>
+                <option value="peminjaman_kendaraan" {{ old('kategori') == 'peminjaman_kendaraan' ? 'selected' : '' }}>Masalah Peminjaman Kendaraan</option>
+                <option value="pengembalian_kendaraan" {{ old('kategori') == 'pengembalian_kendaraan' ? 'selected' : '' }}>Masalah Pengembalian Kendaraan</option>
+                <option value="peminjaman_gedung" {{ old('kategori') == 'peminjaman_gedung' ? 'selected' : '' }}>Masalah Peminjaman Gedung</option>
+                <option value="pengembalian_gedung" {{ old('kategori') == 'pengembalian_gedung' ? 'selected' : '' }}>Masalah Pengembalian Gedung</option>
+                <option value="persediaan" {{ old('kategori') == 'persediaan' ? 'selected' : '' }}>Masalah Permintaan Persediaan</option>
+                <option value="sistem" {{ old('kategori') == 'sistem' ? 'selected' : '' }}>Kendala Sistem/Aplikasi</option>
+                <option value="layanan" {{ old('kategori') == 'layanan' ? 'selected' : '' }}>Kualitas Layanan</option>
+                <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+              </select>
+              @error('kategori')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Deskripsi Pengaduan <span class="text-red-500">*</span></label>
+              <textarea 
+                name="deskripsi" 
+                placeholder="Jelaskan secara detail masalah yang Anda alami..." 
+                rows="5" 
+                required 
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition resize-none @error('deskripsi') border-red-500 ring-red-500/30 @enderror"
+              >{{ old('deskripsi') }}</textarea>
+              @error('deskripsi')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
+            </div>
+
+            <div>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" name="setuju_kebijakan" required class="w-4 h-4 accent-red-500 rounded cursor-pointer" />
+                <span class="text-sm text-slate-600">Saya setuju dengan <a href="#" class="text-red-600 hover:underline">kebijakan privasi</a> dan penggunaan data</span>
+              </label>
+              @error('setuju_kebijakan')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
+            </div>
+
+            <button 
+              type="submit" 
+              id="submitBtn"
+              class="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-2.5 rounded-lg hover:shadow-lg hover:from-red-600 hover:to-rose-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              <span id="submitText">Kirim Pengaduan</span>
+            </button>
+          </form>
+        </div>
+
+          <!-- SURVEY KEPUASAN -->
+           {{-- <div class="grid lg:grid-cols-2 gap-8 mb-16"></div> --}}
+              <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold text-navy-900">Survey Kepuasan Layanan</h3>
+                    <p class="text-slate-500 text-sm">Bantu kami meningkatkan kualitas layanan SIPANDU</p>
+                  </div>
+                </div>
+
+                <!-- ALERT SUCCESS/ERROR -->
+                @if(session('success'))
+                  <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
+                    {{ session('success') }}
+                  </div>
+                @endif
+
+                @if(session('error'))
+                  <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
+                    {{ session('error') }}
+                  </div>
+                @endif
+
+                <form id="surveyForm" class="space-y-4" method="POST" action="{{ route('survey.store') }}">
+                  @csrf
+                  
+                  <div>
+                    <label class="block text-sm font-semibold text-navy-900 mb-2">Nama/Identitas <span class="text-red-500">*</span></label>
+                    <input 
+                      type="text" 
+                      name="nama" 
+                      placeholder="Masukkan nama atau NIP Anda" 
+                      required 
+                      value="{{ old('nama') }}"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('nama') border-red-500 ring-red-500/30 @enderror"
+                    />
+                    @error('nama')
+                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      placeholder="email@example.com" 
+                      required 
+                      value="{{ old('email') }}"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('email') border-red-500 ring-red-500/30 @enderror"
+                    />
+                    @error('email')
+                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-navy-900 mb-3">Tingkat Kepuasan Anda terhadap Layanan SIPANDU <span class="text-red-500">*</span></label>
+                    <div class="space-y-2">
+                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                        <input type="radio" name="kepuasan" value="sangat_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'sangat_puas' ? 'checked' : '' }} />
+                        <div class="flex items-center gap-2">
+                          <span class="text-2xl text-amber-500">★★★★★</span>
+                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Sangat Puas</span>
+                        </div>
+                      </label>
+                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                        <input type="radio" name="kepuasan" value="puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'puas' ? 'checked' : '' }} />
+                        <div class="flex items-center gap-2">
+                          <span class="text-2xl text-amber-500">★★★★</span>
+                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Puas</span>
+                        </div>
+                      </label>
+                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                        <input type="radio" name="kepuasan" value="cukup" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'cukup' ? 'checked' : '' }} />
+                        <div class="flex items-center gap-2">
+                          <span class="text-2xl text-amber-500">★★★</span>
+                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Cukup Puas</span>
+                        </div>
+                      </label>
+                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                        <input type="radio" name="kepuasan" value="kurang_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'kurang_puas' ? 'checked' : '' }} />
+                        <div class="flex items-center gap-2">
+                          <span class="text-2xl text-amber-500">★★</span>
+                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Kurang Puas</span>
+                        </div>
+                      </label>
+                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                        <input type="radio" name="kepuasan" value="tidak_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'tidak_puas' ? 'checked' : '' }} />
+                        <div class="flex items-center gap-2">
+                          <span class="text-2xl text-amber-500">★</span>
+                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Tidak Puas</span>
+                        </div>
+                      </label>
+                    </div>
+                    @error('kepuasan')
+                      <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
+                    @enderror
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-navy-900 mb-2">Aspek yang Paling Memuaskan</label>
+                    <textarea 
+                      name="aspek_memuaskan" 
+                      placeholder="Sebutkan hal-hal yang Anda sukai dari layanan SIPANDU (fasilitas, kemudahan, pelayanan, dll)..." 
+                      rows="3" 
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('aspek_memuaskan') border-red-500 ring-red-500/30 @enderror"
+                    >{{ old('aspek_memuaskan') }}</textarea>
+                    @error('aspek_memuaskan')
+                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-navy-900 mb-2">Saran Perbaikan</label>
+                    <textarea 
+                      name="saran" 
+                      placeholder="Bagikan saran dan masukan untuk peningkatan layanan SIPANDU..." 
+                      rows="3" 
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('saran') border-red-500 ring-red-500/30 @enderror"
+                    >{{ old('saran') }}</textarea>
+                    @error('saran')
+                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                  </div>
+
+                  <div>
+                    <label class="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all border border-slate-200 hover:border-slate-300">
+                      <input type="checkbox" name="setuju_kebijakan" required class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
+                      <span class="text-sm text-slate-700">Saya setuju dengan <a href="#" class="text-amber-600 hover:underline font-semibold">kebijakan privasi</a> dan penggunaan data untuk perbaikan layanan</span>
+                    </label>
+                    @error('setuju_kebijakan')
+                      <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
+                    @enderror
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    id="submitBtn"
+                    class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:from-amber-600 hover:to-yellow-700 transition-all duration-200 flex items-center justify-center gap-2 text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>Kirim Survey & Bantu Kami Berkembang</span>
+                  </button>
+                </form>
+              </div>
+      </div>
 
           <!-- ROW 2: SURVEY FORM & RINGKASAN STATISTIK -->
           {{-- <div class="grid lg:grid-cols-2 gap-8 mb-16">

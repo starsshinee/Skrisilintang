@@ -179,9 +179,19 @@
       'badgeColor' => 'bg-purple-500/20 text-purple-300',
       'navItems' => [
         ['href' => route('kepalabpmp.dashboard'), 'label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'route' => 'kepalabpmp.dashboard'],
-        ['href' => route('kepalabpmp.laporan'), 'label' => 'Laporan BMN', 'icon' => 'fas fa-file-pdf', 'route' => 'kepalabpmp.laporan'],
+        ['href' => route('kepalabpmp.laporan'), 'label' => 'Laporan BMN', 'icon' => 'fas fa-chart-bar', 'route' => 'kepalabpmp.laporan'],
+        [
+          'label' => 'Download Laporan',
+          'icon' => 'fas fa-download',
+          'route' => 'NONE',
+          'children' => [
+            ['href' => route('kepalabpmp.laporan.download-persediaan'), 'label' => 'Laporan Persediaan', 'route' => 'kepalabpmp.laporan.download-persediaan'],
+            ['href' => route('kepalabpmp.laporan.download-aset-tetap'), 'label' => 'Laporan Aset Tetap', 'route' => 'kepalabpmp.laporan.download-aset-tetap'],
+            ['href' => route('kepalabpmp.laporan.download-sarpras'), 'label' => 'Laporan Sarpras', 'route' => 'kepalabpmp.laporan.download-sarpras'],
+            ['href' => route('kepalabpmp.laporan.download-lengkap'), 'label' => 'Laporan Lengkap', 'route' => 'kepalabpmp.laporan.download-lengkap'],
+          ]
+        ],
         ['href' => route('kepalabpmp.pengaturan-akun'), 'label' => 'Pengaturan Akun', 'icon' => 'fas fa-gear', 'route' => 'kepalabpmp.pengaturan-akun'], 
-       
       ]
     ],
   ];
