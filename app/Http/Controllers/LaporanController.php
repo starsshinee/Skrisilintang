@@ -642,6 +642,67 @@ class LaporanController extends Controller
             'total' => TransaksiMasukAssetTetap::whereBetween('tanggal_perolehan', [$startDate, $endDate])->count(),
         ];
     }
+
+    // Tambahkan di dalam class LaporanController
+
+/**
+ * 🔄 DOWNLOAD LAPORAN PENGEMBALIAN (Barang & Kendaraan)
+ */
+    public function downloadPengembalian(Request $request)
+    {
+        $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+
+        $data = [
+            'title' => 'Laporan Pengembalian Aset & Kendaraan',
+            'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
+            'pengembalian_barang' => PengembalianBarang::with(['peminjamanBarang', 'user'])
+                ->whereBetween('tanggal_pengembalian_aktual', [$startDate, $endDate])->get(),
+            'pengembalian_kendaraan' => PengembalianKendaraan::with(['peminjamanKendaraan', 'user'])
+                ->whereBetween('tanggal_pengembalian_aktual', [$startDate, $endDate])->get(),
+            'generated_at' => now()
+        ];
+
+        $format = $request->format ?? 'pdf';
+
+        if ($format === 'excel') {
+            return Excel::download(new LaporanExport($data, 'pengembalian'), 'laporan-pengembalian-' . now()->format('Y-m-d') . '.xlsx');
+        }
+
+        $pdf = Pdf::loadView('adminasettetap.laporan.exports.pengembalian', $data)->setPaper('a4', 'landscape');
+        return $pdf->download('Laporan-Pengembalian-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+ * 🔄 DOWNLOAD LAPORAN MUTASI BARANG
+ */
+    public function downloadMutasi(Request $request)
+    {
+        $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+
+        $data = [
+            'title' => 'Laporan Mutasi Barang Aset Tetap',
+            'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
+            'mutasi' => \App\Models\MutasiBarang::with('barang')
+                ->whereBetween('tanggal_mutasi', [$startDate, $endDate])
+                ->orderBy('tanggal_mutasi', 'desc')
+                ->get(),
+            'total' => \App\Models\MutasiBarang::whereBetween('tanggal_mutasi', [$startDate, $endDate])->count(),
+            'generated_at' => now()
+        ];
+
+        $format = $request->format ?? 'pdf';
+
+        if ($format === 'excel') {
+            return Excel::download(new LaporanExport($data, 'mutasi'), 'laporan-mutasi-' . now()->format('Y-m-d') . '.xlsx');
+        }
+
+        $pdf = Pdf::loadView('adminasettetap.laporan.exports.mutasi', $data)->setPaper('a4', 'landscape');
+        return $pdf->download('Laporan-Mutasi-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+
     private function prepareTransaksiKeluarData($request) { /* ... */ return []; }
     private function preparePengaduanData($request) { /* ... */ return []; }
     private function prepareSurveyData($request) { /* ... */ return []; }

@@ -480,6 +480,19 @@
                             <span class="dl-badge" style="background:#FEE2E2;color:#B91C1C">PDF/Excel</span>
                         </a>
 
+                        <!-- Mutasi Barang (BARU) -->
+                        <div class="dl-card" style="border-color: #E0F2FE;">
+                            <div class="dl-icon" style="background:#E0F2FE">
+                                <i class="fas fa-exchange-alt" style="color:#0369A1"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-gray-800 mb-0.5">Mutasi Barang</h4>
+                            <p class="text-xs text-gray-400 mb-3">{{ number_format($stats['mutasi_barang'] ?? 0) }} data</p>
+                            <div class="flex justify-center gap-1">
+                                <a href="{{ route('adminasettetap.mutasi.download', array_merge(request()->query(), ['format' => 'pdf'])) }}" class="px-2 py-1 bg-red-50 text-[9px] font-bold text-red-600 rounded hover:bg-red-500 hover:text-white transition-colors">PDF</a>
+                                <a href="{{ route('adminasettetap.mutasi.download', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-2 py-1 bg-green-50 text-[9px] font-bold text-green-600 rounded hover:bg-green-500 hover:text-white transition-colors">EXCEL</a>
+                            </div>
+                        </div>
+
                         <!-- Pengaduan -->
                         <a href="{{ route('adminasettetap.pengaduan.download', request()->query()) }}" class="dl-card orange" target="_blank">
                             <div class="dl-icon" style="background:#FEF3C7">
@@ -510,6 +523,19 @@
                             <span class="dl-badge" style="background:#EDE9FE;color:#5B21B6">PDF/Excel</span>
                         </a>
 
+                        <!-- Pengembalian (BARU) -->
+                        <div class="dl-card blue">
+                            <div class="dl-icon" style="background:#DBEAFE">
+                                <i class="fas fa-undo-alt" style="color:#2563EB"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-gray-800 mb-0.5">Pengembalian</h4>
+                            <p class="text-xs text-gray-400 mb-3">Barang & Kendaraan</p>
+                            <div class="flex justify-center gap-1">
+                                <a href="{{ route('adminasettetap.pengembalian.download', array_merge(request()->query(), ['format' => 'pdf'])) }}" class="px-2 py-1 bg-red-50 text-[9px] font-bold text-red-600 rounded hover:bg-red-500 hover:text-white transition-colors">PDF</a>
+                                <a href="{{ route('adminasettetap.pengembalian.download', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-2 py-1 bg-green-50 text-[9px] font-bold text-green-600 rounded hover:bg-green-500 hover:text-white transition-colors">EXCEL</a>
+                            </div>
+                        </div>
+
                         <!-- Ringkasan Dashboard -->
                         <a href="{{ route('adminasettetap.dashboard.download', request()->query()) }}" class="dl-card blue" target="_blank">
                             <div class="dl-icon" style="background:#DBEAFE">
@@ -520,7 +546,7 @@
                             <span class="dl-badge" style="background:#DBEAFE;color:#1E40AF">PDF</span>
                         </a>
 
-                        <!-- Download All ZIP -->
+                        {{-- <!-- Download All ZIP -->
                         <a href="{{ route('adminasettetap.all.download', request()->query()) }}" class="dl-card dark" target="_blank" style="background:rgba(255,255,255,0.92)">
                             <div class="dl-icon" style="background:linear-gradient(135deg,#334155,#1E293B)">
                                 <i class="fas fa-file-archive" style="color:#fff;font-size:20px"></i>
@@ -528,7 +554,7 @@
                             <h4 class="font-bold text-sm text-gray-800 mb-0.5">📦 Download Semua</h4>
                             <p class="text-xs text-gray-400 mb-3">ZIP 7 laporan lengkap</p>
                             <span class="dl-badge" style="background:#1E293B;color:#E2E8F0">ZIP File</span>
-                        </a>
+                        </a> --}}
 
                     </div>
                 </div>
