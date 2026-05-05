@@ -254,7 +254,7 @@
                 @endif
             </td>
             <td>
-                <span class="status-badge {{ $item->cara_pembayaran == 'tunai' ? 'badge-approved' : 'badge-pending' }}">
+                <span class="status-badge {{ $item->cara_pembayaran == 'non-tunai' ? 'badge-approved' : 'badge-pending' }}">
                     {{ ucfirst($item->cara_pembayaran) }}
                 </span>
             </td>

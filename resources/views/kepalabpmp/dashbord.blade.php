@@ -73,9 +73,14 @@
         .action-label { font-size: 13px; font-weight: 700; text-align: center; }
         @media (max-width: 1120px) {
             .hero-grid, .dashboard-grid.columns-2 { grid-template-columns: 1fr; }
-            .main { margin-left: 0; padding: 20px; }
+            .main { margin-left: 0; padding: 20px; padding-top: 70px; }
         }
-        @media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 24px; }
+            .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .actions-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>

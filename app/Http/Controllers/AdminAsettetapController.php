@@ -1347,7 +1347,7 @@ class AdminAsettetapController extends Controller
     try {
         Pengaduan::create($validated);
         
-        return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! Kami akan memproses dalam 24 jam.');
+        return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
 
     } catch (\Exception $e) {
         // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama

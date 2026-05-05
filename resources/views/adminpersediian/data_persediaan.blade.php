@@ -319,7 +319,7 @@
             <th>Kategori</th>
             <th>Kode Barang</th>
             <th>Nama Barang</th>
-            <th>Tanggal Masuk</th>
+            <th>Tanggal Perolehan</th>
             <th>Harga Satuan</th>
             <th>Harga Total</th>
             <th>Jumlah</th>

@@ -63,9 +63,15 @@
   .bar-val { font-size: 11px; font-weight: 700; color: var(--text); }
   .bar-label { font-size: 11px; color: var(--muted); }
   
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
   @media (max-width: 768px) {
     .main { margin-left: 0; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .topbar { padding-top: 60px; flex-wrap: wrap; gap: 8px; }
+    .content { padding: 16px; }
+    .page-header h1 { font-size: 18px; }
   }
 </style>
 </head>

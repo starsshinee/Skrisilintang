@@ -93,6 +93,19 @@
   .badge-pending { background: var(--orange-light); color: var(--orange); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
   
   .empty-state { text-align: center; padding: 30px 10px; color: var(--gray-400); font-size: 13px; font-weight: 500; }
+
+  @media (max-width: 1024px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
+    .stats { grid-template-columns: 1fr; }
+    .hero { flex-direction: column; text-align: center; gap: 16px; padding: 24px 20px; }
+    .hero-right { text-align: center; }
+    .hero-title { font-size: 22px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
 </style>
 </head>
 <body>

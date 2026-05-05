@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar – SIBMN BPMP Gorontalo</title>
+  <title>Daftar – SIPANDU BPMP Gorontalo</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@
       <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#8eaeff"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#8eaeff"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#5a82ff"/></svg>
       </div>
-      <span class="text-white font-bold text-sm">SIBMN</span>
+      <span class="text-white font-bold text-sm">SIPANDU</span>
     </div>
   </div>
 
@@ -111,7 +111,7 @@
           <div class="flex flex-wrap gap-2">
             <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Super Admin</span>
             <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Kepala BPMP</span>
-            <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Kasubag TU</span>
+            <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Kasubag</span>
             <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Admin Persediaan</span>
             <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Admin Sarpras</span>
             <span class="glass text-blue-200 text-xs font-medium px-3 py-1.5 rounded-full">Admin Aset</span>
@@ -129,7 +129,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
             </div>
             <h2 class="text-2xl font-extrabold text-navy-900 mb-1">Buat Akun Baru</h2>
-            <p class="text-slate-400 text-sm">Registrasi akun SIBMN (Demo)</p>
+            <p class="text-slate-400 text-sm">Registrasi akun SIPANDU (Demo)</p>
           </div>
 
           {{-- Flash: sukses --}}
@@ -264,7 +264,7 @@
 
   <!-- Footer -->
   <div class="relative z-10 text-center pb-6">
-    <p class="text-blue-200/40 text-xs">© 2025 SIBMN BPMP Provinsi Gorontalo · Sistem terintegrasi pengelolaan BMN</p>
+    <p class="text-blue-200/40 text-xs">© 2025 SIPANDU BPMP Provinsi Gorontalo · Sistem terintegrasi pengelolaan BMN</p>
   </div>
 </div>
 

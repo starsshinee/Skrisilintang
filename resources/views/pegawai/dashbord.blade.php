@@ -97,6 +97,28 @@
     .req-date { font-size: 12px; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
     
     .empty-state { text-align: center; padding: 30px 10px; color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+
+    @media (max-width: 1024px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .quick-actions { grid-template-columns: repeat(2, 1fr); }
+      .bottom-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .quick-actions { grid-template-columns: 1fr 1fr; }
+      .hero { flex-direction: column; text-align: center; gap: 16px; padding: 24px 20px; }
+      .hero-right { text-align: center; }
+      .hero-title { font-size: 22px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .topbar-right { width: 100%; justify-content: flex-end; }
+      .table-container { overflow-x: auto; }
+      table { min-width: 500px; }
+    }
+    @media (max-width: 480px) {
+      .quick-actions { grid-template-columns: 1fr; }
+      .main { padding: 0 12px 24px; padding-top: 60px; }
+    }
   </style>
 </head>
 <body>

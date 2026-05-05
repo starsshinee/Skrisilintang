@@ -39,7 +39,7 @@
         ['href' => route('tamu.dashboard'),        'label' => 'Dashboard',            'icon' => 'fas fa-door-open',   'route' => 'tamu.dashboard'],
         ['href' => route('tamu.info-fasilitas'),   'label' => 'Informasi Fasilitas',  'icon' => 'fas fa-info-circle', 'route' => 'tamu.info-fasilitas'],
         ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-building', 'route' => 'tamu.peminjaman-gedung'],
-        ['href' => route('tamu.pengembalian-gedung'),  'label' => 'Pengembalian Gedung',      'icon' => 'fas fa-undo', 'route' => 'tamu.pengembalian-gedung'],
+        // ['href' => route('tamu.pengembalian-gedung'),  'label' => 'Pengembalian Gedung',      'icon' => 'fas fa-undo', 'route' => 'tamu.pengembalian-gedung'],
         ['href' => route('tamu.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'tamu.pengaturan-akun'],
       ]
     ],
@@ -554,9 +554,70 @@
   .sidebar-nav::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }
+
+  /* ── MOBILE HAMBURGER ── */
+  .mobile-topbar {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 90;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hamburger-btn {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: 1px solid var(--border-color);
+    border-radius: 8px; cursor: pointer; color: var(--text-dark);
+    font-size: 18px; transition: all 0.2s;
+  }
+  .hamburger-btn:hover { background: var(--bg-light); }
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .sidebar-overlay.active { display: block; opacity: 1; }
+
+  @media (max-width: 768px) {
+    .mobile-topbar { display: flex; }
+    .sidebar-wrapper {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 200;
+    }
+    .sidebar-wrapper.mobile-open {
+      transform: translateX(0);
+    }
+    .main {
+      margin-left: 0 !important;
+      padding-top: 60px !important;
+    }
+  }
 </style>
 
-<aside class="sidebar-wrapper">
+<!-- Mobile Top Bar -->
+<div class="mobile-topbar" id="mobileTopbar">
+  <button class="hamburger-btn" onclick="toggleMobileSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;">
+      <i class="fas fa-boxes" style="color:#fff;font-size:12px;"></i>
+    </div>
+    <span style="font-weight:700;font-size:14px;color:#111827;">SIPANDU</span>
+  </div>
+  <div style="width:40px;"></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+<aside class="sidebar-wrapper" id="sidebarWrapper">
   <!-- Header -->
   <div class="sidebar-header">
     <div class="flex items-center gap-3">
@@ -635,15 +696,12 @@
 </aside>
 
 <script>
-
-// SIDEBAR MOBILE
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebarMobile');
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebarWrapper');
   const overlay = document.getElementById('sidebarOverlay');
-  sidebar.classList.toggle('active');
+  sidebar.classList.toggle('mobile-open');
   overlay.classList.toggle('active');
 }
-
 </script>
  
   {{-- {{-- <div class="sidebar-footer"> --}}

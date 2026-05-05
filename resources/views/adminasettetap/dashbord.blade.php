@@ -158,6 +158,11 @@
     @media (max-width: 768px) {
         .stats-grid { grid-template-columns: 1fr; }
         .stat-card:nth-child(n) { grid-column: span 1; }
+        .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
+        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .page-title { font-size: 22px; }
+        .table-container { overflow-x: auto; }
+        table { min-width: 600px; }
     }
 </style>
 </head>

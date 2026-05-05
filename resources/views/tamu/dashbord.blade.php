@@ -412,13 +412,13 @@
   }
 
   @media (max-width: 768px) {
-    .sidebar { width: 100%; }
-    .main { margin-left: 0; padding: 16px; }
+    .main { margin-left: 0; padding: 16px; padding-top: 60px; }
     .hero { flex-direction: column; text-align: center; }
     .hero-right { text-align: center; margin-top: 16px; }
     .stats-grid { grid-template-columns: 1fr; }
     .topbar { flex-direction: column; gap: 12px; }
     .topbar-right { width: 100%; justify-content: space-between; }
+    .quick-actions { grid-template-columns: 1fr; }
   }
 </style>
 </head>

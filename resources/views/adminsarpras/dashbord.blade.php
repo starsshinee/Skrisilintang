@@ -235,10 +235,13 @@
     .quick-stats { grid-template-columns: 1fr; }
   }
   @media (max-width: 768px) {
-    .main { margin-left: 0; padding: 0 16px 32px; }
+    .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
     .hero { flex-direction: column; text-align: center; gap: 20px; }
     .hero-right { text-align: center; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .card { overflow-x: auto; }
+    table { min-width: 500px; }
   }
 </style>
 </head>

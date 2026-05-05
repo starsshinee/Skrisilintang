@@ -334,6 +334,20 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+  @media (max-width: 1024px) {
+    .content-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
+    .form-grid-2 { grid-template-columns: 1fr; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .tabs-nav { flex-wrap: wrap; }
+    .tab-btn { font-size: 12px; padding: 8px 10px; }
+    .avatar-section { flex-direction: column; text-align: center; }
+    .section-body { padding: 16px; }
+    .section-header { padding: 16px; }
+  }
 </style>
 </head>
 <body>

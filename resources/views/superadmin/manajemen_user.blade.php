@@ -106,6 +106,19 @@
     /* LOG TABLE */
     .log-table th, .log-table td { padding: 10px 12px; font-size: 12px; }
     .log-device { font-size: 10px; color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+
+    @media (max-width: 768px) {
+      .main { margin-left: 0; }
+      .topbar { padding: 16px; padding-top: 70px; }
+      .content { padding: 16px; }
+      .search-box { width: 100%; }
+      .table-toolbar { flex-direction: column; }
+      .toolbar-actions { width: 100%; justify-content: stretch; }
+      .toolbar-actions .btn-log, .toolbar-actions .btn-add { flex: 1; justify-content: center; }
+      .table-card { overflow-x: auto; }
+      table { min-width: 600px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>

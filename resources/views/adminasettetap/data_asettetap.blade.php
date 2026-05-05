@@ -302,6 +302,11 @@
     .table-toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
     .form-row { grid-template-columns: 1fr; }
     .page-top { flex-direction: column; gap: 16px; align-items: stretch; }
+    .topbar { padding-top: 60px; }
+    .content { padding: 16px; }
+    .table-card { overflow-x: auto; }
+    table { min-width: 900px; }
+    .table-footer { flex-direction: column; gap: 12px; text-align: center; }
   }
 
   .status-badge {

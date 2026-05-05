@@ -73,8 +73,15 @@
         /* Modal */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-box { background: #fff; width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-box.large { width: 550px; } /* Tambahan untuk Modal Detail */
         .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
         .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; margin-bottom: 16px; font-family: inherit; }
+        
+        /* Tabel khusus di dalam Modal Detail */
+        .detail-table { width: 100%; border: none; }
+        .detail-table td { padding: 8px 0; border: none; font-size: 13px; vertical-align: top; }
+        .detail-table td.label-col { font-weight: 600; width: 140px; color: var(--text); }
+        .detail-table td.colon-col { width: 10px; }
     </style>
 </head>
 <body>
@@ -125,7 +132,7 @@
                             <div style="font-weight:700">{{ $item->nama_barang }}</div>
                             <div style="font-size:11px; color:var(--muted);">NUP: {{ $item->nup ?? '-' }} | Kategori: {{ $item->kategori ?? 'Umum' }}</div>
                         </td>
-                        <td>{{ $item->user->name }}</td>
+                        <td>{{ $item->user->name ?? '-' }}</td>
                         <td>
                             <span style="font-size: 12px;">{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') }}</span><br>
                             <small style="color:var(--muted)">s/d {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}</small>
@@ -140,8 +147,13 @@
                             <span class="status-badge {{ $statusClass }}">{{ str_replace('_', ' ', ucfirst($statusText)) }}</span>
                         </td>
                         <td>
-                            <!-- Tombol Detail & Cetak (Selalu Muncul) -->
-                            <button class="action-btn" onclick="showDetail({{ $item->id }})">
+                            <!-- Tombol Detail diubah dengan mengirimkan data via attribute -->
+                            <button class="action-btn" 
+                                    data-item="{{ json_encode($item) }}"
+                                    data-peminjam="{{ $item->user->name ?? '-' }}"
+                                    data-tglpinjam="{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') }}"
+                                    data-tglkembali="{{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}"
+                                    onclick="openDetailModal(this)">
                                 <i class="fas fa-eye"></i> Detail
                             </button>
 
@@ -177,6 +189,63 @@
         </div>
     </div>
 </main>
+
+<!-- Modal Detail (BARU) -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-box large">
+        <div class="modal-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Detail Peminjaman Barang</span>
+            <button onclick="closeModal('detailModal')" style="background:none; border:none; cursor:pointer; font-size:18px; color:var(--muted);"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="background: var(--bg); padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+            <table class="detail-table">
+                <tr>
+                    <td class="label-col">Peminjam</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detPeminjam" style="font-weight:600; color:var(--blue);"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Nama Barang</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detBarang"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Nomor Urut Pendaftaran</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detNup"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Kategori</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detKategori"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Jadwal Pinjam</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detTglPinjam"></span> <span style="color:var(--muted); margin:0 4px;">s/d</span> <span id="detTglKembali"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Keperluan / Kegiatan</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detKeperluan"></span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">Status Saat Ini</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detStatus"></span></td>
+                </tr>
+                <tr id="rowKeterangan" style="display: none;">
+                    <td class="label-col">Keterangan/Catatan</td>
+                    <td class="colon-col">:</td>
+                    <td><span id="detKeterangan" style="color: var(--danger); font-style: italic;"></span></td>
+                </tr>
+            </table>
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="action-btn" onclick="closeModal('detailModal')">Tutup</button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Review -->
 <div class="modal-overlay" id="reviewModal">
@@ -215,6 +284,58 @@
 </div>
 
 <script>
+    // Fungsi Baru untuk membuka Modal Detail
+    function openDetailModal(buttonElement) {
+        // Parsing data dari attributes tombol
+        const itemData = JSON.parse(buttonElement.getAttribute('data-item'));
+        const peminjam = buttonElement.getAttribute('data-peminjam');
+        const tglPinjam = buttonElement.getAttribute('data-tglpinjam');
+        const tglKembali = buttonElement.getAttribute('data-tglkembali');
+
+        // Isi data ke dalam modal
+        document.getElementById('detPeminjam').innerText = peminjam;
+        document.getElementById('detBarang').innerText = itemData.nama_barang || '-';
+        document.getElementById('detNup').innerText = itemData.nup || '-';
+        document.getElementById('detKategori').innerText = itemData.kategori || 'Umum';
+        document.getElementById('detTglPinjam').innerText = tglPinjam;
+        document.getElementById('detTglKembali').innerText = tglKembali;
+        
+        // Cek property keperluan atau kegiatan (sesuaikan dengan nama kolom DB Anda)
+        document.getElementById('detKeperluan').innerText = itemData.kegiatan || itemData.keperluan || '-';
+
+        // Penanganan Badge Status
+        let statusSpan = document.getElementById('detStatus');
+        let status = itemData.status;
+        let statusClass = 'status-pending';
+        let statusText = 'Pending';
+
+        if(status === 'disetujui' || status === 'disetujui_admin') {
+            statusClass = 'status-diterima';
+            statusText = 'Disetujui';
+        } else if (status === 'ditolak') {
+            statusClass = 'status-ditolak';
+            statusText = 'Ditolak';
+        } else if (status === 'diteruskan_kasubag') {
+            statusClass = 'status-pending';
+            statusText = 'Review Kasubag';
+        }
+
+        statusSpan.className = 'status-badge ' + statusClass;
+        statusSpan.innerText = statusText;
+
+        // Tampilkan Alasan/Keterangan jika ditolak
+        const rowKeterangan = document.getElementById('rowKeterangan');
+        if (status === 'ditolak' && itemData.komentar) {
+            document.getElementById('detKeterangan').innerText = itemData.komentar;
+            rowKeterangan.style.display = 'table-row';
+        } else {
+            rowKeterangan.style.display = 'none';
+        }
+
+        // Tampilkan modal
+        document.getElementById('detailModal').style.display = 'flex';
+    }
+
     function openReviewModal(id, action) {
         const form = document.getElementById('reviewForm');
         form.action = `/adminasettetap/peminjaman-barang/${id}/review`;

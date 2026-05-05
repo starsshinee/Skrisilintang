@@ -49,7 +49,9 @@
 
     @media (max-width: 768px) {
       .stats-grid { grid-template-columns: 1fr; }
-      .main { margin-left: 0; padding: 16px; }
+      .main { margin-left: 0; padding: 16px; padding-top: 60px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .page-title { font-size: 20px; }
     }
   </style>
 </head>
