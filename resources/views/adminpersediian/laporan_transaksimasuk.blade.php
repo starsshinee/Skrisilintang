@@ -65,7 +65,7 @@
     padding: 10px 18px; border-radius: 10px;
     background: linear-gradient(135deg, var(--green), #059669);
     color: white; font-size: 13.5px; font-weight: 700;
-    font-family: inherit; border: none; cursor: pointer;
+    font-family: inherit; border: none; cursor: pointer; text-decoration: none;
     box-shadow: 0 4px 14px rgba(16,185,129,.3);
     transition: all .2s;
   }
@@ -159,7 +159,14 @@
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
   }
-  table { width: 100%; border-collapse: collapse; }
+  
+  /* Membuat tabel responsif agar tidak terpotong */
+  .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+  }
+  
+  table { width: 100%; border-collapse: collapse; white-space: nowrap; }
   thead tr { background: #F0FDF4; }
   th {
     padding: 13px 20px;
@@ -215,7 +222,10 @@
       <span class="notif-dot"></span>
     </div>
     <span class="date-text">{{ now()->translatedFormat('l, d F Y') }}</span>
-    <button class="btn-keluar">Keluar</button>
+    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+      @csrf
+      <button type="submit" class="btn-keluar">Keluar</button>
+    </form>
   </div>
 </div>
 
@@ -224,7 +234,7 @@
   <div class="page-top">
   <div>
     <h1>Laporan Transaksi Masuk</h1>
-    <p> Berikut Daftar data transaksi Masuk</p>
+    <p>Berikut Daftar data transaksi Masuk Persediaan</p>
   </div>
   <a href="{{ route('adminpersediaan.laporan-transaksi-masuk.pdf', request()->query()) }}" 
      class="btn-unduh" target="_blank">
@@ -271,8 +281,8 @@
         </div>
         <span class="stat-label-sm">Total Transaksi</span>
       </div>
-      <div class="stat-value text-green">{{ $stats['total_transaksi'] ?? 0 }}</div>
-      <div class="stat-sub">Bulan ini</div>
+      <div class="stat-value text-green">{{ number_format($stats['total_transaksi'] ?? 0, 0, ',', '.') }}</div>
+      <div class="stat-sub">Data sesuai filter</div>
     </div>
     <div class="stat-card">
       <div class="stat-header">
@@ -282,7 +292,7 @@
         <span class="stat-label-sm">Total Nilai</span>
       </div>
       <div class="stat-value" style="font-size:24px">Rp {{ number_format($stats['total_nilai'] ?? 0, 0, ',', '.') }}</div>
-      <div class="stat-sub">Bulan ini</div>
+      <div class="stat-sub">Data sesuai filter</div>
     </div>
     <div class="stat-card">
       <div class="stat-header">
@@ -291,12 +301,12 @@
         </div>
         <span class="stat-label-sm">Total Item</span>
       </div>
-      <div class="stat-value">{{ $transaksi->sum('jumlah_masuk') ?? 0 }}</div>
+      <div class="stat-value">{{ number_format($transaksi->sum('jumlah_masuk') ?? 0, 0, ',', '.') }}</div>
       <div class="stat-sub">Unit</div>
     </div>
   </div>
 
-  {{-- CHART (Data bulan ini) --}}
+  {{-- CHART (Data 6 bulan terakhir) --}}
   <div class="chart-card">
     <div class="chart-title">Tren Transaksi Masuk (6 Bulan Terakhir)</div>
     <div class="chart-area">
@@ -324,56 +334,63 @@
   </div>
 
   {{-- TABLE --}}
-  {{-- TABLE --}}
     <div class="table-card">
       <div class="table-toolbar">
         <span style="font-size:13px;color:var(--muted);font-weight:600;">
           @if($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            {{ $transaksi->firstItem() }}–{{ $transaksi->lastItem() }} dari {{ $transaksi->total() }} data
+            {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data
           @else
             {{ $transaksi->count() }} data
           @endif
         </span>
       </div>
       
-      <table>
-        <thead>
-          <tr>
-            <th>Tanggal</th>
-            <th>Kode Kategori</th>
-            <th>Kode Barang</th>
-            <th>Nama Barang</th>
-            <th>Jumlah</th>
-            <th>Harga Satuan</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($transaksi as $item)
-          <tr>
-            <td><strong>{{ $item->tanggal_input_format ?? $item->tanggal_input->format('d/m/Y') }}</strong></td>
-            <td>{{ $item->kode_kategori }}</td>
-            <td class="font-mono"><strong>{{ $item->kode_barang }}</strong></td>
-            <td>{{ Str::limit($item->nama_barang, 35) }}</td>
-            <td class="text-green"><strong>{{ number_format($item->jumlah_masuk) }}</strong></td>
-            <td class="font-mono">{{ isset($item->harga_satuan_format) ? $item->harga_satuan_format : 'Rp ' . number_format($item->harga_satuan ?? 0) }}</td>
-            <td class="font-mono text-green"><strong>{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total ?? 0) }}</strong></td>
-          </tr>
-          @empty
-          <tr>
-            <td colspan="7" style="text-align:center; padding:60px; color:var(--muted);">
-              Belum ada data transaksi masuk
-            </td>
-          </tr>
-          @endforelse
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th width="5%">No</th>
+              <th width="12%">Tanggal Input</th>
+              <th width="12%">Kode Kategori</th>
+              <th width="15%">Kategori</th>
+              <th width="12%">Kode Barang</th>
+              <th width="20%">Nama Barang</th>
+              <th width="8%">Jumlah Masuk</th>
+              <th width="10%">Harga Satuan</th>
+              <th width="10%">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @forelse($transaksi as $index => $item)
+            <tr>
+              <td>
+                {{ ($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator) ? ($transaksi->currentPage() - 1) * $transaksi->perPage() + $loop->iteration : $loop->iteration }}
+              </td>
+              <td><strong>{{ $item->tanggal_input_format ?? \Carbon\Carbon::parse($item->tanggal_input)->format('d/m/Y') }}</strong></td>
+              <td>{{ $item->kode_kategori ?? '-' }}</td>
+              <td>{{ $item->kategori ?? '-' }}</td>
+              <td class="font-mono"><strong>{{ $item->kode_barang ?? '-' }}</strong></td>
+              <td>{{ Str::limit($item->nama_barang ?? '-', 35) }}</td>
+              <td class="text-green"><strong>{{ number_format($item->jumlah_masuk ?? 0, 0, ',', '.') }}</strong></td>
+              <td class="font-mono">{{ isset($item->harga_satuan_format) ? $item->harga_satuan_format : 'Rp ' . number_format($item->harga_satuan ?? 0, 0, ',', '.') }}</td>
+              <td class="font-mono text-green"><strong>{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total ?? 0, 0, ',', '.') }}</strong></td>
+            </tr>
+            @empty
+            <tr>
+              <td colspan="9" style="text-align:center; padding:60px; color:var(--muted);">
+                Belum ada data transaksi masuk pada periode/filter ini.
+              </td>
+            </tr>
+            @endforelse
+          </tbody>
+        </table>
+      </div>
 
       <!-- ✅ FOOTER AMAN WEB & PDF -->
       <div class="table-footer">
         <span style="font-size:13px;color:var(--muted);font-weight:600;">
           @if($transaksi instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            Menampilkan {{ $transaksi->firstItem() }}–{{ $transaksi->lastItem() }} dari {{ $transaksi->total() }} data
+            Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data
           @else
             {{ $transaksi->count() }} data lengkap
           @endif

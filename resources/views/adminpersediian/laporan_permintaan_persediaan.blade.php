@@ -115,10 +115,10 @@
         <h1>Laporan Permintaan Persediaan</h1>
         <p>Analisis Data Persediaan dan Peminjaman</p>
       </div>
-      <button class="btn-unduh" onclick="window.print()">
+      <a href="{{ route('adminpersediaan.laporan.download', request()->query()) }}" class="btn-unduh" style="text-decoration: none;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Cetak Laporan
-      </button>
+        Unduh Laporan (PDF)
+      </a>
     </div>
 
     <!-- ROW 1: STATISTIK UMUM -->

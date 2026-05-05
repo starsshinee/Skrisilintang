@@ -144,7 +144,7 @@ tr:hover { background: #f8faff; }
 .action-btn.lihat:hover { background: #faf5ff; border-color: var(--purple); color: var(--purple); }
 .action-btn i { font-size: 14px; }
 
-/* MODAL CSS (TAMBAHAN BARU) */
+/* MODAL CSS */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -256,7 +256,10 @@ tr:hover { background: #f8faff; }
                   </code>
                 </td>
                 <td>
-                  <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">{{ $item->nama_lengkap }}</div>
+                  {{-- PERBAIKAN NAMA PEMOHON DI SINI --}}
+                  <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">
+                    {{ $item->user->name ?? $item->user->nama_lengkap ?? $item->nama_lengkap ?? 'Tanpa Nama' }}
+                  </div>
                   <div style="font-size: 12.5px; color: var(--text-secondary);">
                     <i class="fas fa-box" style="margin-right: 4px; font-size: 10px;"></i>
                     {{ $item->persediaan->nama_barang ?? $item->nama_barang }}
@@ -276,7 +279,6 @@ tr:hover { background: #f8faff; }
                   </span>
                 </td>
                 <td>
-                  {{-- Logika Manual Status Badge Agar Tidak Error --}}
                   @php 
                     $badgeClass = 'bg-pending';
                     $iconClass = 'fa-clock';
@@ -299,16 +301,13 @@ tr:hover { background: #f8faff; }
                   </span>
                 </td>
                 
-                {{-- KOLOM AKSI DENGAN FLEXBOX --}}
                 <td>
                   <div class="action-group">
-                    {{-- Tombol Detail (Mata) --}}
                     <button class="action-btn detail" onclick="showDetail({{ $item->id }})" title="Lihat Detail Lengkap">
                       <i class="fas fa-eye"></i>
                     </button>
 
                     @if($item->status === 'pending')
-                      {{-- Form Teruskan (Panah Kanan) --}}
                       <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;">
                         @csrf
                         <input type="hidden" name="action" value="teruskan">
@@ -317,7 +316,6 @@ tr:hover { background: #f8faff; }
                         </button>
                       </form>
                       
-                      {{-- Form Tolak (Silang Merah) --}}
                       <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;" onclick="return confirm('Yakin menolak permintaan ini?')">
                         @csrf
                         <input type="hidden" name="action" value="tolak">
@@ -327,24 +325,19 @@ tr:hover { background: #f8faff; }
                       </form>
 
                     @elseif(in_array($item->status, ['dalam_review', 'disetujui_kasubag', 'disetujui']))
-                      
-                      {{-- 1. Tombol Generate Surat BA (Ikon Dokumen + TTD) --}}
                       <a href="{{ route('adminpersediaan.surat-permintaan', $item->id) }}" class="action-btn generate" title="Generate Berita Acara PDF" target="_blank">
                         <i class="fas fa-file-signature"></i>
                       </a>
 
-                      {{-- 2. Tombol Upload Surat Final BAST (Ikon Upload Biru/Hijau) --}}
                       <button type="button" onclick="openUploadModal({{ $item->id }})" class="action-btn upload" title="Upload Surat BAST Final">
                         <i class="fas fa-upload"></i>
                       </button>
 
-                      {{-- 3. Tombol Lihat Dokumen Final (Ikon Dokumen Centang Ungu) - Muncul jika sudah diupload --}}
                       @if($item->surat_bast_path)
                       <a href="{{ asset('storage/' . $item->surat_bast_path) }}" class="action-btn lihat" title="Lihat Dokumen Final (BAST)" target="_blank">
                         <i class="fas fa-file-circle-check"></i>
                       </a>
                       @endif
-
                     @endif
                   </div>
                 </td>
@@ -428,7 +421,7 @@ tr:hover { background: #f8faff; }
 // Fungsi Buka/Tutup Modal
 function openModal(id) {
   document.getElementById(id).classList.add('show');
-  document.body.style.overflow = 'hidden'; // Mencegah scroll di background
+  document.body.style.overflow = 'hidden'; 
 }
 
 function closeModal(id) {
@@ -436,7 +429,6 @@ function closeModal(id) {
   document.body.style.overflow = '';
 }
 
-// Tutup modal jika user klik area gelap (overlay)
 document.getElementById('uploadModal').addEventListener('click', function(e) {
   if (e.target === this) closeModal('uploadModal');
 });
@@ -448,7 +440,6 @@ function showDetail(id) {
 
 function openUploadModal(id) {
     const form = document.getElementById('uploadForm');
-    // Ganti route url form ke ID yang diklik
     form.action = `/adminpersediaan/permintaan/${id}/upload-bast`; 
     openModal('uploadModal');
 }

@@ -280,7 +280,7 @@ class PegawaiController extends Controller
     public function storePermintaanPersediaan(Request $request)
     {
         $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
+
             'kode_barang' => 'required|string|max:50', 
             'jumlah_diminta' => 'required|integer|min:1',
             'tanggal_permintaan' => 'required|date',
@@ -298,7 +298,6 @@ class PegawaiController extends Controller
         }
 
             PermintaanPersediaan::create([
-            'nama_lengkap' => $request->nama_lengkap,
             'kode_barang' => $request->kode_barang,           // ✅ GUNAKAN INI
             'nama_barang' => $persediaan->nama_barang,
             'persediaan_id' => $persediaan->id,               // ✅ AMBIL ID
@@ -347,7 +346,6 @@ class PegawaiController extends Controller
                 'data' => [
                     'id' => $permintaan->id,
                     'kode' => 'REQ-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT),
-                    'nama_lengkap' => $permintaan->nama_lengkap,
                     'nama_barang' => $permintaan->nama_barang ?? '-',
                     'persediaan' => $permintaan->persediaan ? [
                         'nama_barang' => $permintaan->persediaan->nama_barang,
@@ -400,6 +398,21 @@ class PegawaiController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Permintaan persediaan berhasil dibatalkan!'
+        ]);
+    }
+
+    public function show($id)
+    {
+        // Pastikan menambahkan ->with('user')
+        $permintaan = PermintaanPersediaan::with(['persediaan', 'user'])->find($id);
+
+        if (!$permintaan) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $permintaan
         ]);
     }
 

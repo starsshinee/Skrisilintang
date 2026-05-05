@@ -386,15 +386,6 @@
       <form method="POST" action="{{ route('pegawai.permintaan-persediaan.store') }}" id="permintaanForm">
         @csrf
         <div class="form-body">
-          <div class="form-group">
-            <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap <span class="req">*</span></div>
-            <input type="text" class="form-input @error('nama_lengkap') border-red-500 @enderror" 
-                   name="nama_lengkap" value="{{ old('nama_lengkap') }}" 
-                   placeholder="Masukkan nama lengkap Anda" required>
-            @error('nama_lengkap')
-              <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
-            @enderror
-          </div>
 
           <div class="form-group">
             <div class="form-label"><i class="fas fa-box"></i> Pilih Barang <span class="req">*</span></div>
@@ -1141,8 +1132,13 @@ document.addEventListener('DOMContentLoaded', () => {
     statusBadge.style.borderColor = status.color + '20';
     
     // Info peminta
-    document.getElementById('detailNama').textContent = data.nama_lengkap || '-';
-    document.getElementById('detailNipNik').textContent = data.nip || data.nik || '-';
+    // Info peminta (Diambil dari tabel users)
+    // Menggunakan Optional Chaining (?.) untuk mencegah error jika relasi user kosong
+    const userName = data.user?.name || data.user?.nama_lengkap || data.nama_lengkap || '-';
+    const userNik = data.user?.nip || data.user?.nik || data.nip || data.nik || '-';
+
+    document.getElementById('detailNama').textContent = userName;
+    document.getElementById('detailNipNik').textContent = userNik;
     
     // Info persediaan
     document.getElementById('detailFasilitas').textContent = data.persediaan?.nama_barang || data.nama_barang || '-';

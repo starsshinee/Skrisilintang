@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('permintaan_persediaan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_lengkap'); //ini nnti di hapus
             $table->string('kode_barang');
             $table->string('nama_barang');
             $table->foreignId('persediaan_id')->constrained('persediaan')->onDelete('cascade');

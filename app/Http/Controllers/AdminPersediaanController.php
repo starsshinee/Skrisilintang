@@ -802,42 +802,70 @@ class AdminPersediaanController extends Controller
     /**
      * Download Laporan Transaksi Keluar PDF
      */
-    public function downloadLaporanTransaksiKeluar(Request $request)
+    public function downloadLaporanTransaksiKeluarPdf(Request $request)
     {
         $query = TransaksiKeluarPersediaan::query();
 
-        // Filter sama persis
+        // Terapkan filter yang sama dengan web
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('kode_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
-                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
-                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('kode_barang', 'like', "%{$search}%")
+                  ->orWhere('nama_barang', 'like', "%{$search}%")
+                  ->orWhere('nomor_transaksi', 'like', "%{$search}%");
             });
         }
-
         if ($request->filled('tanggal_input')) {
             $query->whereDate('tanggal_input', $request->tanggal_input);
         }
-
         if ($request->filled('kode_kategori')) {
             $query->where('kode_kategori', $request->kode_kategori);
         }
 
-        $transaksi = $query->latest()->get();
-        
-        $stats = [
-            'total_transaksi' => $transaksi->count(),
-            'total_nilai' => $transaksi->sum('total'),
-            'total_item' => $transaksi->sum('jumlah_keluar'),
-            'periode' => $request->tanggal_input ?? 'Semua Periode'
-        ];
+        // Ambil semua data tanpa pagination
+        $transaksi = $query->orderBy('tanggal_input', 'desc')->get();
 
-        $pdf = PDF::loadView('adminpersediian.laporan_pdf_transaksi_keluar', compact('transaksi', 'stats'));
-        
-        $filename = 'Laporan_Transaksi_Keluar_' . now()->format('d-m-Y_His') . '.pdf';
-        
-        return $pdf->download($filename);
+        // Generate PDF
+        $pdf = Pdf::loadView('adminpersediian.pdf_laporan_transaksi_keluar', compact('transaksi'))
+                  ->setPaper('A4', 'landscape');
+
+        return $pdf->download('Laporan_Transaksi_Keluar_' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Download Laporan Permintaan Persediaan (PDF)
+     */
+    public function downloadLaporanPermintaan(Request $request)
+    {
+        // Gunakan eager loading untuk efisiensi query
+        $query = \App\Models\PermintaanPersediaan::with(['user', 'persediaan']);
+
+        // Terapkan filter yang sama dengan tampilan web jika diperlukan
+        if ($request->filled('status') && $request->status !== 'semua') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
+                  ->orWhereHas('persediaan', function($p) use ($request) {
+                      $p->where('nama_barang', 'like', '%'.$request->search.'%');
+                  });
+            });
+        }
+
+        // Ambil semua data sesuai filter tanpa pagination
+        $permintaan = $query->orderBy('tanggal_permintaan', 'desc')->get();
+
+        // Hitung total item yang disetujui untuk laporan
+        $totalItemDisetujui = $permintaan->whereIn('status', ['disetujui', 'disetujui_kasubag'])->sum('jumlah_diminta');
+        $totalTransaksiDisetujui = $permintaan->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('adminpersediian.pdf_laporan_permintaan', compact('permintaan', 'totalItemDisetujui', 'totalTransaksiDisetujui'))
+                  ->setPaper('A4', 'landscape');
+
+        // Download file
+        return $pdf->download('Laporan_Permintaan_Persediaan_' . now()->format('Y-m-d') . '.pdf');
     }
 }

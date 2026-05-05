@@ -228,10 +228,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');
         Route::get('/laporan-transaksi-masuk', [AdminPersediaanController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
         Route::get('/adminpersediaan/laporan-transaksi-masuk/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiMasuk'])->name('laporan-transaksi-masuk.pdf');
-        Route::get('adminpersediaan/laporan-transaksi-keluar/download', [App\Http\Controllers\AdminPersediaanController::class, 'downloadLaporanTransaksiKeluar'])->name('laporan-transaksi-keluar.download');
-
+        Route::get('/laporan-transaksi-keluar/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiKeluarPdf'])->name('laporan-transaksi-keluar.pdf');
+        Route::prefix('adminpersediaan')->middleware(['auth', 'role:adminpersediaan'])->group(function () {
+        Route::get('/laporan-permintaan/download', [AdminPersediaanController::class, 'downloadLaporanPermintaan'])->name('laporan.download');
         Route::get('/laporan-transaksi-keluar', [AdminPersediaanController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
-        
+        });
 });
 
     // ──────────────────────────────────────────────────────────────────
