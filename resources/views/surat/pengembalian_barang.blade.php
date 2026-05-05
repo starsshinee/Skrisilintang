@@ -87,7 +87,7 @@
         }
     </style>
 </head>
-<body>
+<>
 
     @php
         // LOGIKA PENANGGALAN OTOMATIS (FORMAT ANGKA)
@@ -99,7 +99,7 @@
 
         // FORMAT NOMOR SURAT
         $nomor_urut = str_pad($pengembalian->id, 4, '0', STR_PAD_LEFT);
-        $nomor_surat = "S{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}";
+        $nomor_surat = "{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}";
     @endphp
 
     {{-- KOP SURAT --}}
@@ -135,6 +135,13 @@
             <td class="td-titikdua">:</td>
             <td>{{ $pengembalian->user->jabatan ?? '-' }}</td>
         </tr>
+    </table>
+
+        <div class="text-justify">
+        Bermaksud mengembalikan Barang Milik Negara (BMN) yang sebelumnya saya pinjam berdasarkan Surat Izin Peminjaman nomor {{ $nomor_surat = "{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}"  }} dengan rincian sebagai berikut:
+        </div>
+       
+    <table class="data-table">
         <tr>
             <td class="td-label">Nama Barang</td>
             <td class="td-titikdua">:</td>
@@ -150,6 +157,11 @@
             <td class="td-titikdua">:</td>
             <td>{{ $pengembalian->jumlah_dikembalikan ?? '0' }} Unit</td>
         </tr>
+         <tr>
+            <td class="td-label">Kondisi Saat Ini</td>
+            <td class="td-titikdua">:</td>
+            <td>{{ ucwords(str_replace('-', ' ', $pengembalian->kondisi_barang)) }}</td>
+        </tr>
         <tr>
             <td class="td-label">Alasan Pengembalian</td>
             <td class="td-titikdua">:</td>
@@ -158,9 +170,9 @@
     </table>
 
     {{-- PARAGRAF PENUTUP --}}
-    <div class="text-justify">
-        Bahwa barang tersebut telah Selesai di Pergunakan dan di kembalikan sebagaimana Terlampir bahwa barang tersebut masih dalam keadaan baik dan lengkap.
-    </div>
+    {{-- <div class="text-justify">
+        Bahwa barang tersebut telah selesai di pergunakan dan di kembalikan sebagaimana Terlampir bahwa barang tersebut masih dalam keadaan baik dan lengkap.
+    </div> --}}
     <div class="text-justify" style="text-indent: 40px; margin-top: 10px;">
         Demikian berita acara ini ditandatangani dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
     </div>

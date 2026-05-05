@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf; // Tambahkan ini di atas
 use Illuminate\Support\Facades\Storage;
 use App\Models\{
     AdminSarpras,
@@ -378,6 +379,37 @@ class AdminSarprasController extends Controller
         ]);
     }catch (\Exception $e) {
             \Log::error('Reject Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Action: Update Peminjaman (Edit Modal)
+    public function updatePeminjaman(Request $request, $id)
+    {
+        try {
+            if (!auth()->check()) {
+                return response()->json(['success' => false, 'message' => 'Belum login'], 401);
+            }
+
+            $peminjaman = PeminjamanGedung::findOrFail($id);
+
+            $validated = $request->validate([
+                'total_pembayaran' => 'required|numeric|min:0',
+                'status_pembayaran' => 'required|in:belum_lunas,lunas',
+                'status' => 'required|in:pending,dalam_review,disetujui_kasubag,disetujui,ditolak',
+            ]);
+
+            $peminjaman->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data peminjaman berhasil diperbarui!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Update Peminjaman Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Server error: ' . $e->getMessage()
@@ -778,18 +810,73 @@ class AdminSarprasController extends Controller
     }
 
     /**
-     * Export data kerusakan ke Excel/CSV (opsional)
+     * Download Laporan Peminjaman Gedung (PDF)
      */
-    public function exportKerusakan(Request $request)
+    public function downloadLaporanPeminjaman(Request $request)
     {
-        $kerusakans = Kerusakan::filterKondisi($request->kondisi)
-            ->search($request->search)
-            ->get();
+        $query = PeminjamanGedung::with(['gedung']);
 
-        // Logic export menggunakan Laravel Excel atau Maatwebsite
-        return response()->json([
-            'message' => 'Export berhasil',
-            'data' => $kerusakans
-        ]);
+        // Terapkan filter yang sama dengan tampilan web
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
+                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
+                ->orWhere('tujuan_penggunaan', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Ambil semua data tanpa pagination untuk di-print
+        $peminjaman = $query->latest('tanggal_pinjam')->get();
+
+        // Hitung total pendapatan dari laporan yang diunduh
+        $totalPendapatan = $peminjaman->whereIn('status', ['disetujui', 'disetujui_kasubag', 'dipinjam'])->sum('total_pembayaran');
+
+        // Buat PDF
+        $pdf = Pdf::loadView('adminsarpras.pdf_laporan_peminjaman', compact('peminjaman', 'totalPendapatan'))
+                ->setPaper('A4', 'landscape');
+
+        // Kembalikan file untuk di-download
+        return $pdf->download('Laporan_Peminjaman_Gedung_' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Download Laporan Kerusakan (PDF)
+     */
+    public function downloadLaporanKerusakan(Request $request)
+    {
+        $query = Kerusakan::query();
+
+        // Terapkan filter yang sama dengan tampilan web
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $query->whereYear('tanggal_input', $request->tahun)
+                  ->whereMonth('tanggal_input', $request->bulan);
+        }
+
+        if ($request->filled('kondisi')) {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        // Search (jika ada input search)
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('kode_barang', 'like', '%'.$request->search.'%')
+                  ->orWhere('lokasi', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        // Ambil semua data tanpa pagination
+        $kerusakans = $query->orderBy('tanggal_input', 'desc')->get();
+
+        // Buat PDF
+        $pdf = Pdf::loadView('adminsarpras.pdf_laporan_kerusakan', compact('kerusakans'))
+                ->setPaper('A4', 'landscape');
+
+        // Kembalikan file untuk di-download
+        return $pdf->download('Laporan_Kerusakan_Sarpras_' . now()->format('Y-m-d') . '.pdf');
     }
 }

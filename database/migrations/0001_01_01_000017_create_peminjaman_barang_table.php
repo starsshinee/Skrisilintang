@@ -42,6 +42,7 @@ return new class extends Migration
                 'pending', 'dalam_review', 'disetujui_admin', 
                 'diteruskan_kasubag', 'disetujui', 'ditolak'
             ])->default('pending');
+            $table->string('surat_bast_path')->nullable();
             
             $table->timestamps();
         });

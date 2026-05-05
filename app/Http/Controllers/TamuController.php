@@ -243,9 +243,9 @@ class TamuController extends Controller
         return view('tamu.info_fasilitas', compact('gedungs', 'totalGedung', 'tersedia'));
     }
 
-    public function pengembalianGedung()
+    public function surveiLayanan()
     {
         // Logika untuk pengembalian gedung
-        return view('tamu.pengembalian_gedung');
+        return view('tamu.survei_layanan');
     }
 }

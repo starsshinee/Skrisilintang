@@ -99,7 +99,7 @@
 
         // FORMAT NOMOR SURAT
         $nomor_urut = str_pad($pengembalian->id, 4, '0', STR_PAD_LEFT);
-        $nomor_surat = "S{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}";
+        $nomor_surat = "{$nomor_urut}/BA.KB/693228/2026{$tahun_angka}";
     @endphp
 
     {{-- KOP SURAT --}}
@@ -135,6 +135,13 @@
             <td class="td-titikdua">:</td>
             <td>{{ $pengembalian->user->jabatan ?? '-' }}</td>
         </tr>
+    </table>
+
+        <div class="text-justify">
+        Bermaksud mengembalikan Barang Milik Negara (BMN) yang sebelumnya saya pinjam berdasarkan Surat Izin Peminjaman nomor {{ $nomor_surat = "{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}"  }} dengan rincian sebagai berikut:
+        </div>
+
+    <table class="data-table">
         <tr>
             <td class="td-label">Kendaraan Dinas</td>
             <td class="td-titikdua">:</td>
@@ -151,16 +158,16 @@
             <td>{{ ucwords(str_replace('-', ' ', $pengembalian->kondisi_kendaraan)) }}</td>
         </tr>
         <tr>
-            <td class="td-label">Catatan (BBM/KM/Dll)</td>
+            <td class="td-label"> Alasan Pengembalian </td>
             <td class="td-titikdua">:</td>
             <td>{{ $pengembalian->catatan ?? 'Normal, selesai digunakan' }}</td>
         </tr>
     </table>
 
     {{-- PARAGRAF PENUTUP --}}
-    <div class="text-justify">
+    {{-- <div class="text-justify">
         Bahwa kendaraan dinas tersebut telah selesai dipergunakan dan dikembalikan sebagaimana terlampir bahwa kendaraan tersebut masih dalam keadaan sesuai dengan kondisi dan catatan di atas.
-    </div>
+    </div> --}}
     <div class="text-justify" style="text-indent: 40px; margin-top: 10px;">
         Demikian berita acara ini ditandatangani dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
     </div>

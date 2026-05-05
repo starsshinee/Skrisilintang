@@ -35,7 +35,7 @@ return new class extends Migration
             
             // Status pembayaran & cara pembayaran (BARU)
             $table->enum('status_pembayaran', ['belum_lunas', 'lunas'])->default('belum_lunas');
-            $table->enum('cara_pembayaran', ['tunai', 'transfer'])->default('tunai');
+            $table->enum('cara_pembayaran', ['e-billing'])->default('e-billing');
             
             // Lainnya
             $table->text('tujuan_penggunaan');

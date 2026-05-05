@@ -262,10 +262,12 @@
         <h1>Laporan Kerusakan</h1>
         <p>Analisis lengkap kondisi sarana prasarana gedung</p>
       </div>
-      <button class="btn-unduh" onclick="window.print()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Unduh Laporan
-      </button>
+      <a href="{{ route('adminsarpras.laporan.kerusakan.download', request()->query()) }}" class="btn-unduh" style="text-decoration: none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        Unduh Laporan (PDF)
+      </a>
     </div>
 
     {{-- FLASH MESSAGES --}}

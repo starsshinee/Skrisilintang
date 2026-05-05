@@ -1021,11 +1021,11 @@ const FACILITIES = [
   { 
     name: 'Kantor BPMP Gorontalo', 
     category: 'kantor', 
-    location: 'Gedung Utama, Wongkaditi Timur', 
+    location: 'Gedung Utama', 
     capacity: '100 Staf', luas: '500 m²', 
     operasional: 'Senin–Jumat 07.30–16.00 WITA', kontak: '(0435) 821-555', 
     description: 'Pusat administrasi dan layanan penjaminan mutu pendidikan Provinsi Gorontalo yang melayani koordinasi antar instansi pendidikan.',
-    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Area Kerja Open Space', 'Ruang Tamu VVIP', 'Koneksi Internet High-Speed', 'CCTV & Keamanan 24 Jam'], 
+    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Ruang Tamu VIP', 'Koneksi Internet ', 'CCTV & Keamanan 24 Jam'], 
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
@@ -1035,11 +1035,11 @@ const FACILITIES = [
   { 
     name: 'Ruang Pertemuan BPMP Gorontalo', 
     category: 'ruang', 
-    location: 'Gedung Aula Utama, Wongkaditi Timur', 
+    location: 'Gedung Aula Utama', 
     capacity: '200 - 300 Orang', luas: '420 m²', 
     operasional: 'Senin–Minggu (Sesuai Reservasi)', kontak: '(0435) 821-555 ext. 101', 
     description: 'Aula serbaguna yang luas, ideal untuk seminar, lokakarya, dan pertemuan skala besar dengan fasilitas audio visual lengkap.',
-    features: ['AC Sentral', 'Sound System Profesional', 'Proyektor + Layar 5m', 'Podium & Panggung', 'Kursi Ergonomis 200 unit', 'Wi-Fi 100 Mbps', 'Toilet Bersih'], 
+    features: ['AC', 'Standar Sound System ', 'vidio trond', 'Meja Kursi', 'Toilet Bersih'], 
     rules: ['Pemesanan minimal H-7', 'Dilarang membawa makanan berbau tajam ke dalam ruangan', 'Penyewa bertanggung jawab atas kebersihan', 'Jam operasional sesuai izin penggunaan'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_aula.jpeg') }}",
@@ -1052,11 +1052,11 @@ const FACILITIES = [
   { 
     name: 'Ruang Kelas BPMP Gorontalo', 
     category: 'kelas', 
-    location: 'Gedung Diklat, Wongkaditi Timur', 
+    location: 'BPMP Gorontalo', 
     capacity: '40 Orang/Kelas', luas: '64 m²', 
     operasional: 'Senin–Sabtu 07.30–17.00 WITA', kontak: '(0435) 821-555', 
     description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
-    features: ['AC Split', 'Smart TV / Proyektor', 'Papan Tulis Whiteboard', 'Stop', 'Pengaturan Kursi Fleksibel', 'Akses Wi-Fi'], 
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
     rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Kapasitas maksimal tidak boleh dilampaui', 'Menjaga ketenangan'], 
     images: [
       "{{ asset('storage/fasilitas/tinelo_1.jpeg') }}",
@@ -1068,11 +1068,11 @@ const FACILITIES = [
   { 
     name: 'Mess BPMP Gorontalo', 
     category: 'penginapan', 
-    location: 'Area Mess Bandayo, Wongkaditi Timur', 
+    location: 'Area Mess Bandayo', 
     capacity: '2-3 Orang/Kamar', luas: '24 m²', 
     operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: 'Customer Service Mess', 
     description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
-    features: ['Pendingin Ruangan (AC)', 'TV Satelit', 'Kamar Mandi Dalam', 'Water Heater', 'Lemari Pakaian', 'Layanan Kebersihan Harian'], 
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
       "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
@@ -1089,7 +1089,7 @@ const FACILITIES = [
     capacity: '4 Orang/Kamar', luas: '32 m²', 
     operasional: '24 Jam', kontak: 'Pengelola Asrama', 
     description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
-    features: ['Tempat Tidur Tingkat/Single', 'Lemari Individu', 'Kamar Mandi Dalam', 'Meja Belajar Kecil', 'Area Jemuran', 'Ruang Berkumpul Bersama'], 
+    features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
     rules: ['Wajib menjaga kebersihan area bersama', 'Batas jam bertamu maksimal pukul 21.00 WITA', 'Dilarang memasak di dalam kamar asrama', 'Mengunci pintu saat bepergian'], 
     images: [
        "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
@@ -1105,7 +1105,7 @@ const FACILITIES = [
     capacity: '150 Orang', luas: '200 m²', 
     operasional: '06.00–20.00 WITA', kontak: 'Unit Rumah Tangga', 
     description: 'Area makan bersih dan higienis yang melayani konsumsi peserta diklat maupun tamu umum dengan sistem prasmanan.',
-    features: ['Meja & Kursi Makan Panjang', 'Area Cuci Tangan (Wastafel)', 'Dispenser Air Minum', 'Ventilasi Udara Bagus', 'Gazebo Outdoor Olamita', 'Buffet Station'], 
+    features: ['Meja & Kursi Makan ', 'Area Cuci Tangan (Wastafel)', 'Gazebo Outdoor Olamita', 'Toilet', 'Ac'], 
     rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
     images: [
       "{{ asset('storage/fasilitas/olamita1_depan.jpeg') }}",
@@ -1121,7 +1121,7 @@ const FACILITIES = [
     capacity: 'Area Terbuka', luas: '800 m²', 
     operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
     description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
-    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Basket', 'Peralatan Olahraga Dasar', 'Area Terbuka Hijau', 'Penerangan Lapangan'], 
+    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Takraw'], 
     rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
     images: [
       "{{ asset('storage/fasilitas/lapangan_tenis.jpeg') }}",
@@ -1136,7 +1136,7 @@ const FACILITIES = [
     capacity: '50 Orang', luas: '100 m²', 
     operasional: '24 Jam (Waktu Shalat)', kontak: '-', 
     description: 'Sarana ibadah yang bersih dan tenang bagi pegawai maupun tamu untuk melaksanakan shalat lima waktu.',
-    features: ['Sajadah & Mukena Bersih', 'Tempat Wudhu Terpisah (Pria/Wanita)', 'Pendingin Ruangan (AC)', 'Sound System Adzan', 'Al-Quran & Buku Dzikir'], 
+    features: ['Mukena Bersih', 'Tempat Wudhu Terpisah (Pria/Wanita)', 'Sound System Adzan', 'Toilet'], 
     rules: ['Menjaga ketenangan dan kesucian tempat', 'Meletakkan alas kaki di rak yang tersedia', 'Matikan lampu dan AC setelah digunakan (jika tidak ada orang)', 'Dilarang tidur di dalam mushollah'], 
     images: [
       "{{ asset('storage/fasilitas/musolla_depan.jpg') }}"
@@ -1149,7 +1149,7 @@ const FACILITIES = [
     capacity: '5 Pasien', luas: '40 m²', 
     operasional: 'Senin–Jumat 08.00–15.00 WITA', kontak: 'Unit Kesehatan', 
     description: 'Fasilitas kesehatan dasar untuk penanganan pertama bagi pegawai atau peserta diklat yang mengalami gangguan kesehatan ringan.',
-    features: ['Tempat Tidur Pasien', 'Peralatan Medis Dasar', 'Kotak P3K Lengkap', 'Tenaga Medis/Perawat (Jam Kerja)', 'Obat-obatan Standar'], 
+    features: [ 'Kotak P3K Lengkap', 'Obat-obatan Standar', 'kursi roda', 'tempat tidur pasien' ], 
     rules: ['Hanya untuk penanganan medis darurat/ringan', 'Wajib mengisi buku kunjungan pasien', 'Pasien dengan kondisi berat akan dirujuk ke RS terdekat'], 
     images: [
       "{{ asset('storage/fasilitas/klinik.jpeg') }}"
@@ -1162,7 +1162,7 @@ const FACILITIES = [
     capacity: '500 Orang', luas: '1200 m²', 
     operasional: 'Senin–Jumat 07.00–17.00 WITA', kontak: 'Satpam', 
     description: 'Lapangan terbuka yang luas untuk pelaksanaan upacara bendera, apel pagi, serta kegiatan senam bersama setiap hari Jumat.',
-    features: ['Tiang Bendera', 'Lantai Paving Blok Rata', 'Sound System Luar Ruang', 'Podium Upacara', 'Akses Langsung ke Parkiran'], 
+    features: ['Tiang Bendera', 'Lantai Paving Blok Rata', 'Sound System Luar Ruang', 'podium upacara'], 
     rules: ['Dilarang memarkir kendaraan di tengah lapangan saat jam upacara', 'Menjaga kebersihan area lapangan', 'Izin khusus untuk kegiatan tenda/panggung besar'], 
     images: [
       "{{ asset('storage/fasilitas/upacara.jpg') }}"
@@ -1171,24 +1171,24 @@ const FACILITIES = [
   { 
     name: 'Gedung Arsip BPMP Gorontalo', 
     category: 'gedung', 
-    location: 'Area Belakang, Wongkaditi Timur', 
+    location: 'Area Belakang, ', 
     capacity: 'Penyimpanan Dokumen', luas: '150 m²', 
     operasional: 'Senin–Jumat 08.00–16.00 WITA', kontak: 'Unit Kearsipan', 
     description: 'Fasilitas penyimpanan dokumen negara dan data penting lembaga yang dikelola secara sistematis dan aman.',
-    features: ['Lemari Roll O\'pack', 'Sistem Pengatur Kelembapan', 'Alat Pemadam Api (APAR)', 'Sistem Labeling Digital', 'Keamanan Terbatas'], 
+    features: ['Lemari arsip'], 
     rules: ['Hanya petugas berwenang yang boleh masuk', 'Dilarang membawa cairan atau benda mudah terbakar', 'Wajib mencatat pengambilan dokumen di buku log'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_arsip.jpeg') }}"
     ]
   },
   { 
-    name: 'Gedung Laboratorium BPMP Gorontalo', 
-    category: 'gedung', 
-    location: 'Gedung Teknolgi Informasi, Lt. 2', 
-    capacity: '30 Orang', luas: '120 m²', 
+    name: 'Ruang Laboratorium BPMP Gorontalo', 
+    category: 'Ruang', 
+    location: 'Gedung Laboratorium Lt. 2', 
+    capacity: '30 Orang', luas: '61 m²', 
     operasional: 'Sesuai Jadwal Pelatihan', kontak: 'Unit TIK', 
     description: 'Laboratorium komputer dan multimedia untuk uji kompetensi, pelatihan IT, serta pengembangan media pembelajaran digital.',
-    features: ['Unit Komputer High-Spec', 'Server Lokal', 'Headset Multimedia', 'Jaringan LAN & Fiber Optic', 'Papan Tulis Interaktif', 'Full AC'], 
+    features: [''], 
     rules: ['Dilarang mengubah konfigurasi software/hardware', 'Dilarang membawa makanan/minuman ke meja komputer', 'Gunakan alas kaki khusus atau melepas alas kaki'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_laboratorium.jpeg') }}"

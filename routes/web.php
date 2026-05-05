@@ -246,11 +246,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
             Route::post('/simpan-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('simpan-kerusakan');
             Route::get('/daftar-peminjaman', [AdminSarprasController::class, 'daftarPeminjaman'])->name('daftar-peminjaman');
+            Route::put('/peminjaman/{id}/update', [AdminSarprasController::class, 'updatePeminjaman'])->name('peminjaman.update');
             Route::get('/daftar-pengembalian', [AdminSarprasController::class, 'daftarPengembalian'])->name('daftar-pengembalian');
             Route::get('/laporan-peminjaman-gedung', [AdminSarprasController::class, 'laporanPeminjamanGedung'])->name('laporan-peminjaman-gedung');
             Route::get('/laporan-kerusakan', [AdminSarprasController::class, 'laporanKerusakan'])->name('laporan-kerusakan');
             Route::get('/peminjaman/{peminjaman}/surat/download', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
+            Route::get('/laporan-peminjaman/download', [AdminSarprasController::class, 'downloadLaporanPeminjaman'])->name('laporan.peminjaman.download');
+            Route::get('/laporan-kerusakan/download', [AdminSarprasController::class, 'downloadLaporanKerusakan'])->name('laporan.kerusakan.download');
             
             //DATA GEDUNG
             Route::post('/data-gedung', [AdminSarprasController::class, 'storeGedung'])->name('data-gedung.store');
@@ -466,7 +469,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
             Route::post('/peminjaman-gedung', [TamuController::class, 'storePeminjamanGedung'])->name('peminjaman-gedung.store');
             Route::get('/peminjaman-gedung/{peminjaman}', [TamuController::class, 'showPeminjamanGedung'])->name('peminjaman-gedung.show');
-            Route::get('/pengembalian-gedung', [TamuController::class, 'pengembaliangedung'])->name('pengembalian-gedung');
+            Route::get('/survei-layanan', [TamuController::class, 'surveilayanan'])->name('survei-layanan');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });

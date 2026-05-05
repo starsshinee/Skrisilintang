@@ -127,6 +127,14 @@
                             <span style="font-size: 12px; font-weight:600;"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($item->tanggal_pengembalian_aktual)->format('d/m/Y H:i') }}</span>
                         </td>
                         <td>
+                            @php 
+                                $statusClass = 'status-pending'; $statusText = 'Pending';
+                                if($item->status_verifikasi == 'diterima') { $statusClass = 'status-diterima'; $statusText = 'Diterima'; }
+                                elseif($item->status_verifikasi == 'ditolak') { $statusClass = 'status-ditolak'; $statusText = 'Ditolak'; }
+                            @endphp
+                            <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
+                        </td>
+                        <td>
                           <!-- Tombol Detail Modal (Selalu Muncul) -->
                           <button class="action-btn" onclick="showDetailModal({{ $item->id }})">
                               <i class="fas fa-eye"></i> Detail
@@ -143,7 +151,7 @@
                               
                           <!-- Jika status sudah diterima, tampilkan tombol cetak -->
                           @elseif($item->status_pengembalian == 'diterima')
-                              <a href="{{ route('admin.pengembalian-kendaraan.cetak', $item->id) }}" target="_blank" class="action-btn" style="color: var(--purple);">
+                              <a href="{{ route('adminasettetap.pengembalian-kendaraan.cetak', $item->id) }}" target="_blank" class="action-btn" style="color: var(--purple);">
                                   <i class="fas fa-file-pdf"></i> Cetak Berita Acara
                               </a>
                           @endif

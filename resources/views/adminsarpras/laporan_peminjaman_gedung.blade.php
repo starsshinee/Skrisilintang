@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIMASET - Laporan Peminjaman & Pengembalian</title>
+<title>SIPANDU - Laporan Peminjaman & Pengembalian</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -270,10 +270,10 @@ function getStatusBadge($status) {
         <h1>Laporan Peminjaman</h1>
         <p>Analisis lengkap peminjaman Gedung</p>
       </div>
-      <button class="btn-unduh">
+      <a href="{{ route('adminsarpras.laporan.peminjaman.download', request()->query()) }}" class="btn-unduh" style="text-decoration: none;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
         Unduh Laporan
-      </button>
+      </a>
     </div>
 
     <!-- STAT ROW 1 - DYNAMIC -->
