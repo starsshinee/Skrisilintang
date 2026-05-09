@@ -384,6 +384,7 @@
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     transition: all .2s;
+    text-decoration: none;
   }
   .card-btn.detail { background: rgba(37,99,235,0.08); color: var(--primary); }
   .card-btn.detail:hover { background: rgba(37,99,235,0.15); }
@@ -425,13 +426,7 @@
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
   /* ===================== RESPONSIVE ===================== */
-
-  /* Large desktop */
-  @media (max-width: 1280px) {
-    .content-grid { grid-template-columns: 1fr 1.2fr; gap: 20px; }
-  }
-
-  /* Tablet landscape */
+  @media (max-width: 1280px) { .content-grid { grid-template-columns: 1fr 1.2fr; gap: 20px; } }
   @media (max-width: 1024px) {
     :root { --sidebar-width: 220px; }
     .main { padding: 0 24px 40px; }
@@ -439,15 +434,9 @@
     .form-card { position: static; }
     .topbar-title { font-size: 18px; }
   }
-
-  /* Tablet portrait / small tablet */
   @media (max-width: 768px) {
-    .sidebar {
-      transform: translateX(-100%);
-    }
-    .sidebar.open {
-      transform: translateX(0);
-    }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
     .sidebar-close { display: flex; }
     .hamburger { display: flex; }
     .main { margin-left: 0; padding: 0 16px 100px; width: 100%; }
@@ -461,8 +450,6 @@
     .content-grid { gap: 16px; }
     .mobile-tabs { display: block; }
   }
-
-  /* Mobile */
   @media (max-width: 480px) {
     .main { padding: 0 12px 100px; }
     .topbar { padding: 12px 0 14px; }
@@ -482,19 +469,12 @@
     .form-group { margin-bottom: 14px; }
     .form-input, .form-select, .form-textarea { font-size: 14px; padding: 12px 14px; }
   }
-
-  /* Very small mobile */
-  @media (max-width: 360px) {
-    .main { padding: 0 10px 100px; }
-    .history-title { font-size: 14px; }
-  }
 </style>
 </head>
 <body>
 
 @include('partials.sidebar')
 
-<!-- MAIN -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-left">
@@ -512,9 +492,7 @@
     </div>
   </div>
 
-  <!-- FORM + RIWAYAT -->
   <div class="content-grid">
-    <!-- FORM -->
     <div class="form-card animate d2" id="formCard">
       <div class="form-header">
         <div class="form-header-icon"><i class="fas fa-building"></i></div>
@@ -543,7 +521,6 @@
             <i class="fas fa-warehouse"></i> Fasilitas <span class="req">*</span>
           </div>
       
-          <!-- Filter Kategori -->
           <div style="margin-bottom:12px">
             <select class="form-select" style="font-size:12px;padding:6px 12px" id="kategoriFilter">
               <option value="">Semua Kategori</option>
@@ -573,7 +550,6 @@
             @endforeach
           </select>
 
-          <!-- FACILITY PREVIEW ENHANCED -->
           <div class="facility-preview" id="facilityPreview">
             <div class="fp-icon" id="fpIconBox">
               <i class="fas fa-building" id="fpIcon"></i>
@@ -594,8 +570,7 @@
                 alt="Foto Fasilitas">
           </div>
 
-             <!-- Counter fasilitas tersedia -->
-          <div class="form-hint" id="fasilitasCounter" style="display:none">
+             <div class="form-hint" id="fasilitasCounter" style="display:none">
             <i class="fas fa-info-circle"></i>
             <span>10 fasilitas tersedia dari 15 total</span>
           </div>
@@ -624,8 +599,18 @@
         </div>
 
         <div class="form-group">
+            <div class="form-label"><i class="fas fa-users"></i> Jumlah Peserta <span class="req">*</span></div>
+            <input type="number" min="1" class="form-input" id="jumlahPesertaInput" placeholder="Masukkan jumlah peserta">
+        </div>
+
+        <div class="form-group">
+            <div class="form-label"><i class="fas fa-screwdriver-wrench"></i> Alat Penunjang Yang di butuhkan <span class="req">*</span></div>
+            <input type="text" class="form-input" id="alatPenunjangInput" placeholder="Contoh: Proyektor, Sound System, dll">
+        </div>
+
+        <div class="form-group">
           <div class="form-label"><i class="fas fa-sack-dollar"></i> Total Pembayaran <span class="req">*</span></div>
-          <input type="text" class="form-input" placeholder="Rp 0" id="totalPembayaran" oninput="formatRupiah(this)">
+          <input type="text" class="form-input" placeholder="Rp 0" id="totalPembayaran" readonly>
         </div>
 
         <div class="form-group">
@@ -642,7 +627,7 @@
           <div class="form-label"><i class="fas fa-file-upload"></i> Upload Surat <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-secondary)">(opsional)</span></div>
           <div class="file-input-wrapper" onclick="document.getElementById('suratFile').click()">
             <label class="file-input-label">
-              <input type="file" id="suratFile" name="surat" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="onFileChange(this)">
+              <input type="file" id="suratFile" name="surat" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileUpload.call(this)">
               <i class="fas fa-cloud-arrow-up"></i>
               <strong id="fileLabel">Klik untuk unggah file</strong>
               <span>PDF, DOC, JPG, PNG (Maks. 5MB)</span>
@@ -656,7 +641,6 @@
       </div>
     </div>
 
-    <!-- RIWAYAT -->
     <div>
       <div class="history-card animate d3">
         <div class="history-header">
@@ -692,7 +676,7 @@
                 'mess2' => 'fa-bed'
               ];
             @endphp
-            <div class="req-card" data-status="{{ $status[0] }}">
+            <div class="req-card" data-status="{{ $status[0] }}" data-id="{{ $item['id'] }}">
               <div class="req-card-top">
                 <div style="display:flex;align-items:center;gap:12px;min-width:0">
                   <div class="req-card-icon" style="background:rgba(37,99,235,0.1);color:#2563eb">
@@ -755,17 +739,6 @@
   </div>
 </main>
 
-<!-- MOBILE BOTTOM TABS -->
-<nav class="mobile-tabs">
-  <div class="mobile-tabs-inner">
-    <a href="#" class="mobile-tab"><i class="fas fa-gauge-high"></i>Dashboard</a>
-    <button class="mobile-tab active" onclick="scrollToForm()"><i class="fas fa-file-pen"></i>Formulir</button>
-    <button class="mobile-tab" onclick="scrollToHistory()"><i class="fas fa-clock-rotate-left"></i>Riwayat</button>
-    <a href="#" class="mobile-tab"><i class="fas fa-user-circle"></i>Profil</a>
-  </div>
-</nav>
-
-<!-- DETAIL MODAL -->
 <div id="detailModal" style="
   position:fixed; inset:0; background:rgba(0,0,0,0.5); 
   display:none; align-items:center; justify-content:center; z-index:300;
@@ -776,7 +749,6 @@
     max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2);
     animation: modalIn .3s ease;
   ">
-    <!-- Modal Header -->
     <div style="
       padding:24px 28px 20px; 
       background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
@@ -797,22 +769,17 @@
       </div>
     </div>
 
-    <!-- Modal Body -->
     <div style="padding:24px 28px" id="detailBody">
-      <!-- Loading state -->
       <div id="detailLoading" style="text-align:center;padding:40px 0;color:var(--text-secondary)">
         <i class="fas fa-spinner fa-spin" style="font-size:32px;opacity:0.4;display:block;margin-bottom:12px"></i>
         <div style="font-size:14px">Memuat detail...</div>
       </div>
 
-      <!-- Content (hidden by default) -->
       <div id="detailContent" style="display:none">
-        <!-- Status Badge -->
         <div style="text-align:center;margin-bottom:20px">
           <span id="detailStatusBadge" class="status-badge" style="font-size:13px;padding:6px 16px"></span>
         </div>
 
-        <!-- Data Peminjam -->
         <div style="margin-bottom:20px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-user" style="color:var(--primary);font-size:10px"></i> Data Peminjam
@@ -837,7 +804,6 @@
           </div>
         </div>
 
-        <!-- Data Fasilitas -->
         <div style="margin-bottom:20px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-building" style="color:var(--accent);font-size:10px"></i> Data Fasilitas
@@ -848,10 +814,21 @@
               <span id="detailKategori" style="font-size:10px;background:rgba(37,99,235,0.1);color:var(--primary);padding:2px 8px;border-radius:5px;font-weight:600"></span>
               <span id="detailLokasi" style="font-size:10px;background:rgba(6,182,212,0.1);color:var(--accent);padding:2px 8px;border-radius:5px;font-weight:600"></span>
             </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;border-top:1px dashed #c7d7ff;padding-top:12px;">
+              <div>
+                <div style="font-size:10px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">Peserta</div>
+                <div id="detailPeserta" style="font-size:13px;font-weight:700;color:var(--primary);margin-top:2px;"></div>
+              </div>
+              <div>
+                <div style="font-size:10px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">Alat Penunjang</div>
+                <div id="detailAlat" style="font-size:12px;font-weight:500;color:var(--text-primary);margin-top:2px;"></div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <!-- Waktu Peminjaman -->
         <div style="margin-bottom:20px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-calendar" style="color:var(--warning);font-size:10px"></i> Waktu Peminjaman
@@ -876,7 +853,6 @@
           </div>
         </div>
 
-        <!-- Pembayaran -->
         <div style="margin-bottom:20px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-money-bill" style="color:var(--success);font-size:10px"></i> Pembayaran
@@ -897,7 +873,6 @@
           </div>
         </div>
 
-        <!-- Tujuan -->
         <div style="margin-bottom:20px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-bullseye" style="color:var(--danger);font-size:10px"></i> Tujuan Penggunaan
@@ -905,7 +880,6 @@
           <div id="detailTujuan" style="background:#f8faff;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;color:var(--text-primary)"></div>
         </div>
 
-        <!-- Kontak -->
         <div style="margin-bottom:20px">
           <div style="display:flex;gap:10px">
             <div style="flex:1;background:#f8faff;padding:10px 14px;border-radius:10px">
@@ -919,7 +893,6 @@
           </div>
         </div>
 
-        <!-- Komentar Admin (jika ada) -->
         <div id="detailKomentarWrap" style="margin-bottom:20px;display:none">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
             <i class="fas fa-comment" style="color:var(--accent2);font-size:10px"></i> Komentar Admin
@@ -927,7 +900,6 @@
           <div id="detailKomentar" style="background:#fef3c7;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;color:#92400e;border:1px solid #fcd34d"></div>
         </div>
 
-        <!-- Surat Download (jika ada) -->
         <div id="detailSuratWrap" style="margin-bottom:16px;display:none">
           <a id="detailSuratLink" href="#" target="_blank" style="
             display:flex;align-items:center;gap:8px;
@@ -951,7 +923,6 @@
   }
 </style>
 
-<!-- TOAST -->
 <div id="toast" style="
   position:fixed; bottom:80px; right:20px;
   background:#0f172a; color:#fff;
@@ -967,41 +938,29 @@
   <span id="toastMsg">Permintaan berhasil dikirim!</span>
 </div>
 
-
-
 <script>
   $(document).ready(function() {
-      // Disable Tailwind CDN warning
       if (window.tailwindCSSLoaded) console.warn = () => {};
 
-      // Data dari PHP
       window.fasilitasData = @json($fasilitasData ?? []);
       window.gedungs = @json($gedungs ?? collect());
 
-      console.log('Fasilitas loaded:', Object.keys(window.fasilitasData).length);
-
-      // 1. Filter kategori
       $('#kategoriFilter').on('change', filterFasilitas);
       
-      // 2. Fasilitas preview
       $('#fasilitasSelect').on('change', function() {
           showFacilityPreview($(this).val());
           calculateTotal();
       });
 
-      // 3. Submit form
       $(document).on('click', '.submit-peminjaman', function(e) {
           e.preventDefault();
           submitForm();
       });
 
-      // 4. Date & time change
       $('#tglPinjam, #tglKembali').on('change', calculateTotal);
 
-      // 5. File upload
       $('#suratFile').on('change', handleFileUpload);
 
-      // 6. Filter tabs riwayat
       $('.filter-tab').on('click', function() {
           $('.filter-tab').removeClass('active');
           $(this).addClass('active');
@@ -1015,9 +974,7 @@
           });
       });
 
-      // 7. FUNGSI DETAIL - Buka modal dengan AJAX
       window.showDetail = function(id) {
-        // Show modal with loading
         $('#detailModal').css('display', 'flex');
         $('#detailLoading').show();
         $('#detailContent').hide();
@@ -1030,10 +987,8 @@
             if (res.success && res.data) {
               const d = res.data;
 
-              // Kode
               $('#detailKode').text(d.kode);
 
-              // Status badge
               const statusClass = {
                 'pending': 'pending', 'dalam_review': 'pending',
                 'disetujui_kasubag': 'approved', 'disetujui': 'approved',
@@ -1049,34 +1004,32 @@
                 .addClass(statusClass[d.status] || 'pending')
                 .html(`<i class="fas ${statusIcon[d.status] || 'fa-circle'}"></i> ${d.status_label}`);
 
-              // Data peminjam
               $('#detailNama').text(d.nama_lengkap);
               $('#detailNipNik').text(d.nip_nik);
               $('#detailInstansi').text(d.instansi_lembaga);
               $('#detailKabKota').text(d.kabupaten_kota);
 
-              // Fasilitas
               $('#detailFasilitas').text(d.nama_fasilitas);
               $('#detailKategori').text(d.fasilitas ? d.fasilitas.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-');
               $('#detailLokasi').text(d.lokasi);
+              
+              // ✅ Tampilkan Peserta & Alat di Modal
+              $('#detailPeserta').text((d.jumlah_peserta || 0) + ' Orang');
+              $('#detailAlat').text(d.alat_penunjang || '-');
 
-              // Waktu
               $('#detailTglPinjam').text(d.tanggal_pinjam);
               $('#detailTglKembali').text(d.tanggal_kembali);
               $('#detailJam').text(d.jam_mulai + ' - ' + d.jam_selesai);
               $('#detailDurasi').text(d.lama_peminjaman_hari + ' hari');
 
-              // Pembayaran
               $('#detailTarif').text(d.tarif_per_hari);
               $('#detailTotal').text(d.total_pembayaran);
               $('#detailCaraBayar').text(d.cara_pembayaran);
 
-              // Tujuan & kontak
               $('#detailTujuan').text(d.tujuan_penggunaan);
               $('#detailKontak').text(d.nomor_kontak);
               $('#detailCreatedAt').text(d.created_at);
 
-              // Komentar (jika ada)
               if (d.komentar) {
                 $('#detailKomentar').text(d.komentar);
                 $('#detailKomentarWrap').show();
@@ -1084,7 +1037,6 @@
                 $('#detailKomentarWrap').hide();
               }
 
-              // Surat (jika ada)
               if (d.surat_url) {
                 $('#detailSuratLink').attr('href', d.surat_url);
                 $('#detailSuratWrap').show();
@@ -1092,7 +1044,6 @@
                 $('#detailSuratWrap').hide();
               }
 
-              // Show content, hide loading
               $('#detailLoading').hide();
               $('#detailContent').show();
             } else {
@@ -1117,7 +1068,6 @@
         $('#detailModal').fadeOut(200);
       };
 
-      // Tutup modal saat klik overlay
       $('#detailModal').on('click', function(e) {
         if (e.target === this) closeDetailModal();
       });
@@ -1161,7 +1111,6 @@
           });
       };
 
-      // FUNCTIONS
       function filterFasilitas() {
           const kategori = $('#kategoriFilter').val();
           const options = $('#fasilitasSelect option:not([value=""])');
@@ -1212,6 +1161,12 @@
               const start = new Date(tglPinjam);
               const end = new Date(tglKembali);
               const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+              
+              if (days < 1) {
+                  $('#totalPembayaran').val('');
+                  return;
+              }
+              
               const tarif = window.fasilitasData[gedungId].tarif;
               const total = tarif * days;
               $('#totalPembayaran').val(formatRupiah(total));
@@ -1221,8 +1176,8 @@
       }
 
       function submitForm() {
-          // Validasi
-          const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput', '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput', 'textarea', 'input[type="tel"]'];
+          // ✅ 1. Tambahkan ID input baru ke array required
+          const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput', '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput', '#jumlahPesertaInput', '#alatPenunjangInput', 'textarea', 'input[type="tel"]'];
           let valid = true;
           
           required.forEach(id => {
@@ -1254,6 +1209,11 @@
           formData.append('tanggal_kembali', $('#tglKembali').val());
           formData.append('jam_mulai', $('#jamMulaiInput').val());
           formData.append('jam_selesai', $('#jamSelesaiInput').val());
+          
+          // ✅ 2. Tambahkan variabel baru ke dalam FormData
+          formData.append('jumlah_peserta', $('#jumlahPesertaInput').val());
+          formData.append('alat_penunjang', $('#alatPenunjangInput').val().trim());
+
           formData.append('tujuan_penggunaan', $('textarea').val().trim());
           formData.append('nomor_kontak', $('input[type="tel"]').val().trim());
 
@@ -1338,15 +1298,13 @@
           setTimeout(() => toast.css({ transform: 'translateY(80px)', opacity: 0 }), 4000);
       }
 
-      // Mobile scroll
       window.scrollToForm = () => $('#formCard')[0].scrollIntoView({behavior:'smooth'});
       window.scrollToHistory = () => $('.history-card')[0].scrollIntoView({behavior:'smooth'});
 
-      // Initial
       filterFasilitas();
       updateCounter();
 
   });
 </script>
 </body>
-</html
+</html>

@@ -89,7 +89,7 @@
             $nomor_urut = str_pad($peminjaman->id, 3, '0', STR_PAD_LEFT);
             $tahun_surat = \Carbon\Carbon::parse($peminjaman->created_at)->format('Y');
         @endphp
-        <div>No: {{ $nomor_urut }}/BA.PP/693228/{{ $tahun_surat }}</div>
+        <div>No: {{ $nomor_urut }}/BA.PK/693228/{{ $tahun_surat }}</div>
     </div>
 
     <!-- PEMBUKA -->

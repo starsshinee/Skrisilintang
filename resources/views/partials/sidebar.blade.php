@@ -39,7 +39,7 @@
         ['href' => route('tamu.dashboard'),        'label' => 'Dashboard',            'icon' => 'fas fa-door-open',   'route' => 'tamu.dashboard'],
         ['href' => route('tamu.info-fasilitas'),   'label' => 'Informasi Fasilitas',  'icon' => 'fas fa-info-circle', 'route' => 'tamu.info-fasilitas'],
         ['href' => route('tamu.peminjaman-gedung'),  'label' => 'Peminjaman Gedung',      'icon' => 'fas fa-building', 'route' => 'tamu.peminjaman-gedung'],
-        ['href' => route('tamu.survei-layanan'),  'label' => 'Survei Layanan Fasilitas',      'icon' => 'fas fa-undo', 'route' => 'tamu.survei-layanan'],
+        ['href' => route('tamu.survei-layanan'),  'label' => 'Survei Layanan Fasilitas',      'icon' => 'fas fa-comment', 'route' => 'tamu.survei-layanan'],
         ['href' => route('tamu.pengaturan-akun'),  'label' => 'Pengaturan Akun',      'icon' => 'fas fa-gear',        'route' => 'tamu.pengaturan-akun'],
       ]
     ],

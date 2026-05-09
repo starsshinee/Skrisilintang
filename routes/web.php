@@ -275,7 +275,13 @@ Route::middleware('auth')->group(function () {
             Route::post('/peminjaman/{peminjaman}/forward', [AdminSarprasController::class, 'forwardToKasubag'])->name('peminjaman.forward');
             Route::post('/peminjaman/{peminjaman}/reject', [AdminSarprasController::class, 'rejectByAdmin'])->name('peminjaman.reject');
             Route::get('/peminjaman/{peminjaman}/download-surat', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
-        });
+            Route::get('/peminjaman-gedung/download', [AdminSarprasController::class, 'downloadLaporanPeminjaman'])->name('peminjaman.download');
+            // Route untuk Bulk Delete
+            Route::post('/peminjaman-gedung/bulk-delete', [AdminSarprasController::class, 'bulkDeletePeminjaman'])->name('peminjaman.bulk-delete');
+            
+            // Route untuk Review (Form Button)
+            Route::post('/peminjaman-gedung/{id}/review', [AdminSarprasController::class, 'reviewPeminjaman'])->name('review-peminjaman');
+                });
 
 
     // ──────────────────────────────────────────────────────────────────
@@ -470,6 +476,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-gedung', [TamuController::class, 'peminjamangedung'])->name('peminjaman-gedung');
             Route::post('/peminjaman-gedung', [TamuController::class, 'storePeminjamanGedung'])->name('peminjaman-gedung.store');
             Route::get('/peminjaman-gedung/{peminjaman}', [TamuController::class, 'showPeminjamanGedung'])->name('peminjaman-gedung.show');
+            Route::post('/peminjaman-gedung/{id}/cancel', [TamuController::class, 'cancelPeminjaman'])->name('peminjaman-gedung.cancel');
             Route::get('/survei-layanan', [TamuController::class, 'surveilayanan'])->name('survei-layanan');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');

@@ -85,6 +85,8 @@ class TamuController extends Controller
                         'tanggal_kembali' => $item->tanggal_kembali?->format('d M Y'),
                         'range_tanggal' => $item->tanggal_pinjam?->format('d M') . ' – ' . $item->tanggal_kembali?->format('d M Y'),
                         'total_pembayaran' => 'Rp ' . number_format($item->total_pembayaran, 0, ',', '.'),
+                        'jumlah_peserta' => $item->jumlah_peserta,
+                        'alat_penunjang' => $item->alat_penunjang,
                         'status' => $item->status,
                         'status_pembayaran' => $item->status_pembayaran,
                         'created_at' => $item->created_at?->format('d M Y'),
@@ -110,6 +112,8 @@ class TamuController extends Controller
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
+            'jumlah_peserta' => 'required|integer|min:1', 
+            'alat_penunjang' => 'required|string|max:500',
             'tujuan_penggunaan' => 'required|string|max:1000',
             'nomor_kontak' => 'required|string|max:20',
             'surat_path' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120'
@@ -146,13 +150,15 @@ class TamuController extends Controller
             'jam_mulai' => $validated['jam_mulai'],
             'jam_selesai' => $validated['jam_selesai'],
             'lama_peminjaman_hari' => $lamaPeminjaman,
+            'jumlah_peserta' => $validated['jumlah_peserta'],
+            'alat_penunjang' => $validated['alat_penunjang'],
             'total_pembayaran' => $totalPembayaran,
             'tujuan_penggunaan' => $validated['tujuan_penggunaan'],
             'nomor_kontak' => $validated['nomor_kontak'],
             'surat_path' => $suratPath,
             'status' => 'pending',
             'status_pembayaran' => 'belum_lunas',
-            'cara_pembayaran' => 'tunai',
+            'cara_pembayaran' => 'e-billing',
         ]);
 
         return response()->json([
@@ -190,6 +196,8 @@ class TamuController extends Controller
                 'tanggal_kembali' => $peminjaman->tanggal_kembali?->format('d M Y'),
                 'jam_mulai' => $peminjaman->jam_mulai ? \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') : '-',
                 'jam_selesai' => $peminjaman->jam_selesai ? \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') : '-',
+                'jumlah_peserta' => $peminjaman->jumlah_peserta,
+                'alat_penunjang' => $peminjaman->alat_penunjang,
                 'lama_peminjaman_hari' => $peminjaman->lama_peminjaman_hari,
                 'tarif_per_hari' => 'Rp ' . number_format($peminjaman->tarif_per_hari, 0, ',', '.'),
                 'total_pembayaran' => 'Rp ' . number_format($peminjaman->total_pembayaran, 0, ',', '.'),
@@ -205,6 +213,46 @@ class TamuController extends Controller
                 'diteruskan_ke_kasubag_date' => $peminjaman->diteruskan_ke_kasubag_date?->format('d M Y H:i'),
             ]
         ]);
+    }
+
+    /**
+     * Batalkan Permintaan Peminjaman Gedung (AJAX)
+     */
+    public function cancelPeminjaman($id)
+    {
+        try {
+            $peminjaman = PeminjamanGedung::findOrFail($id);
+
+            // Pastikan hanya peminjam yang bisa membatalkan datanya sendiri
+            if ($peminjaman->user_id !== auth()->id()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Anda tidak memiliki akses untuk membatalkan permintaan ini.'
+                ], 403);
+            }
+
+            // Pastikan hanya yang berstatus pending / dalam review yang bisa dibatalkan
+            if (!in_array($peminjaman->status, ['pending', 'dalam_review'])) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Permintaan sudah diproses dan tidak dapat dibatalkan.'
+                ], 400);
+            }
+
+            // Hapus data / batalkan
+            $peminjaman->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permintaan peminjaman berhasil dibatalkan.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function pengaturanAkun()

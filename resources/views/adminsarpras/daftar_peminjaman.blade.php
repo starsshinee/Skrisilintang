@@ -208,6 +208,7 @@
                 <th>Peminjam</th>
                 <th>Fasilitas</th>
                 <th>Tanggal Pinjam</th>
+                <th>Tanggal Kembali</th>
                 <th>Tujuan</th>
                 <th>Total Bayar</th>
                 <th>Status Pembayaran</th>
@@ -224,7 +225,15 @@
             <td class="peminjam-name">{{ $item->nama_lengkap }}<br><small class="text-muted" style="color:var(--text-secondary); font-weight:400;">{{ $item->instansi_lembaga }}</small></td>
             <td>{{ $item->nama_fasilitas ?? $item->fasilitas }}</td>
             <td>{{ $item->tanggal_pinjam->locale('id')->isoFormat('D MMM YYYY') }}</td>
-            <td>{{ Str::limit($item->tujuan_penggunaan, 30) }}</td>
+            <td>{{ $item->tanggal_kembali->locale('id')->isoFormat('D MMM YYYY') }}</td>
+            
+            <td>
+                    <div style="margin-bottom:4px;"><b>Tujuan:</b> {{ Str::limit($item->tujuan_penggunaan, 30) }}</div>
+                    <div style="font-size: 11px; color: var(--text-secondary);">
+                        <div>👥 Peserta: <b>{{ $item->jumlah_peserta ?? 0 }} Orang</b></div>
+                        <div>🔧 Alat: <b>{{ Str::limit($item->alat_penunjang ?? '-', 20) }}</b></div>
+                    </div>
+                </td>
             <td>Rp {{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
             <td>
                 @if($item->status_pembayaran == 'lunas')
@@ -286,14 +295,19 @@
 
                     <!-- Status Action (Forward / Reject - Jika Pending) -->
                     @if($item->status == 'pending')
+                        <!-- Tombol Teruskan -->
                         <button class="act-btn act-forward" title="➡️ Teruskan ke Kasubag" onclick="openForwardModal({{ $item->id }})">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <!-- Icon Paper Airplane (Send/Forward) -->
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
                         </button>
+
+                        <!-- Tombol Tolak -->
                         <button class="act-btn act-reject" title="❌ Tolak" onclick="openRejectModal({{ $item->id }})">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.36 6.64L19.78 5.22a1 1 0 0 0 0-1.41 1 1 0 0 0-1.41 0L17 5.64l-1.64-1.64a1 1 0 0 0-1.41 0 1 1 0 0 0 0 1.41l1.42 1.42L14.36 9a1 1 0 1 0 1.41 1.41L17 9.36l1.64 1.64a1 1 0 1 0 1.41-1.41L18.36 6.64z"/>
+                                <!-- Icon Solid Cross (Reject/Close) -->
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
                             </svg>
                         </button>
                     @endif

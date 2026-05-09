@@ -99,7 +99,7 @@
 
         // FORMAT NOMOR SURAT
         $nomor_urut = str_pad($pengembalian->id, 4, '0', STR_PAD_LEFT);
-        $nomor_surat = "{$nomor_urut}/BA.KB/693228/2026{$tahun_angka}";
+        $nomor_surat = "{$nomor_urut}/BA.KK/693228/2026{$tahun_angka}";
     @endphp
 
     {{-- KOP SURAT --}}
@@ -138,7 +138,7 @@
     </table>
 
         <div class="text-justify">
-        Bermaksud mengembalikan Barang Milik Negara (BMN) yang sebelumnya saya pinjam berdasarkan Surat Izin Peminjaman nomor {{ $nomor_surat = "{$nomor_urut}/BPMP.GTLO/KPA/{$tahun_angka}"  }} dengan rincian sebagai berikut:
+        Bermaksud mengembalikan Barang Milik Negara (BMN) yang sebelumnya saya pinjam berdasarkan Surat Izin Peminjaman nomor {{ $nomor_surat = "{$nomor_urut}/BA.PK/693228/{$tahun_angka}"  }} dengan rincian sebagai berikut:
         </div>
 
     <table class="data-table">
