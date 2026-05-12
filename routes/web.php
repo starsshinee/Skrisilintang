@@ -8,6 +8,7 @@ use App\Http\Controllers\KepalaBPMPController;
 use App\Http\Controllers\KasubagController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TamuController;
+use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\AdminPersediaanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SuperadminController;
@@ -116,6 +117,10 @@ Route::middleware('auth')->group(function () {
             Route::put('/pengguna/{user}', [SuperadminController::class, 'updatePengguna'])->name('pengguna.update');
             Route::delete('/pengguna/{user}', [SuperadminController::class, 'destroyPengguna'])->name('pengguna.destroy');
             Route::patch('/pengguna/{user}/toggle-status', [SuperadminController::class, 'toggleStatus'])->name('pengguna.toggle-status');
+            Route::get('/unit-kerja', [UnitKerjaController::class, 'index'])->name('unit_kerja.index');
+            Route::post('/unit-kerja', [UnitKerjaController::class, 'store'])->name('unit_kerja.store');
+            Route::put('/unit-kerja/{id}', [UnitKerjaController::class, 'update'])->name('unit_kerja.update');
+            Route::delete('/unit-kerja/{id}', [UnitKerjaController::class, 'destroy'])->name('unit_kerja.destroy');
         });
 
     // ──────────────────────────────────────────────────────────────────

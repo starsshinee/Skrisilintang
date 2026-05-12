@@ -11,6 +11,7 @@
       'navItems' => [
         ['href' => route('superadmin.dashboard'),       'label' => 'Dashboard',        'icon' => 'fas fa-chart-line', 'route' => 'superadmin.dashboard'],
         ['href' => route('superadmin.manajemen-user'),  'label' => 'Kelola Pengguna',  'icon' => 'fas fa-users',      'route' => 'superadmin.manajemen-user'],
+        ['href' => route('superadmin.unit_kerja.index'), 'label' => 'Kelola Unit Kerja', 'icon' => 'fas fa-building', 'route' => 'superadmin.unit_kerja.index'],
       ]
     ],
     'pegawai' => [

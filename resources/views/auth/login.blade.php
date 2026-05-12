@@ -95,10 +95,22 @@
           </p>
         </div>
         <div class="grid grid-cols-2 gap-3 anim-fade-up delay-2">
-          <div class="glass rounded-xl p-4"><div class="text-2xl font-extrabold text-white mb-0.5">1,247</div><div class="text-blue-300 text-xs">Item BMN Tercatat</div></div>
-          <div class="glass rounded-xl p-4"><div class="text-2xl font-extrabold text-white mb-0.5">98.5%</div><div class="text-blue-300 text-xs">Kondisi Baik</div></div>
-          <div class="glass rounded-xl p-4"><div class="text-2xl font-extrabold text-white mb-0.5">89</div><div class="text-blue-300 text-xs">Pengguna Aktif</div></div>
-          <div class="glass rounded-xl p-4"><div class="text-2xl font-extrabold text-white mb-0.5">6</div><div class="text-blue-300 text-xs">Peran Tersedia</div></div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-2xl font-extrabold text-white mb-0.5">{{ number_format($totalAset ?? 0, 0, ',', '.') }}</div>
+            <div class="text-blue-300 text-xs">Item BMN Tercatat</div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-2xl font-extrabold text-white mb-0.5">{{ $persentaseBaik ?? 0 }}%</div>
+            <div class="text-blue-300 text-xs">Kondisi Baik</div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-2xl font-extrabold text-white mb-0.5">{{ number_format($penggunaAktif ?? 0, 0, ',', '.') }}</div>
+            <div class="text-blue-300 text-xs">Pengguna Aktif</div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-2xl font-extrabold text-white mb-0.5">{{ $peranTersedia ?? 0 }}</div>
+            <div class="text-blue-300 text-xs">Peran Terpakai</div>
+          </div>
         </div>
         <div class="mt-8 anim-fade-up delay-3 float-anim">
           <div class="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-4 max-w-xs">
@@ -202,12 +214,12 @@
           <div class="grid grid-cols-2 gap-2 mb-6">
             <button type="button" onclick="quickFill('superadmin','super123')"          class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span>Super Admin</button>
             <button type="button" onclick="quickFill('kepalabpmp','kepala123')"         class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span>Kepala BPMP</button>
-            <button type="button" onclick="quickFill('kasubag','kasubag123')"           class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>Kasubag TU</button>
+            <button type="button" onclick="quickFill('kasubag','kasubag123')"           class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>Kasubag Umum</button>
             <button type="button" onclick="quickFill('adminpersediaan','persediaan123')" class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Admin Persediaan</button>
             <button type="button" onclick="quickFill('adminsarpras','sarpras123')"      class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-500"></span>Admin Sarpras</button>
             <button type="button" onclick="quickFill('adminasettetap','aset123')"       class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span>Admin Aset</button>
             <button type="button" onclick="quickFill('pegawai','pegawai123')"           class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-500"></span>Pegawai</button>
-            <button type="button" onclick="quickFill('tamu','tamu123')"                 class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5 col-span-2 justify-center"><span class="w-2 h-2 rounded-full bg-gray-400"></span>Tamu</button>
+            <button type="button" onclick="quickFill('tamu','tamu123')"                 class="text-xs font-semibold text-navy-700 bg-navy-50 hover:bg-navy-100 border border-navy-200/60 rounded-lg py-2 px-3 transition flex items-center gap-1.5 "><span class="w-2 h-2 rounded-full bg-gray-500"></span>Tamu</button>
           </div>
 
           <p class="text-center text-sm text-slate-500">

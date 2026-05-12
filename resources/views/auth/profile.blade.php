@@ -37,8 +37,6 @@
     min-height: 100vh;
   }
 
-  /* Sidebar dari partial */
-
   /* MAIN */
   .main { margin-left: 260px; flex: 1; padding: 0 32px 40px; }
 
@@ -48,7 +46,6 @@
     position: sticky; top: 0; z-index: 50;
     background: var(--bg);
   }
-  .topbar-left {}
   .breadcrumb { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
   .breadcrumb span { color: var(--primary); font-weight: 600; }
   .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
@@ -340,23 +337,20 @@
 
 @include('partials.sidebar')
 
-<!-- MAIN -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
+      <div class="breadcrumb"><a href="{{ route('home') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
       <div class="topbar-title">Pengaturan Akun</div>
     </div>
     <div class="topbar-right">
-      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Tamu</div>
+      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: {{ auth()->user()->role_label }}</div>
       <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>
 
   <div class="content-grid">
-    <!-- LEFT: FORMS -->
-<div>  
-  <!-- TABS -->
+    <div>  
   <div class="tabs-nav animate d1">
     <button class="tab-btn active" onclick="switchTab(this,'profil')">
       <i class="fas fa-user"></i> Informasi Profil
@@ -376,7 +370,6 @@
     @csrf @method('PUT')
     <div class="tab-panel active" id="tab-profil">
       <div class="section-card animate d2">
-        <!-- Avatar -->
         <div class="avatar-section">
           <div class="big-avatar">
             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -428,6 +421,22 @@
               <input type="text" class="form-input readonly" value="{{ auth()->user()->created_at?->format('d M Y') }}" readonly>
             </div>
           </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-users"></i> Unit Kerja</div>
+              <select name="unit_kerja_id" class="form-select cursor-pointer">
+                <option value="">-- Belum memilih unit kerja --</option>
+                @foreach(\App\Models\UnitKerja::all() as $unit)
+                  <option value="{{ $unit->id }}" {{ old('unit_kerja_id', auth()->user()->unit_kerja_id) == $unit->id ? 'selected' : '' }}>
+                    {{ $unit->nama_unit }}
+                  </option>
+                @endforeach
+              </select>
+              @error('unit_kerja_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+          </div>
+
           <div class="btn-row">
             <button type="button" class="cancel-btn" onclick="history.back()">
               <i class="fas fa-xmark"></i> Batal
@@ -447,7 +456,6 @@
   <form method="POST" action="{{ route('password.change') }}">
     @csrf
     <div class="tab-panel" id="tab-keamanan">
-      <!-- Tips Card -->
       <div class="tip-card animate d2">
         <div class="tip-icon"><i class="fas fa-triangle-exclamation"></i></div>
         <div>
@@ -456,7 +464,6 @@
         </div>
       </div>
 
-      <!-- Password Form -->
       <div class="section-card animate d2">
         <div class="section-header">
           <div class="section-title"><i class="fas fa-lock"></i> Ubah Password</div>
@@ -474,7 +481,7 @@
           <div class="form-group">
             <div class="form-label"><i class="fas fa-key"></i> Password Baru</div>
             <div class="pw-wrapper">
-              <input type="password" class="form-input" name="new_password" placeholder="Minimal 8 karakter" id="pwNew" required minlength="8">
+              <input type="password" class="form-input" name="new_password" placeholder="Minimal 8 karakter" id="pwNew" required minlength="8" oninput="checkStrength(this.value)">
               <span class="pw-toggle" onclick="togglePw('pwNew',this)"><i class="fas fa-eye"></i></span>
             </div>
             <div class="pw-strength" id="pwStrength" style="display:none">
@@ -506,7 +513,6 @@
         </div>
       </div>
 
-      <!-- Session Info -->
       <div class="section-card animate d3">
         <div class="section-header">
           <div class="section-title"><i class="fas fa-desktop"></i> Sesi Aktif</div>
@@ -543,7 +549,6 @@
           <div class="section-sub">Tanda tangan akan digunakan pada surat peminjaman gedung</div>
         </div>
         <div class="section-body">
-          <!-- Current Signature -->
           @if(auth()->user()->signature)
             <div style="margin-bottom:20px">
               <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
@@ -560,7 +565,6 @@
             </div>
           @endif
 
-          <!-- Upload -->
           <div style="margin-bottom:20px">
             <div class="form-label"><i class="fas fa-upload"></i> Upload Tanda Tangan Baru</div>
             <label for="signature_upload" style="
@@ -578,7 +582,6 @@
             <input type="file" id="signature_upload" name="signature" accept=".jpg,.jpeg,.png" style="display:none" onchange="previewSig(this)">
           </div>
 
-          <!-- Canvas Signature (Optional) -->
           <div style="margin-bottom:20px">
             <div class="form-label"><i class="fas fa-pen-to-square"></i> Atau Gambar Manual</div>
             <canvas id="sigCanvas" width="600" height="160" style="
@@ -586,7 +589,7 @@
               cursor: crosshair; display: block; width: 100%; touch-action: none;
             "></canvas>
             <div style="display:flex;gap:8px;margin-top:8px">
-              <button type="button" onclick="clearCanvas()" class="btn-small">
+              <button type="button" onclick="clearCanvas()" class="btn-small cancel-btn" style="padding: 6px 12px; font-size:12px;">
                 <i class="fas fa-eraser"></i> Hapus
               </button>
             </div>
@@ -606,7 +609,6 @@
   </form>
 </div>
 
-<!-- RIGHT: INFO CARDS -->
 <aside style="width:320px">
   <div class="info-card animate d2">
     <div class="info-card-header"><i class="fas fa-circle-info"></i> Informasi Akun</div>
@@ -617,6 +619,14 @@
           <i class="fas fa-user"></i> {{ auth()->user()->role_label }}
         </div>
       </div>
+      
+      <div class="info-row">
+        <div class="info-label">Unit Kerja</div>
+        <div class="info-value" style="text-align: right; max-width: 60%; line-height: 1.3;">
+          {{ auth()->user()->unitKerja->nama_unit ?? 'Belum diatur' }}
+        </div>
+      </div>
+
       <div class="info-row">
         <div class="info-label">Status</div>
         <div class="info-badge {{ auth()->user()->is_active ? 'active' : 'inactive' }}">
@@ -624,10 +634,10 @@
           {{ auth()->user()->is_active ? 'Aktif' : 'Tidak Aktif' }}
         </div>
       </div>
-      <div class="info-row">
+      {{-- <div class="info-row">
         <div class="info-label">Kelengkapan Profil</div>
         <div class="info-value">{{ auth()->user()->profile_completeness }}%</div>
-      </div>
+      </div> --}}
       <div class="info-row">
         <div class="info-label">Bergabung</div>
         <div class="info-value">{{ auth()->user()->created_at?->format('d M Y, H:i') }}</div>
@@ -645,7 +655,7 @@
       <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="quick-item">
         <i class="fas fa-chart-line"></i> Dashboard
       </a>
-      <a href="{{ route(auth()->user()->role . '.pengaturan-akun') }}" class="quick-item">
+      <a href="#" class="quick-item">
         <i class="fas fa-cog"></i> Pengaturan Akun
       </a>
       <form method="POST" action="{{ route('logout') }}" style="display:contents">
@@ -660,7 +670,6 @@
 </div>
 </main>
 
-<!-- TOAST -->
 <div id="toast" style="
   position:fixed; bottom:28px; right:28px;
   background:#0f172a; color:#fff;
@@ -675,6 +684,14 @@
   <i class="fas fa-circle-check" style="color:#10b981;font-size:16px" id="toastIcon"></i>
   <span id="toastMsg">Berhasil disimpan!</span>
 </div>
+
+@if(session('success'))
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    showToast("{{ session('success') }}");
+  });
+</script>
+@endif
 
 <script>
 // TABS

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserProfile;
 use App\Models\PeminjamanGedung;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; 
+use App\Models\UnitKerja;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,7 +32,8 @@ class User extends Authenticatable
         'nip',
         'jabatan',
         'is_active',
-        'signature'
+        'signature',
+        'unit_kerja_id'
     ];
 
     /**
@@ -60,18 +63,18 @@ class User extends Authenticatable
     /**
      * Relasi ke profil user (1:1)
      */
-    public function profile(): HasOne
-    {
-        return $this->hasOne(UserProfile::class);
-    }
+    // public function profile(): HasOne
+    // {
+    //     return $this->hasOne(UserProfile::class);
+    // }
 
-    /**
-     * Profile completeness percentage
-     */
-    public function getProfileCompletenessAttribute(): int
-    {
-        return $this->profile?->profile_completeness ?? 0;
-    }
+    // /**
+    //  * Profile completeness percentage
+    //  */
+    // public function getProfileCompletenessAttribute(): int
+    // {
+    //     return $this->profile?->profile_completeness ?? 0;
+    // }
 
     // SCOPE
     public function scopeActive($query)
@@ -168,5 +171,13 @@ class User extends Authenticatable
     public function peminjamanGedung()
     {
         return $this->hasMany(PeminjamanGedung::class, 'user_id');
+    }
+    /**
+     * Relasi ke tabel unit_kerjas (Many to One)
+     * Satu user/pegawai hanya memiliki satu unit kerja.
+     */
+    public function unitKerja(): BelongsTo
+    {
+        return $this->belongsTo(UnitKerja::class, 'unit_kerja_id');
     }
 }

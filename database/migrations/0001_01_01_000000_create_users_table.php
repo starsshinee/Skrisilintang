@@ -30,6 +30,8 @@ return new class extends Migration
             ])->default('pegawai');
             $table->string('nip', 30)->nullable()->comment('Nomor Induk Pegawai');
             $table->string('jabatan')->nullable();
+            // Cukup seperti ini saja di tabel users:
+            $table->unsignedBigInteger('unit_kerja_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

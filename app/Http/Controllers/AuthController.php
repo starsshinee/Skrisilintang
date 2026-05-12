@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AssetTetap;
+use App\Models\Persediaan;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +22,28 @@ class AuthController extends Controller
     // ────────────────────────────────────────────────────────────────────
     public function showLogin(): View
     {
-        return view('auth.login', ['alreadyLoggedIn' => Auth::check()]);
+        // 1. Hitung total BMN (Gabungan Aset Tetap & Persediaan, bisa Anda sesuaikan)
+        $totalAset = AssetTetap::count() + Persediaan::count();
+
+        // 2. Hitung persentase Aset Tetap dengan Kondisi "Baik"
+        $asetTotal = AssetTetap::count();
+        // Catatan: Sesuaikan string 'Baik' dengan nama data kondisi di database Anda
+        $asetBaik = AssetTetap::where('kondisi', 'Baik')->count(); 
+        $persentaseBaik = $asetTotal > 0 ? round(($asetBaik / $asetTotal) * 100, 1) : 0;
+
+        // 3. Hitung jumlah Pengguna Aktif
+        $penggunaAktif = User::where('is_active', true)->count();
+
+        // 4. Hitung jumlah Peran/Role yang saat ini terpakai di sistem
+        $peranTersedia = User::distinct('role')->count('role');
+
+        return view('auth.login', [
+            'alreadyLoggedIn' => Auth::check(),
+            'totalAset' => $totalAset,
+            'persentaseBaik' => $persentaseBaik,
+            'penggunaAktif' => $penggunaAktif,
+            'peranTersedia' => $peranTersedia,
+        ]);
     }
 
     // ────────────────────────────────────────────────────────────────────
@@ -116,6 +139,7 @@ class AuthController extends Controller
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'nip' => ['sometimes', 'nullable', 'string', 'max:30'],
             'jabatan' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'unit_kerja_id' => ['sometimes', 'nullable', 'exists:unit_kerjas,id'],
             'signature' => ['sometimes', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
         ], [
             'name.required' => 'Nama wajib diisi.',
@@ -133,7 +157,9 @@ class AuthController extends Controller
         if ($request->filled('jabatan')) {
             $user->jabatan = $request->jabatan;
         }
-
+        if ($request->has('unit_kerja_id')) {
+            $user->unit_kerja_id = $request->unit_kerja_id;
+        }    
         // Handle signature upload
        if ($request->hasFile('signature')) {
         // Hapus signature lama jika ada
@@ -194,6 +220,7 @@ class AuthController extends Controller
             'role' => ['required', Rule::in(['superadmin','kepalabpmp','kasubag','adminpersediaan','adminsarpras','adminasettetap','pegawai','tamu'])],
             'nip' => ['nullable', 'string', 'max:30'],
             'jabatan' => ['nullable', 'string', 'max:255'],
+            'unit_kerja_id' => ['nullable', 'exists:unit_kerjas,id'],
         ]);
 
         $user = User::create([
@@ -204,6 +231,7 @@ class AuthController extends Controller
             'role' => $request->role,
             'nip' => $request->nip,
             'jabatan' => $request->jabatan,
+            'unit_kerja_id' => $request->unit_kerja_id,
             'is_active' => true,
         ]);
 

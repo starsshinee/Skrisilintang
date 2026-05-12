@@ -48,6 +48,7 @@ class RegisterController extends Controller
                     'pegawai', 'tamu',
                 ]),
             ],
+            'unit_kerja_id' => ['nullable', 'exists:unit_kerjas,id'],
         ], [
             'name.required'     => 'Nama lengkap wajib diisi.',
             'nip.required'      => 'NIP/NIK wajib diisi.',
@@ -59,6 +60,7 @@ class RegisterController extends Controller
             'password.confirmed'=> 'Konfirmasi password tidak cocok.',
             'role.required'     => 'Peran wajib dipilih.',
             'role.in'           => 'Peran tidak valid.',
+            'unit_kerja_id.exists' => 'Unit kerja yang dipilih tidak valid dalam sistem.',
         ]);
 
         $user = User::create([
@@ -67,12 +69,13 @@ class RegisterController extends Controller
             'username'  => $request->username,
             'password'  => Hash::make($request->password),
             'role'      => $request->role,
+            'unit_kerja_id' => $request->unit_kerja_id,
             'is_active' => true,
         ]);
 
         // Langsung login setelah registrasi
-        Auth::login($user);
-        $request->session()->regenerate();
+        // Auth::login($user);
+        // $request->session()->regenerate();
 
         return redirect()->route('login')
             ->with('success', 'Registrasi berhasil! Silakan masuk dengan akun baru Anda.');

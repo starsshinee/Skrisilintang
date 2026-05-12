@@ -37,8 +37,6 @@
     min-height: 100vh;
   }
 
-  /* Sidebar dari partial */
-
   /* MAIN */
   .main { margin-left: 260px; flex: 1; padding: 0 32px 40px; }
 
@@ -48,7 +46,6 @@
     position: sticky; top: 0; z-index: 50;
     background: var(--bg);
   }
-  .topbar-left {}
   .breadcrumb { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
   .breadcrumb span { color: var(--primary); font-weight: 600; }
   .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
@@ -334,198 +331,230 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-  @media (max-width: 1024px) {
-    .content-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 768px) {
-    .main { margin-left: 0; padding: 0 16px 32px; padding-top: 60px; }
-    .form-grid-2 { grid-template-columns: 1fr; }
-    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .tabs-nav { flex-wrap: wrap; }
-    .tab-btn { font-size: 12px; padding: 8px 10px; }
-    .avatar-section { flex-direction: column; text-align: center; }
-    .section-body { padding: 16px; }
-    .section-header { padding: 16px; }
-  }
 </style>
 </head>
 <body>
 
 @include('partials.sidebar')
 
-<!-- MAIN -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="breadcrumb"><a href="{{ route('tamu.dashboard') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
+      <div class="breadcrumb"><a href="{{ route('home') }}" style="text-decoration:none;color:var(--text-secondary)">Dashboard</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> <span>Pengaturan Akun</span></div>
       <div class="topbar-title">Pengaturan Akun</div>
     </div>
     <div class="topbar-right">
-      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: Tamu</div>
+      <div class="role-badge"><i class="fas fa-user-shield"></i> Role: {{ auth()->user()->role_label }}</div>
       <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
     </div>
   </div>
 
   <div class="content-grid">
-    <!-- LEFT: FORMS -->
-    <div>
-      <!-- TABS -->
-      <div class="tabs-nav animate d1">
-        <button class="tab-btn active" onclick="switchTab(this,'profil')"><i class="fas fa-user"></i> Informasi Profil</button>
-        <button class="tab-btn" onclick="switchTab(this,'keamanan')"><i class="fas fa-shield-halved"></i> Keamanan</button>
-        <button class="tab-btn" onclick="switchTab(this,'ttd')"><i class="fas fa-signature"></i> Tanda Tangan</button>
-      </div>
+    <div>  
+  <div class="tabs-nav animate d1">
+    <button class="tab-btn active" onclick="switchTab(this,'profil')">
+      <i class="fas fa-user"></i> Informasi Profil
+    </button>
+    <button class="tab-btn" onclick="switchTab(this,'keamanan')">
+      <i class="fas fa-shield-halved"></i> Keamanan
+    </button>
+    <button class="tab-btn" onclick="switchTab(this,'ttd')">
+      <i class="fas fa-signature"></i> Tanda Tangan
+    </button>
+  </div>
 
-      <!-- TAB: PROFIL -->
-      <div class="tab-panel active" id="tab-profil">
-        <div class="section-card animate d2">
-          <!-- Avatar -->
-          <div class="avatar-section">
-            <div class="big-avatar">
-              A
-              <div class="avatar-edit"><i class="fas fa-pen"></i></div>
+  {{-- ========================================== --}}
+  {{-- TAB 1: PROFIL - FORM UPDATE PROFILE --}}
+  {{-- ========================================== --}}
+  <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+    @csrf @method('PUT')
+    <div class="tab-panel active" id="tab-profil">
+      <div class="section-card animate d2">
+        <div class="avatar-section">
+          <div class="big-avatar">
+            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            <div class="avatar-edit"><i class="fas fa-pen"></i></div>
+          </div>
+          <div class="avatar-info">
+            <h3>{{ auth()->user()->name }}</h3>
+            <p>
+              {{ auth()->user()->jabatan ?? 'BPMP Provinsi Gorontalo' }} 
+              - NIP: {{ auth()->user()->nip ?? '-' }}
+            </p>
+            <label for="signature" class="avatar-upload-btn">
+              <i class="fas fa-camera"></i> Ubah Foto
+            </label>
+            <input type="file" id="signature" name="signature" accept="image/*" style="display:none">
+          </div>
+        </div>
+
+        <div class="section-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap</div>
+              <input type="text" class="form-input" name="name" value="{{ old('name', auth()->user()->name) }}" required>
+              @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
-            <div class="avatar-info">
-              <h3>Tamu</h3>
-              <p>BPMP Provinsi Gorontalo • NIP: 0983654321</p>
-              <button class="avatar-upload-btn"><i class="fas fa-camera"></i> Ubah Foto</button>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-id-badge"></i> Username</div>
+              <input type="text" class="form-input readonly" value="{{ auth()->user()->username }}" readonly>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-building"></i> Jabatan</div>
+              <input type="text" class="form-input" name="jabatan" value="{{ old('jabatan', auth()->user()->jabatan) }}">
+            </div>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-id-card"></i> NIP</div>
+              <input type="text" class="form-input" name="nip" value="{{ old('nip', auth()->user()->nip) }}" maxlength="30">
+              @error('nip') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-envelope"></i> Email</div>
+              <input type="email" class="form-input readonly" value="{{ auth()->user()->email ?? 'Belum diisi' }}" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label"><i class="fas fa-calendar-check"></i> Bergabung</div>
+              <input type="text" class="form-input readonly" value="{{ auth()->user()->created_at?->format('d M Y') }}" readonly>
             </div>
           </div>
 
-          <div class="section-body">
-            <div class="form-grid-2">
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap</div>
-                <input type="text" class="form-input" value="Admin">
-              </div>
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-id-badge"></i> Username</div>
-                <input type="text" class="form-input readonly" value="tamu" readonly>
-              </div>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-building"></i> Instansi Asal</div>
-                <input type="text" class="form-input" value="BPMP Provinsi Gorontalo">
-              </div>
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-id-card"></i> NIP</div>
-                <input type="text" class="form-input" value="0983654321">
-              </div>
-            <div class="form-grid-2">
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-envelope"></i> Email</div>
-                <input type="email" class="form-input" placeholder="email@instansi.go.id">
-              </div>
-              <div class="form-group">
-                <div class="form-label"><i class="fas fa-phone"></i> Nomor HP</div>
-                <input type="tel" class="form-input" placeholder="0812-xxxx-xxxx">
-              </div>
-            </div>
+          <div class="form-grid-2">
             <div class="form-group">
-              <div class="form-label"><i class="fas fa-location-dot"></i> Alamat Instansi</div>
-              <input type="text" class="form-input" placeholder="Alamat lengkap instansi Anda">
+              <div class="form-label"><i class="fas fa-users"></i> Unit Kerja</div>
+              <select name="unit_kerja_id" class="form-select cursor-pointer">
+                <option value="">-- Belum memilih unit kerja --</option>
+                @foreach(\App\Models\UnitKerja::all() as $unit)
+                  <option value="{{ $unit->id }}" {{ old('unit_kerja_id', auth()->user()->unit_kerja_id) == $unit->id ? 'selected' : '' }}>
+                    {{ $unit->nama_unit }}
+                  </option>
+                @endforeach
+              </select>
+              @error('unit_kerja_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
-            <div class="btn-row">
-              <button class="cancel-btn"><i class="fas fa-xmark"></i> Batal</button>
-              <button class="save-btn" onclick="showToast('Profil berhasil diperbarui!')"><i class="fas fa-floppy-disk"></i> Simpan Perubahan</button>
-            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="cancel-btn" onclick="history.back()">
+              <i class="fas fa-xmark"></i> Batal
+            </button>
+            <button type="submit" class="save-btn">
+              <i class="fas fa-floppy-disk"></i> Simpan Perubahan
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  </form>
 
-      <!-- TAB: KEAMANAN -->
-      <div class="tab-panel" id="tab-keamanan">
-        <div class="tip-card animate d2">
-          <div class="tip-icon"><i class="fas fa-triangle-exclamation"></i></div>
-          <div>
-            <div class="tip-title">Tips Keamanan Akun</div>
-            <div class="tip-text">Gunakan password yang kuat dengan minimal 8 karakter, kombinasi huruf besar, angka, dan simbol. Jangan bagikan password Anda kepada siapapun.</div>
-          </div>
+  {{-- ========================================== --}}
+  {{-- TAB 2: KEAMANAN - FORM CHANGE PASSWORD --}}
+  {{-- ========================================== --}}
+  <form method="POST" action="{{ route('password.change') }}">
+    @csrf
+    <div class="tab-panel" id="tab-keamanan">
+      <div class="tip-card animate d2">
+        <div class="tip-icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <div>
+          <div class="tip-title">Tips Keamanan Akun</div>
+          <div class="tip-text">Gunakan password kuat (min 8 karakter: huruf besar, angka, simbol).</div>
         </div>
+      </div>
 
-        <div class="section-card animate d2">
-          <div class="section-header">
-            <div>
-              <div class="section-title"><i class="fas fa-lock"></i> Ubah Password</div>
-              <div class="section-sub">Perbarui password untuk menjaga keamanan akun Anda</div>
-            </div>
-          </div>
-          <div class="section-body">
-            <div class="form-group">
-              <div class="form-label"><i class="fas fa-lock"></i> Password Saat Ini</div>
-              <div class="pw-wrapper">
-                <input type="password" class="form-input" placeholder="Masukkan password lama" id="pwCurrent" value="••••••••">
-                <span class="pw-toggle" onclick="togglePw('pwCurrent',this)"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-label"><i class="fas fa-key"></i> Password Baru</div>
-              <div class="pw-wrapper">
-                <input type="password" class="form-input" placeholder="Minimal 8 karakter" id="pwNew" oninput="checkStrength(this.value)">
-                <span class="pw-toggle" onclick="togglePw('pwNew',this)"><i class="fas fa-eye"></i></span>
-              </div>
-              <div class="pw-strength" id="pwStrength" style="display:none">
-                <div class="pw-bars">
-                  <div class="pw-bar" id="bar1"></div>
-                  <div class="pw-bar" id="bar2"></div>
-                  <div class="pw-bar" id="bar3"></div>
-                  <div class="pw-bar" id="bar4"></div>
-                </div>
-                <div class="pw-label" id="pwLabel">Lemah</div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-label"><i class="fas fa-shield-check"></i> Konfirmasi Password Baru</div>
-              <div class="pw-wrapper">
-                <input type="password" class="form-input" placeholder="Ulangi password baru" id="pwConfirm">
-                <span class="pw-toggle" onclick="togglePw('pwConfirm',this)"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="btn-row">
-              <button class="cancel-btn">Batal</button>
-              <button class="save-btn" onclick="showToast('Password berhasil diperbarui!','success')"><i class="fas fa-shield-halved"></i> Update Password</button>
-            </div>
-          </div>
+      <div class="section-card animate d2">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-lock"></i> Ubah Password</div>
         </div>
-
-        <!-- Session Info -->
-        <div class="section-card animate d3">
-          <div class="section-header">
-            <div>
-              <div class="section-title"><i class="fas fa-desktop"></i> Sesi Aktif</div>
-              <div class="section-sub">Perangkat yang sedang masuk ke akun Anda</div>
+        <div class="section-body">
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-lock"></i> Password Saat Ini</div>
+            <div class="pw-wrapper">
+              <input type="password" class="form-input" name="current_password" placeholder="Masukkan password lama" id="pwCurrent" required>
+              <span class="pw-toggle" onclick="togglePw('pwCurrent',this)"><i class="fas fa-eye"></i></span>
+            </div>
+            @error('current_password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+          </div>
+          
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-key"></i> Password Baru</div>
+            <div class="pw-wrapper">
+              <input type="password" class="form-input" name="new_password" placeholder="Minimal 8 karakter" id="pwNew" required minlength="8" oninput="checkStrength(this.value)">
+              <span class="pw-toggle" onclick="togglePw('pwNew',this)"><i class="fas fa-eye"></i></span>
+            </div>
+            <div class="pw-strength" id="pwStrength" style="display:none">
+              <div class="pw-bars">
+                <div class="pw-bar" id="bar1"></div><div class="pw-bar" id="bar2"></div>
+                <div class="pw-bar" id="bar3"></div><div class="pw-bar" id="bar4"></div>
+              </div>
+              <div class="pw-label" id="pwLabel">Lemah</div>
+            </div>
+            @error('new_password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+          </div>
+          
+          <div class="form-group">
+            <div class="form-label"><i class="fas fa-shield-check"></i> Konfirmasi Password</div>
+            <div class="pw-wrapper">
+              <input type="password" class="form-input" name="new_password_confirmation" placeholder="Ulangi password baru" id="pwConfirm" required>
+              <span class="pw-toggle" onclick="togglePw('pwConfirm',this)"><i class="fas fa-eye"></i></span>
             </div>
           </div>
-          <div class="section-body">
-            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:11px;border:1px solid #e8eeff">
-              <div style="width:42px;height:42px;background:rgba(37,99,235,0.1);border-radius:11px;display:grid;place-items:center;color:#2563eb;font-size:18px;flex-shrink:0">
-                <i class="fas fa-display"></i>
-              </div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Windows PC — Edge</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">Surabaya, Indonesia · Aktif sekarang</div>
-              </div>
-              <div style="font-size:11px;font-weight:700;background:rgba(16,185,129,0.1);color:#10b981;padding:4px 10px;border-radius:6px">
-                <i class="fas fa-circle" style="font-size:7px"></i> Sesi Ini
-              </div>
-            </div>
+          
+          <div class="btn-row">
+            <button type="button" class="cancel-btn" onclick="switchTab(document.querySelector('.tab-btn.active'), 'profil')">
+              Batal
+            </button>
+            <button type="submit" class="save-btn">
+              <i class="fas fa-shield-halved"></i> Update Password
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- TAB: TANDA TANGAN -->
-      <div class="tab-panel" id="tab-ttd">
-        <div class="section-card animate d2">
-          <div class="section-header">
-            <div>
-              <div class="section-title"><i class="fas fa-signature"></i> Tanda Tangan Digital</div>
-              <div class="section-sub">Tanda tangan akan digunakan pada surat peminjaman gedung</div>
+      <div class="section-card animate d3">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-desktop"></i> Sesi Aktif</div>
+        </div>
+        <div class="section-body">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:11px;border:1px solid #e8eeff">
+            <div style="width:42px;height:42px;background:rgba(37,99,235,0.1);border-radius:11px;display:grid;place-items:center;color:#2563eb;font-size:18px;flex-shrink:0">
+              <i class="fas fa-display"></i>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Windows PC — Edge</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">
+                {{ request()->ip() }} · Aktif sekarang
+              </div>
+            </div>
+            <div style="font-size:11px;font-weight:700;background:rgba(16,185,129,0.1);color:#10b981;padding:4px 10px;border-radius:6px">
+              <i class="fas fa-circle" style="font-size:7px"></i> Sesi Ini
             </div>
           </div>
-          <div class="section-body">
-            <!-- Current Signature -->
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {{-- ========================================== --}}
+  {{-- TAB 3: TANDA TANGAN - FORM SIGNATURE --}}
+  {{-- ========================================== --}}
+  <form method="POST" action="{{ route('profile.signature') }}" enctype="multipart/form-data">
+    @csrf
+    <div class="tab-panel" id="tab-ttd">
+      <div class="section-card animate d2">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-signature"></i> Tanda Tangan Digital</div>
+          <div class="section-sub">Tanda tangan akan digunakan pada surat peminjaman gedung</div>
+        </div>
+        <div class="section-body">
+          @if(auth()->user()->signature)
+            <div style="margin-bottom:20px">
+              <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
+              <img src="{{ Storage::url(auth()->user()->signature) }}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain" alt="Signature">
+            </div>
+          @else
             <div style="margin-bottom:20px">
               <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
               <div class="signature-zone" id="sigZone">
@@ -534,131 +563,113 @@
                 <div class="sig-sub">Upload file tanda tangan Anda di bawah</div>
               </div>
             </div>
+          @endif
 
-            <!-- Upload -->
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-upload"></i> Upload Tanda Tangan Baru</div>
-              <div style="
-                border: 1.5px dashed var(--border);
-                border-radius: 11px;
-                padding: 22px;
-                text-align: center;
-                cursor: pointer;
-                transition: all .2s;
-                background: #fafbff;
-              " onmouseover="this.style.borderColor='#2563eb';this.style.background='#f0f4ff'"
-                 onmouseout="this.style.borderColor='var(--border)';this.style.background='#fafbff'"
-                 onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:#dde5f9;margin-bottom:8px;display:block"></i>
-                <div style="font-size:13px;font-weight:600;color:var(--text-secondary)">Klik untuk upload atau drag & drop</div>
-                <div class="sig-formats" style="margin-top:8px">
-                  <span class="sig-fmt">JPG</span>
-                  <span class="sig-fmt">PNG</span>
-                  <span class="sig-fmt">GIF</span>
-                  <span class="sig-fmt">Maks. 2MB</span>
-                </div>
+          <div style="margin-bottom:20px">
+            <div class="form-label"><i class="fas fa-upload"></i> Upload Tanda Tangan Baru</div>
+            <label for="signature_upload" style="
+              border: 1.5px dashed var(--border); border-radius: 11px; padding: 22px;
+              text-align: center; cursor: pointer; transition: all .2s; background: #fafbff;
+              display: block;
+            " onmouseover="this.style.borderColor='#2563eb';this.style.background='#f0f4ff'"
+               onmouseout="this.style.borderColor='var(--border)';this.style.background='#fafbff'">
+              <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:#dde5f9;margin-bottom:8px;display:block"></i>
+              <div style="font-size:13px;font-weight:600;color:var(--text-secondary)">Klik untuk upload</div>
+              <div style="margin-top:8px">
+                <span class="sig-fmt">JPG/PNG</span><span class="sig-fmt">Maks. 2MB</span>
               </div>
-              <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.gif" style="display:none" onchange="previewSig(this)">
-            </div>
+            </label>
+            <input type="file" id="signature_upload" name="signature" accept=".jpg,.jpeg,.png" style="display:none" onchange="previewSig(this)">
+          </div>
 
-            <!-- Canvas Signature -->
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-pen-to-square"></i> Atau Gambar Tanda Tangan</div>
-              <canvas id="sigCanvas" width="600" height="160" style="
-                border: 1.5px solid var(--border);
-                border-radius: 11px;
-                background: #fff;
-                cursor: crosshair;
-                display: block;
-                width: 100%;
-                max-width: 100%;
-                touch-action: none;
-              "></canvas>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <button onclick="clearCanvas()" style="
-                  padding:7px 14px;border-radius:7px;border:1.5px solid var(--border);
-                  background:transparent;font-size:12px;font-weight:600;cursor:pointer;
-                  color:var(--text-secondary);font-family:'Plus Jakarta Sans',sans-serif;
-                  display:flex;align-items:center;gap:6px;transition:all .2s;
-                " onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
-                   onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
-                  <i class="fas fa-eraser"></i> Hapus
-                </button>
-              </div>
+          <div style="margin-bottom:20px">
+            <div class="form-label"><i class="fas fa-pen-to-square"></i> Atau Gambar Manual</div>
+            <canvas id="sigCanvas" width="600" height="160" style="
+              border: 1.5px solid var(--border); border-radius: 11px; background: #fff;
+              cursor: crosshair; display: block; width: 100%; touch-action: none;
+            "></canvas>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button type="button" onclick="clearCanvas()" class="btn-small cancel-btn" style="padding: 6px 12px; font-size:12px;">
+                <i class="fas fa-eraser"></i> Hapus
+              </button>
             </div>
+          </div>
 
-            <div class="btn-row">
-              <button class="cancel-btn">Batal</button>
-              <button class="save-btn" onclick="showToast('Tanda tangan berhasil disimpan!')"><i class="fas fa-floppy-disk"></i> Simpan Tanda Tangan</button>
-            </div>
+          <div class="btn-row">
+            <button type="button" class="cancel-btn" onclick="switchTab(document.querySelector('.tab-btn.active'), 'profil')">
+              Batal
+            </button>
+            <button type="submit" class="save-btn">
+              <i class="fas fa-floppy-disk"></i> Simpan Tanda Tangan
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </form>
+</div>
 
-    <!-- RIGHT: INFO CARDS -->
-    <div>
-      <div class="info-card animate d2">
-        <div class="info-card-header"><i class="fas fa-circle-info"></i> Informasi Akun</div>
-        <div class="info-card-body">
-          <div class="info-row">
-            <div class="info-label">Role</div>
-            <div class="info-badge role"><i class="fas fa-user"></i> Tamu</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Status</div>
-            <div class="info-badge active"><i class="fas fa-circle" style="font-size:7px"></i> Aktif</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Status Persetujuan</div>
-            <div class="info-badge approved"><i class="fas fa-check"></i> Diterima</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Tanggal Bergabung</div>
-            <div class="info-value">12 Apr 2026, 14:16</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Terakhir Diperbarui</div>
-            <div class="info-value">12 Apr 2026, 14:16</div>
-          </div>
+<aside style="width:320px">
+  <div class="info-card animate d2">
+    <div class="info-card-header"><i class="fas fa-circle-info"></i> Informasi Akun</div>
+    <div class="info-card-body">
+      <div class="info-row">
+        <div class="info-label">Role</div>
+        <div class="info-badge role">
+          <i class="fas fa-user"></i> {{ auth()->user()->role_label }}
+        </div>
+      </div>
+      
+      <div class="info-row">
+        <div class="info-label">Unit Kerja</div>
+        <div class="info-value" style="text-align: right; max-width: 60%; line-height: 1.3;">
+          {{ auth()->user()->unitKerja->nama_unit ?? 'Belum diatur' }}
         </div>
       </div>
 
-      <div class="info-card animate d3">
-        <div class="info-card-header"><i class="fas fa-bolt"></i> Aksi Cepat</div>
-        <div class="quick-list">
-          <a href="{{ route('tamu.peminjaman-gedung') }}" class="quick-item"><i class="fas fa-plus-circle"></i> Ajukan Peminjaman</a>
-          <a href="#" class="quick-item"><i class="fas fa-clock-rotate-left"></i> Riwayat Saya</a>
-          <a href="#" class="quick-item"><i class="fas fa-download"></i> Unduh Profil</a>
-          <a href="#" class="quick-item"><i class="fas fa-headset"></i> Bantuan</a>
+      <div class="info-row">
+        <div class="info-label">Status</div>
+        <div class="info-badge {{ auth()->user()->is_active ? 'active' : 'inactive' }}">
+          <i class="fas fa-circle" style="font-size:7px"></i> 
+          {{ auth()->user()->is_active ? 'Aktif' : 'Tidak Aktif' }}
         </div>
       </div>
-
-      <!-- Profile Completeness -->
-      <div class="info-card animate d3">
-        <div class="info-card-header"><i class="fas fa-chart-pie"></i> Kelengkapan Profil</div>
-        <div class="info-card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div style="font-size:13px;color:var(--text-secondary);font-weight:500">70% lengkap</div>
-            <div style="font-size:14px;font-weight:700;color:var(--primary)">7/10</div>
-          </div>
-          <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:14px">
-            <div style="height:100%;width:70%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:4px;transition:width .5s ease"></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#10b981"><i class="fas fa-check-circle"></i> Nama Lengkap</div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#10b981"><i class="fas fa-check-circle"></i> Instansi</div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#10b981"><i class="fas fa-check-circle"></i> NIP</div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8"><i class="fas fa-circle-xmark"></i> Email</div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8"><i class="fas fa-circle-xmark"></i> Tanda Tangan</div>
-          </div>
-        </div>
+      <div class="info-row">
+        <div class="info-label">Kelengkapan Profil</div>
+        <div class="info-value">{{ auth()->user()->profile_completeness }}%</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Bergabung</div>
+        <div class="info-value">{{ auth()->user()->created_at?->format('d M Y, H:i') }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Terakhir Update</div>
+        <div class="info-value">{{ auth()->user()->updated_at?->format('d M Y, H:i') }}</div>
       </div>
     </div>
   </div>
+
+  <div class="info-card animate d3">
+    <div class="info-card-header"><i class="fas fa-bolt"></i> Aksi Cepat</div>
+    <div class="quick-list">
+      <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="quick-item">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </a>
+      <a href="#" class="quick-item">
+        <i class="fas fa-cog"></i> Pengaturan Akun
+      </a>
+      <form method="POST" action="{{ route('logout') }}" style="display:contents">
+        @csrf
+        <button type="submit" class="quick-item" style="border:none;background:none;width:100%;text-align:left;color:#ef4444">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</aside>
+</div>
 </main>
 
-<!-- TOAST -->
 <div id="toast" style="
   position:fixed; bottom:28px; right:28px;
   background:#0f172a; color:#fff;
@@ -673,6 +684,14 @@
   <i class="fas fa-circle-check" style="color:#10b981;font-size:16px" id="toastIcon"></i>
   <span id="toastMsg">Berhasil disimpan!</span>
 </div>
+
+@if(session('success'))
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    showToast("{{ session('success') }}");
+  });
+</script>
+@endif
 
 <script>
 // TABS
