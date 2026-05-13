@@ -43,6 +43,7 @@ return new class extends Migration
             $table->integer('jumlah_peserta')->nullable();
             $table->string('alat_penunjang')->nullable();
             $table->string('surat_path')->nullable();
+            $table->string('surat_perjanjian_path')->nullable();
             
             // Workflow
             $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');

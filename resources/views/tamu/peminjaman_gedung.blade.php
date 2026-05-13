@@ -375,9 +375,10 @@
     padding: 12px 18px;
     display: flex; gap: 8px;
     border-top: 1px solid #eef1ff;
+    flex-wrap: wrap; /* Memastikan tombol tidak bertumpuk berantakan */
   }
   .card-btn {
-    flex: 1; padding: 9px;
+    flex: 1; min-width: 120px; padding: 9px;
     border-radius: 8px;
     font-size: 12px; font-weight: 600;
     cursor: pointer; border: none;
@@ -395,35 +396,6 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
   .animate { animation: fadeUp .5s ease both; }
   .d1 { animation-delay: .05s; } .d2 { animation-delay: .1s; } .d3 { animation-delay: .15s; }
-
-  /* ===================== MOBILE BOTTOM TAB ===================== */
-  .mobile-tabs {
-    display: none;
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--card-bg);
-    border-top: 1px solid var(--border);
-    padding: 8px 0 env(safe-area-inset-bottom, 8px);
-    z-index: 100;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-  }
-  .mobile-tabs-inner { display: flex; justify-content: space-around; }
-  .mobile-tab {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    padding: 6px 16px;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 10px; font-weight: 600;
-    transition: all .2s;
-    text-decoration: none;
-    border: none; background: none; font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .mobile-tab i { font-size: 18px; }
-  .mobile-tab.active { color: var(--primary); }
-
-  /* ===================== SCROLLBAR ===================== */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
   /* ===================== RESPONSIVE ===================== */
   @media (max-width: 1280px) { .content-grid { grid-template-columns: 1fr 1.2fr; gap: 20px; } }
@@ -448,7 +420,6 @@
     .req-list { padding: 16px 18px; }
     .history-header { padding: 18px 18px 14px; }
     .content-grid { gap: 16px; }
-    .mobile-tabs { display: block; }
   }
   @media (max-width: 480px) {
     .main { padding: 0 12px 100px; }
@@ -715,10 +686,24 @@
                 </div>
                 @endif
               </div>
+              
               <div class="req-card-footer">
                   <button class="card-btn detail" onclick="showDetail({{ $item['id'] }})">
                       <i class="fas fa-eye"></i> Detail
                   </button>
+
+                  @if(!empty($item['surat_path']))
+                  <a href="{{ asset('storage/' . $item['surat_path']) }}" target="_blank" class="card-btn" style="background: rgba(59,130,246,0.1); color: var(--primary); text-decoration: none;">
+                      <i class="fas fa-file-alt"></i> File Permohonan
+                  </a>
+                  @endif
+
+                  @if(in_array($item['status'], ['disetujui', 'disetujui_kasubag']) && !empty($item['surat_perjanjian_path']))
+                  <a href="{{ asset('storage/' . $item['surat_perjanjian_path']) }}" target="_blank" class="card-btn" style="background: rgba(16,185,129,0.1); color: var(--success); text-decoration: none;">
+                      <i class="fas fa-file-contract"></i> Surat Perjanjian
+                  </a>
+                  @endif
+
                   @if(in_array($item['status'], ['pending', 'dalam_review']))
                   <button class="card-btn cancel" onclick="cancelRequest({{ $item['id'] }})">
                       <i class="fas fa-xmark"></i> Batalkan
@@ -900,17 +885,22 @@
           <div id="detailKomentar" style="background:#fef3c7;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;color:#92400e;border:1px solid #fcd34d"></div>
         </div>
 
-        <div id="detailSuratWrap" style="margin-bottom:16px;display:none">
-          <a id="detailSuratLink" href="#" target="_blank" style="
-            display:flex;align-items:center;gap:8px;
-            padding:12px 16px;border-radius:10px;
-            background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.15);
-            color:var(--primary);font-size:13px;font-weight:600;text-decoration:none;
-            transition:all .2s;
-          ">
-            <i class="fas fa-file-download"></i> Download Surat Peminjaman
-          </a>
+        <div id="detailSuratWrap" style="margin-bottom:16px; display:flex; flex-direction:column; gap:8px;">
+          <div id="wrapSuratPermohonan" style="display:none">
+            <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px;">Dokumen Permohonan (Anda)</div>
+            <a id="btnSuratPermohonan" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.15);color:var(--primary);font-size:13px;font-weight:600;text-decoration:none;">
+              <i class="fas fa-file-alt"></i> Lihat File Permohonan
+            </a>
+          </div>
+
+          <div id="wrapSuratPerjanjian" style="display:none; margin-top:8px;">
+            <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px;">Dokumen Perjanjian Final (Admin)</div>
+            <a id="btnSuratPerjanjian" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);color:var(--success);font-size:13px;font-weight:600;text-decoration:none;">
+              <i class="fas fa-file-contract"></i> Download Surat Perjanjian Final
+            </a>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -1013,7 +1003,6 @@
               $('#detailKategori').text(d.fasilitas ? d.fasilitas.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-');
               $('#detailLokasi').text(d.lokasi);
               
-              // ✅ Tampilkan Peserta & Alat di Modal
               $('#detailPeserta').text((d.jumlah_peserta || 0) + ' Orang');
               $('#detailAlat').text(d.alat_penunjang || '-');
 
@@ -1037,11 +1026,22 @@
                 $('#detailKomentarWrap').hide();
               }
 
-              if (d.surat_url) {
-                $('#detailSuratLink').attr('href', d.surat_url);
-                $('#detailSuratWrap').show();
+              // ✅ Logika Tampil Dokumen
+              
+              // 1. Surat Permohonan (Tamu)
+              if (d.surat_permohonan_url || d.surat_url) { // Handle variable if mapping is slightly different
+                $('#btnSuratPermohonan').attr('href', d.surat_permohonan_url || d.surat_url);
+                $('#wrapSuratPermohonan').show();
               } else {
-                $('#detailSuratWrap').hide();
+                $('#wrapSuratPermohonan').hide();
+              }
+
+              // 2. Surat Perjanjian Final (Admin Sarpras)
+              if (d.surat_perjanjian_url && (d.status === 'disetujui' || d.status === 'disetujui_kasubag')) {
+                $('#btnSuratPerjanjian').attr('href', d.surat_perjanjian_url);
+                $('#wrapSuratPerjanjian').show();
+              } else {
+                $('#wrapSuratPerjanjian').hide();
               }
 
               $('#detailLoading').hide();
@@ -1176,7 +1176,6 @@
       }
 
       function submitForm() {
-          // ✅ 1. Tambahkan ID input baru ke array required
           const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput', '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput', '#jumlahPesertaInput', '#alatPenunjangInput', 'textarea', 'input[type="tel"]'];
           let valid = true;
           
@@ -1209,11 +1208,8 @@
           formData.append('tanggal_kembali', $('#tglKembali').val());
           formData.append('jam_mulai', $('#jamMulaiInput').val());
           formData.append('jam_selesai', $('#jamSelesaiInput').val());
-          
-          // ✅ 2. Tambahkan variabel baru ke dalam FormData
           formData.append('jumlah_peserta', $('#jumlahPesertaInput').val());
           formData.append('alat_penunjang', $('#alatPenunjangInput').val().trim());
-
           formData.append('tujuan_penggunaan', $('textarea').val().trim());
           formData.append('nomor_kontak', $('input[type="tel"]').val().trim());
 

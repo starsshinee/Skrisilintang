@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf; // Tambahkan ini di atas
 use Illuminate\Support\Facades\Storage;
@@ -518,6 +519,78 @@ class AdminSarprasController extends Controller
         return view('adminsarpras.laporan_peminjaman_gedung', compact(
             'peminjaman', 'stats', 'statusBulanIni', 'trendData', 'donutData'
         ));
+    }
+
+    /**
+     * Generate Surat Perjanjian Sewa Peminjaman Gedung (PDF)
+     */
+    public function generateSuratPerjanjianSewa(PeminjamanGedung $peminjaman)
+    {
+        // 1. Ambil data entitas yang terlibat
+        $admin = Auth::user(); 
+        $kepala = User::where('role', 'kepalabpmp')->first();
+
+        // 2. Fungsi bantuan untuk mengubah tanda tangan menjadi Base64
+        $getBase64 = function ($path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                $type = pathinfo(storage_path('app/public/' . $path), PATHINFO_EXTENSION);
+                $data = Storage::disk('public')->get($path);
+                return 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            return null;
+        };
+
+        // 3. Konversi signature menjadi Base64
+        $ttdAdmin = $getBase64($admin->signature);
+        $ttdKepala = $kepala ? $getBase64($kepala->signature) : null;
+        
+        // Catatan: Jika tamu/peminjam memiliki kolom ttd, kita bisa memanggilnya di sini.
+        // Berdasarkan skema tabel Anda sebelumnya, pendaftar meminjam lewat form dan mungkin tidak punya field signature di model User untuk tamu.
+        // Jika ada, tambahkan logika untuk $ttdPeminjam di bawah ini.
+        $ttdPeminjam = null; 
+        if ($peminjaman->user && isset($peminjaman->user->signature)) {
+             $ttdPeminjam = $getBase64($peminjaman->user->signature);
+        }
+
+        // 4. Render tampilan PDF
+        $pdf = Pdf::loadView('surat.peminjaman_gedung', compact(
+            'peminjaman', 'admin', 'kepala', 
+            'ttdAdmin', 'ttdKepala', 'ttdPeminjam'
+        ));
+
+        // 5. Unduh file PDF
+        return $pdf->download('Surat_peminjaman_gedung' . str_pad($peminjaman->id, 3, '0', STR_PAD_LEFT) . '.pdf');
+    }
+
+    /**
+     * Upload Surat Perjanjian BAST Final oleh Admin
+     */
+    public function uploadSuratPerjanjianSewa(Request $request, PeminjamanGedung $peminjaman)
+    {
+        $request->validate([
+            'surat_bast' => 'required|mimes:pdf|max:5120' // Wajib PDF, max 5MB
+        ]);
+
+        if ($request->hasFile('surat_bast')) {
+            // Hapus file lama jika admin mengunggah ulang
+            if ($peminjaman->surat_path && Storage::disk('public')->exists($peminjaman->surat_path)) {
+                Storage::disk('public')->delete($peminjaman->surat_path);
+            }
+
+            $filename = 'SP_Sewa_Gedung_' . str_pad($peminjaman->id, 3, '0', STR_PAD_LEFT) . '_' . time() . '.pdf';
+            
+            // Simpan file ke storage
+            $path = $request->file('surat_bast')->storeAs('peminjaman_surat', $filename, 'public');
+
+            // Update record
+            $peminjaman->update([
+                'surat_perjanjian_path' => $path, 
+            ]);
+
+            return back()->with('success', 'Surat Perjanjian BAST Final berhasil diunggah!');
+        }
+
+        return back()->with('error', 'Gagal mengunggah surat perjanjian.');
     }
 
     /**

@@ -260,9 +260,9 @@
                 @endif
             </td>
             <td>
+                
                 <div class="action-btns" style="justify-content: center;">
                     
-                    <!-- ✅ Tombol Detail (Selalu Tampil) -->
                     <button class="act-btn act-detail" title="👁️ Detail" 
                             data-item="{{ json_encode($item) }}"
                             onclick="openDetailModal(this)">
@@ -272,7 +272,6 @@
                         </svg>
                     </button>
 
-                    <!-- ✅ Tombol Edit (Selalu Tampil) -->
                     <button class="act-btn act-edit" title="✏️ Edit" 
                             data-item="{{ json_encode($item) }}"
                             onclick="openEditModal(this)">
@@ -281,35 +280,47 @@
                         </svg>
                     </button>
 
-                    <!-- Tombol Download Surat (Jika Ada) -->
-                    @if($item->surat_path)
-                    <a href="{{ route('adminsarpras.download-surat', $item->id) }}" class="act-btn act-dash" title="📄 Download Surat" download>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14,2 14,8 20,8"/>
-                            <line x1="16" y1="13" x2="8" y2="21"/>
-                            <line x1="16" y1="21" x2="8" y2="13"/>
-                        </svg>
-                    </a>
-                    @endif
-
-                    <!-- Status Action (Forward / Reject - Jika Pending) -->
                     @if($item->status == 'pending')
-                        <!-- Tombol Teruskan -->
                         <button class="act-btn act-forward" title="➡️ Teruskan ke Kasubag" onclick="openForwardModal({{ $item->id }})">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <!-- Icon Paper Airplane (Send/Forward) -->
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
                         </button>
 
-                        <!-- Tombol Tolak -->
                         <button class="act-btn act-reject" title="❌ Tolak" onclick="openRejectModal({{ $item->id }})">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <!-- Icon Solid Cross (Reject/Close) -->
                                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
                             </svg>
                         </button>
+                    @endif
+
+                    @if(in_array($item->status, ['disetujui_kasubag', 'disetujui']))
+                        <a href="{{ route('adminsarpras.peminjaman.generate-surat', $item->id) }}" target="_blank" class="act-btn" style="background: #e0e7ff; color: #4361ee;" title="Generate Surat Perjanjian">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </a>
+
+                        <button type="button" class="act-btn" style="background: #dcfce7; color: #10b981;" title="Upload Surat Perjanjian Final" onclick="openUploadModal({{ $item->id }})">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </button>
+
+                        @if($item->surat_path)
+                        <a href="{{ asset('storage/' . $item->surat_path) }}" target="_blank" class="act-btn" style="background: #f3e8fd; color: #9333ea;" title="Lihat Dokumen Final">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </a>
+                        @endif
                     @endif
                 </div>
             </td>
@@ -357,6 +368,23 @@
             <tr id="rowDtKomentar" style="display:none;">
                 <td class="label-col" style="color:var(--danger)">Alasan / Komentar</td><td class="colon-col" style="color:var(--danger)">:</td>
                 <td><span id="dtKomentar" style="color:var(--danger); font-style:italic;"></span></td>
+            </tr>
+            <tr> 
+                <td class="label-col">Lampiran Surat</td><td class="colon-col">:
+                    @if($item->surat_path)
+                        <a href="{{ route('adminsarpras.download-surat', $item->id) }}" class="btn-primary" title="📄 Download Surat" download>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="21"/>
+                                <line x1="16" y1="21" x2="8" y2="13"/>
+                            </svg>
+                            Download Surat
+                        </a>
+                    @else
+                        <span style="color:var(--text-secondary); font-style:italic;">Tidak ada lampiran</span>
+                    @endif
+                </td>
             </tr>
         </table>
 
@@ -448,6 +476,25 @@
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
                 <button type="submit" class="btn-primary" style="background:var(--danger)">🚫 Tolak</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--- Modal Upload Surat Perjanjian Final -->
+<div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+        <h3 class="modal-title">📤 Upload Surat Perjanjian Final</h3>
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label class="form-label">File Surat (PDF) <span style="color:#e63946">*</span></label>
+                <input type="file" name="surat_bast" class="form-input" accept="application/pdf" required style="background: white;">
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">Pastikan file PDF yang diunggah adalah dokumen final yang sudah ditandatangani. Ukuran maksimal 5MB.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('uploadModal')">Batal</button>
+                <button type="submit" class="btn-primary" style="background: var(--success);"><i class="fas fa-upload"></i> Upload Dokumen</button>
             </div>
         </form>
     </div>
@@ -624,6 +671,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const toasts = document.querySelectorAll('#errorToast, #successToast');
         toasts.forEach(toast => toast.remove());
     }, 5000);
+
+    // ✅ BUKA MODAL UPLOAD SURAT
+    window.openUploadModal = function(id) {
+        const form = document.getElementById('uploadForm');
+        // Sesuaikan route action dengan struktur route web.php Anda
+        form.action = `/adminsarpras/peminjaman-gedung/${id}/upload-surat`; 
+        document.getElementById('uploadModal').classList.add('open');
+    }
 });
 </script>
 </body>

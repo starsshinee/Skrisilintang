@@ -281,6 +281,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/peminjaman/{peminjaman}/reject', [AdminSarprasController::class, 'rejectByAdmin'])->name('peminjaman.reject');
             Route::get('/peminjaman/{peminjaman}/download-surat', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
             Route::get('/peminjaman-gedung/download', [AdminSarprasController::class, 'downloadLaporanPeminjaman'])->name('peminjaman.download');
+            Route::get('/peminjaman-gedung/{peminjaman}/generate-surat', [AdminSarprasController::class, 'generateSuratPerjanjianSewa'])
+            ->name('peminjaman.generate-surat');
+            Route::post('/peminjaman-gedung/{peminjaman}/upload-surat', [AdminSarprasController::class, 'uploadSuratPerjanjianSewa'])
+                ->name('peminjaman.upload-surat');
+            
+            
             // Route untuk Bulk Delete
             Route::post('/peminjaman-gedung/bulk-delete', [AdminSarprasController::class, 'bulkDeletePeminjaman'])->name('peminjaman.bulk-delete');
             

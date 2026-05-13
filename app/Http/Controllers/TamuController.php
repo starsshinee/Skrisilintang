@@ -92,6 +92,8 @@ class TamuController extends Controller
                         'created_at' => $item->created_at?->format('d M Y'),
                         'fasilitas' => $item->fasilitas,
                         'gedung_id' => $item->gedung_id,
+                        // 'surat_path' => $item->surat_path,
+                        'surat_perjanjian_path' => $item->surat_perjanjian_path,
                     ];
                 });
         }
@@ -208,7 +210,8 @@ class TamuController extends Controller
                 'status_pembayaran' => $peminjaman->status_pembayaran,
                 'cara_pembayaran' => ucfirst($peminjaman->cara_pembayaran),
                 'komentar' => $peminjaman->komentar,
-                'surat_url' => $peminjaman->surat_path ? asset('storage/' . $peminjaman->surat_path) : null,
+                'surat_permohonan_url' => $peminjaman->surat_path ? asset('storage/' . $peminjaman->surat_path) : null,
+                'surat_perjanjian_url' => $peminjaman->surat_perjanjian_path ? asset('storage/' . $peminjaman->surat_perjanjian_path) : null,
                 'created_at' => $peminjaman->created_at?->format('d M Y H:i'),
                 'diteruskan_ke_kasubag_date' => $peminjaman->diteruskan_ke_kasubag_date?->format('d M Y H:i'),
             ]
