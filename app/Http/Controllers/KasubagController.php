@@ -18,7 +18,7 @@ class KasubagController extends Controller
 {
     public function dashboard()
     {
-        // 1. Hitung Statistik Barang (Contoh asumsi status kasubag = 'diteruskan_kasubag')
+        // 1. Hitung Statistik Barang
         $barangTotal = PeminjamanBarang::count();
         $barangPending = PeminjamanBarang::where('status', 'diteruskan_kasubag')->count();
         $barangSetuju = PeminjamanBarang::where('status', 'disetujui')->count();
@@ -26,33 +26,54 @@ class KasubagController extends Controller
 
         // 2. Hitung Statistik Kendaraan
         $kendaraanTotal = PeminjamanKendaraan::count();
-        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count(); // Sesuaikan dengan alur status kendaraan
+        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count(); 
         $kendaraanSetuju = PeminjamanKendaraan::where('status', 'disetujui')->count();
         $kendaraanTolak = PeminjamanKendaraan::where('status', 'ditolak')->count();
 
-        // (Lakukan hal yang sama untuk Gedung & Persediaan jika modelnya sudah ada)
-        $gedungTotal = 0; $gedungPending = 0; $gedungSetuju = 0; $gedungTolak = 0;
-        $persediaanTotal = 0; $persediaanPending = 0; $persediaanSetuju = 0; $persediaanTolak = 0;
+        // 3. Hitung Statistik Gedung (✅ DIPERBAIKI)
+        $gedungTotal = PeminjamanGedung::count();
+        $gedungPending = PeminjamanGedung::where('status', 'dalam_review')->count(); // Status menunggu verifikasi Kasubag
+        $gedungSetuju = PeminjamanGedung::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count();
+        $gedungTolak = PeminjamanGedung::where('status', 'ditolak')->count();
 
-        // 3. Gabungkan Total Keseluruhan
+        // 4. Hitung Statistik Persediaan (✅ DIPERBAIKI)
+        $persediaanTotal = PermintaanPersediaan::count();
+        $persediaanPending = PermintaanPersediaan::whereIn('status', ['pending', 'diproses'])->count();
+        $persediaanSetuju = PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count();
+        $persediaanTolak = PermintaanPersediaan::where('status', 'ditolak')->count();
+
+        // 5. Gabungkan Total Keseluruhan
         $totalPending = $barangPending + $kendaraanPending + $gedungPending + $persediaanPending;
         $totalDisetujui = $barangSetuju + $kendaraanSetuju + $gedungSetuju + $persediaanSetuju;
         $totalDitolak = $barangTolak + $kendaraanTolak + $gedungTolak + $persediaanTolak;
         $totalPermintaan = $barangTotal + $kendaraanTotal + $gedungTotal + $persediaanTotal;
 
-        // 4. Ambil Data Pending Terbaru untuk di List (Manual mapping jadi array seragam)
+        // 6. Ambil Data Pending Terbaru untuk di List (Mapping menjadi format seragam)
         $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function($item) {
-            return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name, 'tanggal' => $item->created_at];
+            return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
         $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function($item) {
-            return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name, 'tanggal' => $item->created_at];
+            return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
-        // Gabungkan dan urutkan 5 terbaru
-        $recentPending = collect($recentBarang)->merge($recentKendaraan)->sortByDesc('tanggal')->take(5);
+        $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function($item) {
+            return ['tipe' => 'Gedung', 'nama_item' => $item->nama_fasilitas ?? $item->fasilitas, 'nama_peminjam' => $item->nama_lengkap, 'tanggal' => $item->created_at];
+        });
 
-        // 5. Kirim data ke View
+        $recentPersediaan = PermintaanPersediaan::with(['user', 'persediaan'])->whereIn('status', ['pending', 'diproses'])->latest()->take(3)->get()->map(function($item) {
+            return ['tipe' => 'Persediaan', 'nama_item' => $item->persediaan->nama_barang ?? $item->nama_barang ?? 'Barang', 'nama_peminjam' => $item->user->name ?? $item->nama_lengkap ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
+        });
+
+        // Gabungkan semua koleksi, urutkan berdasarkan tanggal terbaru, dan ambil 5 data paling atas
+        $recentPending = collect($recentBarang)
+            ->merge($recentKendaraan)
+            ->merge($recentGedung)
+            ->merge($recentPersediaan)
+            ->sortByDesc('tanggal')
+            ->take(5);
+
+        // 7. Kirim data ke View
         return view('kasubag.dashbord', compact(
             'totalPending', 'totalDisetujui', 'totalDitolak', 'totalPermintaan',
             'barangTotal', 'barangPending',

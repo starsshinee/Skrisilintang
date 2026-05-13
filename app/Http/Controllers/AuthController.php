@@ -238,4 +238,58 @@ class AuthController extends Controller
         return redirect()->route('login')
             ->with('success', "✅ User {$user->name} berhasil dibuat!");
     }
+
+    // ────────────────────────────────────────────────────────────────────
+    // Update Tanda Tangan (File & Canvas)
+    // ────────────────────────────────────────────────────────────────────
+    public function updateSignature(Request $request): RedirectResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
+            'signature_base64' => ['nullable', 'string'],
+        ]);
+
+        $hasUpdate = false;
+
+        // 1. Jika User Mengunggah File Gambar
+        if ($request->hasFile('signature')) {
+            // Hapus yang lama jika ada
+            if ($user->signature && Storage::disk('public')->exists($user->signature)) {
+                Storage::disk('public')->delete($user->signature);
+            }
+            $user->signature = $request->file('signature')->store('signatures', 'public');
+            $hasUpdate = true;
+        } 
+        // 2. Jika User Menggambar Manual di Canvas (Base64)
+        elseif ($request->filled('signature_base64')) {
+            // Hapus yang lama jika ada
+            if ($user->signature && Storage::disk('public')->exists($user->signature)) {
+                Storage::disk('public')->delete($user->signature);
+            }
+            
+            // Decode Base64 ke File
+            $image_parts = explode(";base64,", $request->signature_base64);
+            if (count($image_parts) >= 2) {
+                $image_type_aux = explode("image/", $image_parts[0]);
+                $image_type = $image_type_aux[1];
+                $image_base64 = base64_decode($image_parts[1]);
+                
+                $filename = 'signatures/ttd_' . $user->id . '_' . time() . '.' . $image_type;
+                Storage::disk('public')->put($filename, $image_base64);
+                
+                $user->signature = $filename;
+                $hasUpdate = true;
+            }
+        }
+
+        if ($hasUpdate) {
+            $user->save();
+            return back()->with('success', 'Tanda tangan berhasil diperbarui!');
+        }
+
+        return back()->with('error', 'Tidak ada tanda tangan yang dikirim.');
+    }
 }

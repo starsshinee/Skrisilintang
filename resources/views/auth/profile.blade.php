@@ -540,49 +540,42 @@
   {{-- ========================================== --}}
   {{-- TAB 3: TANDA TANGAN - FORM SIGNATURE --}}
   {{-- ========================================== --}}
-  <form method="POST" action="{{ route('profile.signature') }}" enctype="multipart/form-data">
+  <form method="POST" action="{{ route('profile.signature') }}" enctype="multipart/form-data" id="sigForm">
     @csrf
+    <input type="hidden" name="signature_base64" id="sigBase64">
+
     <div class="tab-panel" id="tab-ttd">
       <div class="section-card animate d2">
         <div class="section-header">
           <div class="section-title"><i class="fas fa-signature"></i> Tanda Tangan Digital</div>
-          <div class="section-sub">Tanda tangan akan digunakan pada surat peminjaman gedung</div>
         </div>
         <div class="section-body">
-          @if(auth()->user()->signature)
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
-              <img src="{{ Storage::url(auth()->user()->signature) }}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain" alt="Signature">
-            </div>
-          @else
-            <div style="margin-bottom:20px">
-              <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
-              <div class="signature-zone" id="sigZone">
+          
+          <div style="margin-bottom:20px" id="previewContainer">
+            <div class="form-label"><i class="fas fa-image"></i> Tanda Tangan Saat Ini</div>
+            @if(auth()->user()->signature)
+              <img src="{{ asset('storage/' . auth()->user()->signature) }}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;border:1px solid var(--border);padding:10px;background:#f8faff;" alt="Signature">
+            @else
+              <div class="signature-zone" style="pointer-events: none;">
                 <div class="sig-icon"><i class="fas fa-pen-fancy"></i></div>
                 <div class="sig-text">Belum ada tanda tangan</div>
-                <div class="sig-sub">Upload file tanda tangan Anda di bawah</div>
               </div>
-            </div>
-          @endif
+            @endif
+          </div>
 
           <div style="margin-bottom:20px">
             <div class="form-label"><i class="fas fa-upload"></i> Upload Tanda Tangan Baru</div>
             <label for="signature_upload" style="
               border: 1.5px dashed var(--border); border-radius: 11px; padding: 22px;
-              text-align: center; cursor: pointer; transition: all .2s; background: #fafbff;
-              display: block;
-            " onmouseover="this.style.borderColor='#2563eb';this.style.background='#f0f4ff'"
-               onmouseout="this.style.borderColor='var(--border)';this.style.background='#fafbff'">
+              text-align: center; cursor: pointer; transition: all .2s; background: #fafbff; display: block;
+            ">
               <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:#dde5f9;margin-bottom:8px;display:block"></i>
-              <div style="font-size:13px;font-weight:600;color:var(--text-secondary)">Klik untuk upload</div>
-              <div style="margin-top:8px">
-                <span class="sig-fmt">JPG/PNG</span><span class="sig-fmt">Maks. 2MB</span>
-              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--text-secondary)">Klik untuk upload gambar</div>
             </label>
             <input type="file" id="signature_upload" name="signature" accept=".jpg,.jpeg,.png" style="display:none" onchange="previewSig(this)">
           </div>
 
-          <div style="margin-bottom:20px">
+          {{-- <div style="margin-bottom:20px">
             <div class="form-label"><i class="fas fa-pen-to-square"></i> Atau Gambar Manual</div>
             <canvas id="sigCanvas" width="600" height="160" style="
               border: 1.5px solid var(--border); border-radius: 11px; background: #fff;
@@ -590,15 +583,12 @@
             "></canvas>
             <div style="display:flex;gap:8px;margin-top:8px">
               <button type="button" onclick="clearCanvas()" class="btn-small cancel-btn" style="padding: 6px 12px; font-size:12px;">
-                <i class="fas fa-eraser"></i> Hapus
+                <i class="fas fa-eraser"></i> Hapus Coretan
               </button>
             </div>
-          </div>
+          </div> --}}
 
           <div class="btn-row">
-            <button type="button" class="cancel-btn" onclick="switchTab(document.querySelector('.tab-btn.active'), 'profil')">
-              Batal
-            </button>
             <button type="submit" class="save-btn">
               <i class="fas fa-floppy-disk"></i> Simpan Tanda Tangan
             </button>
@@ -735,34 +725,49 @@ function checkStrength(val) {
   lbl.textContent = labels[score] || 'Lemah';
   lbl.style.color = labelColors[score] || '#ef4444';
 }
-
 // CANVAS SIGNATURE
 const canvas = document.getElementById('sigCanvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
-canvas.addEventListener('mousedown', e => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+let hasDrawing = false; 
+
+canvas.addEventListener('mousedown', e => { drawing = true; hasDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
 canvas.addEventListener('mousemove', e => {
-  if (!drawing) return;
-  ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a';
-  ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
+if (!drawing) return;
+ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a';
+ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
 });
 canvas.addEventListener('mouseup', () => drawing = false);
 canvas.addEventListener('mouseleave', () => drawing = false);
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+hasDrawing = false;
+document.getElementById('sigBase64').value = ""; 
 }
 
-// FILE PREVIEW
-function previewSig(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const zone = document.getElementById('sigZone');
-      zone.innerHTML = `<img src="${e.target.result}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain">`;
-    };
-    reader.readAsDataURL(input.files[0]);
+// TANGKAP DATA SEBELUM FORM DIKIRIM
+document.getElementById('sigForm').addEventListener('submit', function(e) {
+  if (hasDrawing) {
+      // Ambil coretan canvas jadikan Base64
+      document.getElementById('sigBase64').value = canvas.toDataURL('image/png');
   }
+});
+
+// FILE PREVIEW YANG DIPERBAIKI
+function previewSig(input) {
+if (input.files && input.files[0]) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    // Timpa area preview dengan gambar yang baru diupload
+    document.getElementById('previewContainer').innerHTML = `
+      <div class="form-label"><i class="fas fa-eye"></i> Preview Tanda Tangan Baru</div>
+      <img src="${e.target.result}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;border:1px dashed var(--primary);padding:10px;background:#f0f4ff;">
+    `;
+    clearCanvas(); // Hapus coretan jika user milih upload gambar
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 }
 
 // TOAST

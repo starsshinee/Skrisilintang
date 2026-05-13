@@ -60,7 +60,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('checkrole')->group(function () {
     Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
     Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/signature', [AuthController::class, 'updateProfile'])->name('profile.signature');
+    Route::post('/profile/signature', [AuthController::class, 'updateSignature'])->name('profile.signature');
     Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

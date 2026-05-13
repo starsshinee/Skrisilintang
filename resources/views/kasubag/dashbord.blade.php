@@ -113,7 +113,6 @@
 @include('partials.sidebar')
 
 <main class="main">
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-title">Dashboard Kasubag</div>
     <div class="topbar-right">
@@ -124,7 +123,6 @@
     </div>
   </div>
 
-  <!-- HERO BANNER -->
   <div class="hero">
     <div class="hero-blob"></div>
     <div class="hero-blob2"></div>
@@ -142,7 +140,6 @@
     </div>
   </div>
 
-  <!-- STATISTIK -->
   <div class="stats">
     <div class="stat-card">
       <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
@@ -167,7 +164,6 @@
   </div>
 
   <div class="bottom-grid">
-    <!-- Permintaan per Kategori -->
     <div class="card">
       <div class="card-title">Permintaan per Kategori (Total Keseluruhan)</div>
       
@@ -226,13 +222,11 @@
       </div>
     </div>
 
-    <!-- Permintaan Terbaru Menunggu -->
     <div class="card">
       <div class="card-title">Menunggu Verifikasi Terbaru</div>
       
       @forelse($recentPending as $item)
           <div class="pending-item">
-            <!-- Menentukan Icon berdasarkan tipe -->
             @if($item['tipe'] == 'Barang')
                 <div class="pending-ico" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-box"></i></div>
             @elseif($item['tipe'] == 'Kendaraan')
