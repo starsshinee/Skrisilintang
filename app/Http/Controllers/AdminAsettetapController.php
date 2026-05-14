@@ -1127,8 +1127,8 @@ class AdminAsettetapController extends Controller
             'verified_at' => now()
         ]);
 
-        if ($request->status_verifikasi === 'diterima') {
-            $pengembalian->peminjamanKendaraan()->update(['status' => 'dikembalikan']);
+        if ($request->status_pengembalian === 'diproses') {
+            $pengembalian->peminjamanKendaraan()->update(['status' => 'diterima']);
             
             // Kembalikan stok jika diperlukan
             $aset = $pengembalian->peminjamanKendaraan()->barang;
@@ -1142,6 +1142,8 @@ class AdminAsettetapController extends Controller
         }
 
         return back()->with('success', 'Verifikasi pengembalian kendaraan berhasil disimpan!');
+
+        
     }
 
     public function showPengembalianKendaraanJsonAdmin($id)

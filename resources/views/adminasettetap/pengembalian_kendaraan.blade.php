@@ -128,9 +128,19 @@
                         </td>
                         <td>
                             @php 
-                                $statusClass = 'status-pending'; $statusText = 'Pending';
-                                if($item->status_verifikasi == 'diterima') { $statusClass = 'status-diterima'; $statusText = 'Diterima'; }
-                                elseif($item->status_verifikasi == 'ditolak') { $statusClass = 'status-ditolak'; $statusText = 'Ditolak'; }
+                                $status = strtolower($item->status_pengembalian); // Panggil kolom yang benar
+                                
+                                if($status == 'diterima') { 
+                                    $statusClass = 'status-diterima'; 
+                                    $statusText = 'diterima'; 
+                                } elseif($status == 'ditolak') { 
+                                    $statusClass = 'status-ditolak'; 
+                                    $statusText = 'ditolak'; 
+                                } else { 
+                                    // Default jika statusnya masih 'diproses' atau kosong
+                                    $statusClass = 'status-diproses'; 
+                                    $statusText = 'diproses'; 
+                                }
                             @endphp
                             <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
                         </td>

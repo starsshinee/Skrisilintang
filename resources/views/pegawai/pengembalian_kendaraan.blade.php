@@ -131,7 +131,15 @@
   .filter-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
   .req-list { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; max-height: 70vh; overflow-y: auto; }
-  .req-card { border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; transition: all .2s; }
+  .req-card { 
+    border: 1.5px solid var(--border); 
+    border-radius: 14px; 
+    overflow: hidden; 
+    transition: all .2s; 
+    flex-shrink: 0; /* ✅ INI KUNCINYA AGAR TIDAK TERPENCET */
+    display: flex;
+    flex-direction: column;
+}
   .req-card-top { padding: 16px 18px; display: flex; align-items: flex-start; justify-content: space-between; }
   .req-card-icon { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 17px; flex-shrink: 0; background:rgba(37,99,235,0.1); color:var(--primary); }
   .req-card-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
@@ -142,16 +150,27 @@
   .status-badge.diterima { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
   .status-badge.ditolak { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
 
-  .req-card-meta { padding: 12px 18px; background: #f0f9ff; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #e0f2fe; }
-  .meta-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 3px; }
-  .meta-value { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  /* ✅ META KARTU (Tampilan Box Abu-abu) */
+  .req-card-meta { padding: 0 18px 16px; }
+  .meta-box { 
+    background: #f8fafc; border: 1px solid #f1f5f9; 
+    border-radius: 12px; padding: 14px; 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
+  }
+  .meta-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 4px; }
+  .meta-value { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
 
-  .req-card-footer { padding: 12px 18px; display: flex; gap: 8px; border-top: 1px solid #e0f2fe; }
-  .card-btn { flex: 1; padding: 9px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; }
-  .card-btn.detail { background: rgba(16,185,129,0.08); color: var(--success); }
-  .card-btn.detail:hover { background: rgba(16,185,129,0.15); }
-  .card-btn.cancel { background: rgba(239,68,68,0.08); color: var(--danger); }
-  .card-btn.cancel:hover { background: rgba(239,68,68,0.15); }
+  /* ✅ FOOTER KARTU & TOMBOL */
+  .req-card-footer { padding: 14px 18px; display: flex; gap: 10px; border-top: 1px solid #f1f5f9; }
+  .card-btn { 
+    flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; 
+    cursor: pointer; border: 1px solid transparent; display: flex; 
+    align-items: center; justify-content: center; gap: 6px; transition: all .2s; 
+  }
+  .card-btn.detail { background: #f0f4ff; color: var(--primary); border-color: #dbeafe; }
+  .card-btn.detail:hover { background: var(--primary); color: #fff; }
+  .card-btn.cancel { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
+  .card-btn.cancel:hover { background: var(--danger); color: #fff; }
 
   .alert-success { background: #dcfce7; border: 1px solid #bbf7d0; color: #16a34a; padding: 12px 20px; border-radius: var(--radius-sm); margin-bottom: 24px; font-size: 14px; font-weight: 600; }
   .alert-danger { background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 12px 20px; border-radius: var(--radius-sm); margin-bottom: 24px; font-size: 14px; font-weight: 600; }
@@ -194,7 +213,6 @@
   @endif
 
   <div class="content-grid">
-    <!-- FORM LAPOR PENGEMBALIAN -->
     <div class="form-card">
       <div class="form-header">
         <div class="form-header-icon"><i class="fas fa-car"></i></div>
@@ -265,7 +283,6 @@
       </div>
     </div>
 
-    <!-- RIWAYAT PENGEMBALIAN -->
     <div>
       <div class="history-card">
         <div class="history-header">
@@ -294,22 +311,34 @@
                 </div>
                 <div class="status-badge {{ $statusClass }}">
                   <i class="fas fa-{{ $statusClass == 'diterima' ? 'check-circle' : ($statusClass == 'ditolak' ? 'times-circle' : 'clock') }}"></i>
-                  {{ ucfirst($item->status_pengembalian) }}
+                  {{ ucfirst($item->status_pengembalian ?? 'Diproses') }}
                 </div>
               </div>
               
               <div class="req-card-meta">
-                <div class="meta-item"><div class="meta-label">Kondisi</div><div class="meta-value">{{ ucwords(str_replace('-', ' ', $item->kondisi_kendaraan)) }}</div></div>
-                <div class="meta-item"><div class="meta-label">Tgl Lapor</div><div class="meta-value">{{ \Carbon\Carbon::parse($item->tanggal_pengembalian_aktual)->format('d M Y H:i') }}</div></div>
+                <div class="meta-box">
+                  <div>
+                    <div class="meta-label">Tgl Kembali</div>
+                    <div class="meta-value">{{ $item->tanggal_pengembalian_aktual ? \Carbon\Carbon::parse($item->tanggal_pengembalian_aktual)->format('d M Y') : '-' }}</div>
+                  </div>
+                  <div>
+                    <div class="meta-label">Kondisi</div>
+                    <div class="meta-value">{{ $item->kondisi_kendaraan ? ucwords(str_replace('-', ' ', $item->kondisi_kendaraan)) : '-' }}</div>
+                  </div>
+                </div>
               </div>
               
               <div class="req-card-footer">
-                <button type="button" class="card-btn detail" onclick="showDetailModal({{ $item->id }})"><i class="fas fa-eye"></i> Detail</button>
+                <button type="button" class="card-btn detail" onclick="showDetailModal({{ $item->id }})">
+                  <i class="fas fa-eye"></i> Detail
+                </button>
                 
-                @if($item->status_pengembalian == 'diproses')
-                  <form action="{{ route('pegawai.pengembalian-kendaraan.cancel', $item->id) }}" method="POST" style="flex:1;">
+                @if(strtolower($item->status_pengembalian ?? '') == 'diproses')
+                  <form action="{{ route('pegawai.pengembalian-kendaraan.cancel', $item->id) }}" method="POST" style="flex:1; display:flex;">
                       @csrf @method('DELETE')
-                      <button type="submit" class="card-btn cancel" onclick="return confirm('Yakin batalkan laporan ini?')" style="width:100%"><i class="fas fa-times"></i> Batalkan</button>
+                      <button type="submit" class="card-btn cancel" onclick="return confirm('Yakin batalkan laporan ini?')" style="width:100%">
+                        <i class="fas fa-times"></i> Batalkan
+                      </button>
                   </form>
                 @endif
               </div>
@@ -326,7 +355,6 @@
   </div>
 </main>
 
-<!-- MODAL DETAIL -->
 <div id="detailModal" class="modal-overlay">
     <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px;">
@@ -435,8 +463,8 @@ function showDetailModal(id) {
         document.getElementById('modNopol').textContent = peminjaman.merek || '-';
         document.getElementById('modTgl').textContent = data.tanggal_pengembalian_aktual ? data.tanggal_pengembalian_aktual.replace('T', ' ').substring(0,16) : '-';
         
-        document.getElementById('modKondisi').textContent = data.kondisi_kendaraan.replace('-', ' ').toUpperCase();
-        document.getElementById('modStatus').textContent = data.status_pengembalian.toUpperCase();
+        document.getElementById('modKondisi').textContent = data.kondisi_kendaraan ? data.kondisi_kendaraan.replace('-', ' ').toUpperCase() : '-';
+        document.getElementById('modStatus').textContent = data.status_pengembalian ? data.status_pengembalian.toUpperCase() : '-';
         document.getElementById('modCatatan').textContent = data.catatan || 'Tidak ada catatan.';
 
         const komArea = document.getElementById('komentarAdminArea');

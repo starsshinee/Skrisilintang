@@ -522,6 +522,12 @@ class PegawaiController extends Controller
 
         $peminjaman = PeminjamanKendaraan::findOrFail($request->peminjaman_kendaraan_id);
 
+        // ✅ PENCEGAHAN DOUBLE SUBMIT: 
+        // Tolak jika status kendaraan sudah dalam proses pengembalian atau sudah selesai
+        if (in_array($peminjaman->status, ['proses_pengembalian', 'selesai', 'diterima'])) {
+            return back()->withErrors(['Kendaraan ini sudah dilaporkan untuk dikembalikan.']);
+        }
+
         // Upload Foto
         $fotoSebelum = $request->file('foto_sebelum')->store('pengembalian_kendaraan/sebelum', 'public');
         $fotoSesudah = $request->file('foto_sesudah')->store('pengembalian_kendaraan/sesudah', 'public');
@@ -538,7 +544,8 @@ class PegawaiController extends Controller
             'biaya_denda' => 0 // Bisa disesuaikan logikanya nanti
         ]);
 
-        // Ubah status agar tidak bisa dilapor 2x
+        // ✅ UBAH STATUS PEMINJAMAN
+        // Agar kendaraan hilang dari opsi dropdown "Pilih Kendaraan yang Dikembalikan"
         $peminjaman->update(['status' => 'proses_pengembalian']);
 
         return back()->with('success', 'Laporan pengembalian kendaraan berhasil dikirim!');
