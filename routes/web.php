@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\Route;
 // Halaman Publik
 // ──────────────────────────────────────────────────────────────────────
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
 
+Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');
+Route::get('/', [AdminAsettetapController::class, 'landingpage'])->name('home');
 // ========== PENGADUAN dan SURVEY KEPUASAN PUBLIC FORM (TIDAK PERLU LOGIN) ==========
 Route::post('/pengaduan/store', [AdminAsettetapController::class, 'pengaduanStore'])->name('pengaduan.store');
 Route::post('/survey/store', [AdminAsettetapController::class, 'surveyStore'])->name('survey.store');

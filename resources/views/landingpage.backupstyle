@@ -95,19 +95,19 @@
             box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
         }
- 
+
         .carousel-modern:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
         }
- 
+
         .carousel-modern-inner {
             position: relative;
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
         }
- 
+
         .carousel-modern-slide {
             position: absolute;
             width: 100%;
@@ -118,23 +118,23 @@
             align-items: center;
             justify-content: center;
         }
- 
+
         .carousel-modern-slide.active {
             opacity: 1;
         }
- 
+
         .carousel-modern-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             animation: zoomIn 0.7s ease-out;
         }
- 
+
         @keyframes zoomIn {
             from { transform: scale(1.05); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
- 
+
         .carousel-modern-nav {
             position: absolute;
             bottom: 20px;
@@ -148,7 +148,7 @@
             padding: 8px 12px;
             border-radius: 20px;
         }
- 
+
         .carousel-modern-dot {
             width: 10px;
             height: 10px;
@@ -158,18 +158,18 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
- 
+
         .carousel-modern-dot.active {
             background: #00d4ff;
             box-shadow: 0 0 12px #00d4ff;
             width: 30px;
             border-radius: 5px;
         }
- 
+
         .carousel-modern-dot:hover:not(.active) {
             background: rgba(255, 255, 255, 0.6);
         }
- 
+
         .carousel-modern-arrow {
             position: absolute;
             top: 50%;
@@ -189,12 +189,12 @@
             z-index: 15;
             backdrop-filter: blur(10px);
         }
- 
+
         .carousel-modern-arrow:hover {
             background: rgba(0, 212, 255, 0.4);
             box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
         }
- 
+
     .carousel-modern-arrow.prev { left: 12px; }
     .carousel-modern-arrow.next { right: 12px; }
 
@@ -226,7 +226,6 @@
 </head>
 <body class="h-full bg-slate-50">
 
-  <!-- NAVBAR -->
   <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300" style="background:rgba(6,13,51,0.95);backdrop-filter:blur(12px);box-shadow:rgba(0,0,0,0.15) 0px 4px 20px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between gap-2 h-16 md:h-20">
@@ -243,7 +242,6 @@
           </div>
         </div>
 
-        <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8">
           <a href="#hero"      class="text-blue-100 hover:text-white text-sm font-medium transition">Beranda</a>
           <a href="#fitur"     class="text-blue-100 hover:text-white text-sm font-medium transition">Fitur</a>
@@ -275,7 +273,6 @@
     </div>
   </nav>
 
-  <!-- HERO -->
   <section id="hero" class="hero-bg relative overflow-hidden" style="min-height:600px;padding-top:100px;padding-bottom:80px;">
     <div class="absolute inset-0 overflow-hidden">
       <div class="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -314,7 +311,6 @@
         </div>
       </div>
 
-      <!--beranda-->
       <div class="flex-1 hidden lg:flex justify-center anim-fade-up delay-5">
         <div class="relative">
           <div class="w-[400px] h-[300px] bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6">
@@ -352,7 +348,6 @@
     </div>
   </section>
 
-  <!-- TENTANG -->
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="max-w-2xl mx-auto text-center">
@@ -366,7 +361,6 @@
     </div>
   </section>
 
-  <!-- FITUR -->
   <section id="fitur" class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-14">
@@ -387,7 +381,6 @@
     </div>
   </section>
 
-  <!-- STATISTIK -->
   <section id="statistik" class="py-20 hero-bg relative overflow-hidden">
     <div class="absolute inset-0"><div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div></div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -399,15 +392,43 @@
         <h2 class="text-3xl md:text-4xl font-bold text-white">Statistik BMN BPMP Gorontalo</h2>
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div class="stat-card glass rounded-2xl p-6 text-center"><div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-300"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg></div><div class="text-3xl md:text-4xl font-extrabold text-white mb-1">1,247</div><div class="text-blue-200 text-sm">Total Item BMN</div></div>
-        <div class="stat-card glass rounded-2xl p-6 text-center"><div class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="text-3xl md:text-4xl font-extrabold text-white mb-1">Rp 28.5M</div><div class="text-blue-200 text-sm">Nilai Aset Terkelola</div></div>
-        <div class="stat-card glass rounded-2xl p-6 text-center"><div class="w-14 h-14 bg-yellow-500/20 rounded-xl flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-300"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></div><div class="text-3xl md:text-4xl font-extrabold text-white mb-1">342</div><div class="text-blue-200 text-sm">Transaksi Bulan Ini</div></div>
-        <div class="stat-card glass rounded-2xl p-6 text-center"><div class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-300"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="text-3xl md:text-4xl font-extrabold text-white mb-1">98.5%</div><div class="text-blue-200 text-sm">Kondisi Baik</div></div>
+        
+        <div class="stat-card glass rounded-2xl p-6 text-center">
+            <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-300"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+            </div>
+            <div class="text-3xl md:text-4xl font-extrabold text-white mb-1">{{ number_format($totalItemBMN) }}</div>
+            <div class="text-blue-200 text-sm">Total Item BMN</div>
+        </div>
+
+        <div class="stat-card glass rounded-2xl p-6 text-center">
+            <div class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="text-3xl md:text-4xl font-extrabold text-white mb-1">Rp {{ $formattedNilaiAset }}M</div>
+            <div class="text-blue-200 text-sm">Nilai Aset Terkelola</div>
+        </div>
+
+        <div class="stat-card glass rounded-2xl p-6 text-center">
+            <div class="w-14 h-14 bg-yellow-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-300"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            </div>
+            <div class="text-3xl md:text-4xl font-extrabold text-white mb-1">{{ $totalTransaksiBulanIni }}</div>
+            <div class="text-blue-200 text-sm">Transaksi Bulan Ini</div>
+        </div>
+
+        <div class="stat-card glass rounded-2xl p-6 text-center">
+            <div class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-300"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="text-3xl md:text-4xl font-extrabold text-white mb-1">{{ $persentaseKondisiBaik }}%</div>
+            <div class="text-blue-200 text-sm">Kondisi Baik</div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- FASILITAS -->
   <section id="fasilitas" class="h-screen flex items-center bg-slate-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="px-5 pt-6 pb-4 md:px-8 md:pt-8 md:pb-5 border-b border-slate-100/80">
@@ -439,10 +460,11 @@
     </div>
   </section>
 
-  <!-- PENGADUAN & SURVEY -->
   <section id="pengaduan-survey" class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
       <div class="grid lg:grid-cols-2 gap-12 mb-16">
+        
         <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
@@ -458,7 +480,6 @@
             </div>
           </div>
 
-          <!-- ALERT SUCCESS/ERROR -->
           @if(session('success'))
             <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
               {{ session('success') }}
@@ -583,282 +604,174 @@
           </form>
         </div>
 
-          <!-- SURVEY KEPUASAN -->
-           {{-- <div class="grid lg:grid-cols-2 gap-8 mb-16"></div> --}}
-              <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
-                <div class="flex items-center gap-3 mb-6">
-                  <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-xl font-bold text-navy-900">Survey Kepuasan Layanan</h3>
-                    <p class="text-slate-500 text-sm">Bantu kami meningkatkan kualitas layanan SIPANDU</p>
-                  </div>
-                </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-navy-900">Survey Kepuasan Layanan</h3>
+              <p class="text-slate-500 text-sm">Bantu kami meningkatkan kualitas layanan SIPANDU</p>
+            </div>
+          </div>
 
-                <!-- ALERT SUCCESS/ERROR -->
-                @if(session('success'))
-                  <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
-                    {{ session('success') }}
-                  </div>
-                @endif
+          @if(session('success_survey'))
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm">
+              {{ session('success_survey') }}
+            </div>
+          @endif
 
-                @if(session('error'))
-                  <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
-                    {{ session('error') }}
-                  </div>
-                @endif
-
-                <form id="surveyForm" class="space-y-4" method="POST" action="{{ route('survey.store') }}">
-                  @csrf
-                  
-                  <div>
-                    <label class="block text-sm font-semibold text-navy-900 mb-2">Nama/Identitas <span class="text-red-500">*</span></label>
-                    <input 
-                      type="text" 
-                      name="nama" 
-                      placeholder="Masukkan nama atau NIP Anda" 
-                      required 
-                      value="{{ old('nama') }}"
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('nama') border-red-500 ring-red-500/30 @enderror"
-                    />
-                    @error('nama')
-                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
-                    <input 
-                      type="email" 
-                      name="email" 
-                      placeholder="email@example.com" 
-                      required 
-                      value="{{ old('email') }}"
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('email') border-red-500 ring-red-500/30 @enderror"
-                    />
-                    @error('email')
-                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                  </div>
-                  
-                  <div class="space-y-3">
-                    <label class="block text-sm font-semibold text-navy-900 mb-3">Tingkat Kepuasan Anda terhadap Layanan SIPANDU <span class="text-red-500">*</span></label>
-                    <div class="space-y-2">
-                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                        <input type="radio" name="kepuasan" value="sangat_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'sangat_puas' ? 'checked' : '' }} />
-                        <div class="flex items-center gap-2">
-                          <span class="text-2xl text-amber-500">★★★★★</span>
-                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Sangat Puas</span>
-                        </div>
-                      </label>
-                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                        <input type="radio" name="kepuasan" value="puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'puas' ? 'checked' : '' }} />
-                        <div class="flex items-center gap-2">
-                          <span class="text-2xl text-amber-500">★★★★</span>
-                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Puas</span>
-                        </div>
-                      </label>
-                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                        <input type="radio" name="kepuasan" value="cukup" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'cukup' ? 'checked' : '' }} />
-                        <div class="flex items-center gap-2">
-                          <span class="text-2xl text-amber-500">★★★</span>
-                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Cukup Puas</span>
-                        </div>
-                      </label>
-                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                        <input type="radio" name="kepuasan" value="kurang_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'kurang_puas' ? 'checked' : '' }} />
-                        <div class="flex items-center gap-2">
-                          <span class="text-2xl text-amber-500">★★</span>
-                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Kurang Puas</span>
-                        </div>
-                      </label>
-                      <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
-                        <input type="radio" name="kepuasan" value="tidak_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'tidak_puas' ? 'checked' : '' }} />
-                        <div class="flex items-center gap-2">
-                          <span class="text-2xl text-amber-500">★</span>
-                          <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Tidak Puas</span>
-                        </div>
-                      </label>
-                    </div>
-                    @error('kepuasan')
-                      <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
-                    @enderror
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-semibold text-navy-900 mb-2">Aspek yang Paling Memuaskan</label>
-                    <textarea 
-                      name="aspek_memuaskan" 
-                      placeholder="Sebutkan hal-hal yang Anda sukai dari layanan SIPANDU (fasilitas, kemudahan, pelayanan, dll)..." 
-                      rows="3" 
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('aspek_memuaskan') border-red-500 ring-red-500/30 @enderror"
-                    >{{ old('aspek_memuaskan') }}</textarea>
-                    @error('aspek_memuaskan')
-                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-semibold text-navy-900 mb-2">Saran Perbaikan</label>
-                    <textarea 
-                      name="saran" 
-                      placeholder="Bagikan saran dan masukan untuk peningkatan layanan SIPANDU..." 
-                      rows="3" 
-                      class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none @error('saran') border-red-500 ring-red-500/30 @enderror"
-                    >{{ old('saran') }}</textarea>
-                    @error('saran')
-                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                  </div>
-
-                  <div>
-                    <label class="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all border border-slate-200 hover:border-slate-300">
-                      <input type="checkbox" name="setuju_kebijakan" required class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
-                      <span class="text-sm text-slate-700">Saya setuju dengan <a href="#" class="text-amber-600 hover:underline font-semibold">kebijakan privasi</a> dan penggunaan data untuk perbaikan layanan</span>
-                    </label>
-                    @error('setuju_kebijakan')
-                      <p class="mt-1 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{{ $message }}</p>
-                    @enderror
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    id="submitBtn"
-                    class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:from-amber-600 hover:to-yellow-700 transition-all duration-200 flex items-center justify-center gap-2 text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span>Kirim Survey & Bantu Kami Berkembang</span>
-                  </button>
-                </form>
-              </div>
-      </div>
-
-          <!-- ROW 2: SURVEY FORM & RINGKASAN STATISTIK -->
-          {{-- <div class="grid lg:grid-cols-2 gap-8 mb-16">
+          <form id="surveyForm" class="space-y-4" method="POST" action="{{ route('survey.store') }}">
+            @csrf
             
-            <!-- SURVEY FORM (kiri) -->
-            <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
-              <!-- Form Survey seperti sebelumnya -->
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Nama/Identitas <span class="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                name="nama" 
+                placeholder="Masukkan nama atau NIP Anda" 
+                required 
+                value="{{ old('nama') }}"
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition @error('nama') border-red-500 ring-red-500/30 @enderror"
+              />
             </div>
 
-            <!-- RINGKASAN TINGKAT KEPUASAN (kanan) -->
-            <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-2xl p-8 border border-amber-100 shadow-lg">
-              <div class="flex items-center gap-3 mb-6">
-                <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-white">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-navy-900">Statistik Kepuasan</h3>
-                  <p class="text-slate-500 text-sm">Ringkasan feedback pengguna</p>
-                </div>
-              </div>
-
-              <!-- TOTAL RESPONDEN -->
-              <div class="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/50 shadow-sm">
-                <div class="text-3xl font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent mb-1">
-                  {{ $totalSurvey ?? 0 }}
-                </div>
-                <div class="text-sm text-slate-600 font-medium">Total Responden</div>
-              </div>
-
-              <!-- RATING OVERALL -->
-              <div class="mb-8">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="text-2xl font-bold text-navy-900">{{ number_format($rataRataRating ?? 0, 1) }}/5</div>
-                  <div class="flex gap-0.5 text-amber-500 text-xl">
-                    {!! str_repeat('<span>★</span>', floor($rataRataRating ?? 0)) !!}
-                    {!! str_repeat('<span class="text-slate-300">☆</span>', 5 - floor($rataRataRating ?? 0)) !!}
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Email <span class="text-red-500">*</span></label>
+              <input 
+                type="email" 
+                name="email" 
+                placeholder="email@example.com" 
+                required 
+                value="{{ old('email') }}"
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition"
+              />
+            </div>
+            
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-navy-900 mb-3">Tingkat Kepuasan Anda terhadap Layanan SIPANDU <span class="text-red-500">*</span></label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                  <input type="radio" name="kepuasan" value="sangat_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'sangat_puas' ? 'checked' : '' }} />
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl text-amber-500">★★★★★</span>
+                    <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Sangat Puas</span>
                   </div>
-                </div>
-                <div class="w-full bg-slate-200 rounded-full h-2">
-                  <div class="bg-gradient-to-r from-amber-500 to-yellow-500 h-2 rounded-full" 
-                      style="width: {{ ($rataRataRating ?? 0) / 5 * 100 }}%"></div>
-                </div>
-              </div>
-
-              <!-- BREAKDOWN PER TINGKAT -->
-              <div class="space-y-3 mb-8">
-                @php
-                  $kepuasanLabels = [
-                    'sangat_puas' => ['label' => 'Sangat Puas', 'color' => 'from-emerald-500 to-green-500', 'stars' => 5],
-                    'puas' => ['label' => 'Puas', 'color' => 'from-amber-500 to-yellow-500', 'stars' => 4],
-                    'cukup' => ['label' => 'Cukup', 'color' => 'from-blue-500 to-indigo-500', 'stars' => 3],
-                    'kurang_puas' => ['label' => 'Kurang Puas', 'color' => 'from-orange-500 to-red-500', 'stars' => 2],
-                    'tidak_puas' => ['label' => 'Tidak Puas', 'color' => 'from-red-500 to-rose-600', 'stars' => 1]
-                  ];
-                @endphp
-                
-                @foreach($kepuasanLabels as $key => $data)
-                  @php
-                    $count = $surveyStats[$key] ?? 0;
-                    $percentage = $totalSurvey > 0 ? round(($count / $totalSurvey) * 100, 1) : 0;
-                  @endphp
-                  <div class="flex items-center justify-between p-3 bg-white/50 backdrop-blur-sm rounded-xl hover:bg-white transition-all">
-                    <div class="flex items-center gap-3 flex-1 min-w-0">
-                      <div class="w-10 h-10 {{ $data['color'] }} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
-                        <div class="text-white text-sm font-bold">{{ $data['stars'] }}</div>
-                      </div>
-                      <div class="min-w-0">
-                        <div class="font-semibold text-navy-900 text-sm truncate">{{ $data['label'] }}</div>
-                        <div class="flex items-center gap-1 text-xs text-slate-500">
-                          <span>{{ $count }}</span>
-                          <span>responden</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <div class="font-bold text-lg text-navy-900">{{ $percentage }}%</div>
-                      <div class="w-20 bg-slate-200 rounded-full h-2 overflow-hidden mx-auto">
-                        <div class="h-full {{ $data['color'] }} rounded-full transition-all duration-500" 
-                            style="width: {{ $percentage }}%"></div>
-                      </div>
-                    </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                  <input type="radio" name="kepuasan" value="puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'puas' ? 'checked' : '' }} />
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl text-amber-500">★★★★</span>
+                    <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Puas</span>
                   </div>
-                @endforeach
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                  <input type="radio" name="kepuasan" value="cukup" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'cukup' ? 'checked' : '' }} />
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl text-amber-500">★★★</span>
+                    <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Cukup Puas</span>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group p-3 bg-amber-50/50 rounded-xl hover:bg-amber-50 transition-all border border-amber-100 hover:border-amber-200">
+                  <input type="radio" name="kepuasan" value="kurang_puas" required class="w-5 h-5 accent-amber-500 cursor-pointer" {{ old('kepuasan') == 'kurang_puas' ? 'checked' : '' }} />
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl text-amber-500">★★</span>
+                    <span class="text-sm font-semibold text-slate-800 group-hover:text-navy-900">Kurang Puas</span>
+                  </div>
+                </label>
               </div>
+            </div>
 
-              <!-- TREND BULAN INI -->
-              <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/50 mb-6">
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-slate-700">Trend Bulan Ini</span>
-                  <span class="text-sm font-bold text-emerald-600 flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-emerald-500">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                      <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                    {{ $trendBulanIni ?? '+12%' }}
-                  </span>
-                </div>
-                <div class="space-y-1">
-                  @for($i = 1; $i <= 5; $i++)
-                    <div class="flex items-center justify-between text-xs">
-                      <span>Rating {{ $i }}</span>
-                      <div class="w-16 bg-slate-100 rounded-full h-1.5">
-                        <div class="bg-emerald-400 h-1.5 rounded-full" style="width: {{ rand(20,80) }}%"></div>
-                      </div>
-                    </div>
-                  @endfor
-                </div>
-              </div>
+            <div>
+              <label class="block text-sm font-semibold text-navy-900 mb-2">Aspek yang Paling Memuaskan</label>
+              <textarea 
+                name="aspek_memuaskan" 
+                placeholder="Sebutkan hal-hal yang Anda sukai dari layanan SIPANDU (fasilitas, kemudahan, pelayanan, dll)..." 
+                rows="3" 
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition resize-none"
+              >{{ old('aspek_memuaskan') }}</textarea>
+            </div>
 
-              <!-- QUOTE TERBAIK -->
-              @if($quoteTerbaik)
-              <div class="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-200 rounded-xl p-5 italic text-center">
-                <div class="text-lg font-semibold text-navy-900 mb-2">"</div>
-                <p class="text-slate-700 leading-relaxed mb-3">{{ Str::limit($quoteTerbaik, 100) }}</p>
-                <div class="text-xs text-slate-500">- {{ $namaQuoteTerbaik ?? 'Responden' }}</div>
-              </div>
+            <div>
+              <label class="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <input type="checkbox" name="setuju_kebijakan" required class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
+                <span class="text-sm text-slate-700">Saya setuju dengan <a href="#" class="text-amber-600 hover:underline font-semibold">kebijakan privasi</a></span>
+              </label>
+            </div>
+
+            <button 
+              type="submit" 
+              class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-base shadow-md"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Kirim Survey & Bantu Kami Berkembang</span>
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="mb-16 pt-10 border-t border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <div class="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-1.5 mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M2 12h10"/><path d="M9 4v16"/><path d="m3 9 3 3-3 3"/></svg>
+              <span class="text-navy-700 text-sm font-semibold">Live Tracking</span>
+            </div>
+            <h3 class="text-2xl font-bold text-navy-900">Pantauan Pengaduan Publik</h3>
+            <p class="text-slate-500 text-sm mt-1">Transparansi tindak lanjut laporan dan keluhan dari masyarakat maupun pegawai</p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @forelse($pengaduans as $item)
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group">
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                {{ str_replace('_', ' ', $item->kategori) }}
+              </span>
+              
+              @if($item->status == 'pending')
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-600 border border-yellow-200 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span> Menunggu
+                </span>
+              @elseif($item->status == 'diproses')
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Diproses
+                </span>
+              @elseif($item->status == 'selesai')
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Selesai
+                </span>
               @endif
             </div>
-          </div> --}}
-      </div>
+            
+            <p class="text-navy-900 text-sm font-medium mb-4 line-clamp-3 group-hover:line-clamp-none transition-all">
+              "{{ $item->deskripsi }}"
+            </p>
+            
+            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4 mt-auto">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-[10px]">
+                  {{ strtoupper(substr($item->nama_lengkap, 0, 1)) }}
+                </div>
+                <span class="font-semibold text-slate-700">{{ substr($item->nama_lengkap, 0, 4) . '***' }}</span>
+              </div>
+              <span>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</span>
+            </div>
+          </div>
 
-      <!-- INFO CARDS -->
+          @empty
+          <div class="col-span-full bg-slate-50 rounded-2xl p-8 text-center border border-slate-200 border-dashed">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h4 class="text-navy-900 font-bold mb-1">Belum Ada Pengaduan</h4>
+            <p class="text-slate-500 text-sm">Saat ini belum ada data pengaduan publik yang masuk ke dalam sistem.</p>
+          </div>
+          @endforelse
+        </div>
+      </div>
       <div class="grid md:grid-cols-3 gap-6 mb-10">
         <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-6 border border-red-100">
           <div class="flex items-start gap-3 mb-3">
@@ -893,7 +806,6 @@
     </div>
   </section>
 
-  <!-- KONTAK -->
   <section id="kontak" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
@@ -904,27 +816,41 @@
           </div>
           <h2 class="text-3xl font-bold text-navy-900 mb-6">Hubungi BPMP Gorontalo</h2>
           <div class="space-y-5">
-            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Alamat</h4><p class="text-slate-500 text-sm">Jl. Prof. Dr. H. Aloei Saboe, Kel. Wongkaditi Timur, Kec. Kota Utara, Kota Gorontalo, Gorontalo 96128</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Telepon</h4><p class="text-slate-500 text-sm">(0435) 821-555</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Email</h4><p class="text-slate-500 text-sm">bpmp.gorontalo@kemdikbud.go.id</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Jam Operasional</h4><p class="text-slate-500 text-sm">Senin – Jumat: 08.00 – 16.00 WITA</p></div></div>
+            <div class="flex items-start gap-4">
+                <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-navy-900 text-sm">Alamat</h4>
+                    <a href="https://maps.app.goo.gl/gRqbzLfozSsyygreA" target="_blank" class="text-slate-500 text-sm hover:text-blue-600 transition-colors duration-200">
+                        Jl. Dr Zainal Umar Sadiki, Desa Tunggulo, Kec.Tilongkabila, Kab.Bone Bolanggo, Provinsi Gorontalo 96128
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Telepon</h4><p class="text-slate-500 text-sm">081313266661</p></div></div>
+            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Email</h4><p class="text-slate-500 text-sm">bpmpgorontalo@kemdikdasmen.go.id</p></div></div>
+            <div class="flex items-start gap-4"><div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h4 class="font-semibold text-navy-900 text-sm">Jam Operasional</h4><p class="text-slate-500 text-sm">Senin – Kamis: 07.30 – 16.00 WITA</p><span class="text-slate-500 text-sm">Jumat 07.30-16.30 WITA</span></div></div>
           </div>
         </div>
-        <div class="bg-slate-100 rounded-2xl overflow-hidden" style="height:350px;">
+
+        <a href="https://maps.app.goo.gl/gRqbzLfozSsyygreA" target="_blank" class="block group bg-slate-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300" style="height:350px;">
           <div class="w-full h-full bg-gradient-to-br from-navy-100 to-blue-100 flex items-center justify-center relative">
-            <div class="text-center">
-              <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg></div>
+            <div class="text-center group-hover:scale-105 transition-transform duration-300">
+              <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy-600"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+              </div>
               <p class="text-navy-700 font-semibold">BPMP Provinsi Gorontalo</p>
               <p class="text-navy-500 text-sm mt-1">Kota Gorontalo, 96128</p>
+              <span class="mt-4 inline-block bg-navy-600 text-white text-xs px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">Buka di Google Maps →</span>
             </div>
             <div class="absolute top-4 left-4 bg-white/80 backdrop-blur rounded-lg px-3 py-1.5 text-xs text-navy-600 font-medium">📍 0.5488° N, 123.0568° E</div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="bg-navy-950 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid md:grid-cols-4 gap-8 mb-10">
@@ -957,7 +883,6 @@
     </div>
   </footer>
 
-  <!-- MODAL FASILITAS -->
   <div id="facilityModal" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-shrink-0">
@@ -1012,7 +937,6 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div id="toastContainer" class="fixed top-4 right-4 z-[300] space-y-2 pointer-events-none"></div>
 
 <script>
@@ -1021,11 +945,11 @@ const FACILITIES = [
   { 
     name: 'Kantor BPMP Gorontalo', 
     category: 'kantor', 
-    location: 'Gedung Utama, Wongkaditi Timur', 
+    location: 'Gedung Utama', 
     capacity: '100 Staf', luas: '500 m²', 
     operasional: 'Senin–Jumat 07.30–16.00 WITA', kontak: '(0435) 821-555', 
     description: 'Pusat administrasi dan layanan penjaminan mutu pendidikan Provinsi Gorontalo yang melayani koordinasi antar instansi pendidikan.',
-    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Area Kerja Open Space', 'Ruang Tamu VVIP', 'Koneksi Internet High-Speed', 'CCTV & Keamanan 24 Jam'], 
+    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Ruang Tamu VIP', 'Koneksi Internet ', 'CCTV & Keamanan 24 Jam'], 
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
@@ -1035,11 +959,11 @@ const FACILITIES = [
   { 
     name: 'Ruang Pertemuan BPMP Gorontalo', 
     category: 'ruang', 
-    location: 'Gedung Aula Utama, Wongkaditi Timur', 
+    location: 'Gedung Aula Utama', 
     capacity: '200 - 300 Orang', luas: '420 m²', 
     operasional: 'Senin–Minggu (Sesuai Reservasi)', kontak: '(0435) 821-555 ext. 101', 
     description: 'Aula serbaguna yang luas, ideal untuk seminar, lokakarya, dan pertemuan skala besar dengan fasilitas audio visual lengkap.',
-    features: ['AC Sentral', 'Sound System Profesional', 'Proyektor + Layar 5m', 'Podium & Panggung', 'Kursi Ergonomis 200 unit', 'Wi-Fi 100 Mbps', 'Toilet Bersih'], 
+    features: ['AC', 'Standar Sound System ', 'vidio trond', 'Meja Kursi', 'Toilet Bersih'], 
     rules: ['Pemesanan minimal H-7', 'Dilarang membawa makanan berbau tajam ke dalam ruangan', 'Penyewa bertanggung jawab atas kebersihan', 'Jam operasional sesuai izin penggunaan'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_aula.jpeg') }}",
@@ -1052,11 +976,11 @@ const FACILITIES = [
   { 
     name: 'Ruang Kelas BPMP Gorontalo', 
     category: 'kelas', 
-    location: 'Gedung Diklat, Wongkaditi Timur', 
+    location: 'BPMP Gorontalo', 
     capacity: '40 Orang/Kelas', luas: '64 m²', 
     operasional: 'Senin–Sabtu 07.30–17.00 WITA', kontak: '(0435) 821-555', 
     description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
-    features: ['AC Split', 'Smart TV / Proyektor', 'Papan Tulis Whiteboard', 'Stop', 'Pengaturan Kursi Fleksibel', 'Akses Wi-Fi'], 
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
     rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Kapasitas maksimal tidak boleh dilampaui', 'Menjaga ketenangan'], 
     images: [
       "{{ asset('storage/fasilitas/tinelo_1.jpeg') }}",
@@ -1068,11 +992,11 @@ const FACILITIES = [
   { 
     name: 'Mess BPMP Gorontalo', 
     category: 'penginapan', 
-    location: 'Area Mess Bandayo, Wongkaditi Timur', 
+    location: 'Area Mess Bandayo', 
     capacity: '2-3 Orang/Kamar', luas: '24 m²', 
     operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: 'Customer Service Mess', 
     description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
-    features: ['Pendingin Ruangan (AC)', 'TV Satelit', 'Kamar Mandi Dalam', 'Water Heater', 'Lemari Pakaian', 'Layanan Kebersihan Harian'], 
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
       "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
@@ -1089,7 +1013,7 @@ const FACILITIES = [
     capacity: '4 Orang/Kamar', luas: '32 m²', 
     operasional: '24 Jam', kontak: 'Pengelola Asrama', 
     description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
-    features: ['Tempat Tidur Tingkat/Single', 'Lemari Individu', 'Kamar Mandi Dalam', 'Meja Belajar Kecil', 'Area Jemuran', 'Ruang Berkumpul Bersama'], 
+    features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
     rules: ['Wajib menjaga kebersihan area bersama', 'Batas jam bertamu maksimal pukul 21.00 WITA', 'Dilarang memasak di dalam kamar asrama', 'Mengunci pintu saat bepergian'], 
     images: [
        "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
@@ -1105,7 +1029,7 @@ const FACILITIES = [
     capacity: '150 Orang', luas: '200 m²', 
     operasional: '06.00–20.00 WITA', kontak: 'Unit Rumah Tangga', 
     description: 'Area makan bersih dan higienis yang melayani konsumsi peserta diklat maupun tamu umum dengan sistem prasmanan.',
-    features: ['Meja & Kursi Makan Panjang', 'Area Cuci Tangan (Wastafel)', 'Dispenser Air Minum', 'Ventilasi Udara Bagus', 'Gazebo Outdoor Olamita', 'Buffet Station'], 
+    features: ['Meja & Kursi Makan ', 'Area Cuci Tangan (Wastafel)', 'Gazebo Outdoor Olamita', 'Toilet', 'Ac'], 
     rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
     images: [
       "{{ asset('storage/fasilitas/olamita1_depan.jpeg') }}",
@@ -1121,7 +1045,7 @@ const FACILITIES = [
     capacity: 'Area Terbuka', luas: '800 m²', 
     operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
     description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
-    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Basket', 'Peralatan Olahraga Dasar', 'Area Terbuka Hijau', 'Penerangan Lapangan'], 
+    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Takraw'], 
     rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
     images: [
       "{{ asset('storage/fasilitas/lapangan_tenis.jpeg') }}",
@@ -1136,7 +1060,7 @@ const FACILITIES = [
     capacity: '50 Orang', luas: '100 m²', 
     operasional: '24 Jam (Waktu Shalat)', kontak: '-', 
     description: 'Sarana ibadah yang bersih dan tenang bagi pegawai maupun tamu untuk melaksanakan shalat lima waktu.',
-    features: ['Sajadah & Mukena Bersih', 'Tempat Wudhu Terpisah (Pria/Wanita)', 'Pendingin Ruangan (AC)', 'Sound System Adzan', 'Al-Quran & Buku Dzikir'], 
+    features: ['Mukena Bersih', 'Tempat Wudhu Terpisah (Pria/Wanita)', 'Sound System Adzan', 'Toilet'], 
     rules: ['Menjaga ketenangan dan kesucian tempat', 'Meletakkan alas kaki di rak yang tersedia', 'Matikan lampu dan AC setelah digunakan (jika tidak ada orang)', 'Dilarang tidur di dalam mushollah'], 
     images: [
       "{{ asset('storage/fasilitas/musolla_depan.jpg') }}"
@@ -1149,7 +1073,7 @@ const FACILITIES = [
     capacity: '5 Pasien', luas: '40 m²', 
     operasional: 'Senin–Jumat 08.00–15.00 WITA', kontak: 'Unit Kesehatan', 
     description: 'Fasilitas kesehatan dasar untuk penanganan pertama bagi pegawai atau peserta diklat yang mengalami gangguan kesehatan ringan.',
-    features: ['Tempat Tidur Pasien', 'Peralatan Medis Dasar', 'Kotak P3K Lengkap', 'Tenaga Medis/Perawat (Jam Kerja)', 'Obat-obatan Standar'], 
+    features: [ 'Kotak P3K Lengkap', 'Obat-obatan Standar', 'kursi roda', 'tempat tidur pasien' ], 
     rules: ['Hanya untuk penanganan medis darurat/ringan', 'Wajib mengisi buku kunjungan pasien', 'Pasien dengan kondisi berat akan dirujuk ke RS terdekat'], 
     images: [
       "{{ asset('storage/fasilitas/klinik.jpeg') }}"
@@ -1162,7 +1086,7 @@ const FACILITIES = [
     capacity: '500 Orang', luas: '1200 m²', 
     operasional: 'Senin–Jumat 07.00–17.00 WITA', kontak: 'Satpam', 
     description: 'Lapangan terbuka yang luas untuk pelaksanaan upacara bendera, apel pagi, serta kegiatan senam bersama setiap hari Jumat.',
-    features: ['Tiang Bendera', 'Lantai Paving Blok Rata', 'Sound System Luar Ruang', 'Podium Upacara', 'Akses Langsung ke Parkiran'], 
+    features: ['Tiang Bendera', 'Lantai Paving Blok Rata', 'Sound System Luar Ruang', 'podium upacara'], 
     rules: ['Dilarang memarkir kendaraan di tengah lapangan saat jam upacara', 'Menjaga kebersihan area lapangan', 'Izin khusus untuk kegiatan tenda/panggung besar'], 
     images: [
       "{{ asset('storage/fasilitas/upacara.jpg') }}"
@@ -1171,24 +1095,24 @@ const FACILITIES = [
   { 
     name: 'Gedung Arsip BPMP Gorontalo', 
     category: 'gedung', 
-    location: 'Area Belakang, Wongkaditi Timur', 
+    location: 'Area Belakang, ', 
     capacity: 'Penyimpanan Dokumen', luas: '150 m²', 
     operasional: 'Senin–Jumat 08.00–16.00 WITA', kontak: 'Unit Kearsipan', 
     description: 'Fasilitas penyimpanan dokumen negara dan data penting lembaga yang dikelola secara sistematis dan aman.',
-    features: ['Lemari Roll O\'pack', 'Sistem Pengatur Kelembapan', 'Alat Pemadam Api (APAR)', 'Sistem Labeling Digital', 'Keamanan Terbatas'], 
+    features: ['Lemari arsip'], 
     rules: ['Hanya petugas berwenang yang boleh masuk', 'Dilarang membawa cairan atau benda mudah terbakar', 'Wajib mencatat pengambilan dokumen di buku log'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_arsip.jpeg') }}"
     ]
   },
   { 
-    name: 'Gedung Laboratorium BPMP Gorontalo', 
-    category: 'gedung', 
-    location: 'Gedung Teknolgi Informasi, Lt. 2', 
-    capacity: '30 Orang', luas: '120 m²', 
+    name: 'Ruang Laboratorium BPMP Gorontalo', 
+    category: 'Ruang', 
+    location: 'Gedung Laboratorium Lt. 2', 
+    capacity: '30 Orang', luas: '61 m²', 
     operasional: 'Sesuai Jadwal Pelatihan', kontak: 'Unit TIK', 
     description: 'Laboratorium komputer dan multimedia untuk uji kompetensi, pelatihan IT, serta pengembangan media pembelajaran digital.',
-    features: ['Unit Komputer High-Spec', 'Server Lokal', 'Headset Multimedia', 'Jaringan LAN & Fiber Optic', 'Papan Tulis Interaktif', 'Full AC'], 
+    features: [''], 
     rules: ['Dilarang mengubah konfigurasi software/hardware', 'Dilarang membawa makanan/minuman ke meja komputer', 'Gunakan alas kaki khusus atau melepas alas kaki'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_laboratorium.jpeg') }}"
@@ -1208,9 +1132,9 @@ const FACILITY_CHIPS = [
 ];
 
 const DEMO_ACCOUNTS = [
-  { username:'superadmin',     password:'super123',      label:'Super Admin',          color:'from-red-500 to-rose-600',     icon:'shield',    desc:'Akses penuh ke seluruh sistem' },
-  { username:'kepalabpmp',     password:'kepala123',     label:'Kepala BPMP',           color:'from-purple-500 to-indigo-600',icon:'crown',     desc:'Dashboard eksekutif & persetujuan' },
-  { username:'kasubag',        password:'kasubag123',    label:'Kasubag TU',            color:'from-indigo-500 to-blue-600',  icon:'briefcase', desc:'Verifikasi & koordinasi BMN' },
+  { username:'superadmin',     password:'super123',      label:'Super Admin',         color:'from-red-500 to-rose-600',     icon:'shield',    desc:'Akses penuh ke seluruh sistem' },
+  { username:'kepalabpmp',     password:'kepala123',     label:'Kepala BPMP',            color:'from-purple-500 to-indigo-600',icon:'crown',     desc:'Dashboard eksekutif & persetujuan' },
+  { username:'kasubag',        password:'kasubag123',    label:'Kasubag TU',             color:'from-indigo-500 to-blue-600',  icon:'briefcase', desc:'Verifikasi & koordinasi BMN' },
   { username:'adminpersediaan',password:'persediaan123', label:'Admin Persediaan',      color:'from-emerald-500 to-green-600',icon:'package',   desc:'Kelola stok & barang habis pakai' },
   { username:'adminsarpras',   password:'sarpras123',    label:'Admin Sarana Prasarana',color:'from-cyan-500 to-teal-600',   icon:'building',  desc:'Monitor gedung & fasilitas' },
   { username:'adminaset',      password:'aset123',       label:'Admin Aset Tetap',      color:'from-amber-500 to-yellow-600', icon:'landmark',  desc:'Inventarisasi aset tetap' },
@@ -1274,13 +1198,11 @@ function buildCarousel() {
         </div>
       </div>
       
-      <!-- 3 Info Horizontal -->
       <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
         <span>📏 ${f.luas}</span>
         <span>👥 ${f.capacity}</span>
         <span>🕒 ${f.operasional.split(' ')[0]}</span>
       </div>
-      <!-- Kontak -->
       <p class="text-emerald-600 text-xs font-medium flex items-center gap-1 pt-1 border-t border-slate-200/50 mt-auto">
         📞 ${f.kontak}
       </p>
@@ -1379,8 +1301,7 @@ buildCarousel();
 buildDemoAccounts();
 lucide.createIcons();
 
-<!--Corousel Beranda-->
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     // =========================
     // INIT CAROUSEL
     // =========================

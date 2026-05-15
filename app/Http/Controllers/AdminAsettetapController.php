@@ -18,6 +18,8 @@ use App\Models\{
     TransaksiMasukAssetTetap,
     TransaksiKeluarAssetTetap,
     MutasiBarang,
+    Persediaan,
+    PermintaanPersediaan,
     Pengaduan,
     SurveyKepuasan,
     PeminjamanBarang,
@@ -1285,6 +1287,47 @@ class AdminAsettetapController extends Controller
 
 
      // ========== PENGADUAN ==========
+    //====landing page====//
+    public function landingpage()
+{
+    // 1. Total Item BMN (Gabungan Aset Tetap dan Master Barang Persediaan)
+    $totalAset = AssetTetap::count();
+    $totalPersediaan = Persediaan::count();
+    $totalItemBMN = $totalAset + $totalPersediaan;
+
+    // 2. Nilai Aset Terkelola (Menjumlahkan kolom harga_perolehan/nilai pada aset tetap)
+    // Asumsi nama kolomnya adalah 'harga_perolehan'
+    $nilaiAsetTotal = AssetTetap::sum('nilai_perolehan'); // Ganti dengan nama kolom yang sesuai di database Anda
+    $formattedNilaiAset = number_format($nilaiAsetTotal / 1000000000, 1); // Konversi ke Milyar (M)
+
+    // 3. Transaksi Bulan Ini (Jumlah Peminjaman + Permintaan Persediaan bulan ini)
+    $transaksiAset = PeminjamanBarang::whereMonth('created_at', Carbon::now()->month)->count();
+    $transaksiPersediaan = PermintaanPersediaan::whereMonth('created_at', Carbon::now()->month)->count();
+    $totalTransaksiBulanIni = $transaksiAset + $transaksiPersediaan;
+
+    // 4. Kondisi Baik (Persentase aset tetap yang kondisinya 'Baik')
+    $asetBaik = AssetTetap::where('kondisi', 'Baik')->count();
+    $persentaseKondisiBaik = $totalAset > 0 ? round(($asetBaik / $totalAset) * 100, 1) : 0;
+
+    // Data pengaduan untuk live tracking (dari langkah sebelumnya)
+    $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
+
+    return view('welcome', compact(
+        'pengaduans', 
+        'totalItemBMN', 
+        'formattedNilaiAset', 
+        'totalTransaksiBulanIni', 
+        'persentaseKondisiBaik'
+    ));
+}
+     public function index()
+    {
+        // Mengambil 6 pengaduan terbaru dari database
+        $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
+
+        // Passing variabel $pengaduans ke file blade landing page Anda
+        return view('welcome', compact('pengaduans')); 
+    }
         public function pengaduan(Request $request)
     {
         $query = Pengaduan::query()
