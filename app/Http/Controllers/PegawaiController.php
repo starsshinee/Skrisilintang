@@ -139,15 +139,26 @@ class PegawaiController extends Controller
             'status' => 'pending',
         ]);
 
-        $adminAset = User::where('role', 'admin_aset_tetap')->first();
-        $namaPegawai = Auth::user()->name;
-        $pesan = "*Permintaan Peminjaman BARANG Baru*\n\nHalo Admin Aset Tetap,\nPegawai atas nama {$namaPegawai} mengajukan peminjaman. Silakan login untuk melakukan review.";
-        FonnteService::sendMessage("082290211876", $pesan);
-        // if ($adminAset && $adminAset->no_hp) {
-        //     $namaPegawai = Auth::user()->name;
-        //     $pesan = "*Permintaan Peminjaman BARANG Baru*\n\nHalo Admin Aset Tetap,\nPegawai atas nama {$namaPegawai} mengajukan peminjaman. Silakan login untuk melakukan review.";
-        //     FonnteService::sendMessage($adminAset->no_hp, $pesan);
-        // }
+        $adminAset = User::where('role', 'adminasettetap')->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $namaPegawai = Auth::user()->name;
+
+            // Merangkai pesan dengan detail peminjaman
+            $pesan = "*Permintaan Peminjaman BARANG Baru*\n\n";
+            $pesan .= "Halo Admin Aset Tetap,\n";
+            $pesan .= "Pegawai atas nama *{$namaPegawai}* mengajukan peminjaman dengan detail berikut:\n\n";
+
+            $pesan .= "📦 *Nama Barang:* {$aset->nama_barang}\n";
+            $pesan .= "🔖 *Kode/NUP:* {$aset->kode_barang} / " . ($aset->nup ?? '-') . "\n";
+            $pesan .= "🔢 *Jumlah:* {$request->jumlah}\n";
+            $pesan .= "📅 *Tgl Pinjam:* {$request->tanggal_peminjaman}\n";
+            $pesan .= "📅 *Tgl Kembali:* {$request->tanggal_pengembalian}\n";
+            $pesan .= "📝 *Keperluan:* {$request->deskripsi_peruntukan}\n\n";
+
+            $pesan .= "Silakan login ke sistem untuk melakukan review.";
+
+            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+        }
 
         return back()->with('success', 'Permintaan peminjaman aset berhasil dikirim dan sedang menunggu persetujuan Admin.');
     }
@@ -257,11 +268,23 @@ class PegawaiController extends Controller
             $peminjaman->update(['status' => 'proses_pengembalian']);
         }
 
-        $adminAset = User::where('role', 'admin_aset_tetap')->first();
-        if ($adminAset && $adminAset->no_hp) {
+        $adminAset = User::where('role', 'adminasettetap')->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
             $namaPegawai = Auth::user()->name;
-            $pesan = "*Laporan Pengembalian BARANG*\n\nHalo Admin Aset Tetap,\nPegawai atas nama {$namaPegawai} melaporkan pengembalian. Silakan cek sistem untuk melakukan verifikasi.";
-            FonnteService::sendMessage($adminAset->no_hp, $pesan);
+
+            $pesan = "*Laporan Pengembalian BARANG*\n\n";
+            $pesan .= "Halo Admin Aset Tetap,\n";
+            $pesan .= "Pegawai atas nama *{$namaPegawai}* melaporkan pengembalian barang dengan detail:\n\n";
+
+            $pesan .= "📦 *Nama Barang:* {$peminjaman->nama_barang}\n";
+            $pesan .= "🔢 *Jumlah Dikembalikan:* {$request->jumlah_dikembalikan}\n";
+            $pesan .= "📅 *Tanggal Kembali:* {$request->tanggal_pengembalian_aktual}\n";
+            $pesan .= "🔍 *Kondisi:* " . ucfirst($request->kondisi_barang) . "\n";
+            $pesan .= "📝 *Catatan:* " . ($request->catatan ?? '-') . "\n\n";
+
+            $pesan .= "Silakan login ke sistem untuk melakukan verifikasi foto dan laporan.";
+
+            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
         }
 
         return back()->with('success', 'Laporan pengembalian berhasil dikirim dan menunggu verifikasi Admin!');
@@ -338,11 +361,23 @@ class PegawaiController extends Controller
             'status' => 'pending',
         ]);
 
-        $adminPersediaan = User::where('role', 'admin_persediaan')->first();
-        if ($adminPersediaan && $adminPersediaan->no_hp) {
+        $adminPersediaan = User::where('role', 'adminpersediaan')->first();
+        if ($adminPersediaan && $adminPersediaan->nomor_telepon) {
             $namaPegawai = Auth::user()->name;
-            $pesan = "*Permintaan PERSEDIAAN Baru*\n\nHalo Admin Persediaan,\nPegawai atas nama {$namaPegawai} mengajukan permintaan barang persediaan. Silakan cek sistem.";
-            FonnteService::sendMessage($adminPersediaan->no_hp, $pesan);
+
+            $pesan = "*Permintaan PERSEDIAAN Baru*\n\n";
+            $pesan .= "Halo Admin Persediaan,\n";
+            $pesan .= "Pegawai atas nama *{$namaPegawai}* mengajukan permintaan barang persediaan:\n\n";
+
+            $pesan .= "📦 *Barang:* {$persediaan->nama_barang}\n";
+            $pesan .= "🔖 *Kode:* {$request->kode_barang}\n";
+            $pesan .= "🔢 *Jumlah:* {$request->jumlah_diminta}\n";
+            $pesan .= "📅 *Tgl Dibutuhkan:* {$request->tanggal_dibutuhkan}\n";
+            $pesan .= "📝 *Keperluan:* {$request->tujuan_penggunaan}\n\n";
+
+            $pesan .= "Silakan login ke sistem untuk melakukan review permintaan.";
+
+            FonnteService::sendMessage($adminPersediaan->nomor_telepon, $pesan);
         }
 
         return redirect()->route('pegawai.permintaan-persediaan')
@@ -483,13 +518,6 @@ class PegawaiController extends Controller
         // Ambil detail aset dari database berdasarkan kode_barang yang dipilih
         $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();
 
-        $adminAset = User::where('role', 'admin_aset_tetap')->first();
-        if ($adminAset && $adminAset->no_hp) {
-            $namaPegawai = Auth::user()->name;
-            $pesan = "*Permintaan Peminjaman KENDARAAN Baru*\n\nHalo Admin Aset Tetap,\nPegawai atas nama {$namaPegawai} mengajukan peminjaman. Silakan login untuk melakukan review.";
-            FonnteService::sendMessage($adminAset->no_hp, $pesan);
-        }
-
         PeminjamanKendaraan::create([
             'user_id' => auth()->id(),
             'nama_barang' => $aset->nama_barang,
@@ -502,6 +530,26 @@ class PegawaiController extends Controller
             'deskripsi_peruntukan' => $request->deskripsi_peruntukan,
             'status' => 'pending',
         ]);
+
+        $adminAset = User::where('role', 'adminasettetap')->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $namaPegawai = Auth::user()->name;
+
+            $pesan = "*Permintaan Peminjaman KENDARAAN Baru*\n\n";
+            $pesan .= "Halo Admin Aset Tetap,\n";
+            $pesan .= "Pegawai atas nama *{$namaPegawai}* mengajukan peminjaman kendaraan dinas:\n\n";
+
+            // Menampilkan nama barang dan merek jika ada
+            $merek = $aset->merek ? " ({$aset->merek})" : "";
+            $pesan .= "🚗 *Kendaraan:* {$aset->nama_barang}{$merek}\n";
+            $pesan .= "📅 *Tgl Pinjam:* {$request->tanggal_peminjaman}\n";
+            $pesan .= "📅 *Tgl Kembali:* {$request->tanggal_pengembalian}\n";
+            $pesan .= "📝 *Keperluan:* {$request->deskripsi_peruntukan}\n\n";
+
+            $pesan .= "Silakan login ke sistem untuk melakukan review.";
+
+            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+        }
 
         return back()->with('success', 'Permintaan peminjaman berhasil dikirim.');
     }
@@ -591,11 +639,22 @@ class PegawaiController extends Controller
         // Agar kendaraan hilang dari opsi dropdown "Pilih Kendaraan yang Dikembalikan"
         $peminjaman->update(['status' => 'proses_pengembalian']);
 
-        $adminAset = User::where('role', 'admin_aset_tetap')->first();
-        if ($adminAset && $adminAset->no_hp) {
+        $adminAset = User::where('role', 'adminasettetap')->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
             $namaPegawai = Auth::user()->name;
-            $pesan = "*Laporan Pengembalian KENDARAAN*\n\nHalo Admin Aset Tetap,\nPegawai atas nama {$namaPegawai} melaporkan pengembalian. Silakan cek sistem untuk melakukan verifikasi.";
-            FonnteService::sendMessage($adminAset->no_hp, $pesan);
+
+            $pesan = "*Laporan Pengembalian KENDARAAN*\n\n";
+            $pesan .= "Halo Admin Aset Tetap,\n";
+            $pesan .= "Pegawai atas nama *{$namaPegawai}* melaporkan pengembalian kendaraan dinas:\n\n";
+
+            $pesan .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+            $pesan .= "📅 *Tanggal Kembali:* {$request->tanggal_pengembalian_aktual}\n";
+            $pesan .= "🔍 *Kondisi Kendaraan:* " . ucfirst($request->kondisi_kendaraan) . "\n";
+            $pesan .= "📝 *Catatan:* " . ($request->catatan ?? '-') . "\n\n";
+
+            $pesan .= "Silakan login ke sistem untuk melakukan verifikasi foto kendaraan.";
+
+            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
         }
 
         return back()->with('success', 'Laporan pengembalian kendaraan berhasil dikirim!');

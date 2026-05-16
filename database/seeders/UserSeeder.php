@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 'role'     => 'superadmin',
                 'nip'      => '196501011990031001',
                 'jabatan'  => 'Super Administrator Sistem',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Kepala BPMP ──────────────────────────────────────────────
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
                 'role'     => 'kepalabpmp',
                 'nip'      => '197003151995031002',
                 'jabatan'  => 'Kepala BPMP Provinsi Gorontalo',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Kasubag TU ───────────────────────────────────────────────
@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
                 'role'     => 'kasubag',
                 'nip'      => '198205102005022001',
                 'jabatan'  => 'Kepala Sub Bagian Tata Usaha',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Admin Persediaan ─────────────────────────────────────────
@@ -69,7 +69,7 @@ class UserSeeder extends Seeder
                 'role'     => 'adminpersediaan',
                 'nip'      => '199001152015031002',
                 'jabatan'  => 'Pengelola Barang Persediaan',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Admin Sarpras ────────────────────────────────────────────
@@ -81,7 +81,7 @@ class UserSeeder extends Seeder
                 'role'     => 'adminsarpras',
                 'nip'      => '199204082017042001',
                 'jabatan'  => 'Pengelola Sarana dan Prasarana',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Admin Aset Tetap ─────────────────────────────────────────
@@ -93,7 +93,7 @@ class UserSeeder extends Seeder
                 'role'     => 'adminasettetap',
                 'nip'      => '199307212018031003',
                 'jabatan'  => 'Pengelola Aset Tetap / BMN',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Pegawai (contoh umum) ─────────────────────────────────────
@@ -105,7 +105,7 @@ class UserSeeder extends Seeder
                 'role'     => 'pegawai',
                 'nip'      => '199510302019031004',
                 'jabatan'  => 'Staf Tata Usaha',
-                'is_active'=> true,
+                'is_active' => true,
             ],
 
             // ── Tamu ────────────────────────────────────────────────────
@@ -117,7 +117,7 @@ class UserSeeder extends Seeder
                 'role'     => 'tamu',
                 'nip'      => null,
                 'jabatan'  => 'Tamu / Pengunjung',
-                'is_active'=> true,
+                'is_active' => true,
             ],
         ];
 
