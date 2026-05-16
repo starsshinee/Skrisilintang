@@ -357,15 +357,37 @@ class AdminSarprasController extends Controller
                 'komentar' => $request->komentar
             ]);
 
+            // --- 1. NOTIFIKASI KE KASUBAG ---
             $kasubag = User::where('role', 'kasubag')->first();
-            if ($kasubag && $kasubag->no_hp) {
-                $pesan = "*Persetujuan Peminjaman Gedung*\n\nYth. Kasubag,\nAdmin Sarpras meneruskan permintaan peminjaman gedung dari {$peminjaman->nama_lengkap}. Silakan login untuk persetujuan.";
-                FonnteService::sendMessage($kasubag->no_hp, $pesan);
+            if ($kasubag && $kasubag->nomor_telepon) {
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+
+                // Mengambil nama gedung (asumsi ada relasi 'gedung')
+                $namaGedung = $peminjaman->gedung->nama_gedung ?? 'Gedung/Ruangan';
+                $instansi = $peminjaman->instansi_lembaga ? "({$peminjaman->instansi_lembaga})" : "";
+
+                $pesanKasubag = "*Persetujuan Peminjaman GEDUNG*\n\n";
+                $pesanKasubag .= "Yth. Kasubag,\n";
+                $pesanKasubag .= "Admin Sarpras meneruskan permintaan peminjaman gedung dari Tamu untuk disetujui:\n\n";
+                $pesanKasubag .= "👤 *Pemohon:* {$peminjaman->nama_lengkap} {$instansi}\n";
+                $pesanKasubag .= "🏫 *Gedung:* {$namaGedung}\n";
+                $pesanKasubag .= "📅 *Tanggal:* " . ($peminjaman->tanggal_mulai ?? '-') . " s/d " . ($peminjaman->tanggal_selesai ?? '-') . "\n";
+                $pesanKasubag .= "📝 *Kegiatan:* " . ($peminjaman->nama_kegiatan ?? '-') . "\n\n";
+                $pesanKasubag .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
+
+                FonnteService::sendMessage($noHpKasubag, $pesanKasubag);
             }
 
+            // --- 2. NOTIFIKASI INFO KE TAMU (Bukan Ditolak!) ---
             if ($peminjaman->nomor_kontak) {
-                $pesan = "*Peminjaman Gedung Ditolak*\n\nHalo {$peminjaman->nama_lengkap},\nMaaf, permintaan peminjaman gedung Anda ditolak oleh Admin dengan catatan: {$request->komentar}";
-                FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+                $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+                $pesanTamu = "*Status Peminjaman Gedung*\n\n";
+                $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+                $pesanTamu .= "Pengajuan peminjaman gedung Anda telah diverifikasi oleh Admin Sarpras dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
+                $pesanTamu .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
+
+                FonnteService::sendMessage($noHpTamu, $pesanTamu);
             }
 
             return response()->json([
@@ -404,6 +426,25 @@ class AdminSarprasController extends Controller
                 'reviewed_by_admin_id' => $adminId,
                 'komentar' => $request->komentar
             ]);
+
+            // --- NOTIFIKASI KE TAMU (DITOLAK OLEH ADMIN) ---
+            if ($peminjaman->nomor_kontak) {
+                // Bersihkan format nomor HP
+                $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+                // Ambil nama gedung
+                $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+                $pesanTamu = "*Peminjaman Gedung DITOLAK Admin*\n\n";
+                $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+                $pesanTamu .= "Maaf, pengajuan peminjaman fasilitas Anda telah *ditolak* oleh Admin Sarpras:\n\n";
+                $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+                $pesanTamu .= "📅 *Tanggal:* {$peminjaman->tanggal_pinjam} s/d {$peminjaman->tanggal_kembali}\n";
+                $pesanTamu .= "💬 *Alasan Penolakan:* " . $request->komentar . "\n\n";
+                $pesanTamu .= "Silakan hubungi bagian Admin Sarpras jika ada pertanyaan lebih lanjut. Terima kasih.";
+
+                FonnteService::sendMessage($noHpTamu, $pesanTamu);
+            }
 
             return response()->json([
                 'success' => true,

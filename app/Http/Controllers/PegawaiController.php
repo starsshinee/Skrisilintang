@@ -264,9 +264,9 @@ class PegawaiController extends Controller
         ]);
 
         // Ubah status peminjaman agar tidak bisa dikembalikan 2x jika jumlah penuh
-        if ($request->jumlah_dikembalikan >= $peminjaman->jumlah) {
-            $peminjaman->update(['status' => 'proses_pengembalian']);
-        }
+        // if ($request->jumlah_dikembalikan >= $peminjaman->jumlah) {
+        //     $peminjaman->update(['status' => 'proses_pengembalian']);
+        // }
 
         $adminAset = User::where('role', 'adminasettetap')->first();
         if ($adminAset && $adminAset->nomor_telepon) {
@@ -623,6 +623,13 @@ class PegawaiController extends Controller
         $fotoSebelum = $request->file('foto_sebelum')->store('pengembalian_kendaraan/sebelum', 'public');
         $fotoSesudah = $request->file('foto_sesudah')->store('pengembalian_kendaraan/sesudah', 'public');
 
+        $statusMap = [
+            'baik' => 'lengkap',
+            'rusak-ringan' => 'rusak_ringan',
+            'rusak-berat' => 'rusak_berat',
+            'hilang' => 'hilang'
+        ];
+
         PengembalianKendaraan::create([
             'peminjaman_kendaraan_id' => $request->peminjaman_kendaraan_id,
             'user_id' => auth()->id(),
@@ -631,9 +638,11 @@ class PegawaiController extends Controller
             'catatan' => $request->catatan,
             'foto_sebelum' => $fotoSebelum,
             'foto_sesudah' => $fotoSesudah,
-            'status_pengembalian' => 'diproses',
-            'biaya_denda' => 0 // Bisa disesuaikan logikanya nanti
+            'status_pengembalian' => $statusMap[$request->kondisi_barang] ?? 'lengkap',
+            'biaya_denda' => 0,
+            'status_verifikasi' => 'pending',
         ]);
+
 
         // ✅ UBAH STATUS PEMINJAMAN
         // Agar kendaraan hilang dari opsi dropdown "Pilih Kendaraan yang Dikembalikan"

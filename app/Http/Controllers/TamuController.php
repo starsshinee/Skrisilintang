@@ -165,10 +165,27 @@ class TamuController extends Controller
             'cara_pembayaran' => 'e-billing',
         ]);
 
-        $adminSarpras = User::where('role', 'admin_sarpras')->first();
-        if ($adminSarpras && $adminSarpras->no_hp) {
-            $pesan = "*Permintaan Peminjaman GEDUNG Baru*\n\nHalo Admin Sarpras,\nTerdapat pengajuan dari {$validated['nama_lengkap']} ({$validated['instansi_lembaga']}). Silakan cek sistem.";
-            FonnteService::sendMessage($adminSarpras->no_hp, $pesan);
+        // --- NOTIFIKASI KE ADMIN SARPRAS ---
+        $adminSarpras = User::where('role', 'adminsarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            // Membersihkan format nomor telepon tujuan
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Permintaan Peminjaman GEDUNG Baru*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Terdapat pengajuan peminjaman gedung/fasilitas baru dengan detail sebagai berikut:\n\n";
+
+            $pesanAdmin .= "👤 *Pemohon:* {$validated['nama_lengkap']} ({$validated['instansi_lembaga']})\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$gedung->nama_gedung}\n";
+            $pesanAdmin .= "📅 *Tanggal:* {$validated['tanggal_pinjam']} s/d {$validated['tanggal_kembali']}\n";
+            $pesanAdmin .= "⏰ *Waktu:* {$validated['jam_mulai']} - {$validated['jam_selesai']}\n";
+            $pesanAdmin .= "👥 *Peserta:* {$validated['jumlah_peserta']} Orang\n";
+            $pesanAdmin .= "📝 *Kegiatan:* {$validated['tujuan_penggunaan']}\n";
+            $pesanAdmin .= "📞 *Kontak:* {$validated['nomor_kontak']}\n\n";
+
+            $pesanAdmin .= "Silakan login ke sistem untuk melakukan review pengajuan ini.";
+
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([

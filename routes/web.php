@@ -68,36 +68,38 @@ Route::middleware('checkrole')->group(function () {
 });
 
 // Superadmin Register - PAKAI MIDDLEWARE ANDA!
-    Route::middleware('checkrole:superadmin')->group(function () {
-        Route::get('/register', function() { return view('auth.register'); })->name('register.show');
-        Route::post('/register', [AuthController::class, 'register'])->name('register');
-    });
+Route::middleware('checkrole:superadmin')->group(function () {
+    Route::get('/register', function () {
+        return view('auth.register');
+    })->name('register.show');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+});
 
-    // Role-specific dashboards
-    Route::middleware('checkrole:superadmin')->group(function () {
-        Route::get('/superadmin/dashbord', fn() => view('superadmin.dashbord'))->name('superadmin.dashbord');
-    });
-    Route::middleware('checkrole:kepalabpmp')->group(function () {
-        Route::get('/kepalabpmp/dashboard', fn() => view('kepalabpmp.dashboard'))->name('kepalabpmp.dashboard');
-    });
-    Route::middleware('checkrole:kasubag')->group(function () {
-        Route::get('/kasubag/dashboard', fn() => view('kasubag.dashboard'))->name('kasubag.dashboard');
-    });
-    Route::middleware('checkrole:adminpersediaan')->group(function () {
-        Route::get('/adminpersediaan/dashboard', fn() => view('adminpersediaan.dashboard'))->name('kasubag.dashboard');
-    });
-    Route::middleware('checkrole:adminsarpras')->group(function () {
-        Route::get('/adminsarpras/dashboard', fn() => view('adminsarpras.dashboard'))->name('adminsarpras.dashboard');
-    });
-    Route::middleware('checkrole:adminasettetap')->group(function () {
-        Route::get('/adminasettetap/dashboard', fn() => view('adminasettetap.dashboard'))->name('adminasettetap.dashboard');
-    });
-    Route::middleware('checkrole:pegawai')->group(function () {
-        Route::get('/pegawai/dashboard', fn() => view('pegawai.dashboard'))->name('pegawai.dashboard');
-    });
-    Route::middleware('checkrole:tamu')->group(function () {
-        Route::get('/tamu/dashboard', fn() => view('tamu.dashboard'))->name('tamu.dashboard');
-    });
+// Role-specific dashboards
+Route::middleware('checkrole:superadmin')->group(function () {
+    Route::get('/superadmin/dashbord', fn() => view('superadmin.dashbord'))->name('superadmin.dashbord');
+});
+Route::middleware('checkrole:kepalabpmp')->group(function () {
+    Route::get('/kepalabpmp/dashboard', fn() => view('kepalabpmp.dashboard'))->name('kepalabpmp.dashboard');
+});
+Route::middleware('checkrole:kasubag')->group(function () {
+    Route::get('/kasubag/dashboard', fn() => view('kasubag.dashboard'))->name('kasubag.dashboard');
+});
+Route::middleware('checkrole:adminpersediaan')->group(function () {
+    Route::get('/adminpersediaan/dashboard', fn() => view('adminpersediaan.dashboard'))->name('kasubag.dashboard');
+});
+Route::middleware('checkrole:adminsarpras')->group(function () {
+    Route::get('/adminsarpras/dashboard', fn() => view('adminsarpras.dashboard'))->name('adminsarpras.dashboard');
+});
+Route::middleware('checkrole:adminasettetap')->group(function () {
+    Route::get('/adminasettetap/dashboard', fn() => view('adminasettetap.dashboard'))->name('adminasettetap.dashboard');
+});
+Route::middleware('checkrole:pegawai')->group(function () {
+    Route::get('/pegawai/dashboard', fn() => view('pegawai.dashboard'))->name('pegawai.dashboard');
+});
+Route::middleware('checkrole:tamu')->group(function () {
+    Route::get('/tamu/dashboard', fn() => view('tamu.dashboard'))->name('tamu.dashboard');
+});
 
 Route::middleware('auth')->group(function () {
 
@@ -158,25 +160,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman-barang', [KasubagController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
             Route::post('/peminjaman-barang/{id}/approve', [KasubagController::class, 'approvePeminjamanBarang'])->name('peminjaman-barang.approve');
             Route::get('/peminjaman-barang/{id}/detail', [KasubagController::class, 'detailPeminjamanBarang'])->name('peminjaman-barang.detail');
-            
-           
+
+
             //PEMINJAMAN KENDARAAN
-            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');   
+            Route::get('/persetujuan-peminjaman-kendaraan', [KasubagController::class, 'persetujuanPeminjamanKendaraan'])->name('persetujuan-peminjaman-kendaraan');
             Route::post('/peminjaman-kendaraan/{id}/approve', [App\Http\Controllers\KasubagController::class, 'approveKendaraan'])->name('peminjaman-kendaraan.approve');
             Route::get('/peminjaman-kendaraan/{id}/json', [App\Http\Controllers\KasubagController::class, 'showJsonKendaraan']);
-            
+
             //PERMINTAAN PERSEDIAAN
             Route::get('/persetujuan-permintaan-persediaan', [KasubagController::class, 'persetujuanPermintaanPersediaan'])->name('persetujuan-permintaan-persediaan');
             Route::get('/permintaan-persediaan', [KasubagController::class, 'permintaanPersediaan'])->name('permintaan-persediaan');
             Route::post('/permintaan/{permintaan}/approve', [KasubagController::class, 'approvePermintaan'])->name('approve-permintaan');
             Route::get('/permintaan-persediaan/{id}', [KasubagController::class, 'showPermintaan'])->name('permintaan-persediaan.show');
-            
+
             // PEMINJAMAN GEDUNG
             Route::get('/peminjaman-gedung/{peminjaman}', [KasubagController::class, 'show'])->name('peminjaman-gedung.show');
             Route::post('/peminjaman-gedung/{peminjaman}/approve', [KasubagController::class, 'approveByKasubag']);
             Route::post('/peminjaman-gedung/{peminjaman}/reject', [KasubagController::class, 'rejectByKasubag']);
             Route::get('/peminjaman-gedung/{peminjaman}/download', [KasubagController::class, 'downloadSurat']);
-            Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung'); 
+            Route::get('/persetujuan-peminjaman-gedung', [KasubagController::class, 'persetujuanPeminjamanGedung'])->name('persetujuan-peminjaman-gedung');
             Route::get('/peminjaman/{peminjaman}/surat/download', [KasubagController::class, 'downloadSurat'])->name('download-surat');
             Route::get('/kasubag/peminjaman-gedung/{peminjaman}', [KasubagController::class, 'show'])->name('kasubag.peminjaman-gedung.show');
 
@@ -188,64 +190,64 @@ Route::middleware('auth')->group(function () {
     // ADMIN PERSEDIAAN – kelola barang persediaan
     // ──────────────────────────────────────────────────────────────────
     Route::prefix('adminpersediaan')
-    ->name('adminpersediaan.')
-    ->middleware('role:adminpersediaan,kasubag,superadmin')
-    ->group(function () {
-        
-        // Dashboard
-        Route::get('/dashboard', [AdminPersediaanController::class, 'dashboard'])->name('dashboard');
-        Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
-        
-        // 📋 DATA PERSEDIAAN - Custom Routes (bukan resource)
-        Route::get('/data-persediaan', [AdminPersediaanController::class, 'dataPersediaan'])->name('data-persediaan');
-        Route::get('/data-persediaan/create', [AdminPersediaanController::class, 'create'])->name('data-persediaan.create');
-        Route::post('/data-persediaan', [AdminPersediaanController::class, 'store'])->name('data-persediaan.store');
-        Route::get('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'show'])->name('data-persediaan.show');
-        Route::get('/data-persediaan/{persediaan}/edit', [AdminPersediaanController::class, 'edit'])->name('data-persediaan.edit');
-        Route::put('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'update'])->name('data-persediaan.update');
-        Route::delete('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'destroy'])->name('data-persediaan.destroy');
+        ->name('adminpersediaan.')
+        ->middleware('role:adminpersediaan,kasubag,superadmin')
+        ->group(function () {
 
-        // Rute untuk mengunduh template Excel khusus data persediaan
-        Route::get('/data-persediaan/template', [AdminPersediaanController::class, 'downloadTemplate'])->name('data-persediaan.template');
-        // Rute untuk memproses file Excel persediaan yang diunggah oleh admin
-        Route::post('/data-persediaan/import', [AdminPersediaanController::class, 'importPersediaan'])->name('data-persediaan.import');
-            
-        // 📤 TRANSAKSI KELUAR
-        Route::get('/transaksi-keluar', [AdminPersediaanController::class, 'transaksiKeluar'])->name('transaksi-keluar');
-        Route::get('/transaksi-keluar/create', [AdminPersediaanController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
-        Route::post('/transaksi-keluar', [AdminPersediaanController::class, 'storeTransaksiKeluar'])->name('transaksi-keluar.store');
-        Route::get('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'showTransaksiKeluar'])->name('transaksi-keluar.show');
-        Route::get('/transaksi-keluar/{transaksiKeluar}/edit', [AdminPersediaanController::class, 'editTransaksiKeluar'])->name('transaksi-keluar.edit');
-        Route::put('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'updateTransaksiKeluar'])->name('transaksi-keluar.update');
-        Route::delete('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
-        
-        // TRANSAKSI MASUK
-        Route::get('/transaksi-masuk', [AdminPersediaanController::class, 'TransaksiMasuk'])->name('transaksi-masuk');
-        Route::get('/transaksi-masuk/create', [AdminPersediaanController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
-        Route::post('/transaksi-masuk', [AdminPersediaanController::class, 'storeTransaksiMasuk'])->name('transaksi-masuk.store');
-        Route::get('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'showTransaksiMasuk'])->name('transaksi-masuk.show');
-        Route::get('/transaksi-masuk/{transaksiMasuk}/edit', [AdminPersediaanController::class, 'editTransaksiMasuk'])->name('transaksi-masuk.edit');
-        Route::put('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'updateTransaksiMasuk'])->name('transaksi-masuk.update');
-        Route::delete('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'destroyTransaksiMasuk'])->name('transaksi-masuk.destroy');
+            // Dashboard
+            Route::get('/dashboard', [AdminPersediaanController::class, 'dashboard'])->name('dashboard');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
 
-        //PERMINTAAN PERSEDIAAN
-        Route::get('/permintaan-persediaan', [AdminPersediaanController::class, 'PermintaanPersediaan'])->name('permintaan-persediaan');
-        Route::get('/permintaan/{id}', [AdminPersediaanController::class, 'showPermintaan'])->name('permintaan.show');
-        
-        Route::post('/permintaan/{permintaan}/review', [AdminPersediaanController::class, 'reviewPermintaan'])->name('review-permintaan');
-        Route::get('/surat/{permintaan}', [AdminPersediaanController::class, 'generateSuratPermintaan'])->name('surat-permintaan');
-        Route::post('/permintaan/{permintaan}/upload-bast', [AdminPersediaanController::class, 'uploadSuratBast'])->name('upload-bast');
+            // 📋 DATA PERSEDIAAN - Custom Routes (bukan resource)
+            Route::get('/data-persediaan', [AdminPersediaanController::class, 'dataPersediaan'])->name('data-persediaan');
+            Route::get('/data-persediaan/create', [AdminPersediaanController::class, 'create'])->name('data-persediaan.create');
+            Route::post('/data-persediaan', [AdminPersediaanController::class, 'store'])->name('data-persediaan.store');
+            Route::get('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'show'])->name('data-persediaan.show');
+            Route::get('/data-persediaan/{persediaan}/edit', [AdminPersediaanController::class, 'edit'])->name('data-persediaan.edit');
+            Route::put('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'update'])->name('data-persediaan.update');
+            Route::delete('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'destroy'])->name('data-persediaan.destroy');
 
-        //LAPORAN
-        Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');
-        Route::get('/laporan-transaksi-masuk', [AdminPersediaanController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
-        Route::get('/adminpersediaan/laporan-transaksi-masuk/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiMasuk'])->name('laporan-transaksi-masuk.pdf');
-        Route::get('/laporan-transaksi-keluar/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiKeluarPdf'])->name('laporan-transaksi-keluar.pdf');
-        Route::prefix('adminpersediaan')->middleware(['auth', 'role:adminpersediaan'])->group(function () {
-        Route::get('/laporan-permintaan/download', [AdminPersediaanController::class, 'downloadLaporanPermintaan'])->name('laporan.download');
-        Route::get('/laporan-transaksi-keluar', [AdminPersediaanController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
+            // Rute untuk mengunduh template Excel khusus data persediaan
+            Route::get('/data-persediaan/template', [AdminPersediaanController::class, 'downloadTemplate'])->name('data-persediaan.template');
+            // Rute untuk memproses file Excel persediaan yang diunggah oleh admin
+            Route::post('/data-persediaan/import', [AdminPersediaanController::class, 'importPersediaan'])->name('data-persediaan.import');
+
+            // 📤 TRANSAKSI KELUAR
+            Route::get('/transaksi-keluar', [AdminPersediaanController::class, 'transaksiKeluar'])->name('transaksi-keluar');
+            Route::get('/transaksi-keluar/create', [AdminPersediaanController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
+            Route::post('/transaksi-keluar', [AdminPersediaanController::class, 'storeTransaksiKeluar'])->name('transaksi-keluar.store');
+            Route::get('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'showTransaksiKeluar'])->name('transaksi-keluar.show');
+            Route::get('/transaksi-keluar/{transaksiKeluar}/edit', [AdminPersediaanController::class, 'editTransaksiKeluar'])->name('transaksi-keluar.edit');
+            Route::put('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'updateTransaksiKeluar'])->name('transaksi-keluar.update');
+            Route::delete('/transaksi-keluar/{transaksiKeluar}', [AdminPersediaanController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
+
+            // TRANSAKSI MASUK
+            Route::get('/transaksi-masuk', [AdminPersediaanController::class, 'TransaksiMasuk'])->name('transaksi-masuk');
+            Route::get('/transaksi-masuk/create', [AdminPersediaanController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
+            Route::post('/transaksi-masuk', [AdminPersediaanController::class, 'storeTransaksiMasuk'])->name('transaksi-masuk.store');
+            Route::get('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'showTransaksiMasuk'])->name('transaksi-masuk.show');
+            Route::get('/transaksi-masuk/{transaksiMasuk}/edit', [AdminPersediaanController::class, 'editTransaksiMasuk'])->name('transaksi-masuk.edit');
+            Route::put('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'updateTransaksiMasuk'])->name('transaksi-masuk.update');
+            Route::delete('/transaksi-masuk/{transaksiMasuk}', [AdminPersediaanController::class, 'destroyTransaksiMasuk'])->name('transaksi-masuk.destroy');
+
+            //PERMINTAAN PERSEDIAAN
+            Route::get('/permintaan-persediaan', [AdminPersediaanController::class, 'PermintaanPersediaan'])->name('permintaan-persediaan');
+            Route::get('/permintaan/{id}', [AdminPersediaanController::class, 'showPermintaan'])->name('permintaan.show');
+
+            Route::post('/permintaan/{permintaan}/review', [AdminPersediaanController::class, 'reviewPermintaan'])->name('review-permintaan');
+            Route::get('/surat/{permintaan}', [AdminPersediaanController::class, 'generateSuratPermintaan'])->name('surat-permintaan');
+            Route::post('/permintaan/{permintaan}/upload-bast', [AdminPersediaanController::class, 'uploadSuratBast'])->name('upload-bast');
+
+            //LAPORAN
+            Route::get('/laporan-permintaan-persediaan', [AdminPersediaanController::class, 'laporanPermintaanPersediaan'])->name('laporan-permintaan-persediaan');
+            Route::get('/laporan-transaksi-masuk', [AdminPersediaanController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');
+            Route::get('/adminpersediaan/laporan-transaksi-masuk/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiMasuk'])->name('laporan-transaksi-masuk.pdf');
+            Route::get('/laporan-transaksi-keluar/pdf', [AdminPersediaanController::class, 'downloadLaporanTransaksiKeluarPdf'])->name('laporan-transaksi-keluar.pdf');
+            Route::prefix('adminpersediaan')->middleware(['auth', 'role:adminpersediaan'])->group(function () {
+                Route::get('/laporan-permintaan/download', [AdminPersediaanController::class, 'downloadLaporanPermintaan'])->name('laporan.download');
+                Route::get('/laporan-transaksi-keluar', [AdminPersediaanController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
+            });
         });
-});
 
     // ──────────────────────────────────────────────────────────────────
     // ADMIN SARPRAS – kelola sarana dan prasarana
@@ -254,7 +256,7 @@ Route::middleware('auth')->group(function () {
         ->name('adminsarpras.')
         ->middleware('role:adminsarpras,kasubag,superadmin')
         ->group(function () {
-            Route::get('/dashboard', [AdminSarprasController::class, 'dashboard']) ->name('dashboard');
+            Route::get('/dashboard', [AdminSarprasController::class, 'dashboard'])->name('dashboard');
             Route::get('/data-gedung', [AdminSarprasController::class, 'dataGedung'])->name('data-gedung');
             Route::get('/data-kerusakan', [AdminSarprasController::class, 'dataKerusakan'])->name('data-kerusakan');
             Route::post('/simpan-kerusakan', [AdminSarprasController::class, 'storeKerusakan'])->name('simpan-kerusakan');
@@ -267,15 +269,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/laporan-peminjaman/download', [AdminSarprasController::class, 'downloadLaporanPeminjaman'])->name('laporan.peminjaman.download');
             Route::get('/laporan-kerusakan/download', [AdminSarprasController::class, 'downloadLaporanKerusakan'])->name('laporan.kerusakan.download');
-            
+
             //DATA GEDUNG
             Route::post('/data-gedung', [AdminSarprasController::class, 'storeGedung'])->name('data-gedung.store');
             Route::get('/gedung/{gedung}', [AdminSarprasController::class, 'showGedungJson'])->name('gedung.show');
             Route::put('/gedung/{gedung}', [AdminSarprasController::class, 'updateGedung'])->name('gedung.update');
             Route::delete('/gedung/{gedung}', [AdminSarprasController::class, 'destroyGedung'])->name('gedung.destroy');
-             Route::get('data-gedung/{gedung}', [AdminSarprasController::class, 'showGedungJson'])->name('data-gedung.show');
-            
-                    
+            Route::get('data-gedung/{gedung}', [AdminSarprasController::class, 'showGedungJson'])->name('data-gedung.show');
+
+
             // Modal AJAX Routes (BARU)
             Route::get('/data-kerusakan/{kerusakan}/edit', [AdminSarprasController::class, 'editKerusakanJson'])->name('kerusakan.edit.json');
             Route::get('/data-kerusakan/{kerusakan}', [AdminSarprasController::class, 'showKerusakanJson'])->name('kerusakan.show.json');
@@ -289,17 +291,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman/{peminjaman}/download-surat', [AdminSarprasController::class, 'downloadSurat'])->name('download-surat');
             Route::get('/peminjaman-gedung/download', [AdminSarprasController::class, 'downloadLaporanPeminjaman'])->name('peminjaman.download');
             Route::get('/peminjaman-gedung/{peminjaman}/generate-surat', [AdminSarprasController::class, 'generateSuratPerjanjianSewa'])
-            ->name('peminjaman.generate-surat');
+                ->name('peminjaman.generate-surat');
             Route::post('/peminjaman-gedung/{peminjaman}/upload-surat', [AdminSarprasController::class, 'uploadSuratPerjanjianSewa'])
                 ->name('peminjaman.upload-surat');
-            
-            
+
+
             // Route untuk Bulk Delete
             Route::post('/peminjaman-gedung/bulk-delete', [AdminSarprasController::class, 'bulkDeletePeminjaman'])->name('peminjaman.bulk-delete');
-            
+
             // Route untuk Review (Form Button)
             Route::post('/peminjaman-gedung/{id}/review', [AdminSarprasController::class, 'reviewPeminjaman'])->name('review-peminjaman');
-                });
+        });
 
 
     // ──────────────────────────────────────────────────────────────────
@@ -316,11 +318,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/mutasi-barang', [AdminAsettetapController::class, 'mutasiBarang'])->name('mutasi-barang');
             Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
             Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
-            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');  
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
 
             // Rute untuk mengunduh template Excel format standar sistem
             Route::get('/data-aset-tetap/template', [AdminAsettetapController::class, 'downloadTemplate'])->name('data-aset-tetap.template');
-            
+
             // Rute untuk memproses file Excel yang diunggah oleh admin
             Route::post('/data-aset-tetap/import', [AdminAsettetapController::class, 'importAset'])->name('data-aset-tetap.import');
 
@@ -337,13 +339,13 @@ Route::middleware('auth')->group(function () {
             Route::post('/peminjaman-kendaraan/{id}/upload', [AdminAsettetapController::class, 'uploadBastKendaraan']);
             Route::get('/peminjaman-kendaraan/{peminjaman}/print', [AdminAsettetapController::class, 'generateSuratPeminjamanKendaraan'])->name('peminjaman-kendaraan.print');
             Route::get('/peminjaman-kendaraan/{id}/json', [AdminAsettetapController::class, 'showJsonKendaraan']);
-            
+
             //PENGAMBLIAN KENDARAAN
-            Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');  
+            Route::get('/pengembalian-kendaraan', [AdminAsettetapController::class, 'PengembalianKendaraan'])->name('pengembalian-kendaraan');
             Route::post('/pengembalian-kendaraan/{id}/verifikasi', [AdminAsettetapController::class, 'verifikasiPengembalianKendaraan'])->name('pengembalian-kendaraan.verifikasi');
             Route::get('/pengembalian-kendaraan/{id}/json', [AdminAsettetapController::class, 'showPengembalianKendaraanJsonAdmin']);
-            Route::get('/pengembalian-kendaraan/{id}/cetak', [AdminAsettetapController::class, 'cetakSuratPengembalianKendaraan'])->name('pengembalian-kendaraan.cetak');        
-            
+            Route::get('/pengembalian-kendaraan/{id}/cetak', [AdminAsettetapController::class, 'cetakSuratPengembalianKendaraan'])->name('pengembalian-kendaraan.cetak');
+
             //PEMINJAMAN BARANG
             Route::get('/peminjaman-barang', [AdminAsettetapController::class, 'PeminjamanBarang'])->name('peminjaman-barang');
             Route::post('/peminjaman-barang/{id}/review', [AdminAsettetapController::class, 'reviewPeminjaman'])->name('peminjaman-barang.review');
@@ -353,7 +355,7 @@ Route::middleware('auth')->group(function () {
             // Laporan
             Route::prefix('adminasettetap/laporan')->group(function () {
                 Route::get('/', [LaporanController::class, 'index'])->name('laporan');
-                
+
                 // Rute Download dengan parameter
                 Route::get('/download-transaksi-masuk', [LaporanController::class, 'downloadTransaksiMasuk'])->name('transaksi-masuk.download');
                 Route::get('/download-transaksi-keluar', [LaporanController::class, 'downloadTransaksiKeluar'])->name('transaksi-keluar.download');
@@ -377,9 +379,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/data-aset-tetap/{aset}/edit', [AdminAsettetapController::class, 'editDataAsetTetap'])->name('data-aset-tetap.edit');
             Route::put('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'updateDataAsetTetap'])->name('data-aset-tetap.update');
             Route::delete('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'destroyDataAsetTetap'])->name('data-aset-tetap.destroy');
-            
-            
-            
+
+
+
             // ========== CRUD TRANSAKSI KELUAR ASET TETAP ==========
             // ========== TRANSAKSI KELUAR ==========
             Route::get('/adminasettetap/transaksi-keluar', [AdminAsettetapController::class, 'TransaksiKeluar'])->name('transaksi-keluar');
@@ -392,7 +394,7 @@ Route::middleware('auth')->group(function () {
             // // Detail & Edit JSON
             Route::get('transaksi-keluar/{id}/show-aset', [AdminAsettetapController::class, 'showWithAset'])->name('transaksi-keluar.show-aset');
             Route::get('transaksi-keluar/{id}/edit-json', [AdminAsettetapController::class, 'editJson'])->name('transaksi-keluar.edit-json');
-            
+
             // ✅ DELETE ROUTE - TAMBAHAN BARU
             Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
 
@@ -412,7 +414,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/mutasi-barang/{id}', [AdminAsettetapController::class, 'mutasiBarangShow']);
             Route::get('/mutasi-barang/{id}/edit', [AdminAsettetapController::class, 'mutasiBarangEdit']);
             Route::get('/mutasi-barang/aset/{id}', [AdminAsettetapController::class, 'getAsetTetapData'])->name('mutasi-barang.aset');
-            
+
             //CRUD PENGADUAN
             Route::get('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanShow'])->name('pengaduan.show');
             Route::put('/pengaduan/{pengaduan}', [AdminAsettetapController::class, 'pengaduanUpdate'])->name('pengaduanUpdate');
@@ -421,7 +423,7 @@ Route::middleware('auth')->group(function () {
             //DELET SURVEY KEPUASAN
             Route::delete('/survey/{survey}', [AdminAsettetapController::class, 'surveyDestroy'])->name('survey.destroy');
             Route::get('/survey-kepuasan/export-excel', [AdminAsettetapController::class, 'exportExcel'])->name('survey.excel-export');
-            
+
             // 📊 LAPORAN & ANALITIK (BARU ⭐)
             Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
             Route::get('/laporan/filter', [LaporanController::class, 'filter'])->name('laporan.filter');
@@ -434,9 +436,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman/download', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
             Route::get('/dashboard-summary/download', [LaporanController::class, 'downloadDashboardSummary'])->name('dashboard.download');
             Route::get('/all/download', [LaporanController::class, 'downloadAll'])->name('all.download');
-            
-            });
-        
+        });
+
 
     // ──────────────────────────────────────────────────────────────────
 
@@ -470,7 +471,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/peminjaman-kendaraan/store', [PegawaiController::class, 'storePeminjamanKendaraan'])->name('peminjaman-kendaraan.store');
             Route::delete('/peminjaman-kendaraan/{id}/cancel', [PegawaiController::class, 'cancelPeminjamanKendaraan']);
             Route::get('/peminjaman-kendaraan/{id}/show', [PegawaiController::class, 'showPeminjamanKendaraan'])->name('peminjaman-kendaraan.show');
-            
+
 
             //PENGEMBALIAN KENDARAAN
             Route::get('/pengembalian-kendaraan', [PegawaiController::class, 'pengembalianKendaraan'])->name('pengembalian-kendaraan');
@@ -484,7 +485,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/permintaan-persediaan', [PegawaiController::class, 'storePermintaanPersediaan'])->name('permintaan-persediaan.store');
             Route::get('/permintaan-persediaan/{id}', [PegawaiController::class, 'detailPermintaanPersediaan'])->name('permintaan_persediaan.detail');
             Route::post('/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancelPermintaanPersediaan'])->name('permintaan_persediaan.cancel');
-            
+
             //PENGATURAN AKUN
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
@@ -505,6 +506,4 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
             Route::get('/info-fasilitas', [TamuController::class, 'infoFasilitas'])->name('info-fasilitas');
         });
-
 });
-

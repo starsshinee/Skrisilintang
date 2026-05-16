@@ -54,9 +54,24 @@ class KasubagController extends Controller
             return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
-        $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function ($item) {
-            return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
-        });
+        // $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function ($item) {
+        //     return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
+        // });
+
+        $recentKendaraan = PeminjamanKendaraan::with(['user']) // Hapus 'kendaraan' dari sini
+            ->where('status', 'pending')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'tipe' => 'Kendaraan',
+                    // Ambil merek langsung dari $item. Jika kosong, fallback ke nama_barang atau teks default.
+                    'nama_item' => $item->merek ?? $item->nama_barang ?? 'Kendaraan',
+                    'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai',
+                    'tanggal' => $item->created_at
+                ];
+            });
 
         $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Gedung', 'nama_item' => $item->nama_fasilitas ?? $item->fasilitas, 'nama_peminjam' => $item->nama_lengkap, 'tanggal' => $item->created_at];
@@ -125,22 +140,52 @@ class KasubagController extends Controller
         }
 
         $peminjaman->update([
-            'status' => 'disetujui_kasubag', // Ubah ke status yang sesuai model
+            'status' => 'disetujui_kasubag',
             'approved_by_kasubag_id' => auth()->id(),
             'approved_by_kasubag_date' => now(),
             'komentar' => $request->komentar
         ]);
 
-        // WhatsApp Notification for Approval
+        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+        // 🔥 PARSING TANGGAL MENGGUNAKAN CARBON AGAR BERSIH (TANPA 00:00:00)
+        $tglPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y');
+        $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y');
+
+        // Ambil field jam terpisah
+        $jamMulai = $peminjaman->jam_mulai ?? '--:--';
+        $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
+
+        // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
         if ($peminjaman->nomor_kontak) {
-            $pesan = "*Peminjaman Gedung Disetujui!*\n\nHalo {$peminjaman->nama_lengkap},\nPengajuan peminjaman gedung Anda disetujui oleh Kasubag. Silakan tunggu Surat Perjanjian dari Admin Sarpras.";
-            FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+            $pesanTamu = "*Peminjaman Gedung DISETUJUI*\n\n";
+            $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+            $pesanTamu .= "Pengajuan peminjaman fasilitas Anda telah disetujui oleh Kasubag:\n\n";
+            $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanTamu .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+            $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
+            $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
+
+            FonnteService::sendMessage($noHpTamu, $pesanTamu);
         }
 
-        // WhatsApp Notification for Rejection
-        if ($peminjaman->nomor_kontak) {
-            $pesan = "*Peminjaman Gedung Ditolak*\n\nHalo {$peminjaman->nama_lengkap},\nMaaf, pengajuan peminjaman gedung Anda ditolak oleh Kasubag dengan catatan: {$request->komentar}";
-            FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+        // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
+        $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Info Persetujuan Kasubag (Gedung)*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman fasilitas dari Tamu:\n\n";
+            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanAdmin .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+            $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
+            $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
+
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([
@@ -161,10 +206,43 @@ class KasubagController extends Controller
         }
 
         $peminjaman->update([
-            'status' => 'ditolak_kasubag',
+            'status' => 'ditolak',
             'approved_by_kasubag_id' => auth()->id(),
+            'approved_by_kasubag_date' => now(),
             'komentar' => $request->komentar
         ]);
+
+        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+        // --- 1. NOTIFIKASI KE TAMU (DITOLAK) ---
+        if ($peminjaman->nomor_kontak) {
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+            $pesanTamu = "*Peminjaman Gedung DITOLAK*\n\n";
+            $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+            $pesanTamu .= "Maaf, pengajuan peminjaman fasilitas Anda ditolak oleh Kasubag:\n\n";
+            $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanTamu .= "📅 *Tanggal:* {$peminjaman->tanggal_pinjam} s/d {$peminjaman->tanggal_kembali}\n";
+            $pesanTamu .= "💬 *Catatan Kasubag:* " . $request->komentar . "\n\n";
+            $pesanTamu .= "Silakan hubungi Admin Sarpras untuk informasi lebih lanjut.";
+
+            FonnteService::sendMessage($noHpTamu, $pesanTamu);
+        }
+
+        // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DITOLAK) ---
+        $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Info Penolakan Kasubag (Gedung)*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman fasilitas dari Tamu:\n\n";
+            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanAdmin .= "💬 *Catatan Kasubag:* " . $request->komentar;
+
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+        }
 
         return response()->json([
             'success' => true,
@@ -285,13 +363,50 @@ class KasubagController extends Controller
         }
 
         $pegawai = $peminjaman->user;
-        if ($pegawai && $pegawai->no_hp) {
+        // 1. NOTIFIKASI KE PEGAWAI
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
             if ($request->action == 'setuju') {
-                $pesan = "*Peminjaman Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan peminjaman Anda telah disetujui oleh Kasubag. Admin akan segera membuatkan Surat BAST.";
+                $pesanPegawai = "*Peminjaman Barang DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan peminjaman barang Anda telah disetujui oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$peminjaman->jumlah}\n";
+                $pesanPegawai .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n\n";
+                $pesanPegawai .= "Admin akan segera membuatkan Surat BAST. Silakan cek sistem secara berkala.";
             } else {
-                $pesan = "*Peminjaman Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan peminjaman Anda ditolak oleh Kasubag dengan catatan: " . ($request->komentar ?? '-');
+                $pesanPegawai = "*Peminjaman Barang DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan peminjaman barang Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
             }
-            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN ASET TETAP
+        // Saya gunakan whereIn agar aman jika penulisan rolenya 'adminasettetap' atau 'admin_aset_tetap'
+        $adminAset = \App\Models\User::whereIn('role', ['admin_aset_tetap', 'adminasettetap'])->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action == 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Barang)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman barang dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "Silakan login ke sistem untuk men-generate Surat BAST.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Barang)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman barang dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', $pesan);
@@ -340,13 +455,48 @@ class KasubagController extends Controller
         $peminjaman->save();
 
         $pegawai = $peminjaman->user;
-        if ($pegawai && $pegawai->no_hp) {
+        // 1. NOTIFIKASI KE PEGAWAI
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
             if ($request->action == 'setuju') {
-                $pesan = "*Peminjaman Kendaraan Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan peminjaman kendaraan Anda telah disetujui oleh Kasubag. Admin akan segera membuatkan Surat BAST.";
+                $pesanPegawai = "*Peminjaman Kendaraan DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan peminjaman kendaraan dinas Anda telah disetujui oleh Kasubag:\n\n";
+                $pesanPegawai .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n\n";
+                $pesanPegawai .= "Admin akan segera membuatkan Surat BAST. Silakan cek sistem secara berkala.";
             } else {
-                $pesan = "*Peminjaman Kendaraan Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan peminjaman kendaraan Anda ditolak oleh Kasubag dengan catatan: " . ($request->komentar ?? '-');
+                $pesanPegawai = "*Peminjaman Kendaraan DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan peminjaman kendaraan dinas Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
             }
-            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN ASET TETAP
+        $adminAset = \App\Models\User::whereIn('role', ['admin_aset_tetap', 'adminasettetap'])->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action == 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Kendaraan)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman kendaraan dinas dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "Silakan login ke sistem untuk men-generate Surat BAST Kendaraan.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Kendaraan)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman kendaraan dinas dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', $pesan);
@@ -406,13 +556,50 @@ class KasubagController extends Controller
         }
 
         $pegawai = $permintaan->user;
-        if ($pegawai && $pegawai->no_hp) {
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
             if ($request->action === 'setuju') {
-                $pesan = "*Permintaan Persediaan Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan persediaan Anda telah disetujui Kasubag.";
+                $pesanPegawai = "*Permintaan Persediaan DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan barang persediaan Anda telah disetujui Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanPegawai .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin Persediaan untuk pengambilan barang.";
             } else {
-                $pesan = "*Permintaan Persediaan Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan persediaan Anda ditolak oleh Kasubag.";
+                $pesanPegawai = "*Permintaan Persediaan DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan barang persediaan Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
             }
-            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN PERSEDIAAN
+        $adminPersediaan = \App\Models\User::where('role', 'admin_persediaan')->first();
+        if ($adminPersediaan && $adminPersediaan->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action === 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Persediaan)*\n\n";
+                $pesanAdmin .= "Halo Admin Persediaan,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* permintaan barang persediaan dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanAdmin .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n\n";
+                $pesanAdmin .= "Silakan siapkan barang tersebut untuk diserahkan ke pegawai terkait.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Persediaan)*\n\n";
+                $pesanAdmin .= "Halo Admin Persediaan,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* permintaan persediaan dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', 'Permintaan berhasil diproses!');

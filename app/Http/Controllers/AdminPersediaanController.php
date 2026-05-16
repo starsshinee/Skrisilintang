@@ -531,34 +531,67 @@ class AdminPersediaanController extends Controller
             return back()->with('error', 'Permintaan sudah diproses!');
         }
 
+        $namaPegawai = $permintaan->user->name ?? 'Pegawai';
+
         if ($request->action === 'teruskan') {
+            // --- 1. JIKA DITERUSKAN KE KASUBAG ---
             $permintaan->update([
                 'status' => 'dalam_review',
                 'reviewed_by_adminpersediaan_id' => Auth::id(),
             ]);
 
-            return back()->with('success', 'Permintaan diteruskan ke Kasubag!');
+            $pesanFlash = 'Permintaan diteruskan ke Kasubag!';
+
+            // Notifikasi ke Kasubag
+            $kasubag = User::where('role', 'kasubag')->first();
+
+            // Catatan: Pastikan kolom di database Anda 'nomor_telepon' atau 'no_hp'
+            // Jika sebelumnya pakai nomor_telepon, ganti $kasubag->no_hp jadi $kasubag->nomor_telepon
+            if ($kasubag && $kasubag->nomor_telepon) {
+                // Bersihkan format nomor WA
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+
+                $pesanWa = "*Persetujuan Permintaan Persediaan*\n\n";
+                $pesanWa .= "Yth. Kasubag,\n";
+                $pesanWa .= "Admin Persediaan meneruskan permintaan barang persediaan untuk disetujui:\n\n";
+                $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
+                $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
+
+                FonnteService::sendMessage($noHpKasubag, $pesanWa);
+            }
+        } else {
+            // --- 2. JIKA DITOLAK OLEH ADMIN ---
+            $permintaan->update([
+                'status' => 'ditolak',
+                'reviewed_by_adminpersediaan_id' => Auth::id(),
+                // Jika ada field komentar penolakan dari admin persediaan, bisa ditambahkan di sini:
+                // 'komentar' => $request->komentar, 
+            ]);
+
+            $pesanFlash = 'Permintaan berhasil ditolak!';
+
+            // Notifikasi Penolakan ke Pegawai
+            $pegawai = $permintaan->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+                $pesanWa = "*Permintaan Persediaan DITOLAK Admin*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Maaf, pengajuan barang persediaan Anda telah *ditolak* oleh Admin Persediaan.\n\n";
+                $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "💬 *Catatan:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanWa .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
+
+                FonnteService::sendMessage($noHpPegawai, $pesanWa);
+            }
         }
 
-        $permintaan->update([
-            'status' => 'ditolak',
-            'reviewed_by_adminpersediaan_id' => Auth::id(),
-        ]);
-
-        $kasubag = User::where('role', 'kasubag')->first();
-        if ($kasubag && $kasubag->no_hp) {
-            $namaPegawai = $permintaan->user->name ?? 'Pegawai';
-            $pesan = "*Persetujuan Permintaan Persediaan*\n\nYth. Kasubag,\nAdmin meneruskan permintaan persediaan dari {$namaPegawai}. Silakan login untuk persetujuan.";
-            FonnteService::sendMessage($kasubag->no_hp, $pesan);
-        }
-
-        $pegawai = $permintaan->user;
-        if ($pegawai && $pegawai->no_hp) {
-            $pesan = "*Permintaan Persediaan Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan persediaan Anda ditolak oleh Admin.";
-            FonnteService::sendMessage($pegawai->no_hp, $pesan);
-        }
-
-        return back()->with('success', 'Permintaan ditolak!');
+        // Return dieksekusi paling akhir, setelah WA dikirim
+        return back()->with('success', $pesanFlash);
     }
 
     // 1. FUNGSI GENERATE SURAT (Dilengkapi TTD Base64)

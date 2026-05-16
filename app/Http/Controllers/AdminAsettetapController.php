@@ -1207,18 +1207,18 @@ class AdminAsettetapController extends Controller
         $pengembalian = PengembalianKendaraan::findOrFail($id);
 
         $request->validate([
-            'status_pengembalian' => 'required|in:diterima,ditolak',
+            'status_verifikasi' => 'required|in:diterima,ditolak',
             'komentar_admin' => 'nullable|string'
         ]);
 
         $pengembalian->update([
-            'status_pengembalian' => $request->status_pengembalian,
+            'status_verifikasi' => $request->status_verifikasi,
             'komentar_admin' => $request->komentar_admin,
             'verified_by_admin_id' => auth()->id(),
             'verified_at' => now()
         ]);
 
-        if ($request->status_pengembalian === 'diproses') {
+        if ($request->status_verifikasi === 'pending') {
             $pengembalian->peminjamanKendaraan()->update(['status' => 'diterima']);
 
             // Kembalikan stok jika diperlukan
@@ -1237,7 +1237,7 @@ class AdminAsettetapController extends Controller
             $namaKendaraan = $pengembalian->peminjamanKendaraan->nama_barang ?? 'Kendaraan';
 
             // Status pada kendaraan biasanya menggunakan 'diproses' / 'diterima'
-            if ($request->status_pengembalian === 'diterima' || $request->status_pengembalian === 'diproses') {
+            if ($request->status_verifikasi === 'diterima' || $request->status_verifikasi === 'pending') {
                 $pesanWa = "*Pengembalian Kendaraan DITERIMA*\n\n";
                 $pesanWa .= "Halo {$pegawai->name},\n";
                 $pesanWa .= "Terima kasih, laporan pengembalian kendaraan dinas Anda telah diverifikasi dan *Diterima* oleh Admin.\n\n";
