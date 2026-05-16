@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -185,7 +186,7 @@ class TamuController extends Controller
 
             $pesanAdmin .= "Silakan login ke sistem untuk melakukan review pengajuan ini.";
 
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([

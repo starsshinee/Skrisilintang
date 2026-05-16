@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -168,7 +169,8 @@ class KasubagController extends Controller
             $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
             $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
 
-            FonnteService::sendMessage($noHpTamu, $pesanTamu);
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
         }
 
         // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
@@ -185,7 +187,8 @@ class KasubagController extends Controller
             $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
             $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
 
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([
@@ -226,7 +229,8 @@ class KasubagController extends Controller
             $pesanTamu .= "💬 *Catatan Kasubag:* " . $request->komentar . "\n\n";
             $pesanTamu .= "Silakan hubungi Admin Sarpras untuk informasi lebih lanjut.";
 
-            FonnteService::sendMessage($noHpTamu, $pesanTamu);
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
         }
 
         // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DITOLAK) ---
@@ -241,7 +245,8 @@ class KasubagController extends Controller
             $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
             $pesanAdmin .= "💬 *Catatan Kasubag:* " . $request->komentar;
 
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([
@@ -383,7 +388,8 @@ class KasubagController extends Controller
                 $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
             }
-            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
         }
 
         // 2. NOTIFIKASI KE ADMIN ASET TETAP
@@ -406,7 +412,8 @@ class KasubagController extends Controller
                 $pesanAdmin .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
                 $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
             }
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', $pesan);
@@ -474,7 +481,8 @@ class KasubagController extends Controller
                 $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
             }
-            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
         }
 
         // 2. NOTIFIKASI KE ADMIN ASET TETAP
@@ -496,7 +504,8 @@ class KasubagController extends Controller
                 $pesanAdmin .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
                 $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
             }
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', $pesan);
@@ -576,7 +585,7 @@ class KasubagController extends Controller
                 $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanPegawai .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
             }
-            FonnteService::sendMessage($noHpPegawai, $pesanPegawai);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
         }
 
         // 2. NOTIFIKASI KE ADMIN PERSEDIAAN
@@ -599,7 +608,8 @@ class KasubagController extends Controller
                 $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
                 $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
             }
-            FonnteService::sendMessage($noHpAdmin, $pesanAdmin);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return back()->with('success', 'Permintaan berhasil diproses!');

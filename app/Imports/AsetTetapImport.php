@@ -12,57 +12,55 @@ class AsetTetapImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        // Lewati jika data kunci kosong (mengantisipasi baris kosong di Excel)
-        if (!isset($row['kode_barang']) || !isset($row['nama_barang'])) {
+        // Lewati jika kunci utama kosong
+        if (empty($row['kode_barang']) || empty($row['nama_barang'])) {
             return null;
         }
 
-        try {
-            // Cek apakah kode barang sudah ada (Update) atau Baru (Create)
-            $aset = AssetTetap::where('kode_barang', $row['kode_barang'])->first();
+        // Cari berdasarkan KODE BARANG dan NUP
+        $query = AssetTetap::where('kode_barang', $row['kode_barang']);
 
-            $data = [
-                'tanggal_input'     => $this->parseDate($row['tanggal_input']) ?? now(),
-                'nup'               => $row['nup'] ?? null,
-                'nama_barang'       => $row['nama_barang'],
-                'merek'             => $row['merek'] ?? null,
-                'kategori'          => $row['kategori'] ?? null,
-                'tanggal_perolehan' => $this->parseDate($row['tanggal_perolehan']),
-                'nilai_perolehan'   => $row['nilai_perolehan'] ?? 0,
-                'kondisi'           => strtolower($row['kondisi'] ?? 'baik'),
-                'lokasi'            => $row['lokasi'] ?? null,
-                'jumlah'            => $row['jumlah'] ?? 1,
-                'status'            => ucfirst($row['status'] ?? 'Tersedia'),
-            ];
+        if (!empty($row['nup'])) {
+            $query->where('nup', $row['nup']);
+        } else {
+            $query->whereNull('nup');
+        }
 
-            // Jika barang sudah ada, lakukan update datanya
-            if ($aset) {
-                $aset->update($data);
-                return null; // Return null agar tidak membuat baris ganda
-            }
+        $aset = $query->first();
 
-            // Jika barang baru, masukkan ke dalam Create
-            $data['kode_barang'] = $row['kode_barang'];
-            return new AssetTetap($data);
-        } catch (\Exception $e) {
-            Log::error('Error Import Aset Baris: ' . json_encode($row) . ' - Error: ' . $e->getMessage());
+        $data = [
+            'tanggal_input'     => $this->parseDate($row['tanggal_input']) ?? now(),
+            'nama_barang'       => $row['nama_barang'],
+            'merek'             => $row['merek'] ?? null,
+            'kategori'          => $row['kategori'] ?? null,
+            'tanggal_perolehan' => $this->parseDate($row['tanggal_perolehan']),
+            'nilai_perolehan'   => $row['nilai_perolehan'] ?? 0,
+            'kondisi'           => strtolower($row['kondisi'] ?? 'baik'),
+            'lokasi'            => $row['lokasi'] ?? null,
+            'jumlah'            => $row['jumlah'] ?? 1,
+            'status'            => ucfirst($row['status'] ?? 'Tersedia'),
+        ];
+
+        // Jika barang dengan Kode & NUP tersebut sudah ada, Update lokasinya/kondisinya
+        if ($aset) {
+            $aset->update($data);
             return null;
         }
+
+        // Jika belum ada, masukkan sebagai data baru (Create)
+        $data['kode_barang'] = $row['kode_barang'];
+        $data['nup'] = $row['nup'] ?? null;
+        return new AssetTetap($data);
     }
 
-    /**
-     * Fungsi untuk mengubah format tanggal dari angka seri Excel ke Y-m-d
-     */
     private function parseDate($date)
     {
         if (!$date) return null;
 
-        // Excel seringkali menyimpan tanggal sebagai angka (misal: 44197)
         if (is_numeric($date)) {
             return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
         }
 
-        // Jika formatnya teks biasa
         return Carbon::parse($date)->format('Y-m-d');
     }
 }

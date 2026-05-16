@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
-
+use App\Exports\AsetTetapTemplateExport;
+use App\Imports\AsetTetapImport;
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -84,6 +85,37 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.data_asettetap', compact('asetTetap', 'asetTetapOptions'));
     }
 
+    // ========== DOWNLOAD TEMPLATE EXCEL ==========
+    public function downloadTemplate()
+    {
+        // Akan langsung mendownload file berekstensi .xlsx dengan desain dari class AsetTetapTemplateExport
+        return Excel::download(new AsetTetapTemplateExport, 'Template_Import_Aset_Tetap.xlsx');
+    }
+
+    // ========== PROSES IMPORT EXCEL ==========
+    public function importAset(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file_excel.mimes'    => 'Format file harus .xlsx, .xls, atau .csv.',
+            'file_excel.max'      => 'Ukuran file maksimal 5MB.'
+        ]);
+
+        try {
+            Excel::import(new AsetTetapImport, $request->file('file_excel'));
+
+            return redirect()->route('adminasettetap.data-aset-tetap')
+                ->with('success', 'Data Aset Tetap berhasil diimport secara massal!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            // Menangkap error jika header file Excel tidak sesuai standar
+            return back()->with('error', 'Gagal mengimpor file! Pastikan format tabel sesuai dengan template.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
     // ========== CREATE ==========
     public function create()
     {
@@ -95,7 +127,7 @@ class AdminAsettetapController extends Controller
     {
         $validated = $request->validate([
             'tanggal_input' => 'required|date|before_or_equal:today',
-            'kode_barang' => 'required|string|max:50|unique:aset_tetap,kode_barang',
+            'kode_barang' => 'required|string|max:50',
             'nup' => 'nullable|string|max:50',
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
@@ -828,7 +860,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "📝 *Keperluan:* {$peminjaman->deskripsi_peruntukan}\n\n";
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
-                FonnteService::sendMessage($kasubag->nomor_telepon, $pesanWa);
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
         } elseif ($request->action == 'tolak') {
             // 🔥 CARA MANUAL UNTUK TOLAK
@@ -851,7 +884,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanWa .= "Silakan hubungi Admin Aset Tetap jika ada pertanyaan lebih lanjut.";
 
-                FonnteService::sendMessage($pegawai->nomor_telepon, $pesanWa);
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
             }
         }
 
@@ -1004,7 +1038,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "Silakan login ke sistem untuk memperbaiki data laporan pengembalian Anda.";
             }
 
-            FonnteService::sendMessage($pegawai->nomor_telepon, $pesanWa);
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
         }
 
         return back()->with('success', 'Verifikasi pengembalian berhasil disimpan!');
@@ -1066,7 +1101,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "📝 *Keperluan:* {$peminjaman->deskripsi_peruntukan}\n\n";
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
-                FonnteService::sendMessage($kasubag->nomor_telepon, $pesanWa);
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
         } else {
             $peminjaman->status = 'ditolak';
@@ -1084,7 +1120,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanWa .= "Silakan hubungi Admin Aset Tetap jika ada pertanyaan lebih lanjut.";
 
-                FonnteService::sendMessage($pegawai->nomor_telepon, $pesanWa);
+                $noHpAdmin = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpAdmin, $pesanWa);
             }
         }
 
@@ -1254,7 +1291,8 @@ class AdminAsettetapController extends Controller
                 $pesanWa .= "Silakan login ke sistem untuk memperbaiki data laporan pengembalian atau foto kendaraan Anda.";
             }
 
-            FonnteService::sendMessage($pegawai->nomor_telepon, $pesanWa);
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
         }
 
         return back()->with('success', 'Verifikasi pengembalian kendaraan berhasil disimpan!');

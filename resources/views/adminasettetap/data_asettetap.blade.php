@@ -1102,51 +1102,7 @@
                                 </div>
                             </div>
 
-                            {{-- MODAL IMPORT EXCEL --}}
-                            <div id="modal-import" class="modal-overlay">
-                                <div class="modal" style="max-width: 480px;">
-                                    <h2 class="modal-title">Import Data Excel</h2>
 
-                                    <form action="{{ route('adminasettetap.data-aset-tetap.import') }}"
-                                        method="POST" enctype="multipart/form-data">
-                                        @csrf
-
-                                        <div class="form-group">
-                                            <label class="form-label">Pilih File Data Aset <span
-                                                    class="text-red-500">*</span></label>
-
-                                            <div class="upload-area">
-                                                <svg width="40" height="40" viewBox="0 0 24 24"
-                                                    fill="var(--blue)" style="opacity: 0.7; margin: 0 auto 12px;">
-                                                    <path
-                                                        d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                                                </svg>
-                                                <input type="file" name="file_excel" id="file_excel"
-                                                    accept=".xlsx, .xls, .csv" class="form-input"
-                                                    style="background: white;" required>
-                                            </div>
-
-                                            <p style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">
-                                                Unggah file dengan ekstensi <strong>.xlsx</strong> atau
-                                                <strong>.csv</strong>. Pastikan format kolom sesuai dengan standar
-                                                sistem.
-                                                <br>
-                                                <a href="{{ route('adminasettetap.data-aset-tetap.template') }}"
-                                                    style="color: var(--blue); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 6px;">
-                                                    ↓ Unduh Template Excel
-                                                </a>
-                                            </p>
-                                        </div>
-
-                                        <div class="btn-group" style="margin-top: 24px;">
-                                            <button type="button" class="btn btn-secondary"
-                                                onclick="closeModal('modal-import')">Batal</button>
-                                            <button type="submit" class="btn btn-primary"
-                                                onclick="this.innerHTML='Mengunggah...';">Mulai Import</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
 
                             {{-- MODAL EDIT --}}
                             <div id="modal-edit-{{ $aset->id }}" class="modal-overlay">
@@ -1359,6 +1315,50 @@
             </div>
         </div>
     </main>
+
+    {{-- MODAL IMPORT EXCEL --}}
+    <div id="modal-import" class="modal-overlay">
+        <div class="modal" style="max-width: 480px;">
+            <h2 class="modal-title">Import Data Excel</h2>
+
+            <form action="{{ route('adminasettetap.data-aset-tetap.import') }}" method="POST"
+                enctype="multipart/form-data">
+                @csrf
+
+                <div class="form-group">
+                    <label class="form-label">Pilih File Data Aset <span class="text-red-500">*</span></label>
+
+                    <div class="upload-area">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--blue)"
+                            style="opacity: 0.7; margin: 0 auto 12px;">
+                            <path
+                                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                        </svg>
+                        <input type="file" name="file_excel" id="file_excel" accept=".xlsx, .xls, .csv"
+                            class="form-input" style="background: white;" required>
+                    </div>
+
+                    <p style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">
+                        Unggah file dengan ekstensi <strong>.xlsx</strong> atau
+                        <strong>.csv</strong>. Pastikan format kolom sesuai dengan standar
+                        sistem.
+                        <br>
+                        <a href="{{ route('adminasettetap.data-aset-tetap.template') }}"
+                            style="color: var(--blue); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 6px;">
+                            ↓ Unduh Template Excel
+                        </a>
+                    </p>
+                </div>
+
+                <div class="btn-group" style="margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-import')">Batal</button>
+                    <button type="submit" class="btn btn-primary" onclick="this.innerHTML='Mengunggah...';">Mulai
+                        Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     {{-- MODAL TAMBAH --}}
     <div id="modal-tambah" class="modal-overlay">

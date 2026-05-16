@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PeminjamanBarang;
@@ -157,7 +158,8 @@ class PegawaiController extends Controller
 
             $pesan .= "Silakan login ke sistem untuk melakukan review.";
 
-            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesan);
         }
 
         return back()->with('success', 'Permintaan peminjaman aset berhasil dikirim dan sedang menunggu persetujuan Admin.');
@@ -284,7 +286,8 @@ class PegawaiController extends Controller
 
             $pesan .= "Silakan login ke sistem untuk melakukan verifikasi foto dan laporan.";
 
-            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesan);
         }
 
         return back()->with('success', 'Laporan pengembalian berhasil dikirim dan menunggu verifikasi Admin!');
@@ -377,7 +380,8 @@ class PegawaiController extends Controller
 
             $pesan .= "Silakan login ke sistem untuk melakukan review permintaan.";
 
-            FonnteService::sendMessage($adminPersediaan->nomor_telepon, $pesan);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesan);
         }
 
         return redirect()->route('pegawai.permintaan-persediaan')
@@ -548,7 +552,8 @@ class PegawaiController extends Controller
 
             $pesan .= "Silakan login ke sistem untuk melakukan review.";
 
-            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesan);
         }
 
         return back()->with('success', 'Permintaan peminjaman berhasil dikirim.');
@@ -663,7 +668,8 @@ class PegawaiController extends Controller
 
             $pesan .= "Silakan login ke sistem untuk melakukan verifikasi foto kendaraan.";
 
-            FonnteService::sendMessage($adminAset->nomor_telepon, $pesan);
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesan);
         }
 
         return back()->with('success', 'Laporan pengembalian kendaraan berhasil dikirim!');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -375,7 +376,7 @@ class AdminSarprasController extends Controller
                 $pesanKasubag .= "📝 *Kegiatan:* " . ($peminjaman->nama_kegiatan ?? '-') . "\n\n";
                 $pesanKasubag .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
-                FonnteService::sendMessage($noHpKasubag, $pesanKasubag);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanKasubag);
             }
 
             // --- 2. NOTIFIKASI INFO KE TAMU (Bukan Ditolak!) ---
@@ -387,7 +388,7 @@ class AdminSarprasController extends Controller
                 $pesanTamu .= "Pengajuan peminjaman gedung Anda telah diverifikasi oleh Admin Sarpras dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
                 $pesanTamu .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
 
-                FonnteService::sendMessage($noHpTamu, $pesanTamu);
+                SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
             }
 
             return response()->json([
@@ -443,7 +444,7 @@ class AdminSarprasController extends Controller
                 $pesanTamu .= "💬 *Alasan Penolakan:* " . $request->komentar . "\n\n";
                 $pesanTamu .= "Silakan hubungi bagian Admin Sarpras jika ada pertanyaan lebih lanjut. Terima kasih.";
 
-                FonnteService::sendMessage($noHpTamu, $pesanTamu);
+                SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
             }
 
             return response()->json([

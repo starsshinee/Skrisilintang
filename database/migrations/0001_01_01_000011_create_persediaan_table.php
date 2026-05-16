@@ -12,14 +12,14 @@ return new class extends Migration
             $table->id();
             $table->string('kode_kategori', 20);
             $table->string('kategori', 100);
-            $table->string('kode_barang', 50)->unique();
+            $table->string('kode_barang', 50);
             $table->string('nama_barang', 200);
             $table->date('tanggal_masuk');
             $table->decimal('harga_satuan', 15, 2);
             $table->decimal('harga_total', 15, 2);
             $table->integer('jumlah')->default(0);
             $table->timestamps();
-            
+
             $table->index(['kode_kategori', 'kode_barang']);
             $table->index('tanggal_masuk');
         });

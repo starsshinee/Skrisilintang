@@ -201,16 +201,18 @@ Route::middleware('auth')->group(function () {
             // 📋 DATA PERSEDIAAN - Custom Routes (bukan resource)
             Route::get('/data-persediaan', [AdminPersediaanController::class, 'dataPersediaan'])->name('data-persediaan');
             Route::get('/data-persediaan/create', [AdminPersediaanController::class, 'create'])->name('data-persediaan.create');
+            // Rute untuk mengunduh template Excel khusus data persediaan
+            Route::get('/data-persediaan/template', [AdminPersediaanController::class, 'downloadTemplate'])->name('data-persediaan.template');
+            // Rute untuk memproses file Excel persediaan yang diunggah oleh admin
+            Route::post('/data-persediaan/import', [AdminPersediaanController::class, 'importPersediaan'])->name('data-persediaan.import');
+
             Route::post('/data-persediaan', [AdminPersediaanController::class, 'store'])->name('data-persediaan.store');
             Route::get('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'show'])->name('data-persediaan.show');
             Route::get('/data-persediaan/{persediaan}/edit', [AdminPersediaanController::class, 'edit'])->name('data-persediaan.edit');
             Route::put('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'update'])->name('data-persediaan.update');
             Route::delete('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'destroy'])->name('data-persediaan.destroy');
 
-            // Rute untuk mengunduh template Excel khusus data persediaan
-            Route::get('/data-persediaan/template', [AdminPersediaanController::class, 'downloadTemplate'])->name('data-persediaan.template');
-            // Rute untuk memproses file Excel persediaan yang diunggah oleh admin
-            Route::post('/data-persediaan/import', [AdminPersediaanController::class, 'importPersediaan'])->name('data-persediaan.import');
+
 
             // 📤 TRANSAKSI KELUAR
             Route::get('/transaksi-keluar', [AdminPersediaanController::class, 'transaksiKeluar'])->name('transaksi-keluar');

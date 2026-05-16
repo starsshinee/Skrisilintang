@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PersediaanTemplateExport;
+use App\Imports\PersediaanImport;
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +19,7 @@ use App\Models\{
     TransaksiMasukPersediaan,
 };
 use App\Services\FonnteService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminPersediaanController extends Controller
 {
@@ -233,6 +237,35 @@ class AdminPersediaanController extends Controller
 
         return redirect()->route('adminpersediaan.transaksi-keluar')
             ->with('success', 'Transaksi keluar berhasil disimpan!');
+    }
+
+    // ========== DOWNLOAD TEMPLATE EXCEL PERSEDIAAN ==========
+    public function downloadTemplate()
+    {
+        return Excel::download(new PersediaanTemplateExport, 'Template_Import_Persediaan.xlsx');
+    }
+
+    // ========== PROSES IMPORT EXCEL PERSEDIAAN ==========
+    public function importPersediaan(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file_excel.mimes'    => 'Format file harus .xlsx, .xls, atau .csv.',
+            'file_excel.max'      => 'Ukuran file maksimal 5MB.'
+        ]);
+
+        try {
+            Excel::import(new PersediaanImport, $request->file('file_excel'));
+
+            return redirect()->route('adminpersediaan.data-persediaan')
+                ->with('success', 'Data Persediaan berhasil diimport secara massal!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            return back()->withErrors(['error' => 'Gagal mengimpor file! Pastikan format tabel sesuai dengan template.']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Terjadi kesalahan sistem: ' . $e->getMessage()]);
+        }
     }
 
     /** SHOW - Detail transaksi */
@@ -560,7 +593,7 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
-                FonnteService::sendMessage($noHpKasubag, $pesanWa);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
         } else {
             // --- 2. JIKA DITOLAK OLEH ADMIN ---
@@ -586,7 +619,7 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "💬 *Catatan:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanWa .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
 
-                FonnteService::sendMessage($noHpPegawai, $pesanWa);
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
             }
         }
 
