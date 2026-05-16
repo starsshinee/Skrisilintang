@@ -3,13 +3,16 @@
 ## 📋 Daftar Models dan Tabel Database
 
 ### 1. **AssetTetap** (aset_tetap)
+
 **Deskripsi**: Menyimpan data aset tetap yang dimiliki organisasi
 **Relasi**:
+
 - `hasMany(TransaksiMasukAssetTetap)` - Transaksi masuk aset
 - `hasMany(TransaksiKeluarAssetTetap)` - Transaksi keluar aset
 - `hasMany(PeminjamanKendaraan)` - Peminjaman kendaraan
 
 **Kolom Utama**:
+
 - kode_aset (unique)
 - nama_aset
 - kategori
@@ -21,13 +24,16 @@
 ---
 
 ### 2. **Persediaan** (persediaan)
+
 **Deskripsi**: Menyimpan data barang persediaan yang tersedia
 **Relasi**:
+
 - `hasMany(PermintaanPersediaan)` - Permintaan barang
 - `hasMany(TransaksiMasukPersediaan)` - Transaksi masuk
 - `hasMany(TransaksiKeluarPersediaan)` - Transaksi keluar
 
 **Kolom Utama**:
+
 - kode_persediaan (unique)
 - nama_barang
 - kategori
@@ -40,11 +46,14 @@
 ---
 
 ### 3. **Gedung** (gedung)
+
 **Deskripsi**: Menyimpan data ruang/gedung yang dapat dipinjam
 **Relasi**:
+
 - `hasMany(PeminjamanGedung)` - Peminjaman gedung
 
 **Kolom Utama**:
+
 - kode_gedung (unique)
 - nama_gedung
 - lokasi
@@ -57,13 +66,16 @@
 ---
 
 ### 4. **PeminjamanGedung** (peminjaman_gedung)
+
 **Deskripsi**: Mencatat peminjaman gedung/ruang
 **Relasi**:
+
 - `belongsTo(Gedung)` - Gedung yang dipinjam
 - `belongsTo(User)` - Peminjam
 - `hasMany(PengembalianBarang)` - Pengembalian barang
 
 **Kolom Utama**:
+
 - nomor_peminjaman (unique)
 - gedung_id
 - user_id
@@ -74,13 +86,16 @@
 ---
 
 ### 5. **PeminjamanKendaraan** (peminjaman_kendaraan)
+
 **Deskripsi**: Mencatat peminjaman kendaraan (aset tetap yang berupa kendaraan)
 **Relasi**:
+
 - `belongsTo(AssetTetap)` - Kendaraan yang dipinjam
 - `belongsTo(User)` - Peminjam
 - `hasMany(PengembalianKendaraan)` - Pengembalian kendaraan
 
 **Kolom Utama**:
+
 - nomor_peminjaman (unique)
 - aset_tetap_id
 - user_id
@@ -93,13 +108,16 @@
 ---
 
 ### 6. **PermintaanPersediaan** (permintaan_persediaan)
+
 **Deskripsi**: Mencatat permintaan/pengajuan barang persediaan
 **Relasi**:
+
 - `belongsTo(Persediaan)` - Barang yang diminta
 - `belongsTo(User)` - Peminta
 - `hasMany(TransaksiKeluarPersediaan)` - Pengeluaran barang
 
 **Kolom Utama**:
+
 - nomor_permintaan (unique)
 - persediaan_id
 - user_id
@@ -111,12 +129,15 @@
 ---
 
 ### 7. **PengembalianBarang** (pengembalian_barang)
+
 **Deskripsi**: Mencatat pengembalian barang dari peminjaman gedung
 **Relasi**:
+
 - `belongsTo(PeminjamanGedung)` - Peminjaman terkait
 - `belongsTo(User)` - Yang mengembalikan
 
 **Kolom Utama**:
+
 - nomor_pengembalian (unique)
 - peminjaman_gedung_id
 - user_id
@@ -129,13 +150,16 @@
 ---
 
 ### 8. **PengembalianKendaraan** (pengembalian_kendaraan)
+
 **Deskripsi**: Mencatat pengembalian kendaraan dari peminjaman
 **Relasi**:
+
 - `belongsTo(PeminjamanKendaraan)` - Peminjaman terkait
 - `belongsTo(AssetTetap)` - Kendaraan
 - `belongsTo(User)` - Yang mengembalikan
 
 **Kolom Utama**:
+
 - nomor_pengembalian (unique)
 - peminjaman_kendaraan_id
 - aset_tetap_id
@@ -150,12 +174,15 @@
 ---
 
 ### 9. **TransaksiMasukAssetTetap** (transaksi_masuk_aset_tetap)
+
 **Deskripsi**: Mencatat transaksi masuk/penerimaan aset tetap
 **Relasi**:
+
 - `belongsTo(AssetTetap)` - Aset yang masuk
 - `belongsTo(User)` - User pencatat
 
 **Kolom Utama**:
+
 - nomor_transaksi (unique)
 - aset_tetap_id
 - user_id
@@ -169,12 +196,15 @@
 ---
 
 ### 10. **TransaksiMasukPersediaan** (transaksi_masuk_persediaan)
+
 **Deskripsi**: Mencatat transaksi masuk/penerimaan persediaan
 **Relasi**:
+
 - `belongsTo(Persediaan)` - Persediaan yang masuk
 - `belongsTo(User)` - User pencatat
 
 **Kolom Utama**:
+
 - nomor_transaksi (unique)
 - persediaan_id
 - user_id
@@ -188,13 +218,16 @@
 ---
 
 ### 11. **TransaksiKeluarPersediaan** (transaksi_keluar_persediaan)
+
 **Deskripsi**: Mencatat transaksi keluar/pengeluaran persediaan
 **Relasi**:
+
 - `belongsTo(Persediaan)` - Persediaan yang keluar
 - `belongsTo(PermintaanPersediaan)` - Permintaan terkait (opsional)
 - `belongsTo(User)` - User pencatat
 
 **Kolom Utama**:
+
 - nomor_transaksi (unique)
 - persediaan_id
 - permintaan_persediaan_id (nullable)
@@ -208,12 +241,15 @@
 ---
 
 ### 12. **TransaksiKeluarAssetTetap** (transaksi_keluar_aset_tetap)
+
 **Deskripsi**: Mencatat transaksi keluar/pengeluaran aset tetap
 **Relasi**:
+
 - `belongsTo(AssetTetap)` - Aset yang keluar
 - `belongsTo(User)` - User pencatat
 
 **Kolom Utama**:
+
 - nomor_transaksi (unique)
 - aset_tetap_id
 - user_id
@@ -228,24 +264,28 @@
 ## 🔄 Alur Proses Utama Sistem
 
 ### **Alur Manajemen Aset Tetap**
+
 1. Aset masuk melalui **TransaksiMasukAssetTetap**
 2. Aset dapat dipinjam melalui **PeminjamanKendaraan** (khusus kendaraan)
 3. Pengembalian dicatat di **PengembalianKendaraan**
 4. Aset keluar melalui **TransaksiKeluarAssetTetap**
 
 ### **Alur Manajemen Persediaan**
+
 1. Persediaan masuk melalui **TransaksiMasukPersediaan**
 2. User membuat **PermintaanPersediaan**
 3. Persediaan dikeluarkan melalui **TransaksiKeluarPersediaan** (terhubung dengan permintaan)
 4. Stok persediaan berkurang setiap ada pengeluaran
 
 ### **Alur Peminjaman Gedung**
+
 1. User membuat **PeminjamanGedung** (status: pending)
 2. Admin approve/reject permintaan
 3. Barang/perlengkapan gedung dikembalikan melalui **PengembalianBarang**
 4. Kondisi barang dicatat (baik/rusak/hilang)
 
 ### **Alur Peminjaman Kendaraan**
+
 1. User membuat **PeminjamanKendaraan** (status: pending)
 2. Admin approve/reject permintaan
 3. Kendaraan digunakan oleh peminjam
@@ -257,14 +297,17 @@
 ## 🗄️ Catatan Teknis
 
 ### Constraints Penting:
+
 - Foreign key `constrained('tabel')->onDelete('cascade')`: Jika parent dihapus, child otomatis terhapus
 - Foreign key `nullable()->constrained('tabel')->onDelete('set null')`: Jika parent dihapus, child ForeignKey diset NULL
 - Kolom `nomor_*` menggunakan UNIQUE untuk memastikan uniqueness nomor transaksi
 
 ### Timestamps:
+
 Semua tabel memiliki `created_at` dan `updated_at` otomatis dari Laravel
 
 ### Status Values:
+
 - **AssetTetap**: aktif, nonaktif, rusak
 - **Persediaan**: aktif, nonaktif
 - **PeminjamanGedung**: pending, approved, rejected, selesai
@@ -313,3 +356,9 @@ $transaksiMasuk = $asset->transaksiMasuk()->get();
 4. Buat **Routes** di `routes/web.php` atau `routes/api.php`
 5. Buat **Views** untuk UI
 6. Jalankan migrations: `php artisan migrate`
+
+## 🚀 Running Job Notifikasi
+
+```php
+php artisan queue:work
+```
