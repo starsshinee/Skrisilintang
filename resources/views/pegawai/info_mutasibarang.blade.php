@@ -63,6 +63,14 @@
     .card-header h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); }
     .card-header p { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
+    /* PAGINATION */
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
+
     .table-container { padding: 20px 28px; overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th {
@@ -125,7 +133,7 @@
                         <th>No</th>
                         <th>Informasi Barang</th>
                         <th>Tanggal Mutasi</th>
-                        <th>Alur Perpindahan</th>
+                        <th>Arah Perpindahan</th>
                         <th>Keterangan</th>
                     </tr>
                 </thead>
@@ -150,11 +158,11 @@
                         <td>
                             <div style="display: flex; align-items: center;">
                                 <span class="location-badge loc-from">
-                                    <i class="fas fa-sign-out-alt"></i> {{ $mutasi->lokasi_asal }}
+                                    <i class="fas fa-sign-out-alt"></i> {{ $mutasi->lokasi_awal }}
                                 </span>
                                 <i class="fas fa-long-arrow-alt-right arrow-icon"></i>
                                 <span class="location-badge loc-to">
-                                    <i class="fas fa-sign-in-alt"></i> {{ $mutasi->lokasi_tujuan }}
+                                    <i class="fas fa-sign-in-alt"></i> {{ $mutasi->lokasi_akhir }}
                                 </span>
                             </div>
                         </td>
@@ -173,8 +181,32 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 24px;">
-                {{ $mutasiBarang->links() }}
+        @if($mutasiBarang->hasPages())
+        <div class="table-footer">
+            <span>Menampilkan {{ ($mutasiBarang->currentPage() - 1) * $mutasiBarang->perPage() + 1 }}–{{ min($mutasiBarang->total(), $mutasiBarang->currentPage() * $mutasiBarang->perPage()) }} dari {{ $mutasiBarang->total() }} data</span>
+            <div class="pagination">
+            @if($mutasiBarang->onFirstPage())
+                <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-left"></i></button>
+            @else
+                <a href="{{ $mutasiBarang->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+            @endif
+
+            @foreach($mutasiBarang->getUrlRange(max(1, $mutasiBarang->currentPage() - 2), min($mutasiBarang->lastPage(), $mutasiBarang->currentPage() + 2)) as $page => $url)
+                <a href="{{ $url }}" class="page-btn {{ $mutasiBarang->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
+            @endforeach
+
+            @if($mutasiBarang->hasMorePages())
+                <a href="{{ $mutasiBarang->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+            @else
+                <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-right"></i></button>
+            @endif
+            </div>
+        </div>
+        @endif
+        <div class="table-footer">
+            <span>Menampilkan {{ $mutasiBarang->firstItem() ?? 0 }}–{{ $mutasiBarang->lastItem() ?? 0 }} dari {{ $mutasiBarang->total() }} data</span>
+            <div class="pagination">
+            {{ $mutasiBarang->appends(request()->query())->links() }}
             </div>
         </div>
     </div>

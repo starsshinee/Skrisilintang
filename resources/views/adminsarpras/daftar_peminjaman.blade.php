@@ -112,6 +112,13 @@
   .badge-rejected { background: var(--danger-light); color: var(--danger); }
   .peminjam-name { font-weight: 600; color: var(--primary); }
 
+  /* PAGINATION */
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
   /* Modal */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.4);
@@ -337,9 +344,38 @@
     </div>
 
     <!-- PAGINATION -->
-    <div class="mt-6">
+    @if($peminjaman->hasPages())
+    <div class="table-footer">
+        <span>Menampilkan {{ ($peminjaman->currentPage() - 1) * $peminjaman->perPage() + 1 }}–{{ min($peminjaman->total(), $peminjaman->currentPage() * $peminjaman->perPage()) }} dari {{ $peminjaman->total() }} data</span>
+        <div class="pagination">
+          @if($peminjaman->onFirstPage())
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-left"></i></button>
+          @else
+            <a href="{{ $peminjaman->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+          @endif
+
+          @foreach($peminjaman->getUrlRange(max(1, $peminjaman->currentPage() - 2), min($peminjaman->lastPage(), $peminjaman->currentPage() + 2)) as $page => $url)
+            <a href="{{ $url }}" class="page-btn {{ $peminjaman->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
+          @endforeach
+
+          @if($peminjaman->hasMorePages())
+            <a href="{{ $peminjaman->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+          @else
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-right"></i></button>
+          @endif
+        </div>
+      </div>
+      @endif
+    <div class="table-footer">
+        <span>Menampilkan {{ $peminjaman->firstItem() ?? 0 }}–{{ $peminjaman->lastItem() ?? 0 }} dari {{ $peminjaman->total() }} data</span>
+        <div class="pagination">
+          {{ $peminjaman->appends(request()->query())->links() }}
+        </div>
+      </div>
+
+    {{-- <div class="mt-6">
         {{ $peminjaman->links() }}
-    </div>
+    </div> --}}
   </div>
 </main>
 

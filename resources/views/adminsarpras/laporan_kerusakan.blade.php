@@ -544,7 +544,7 @@
       </div>
 
       <!-- Tab Hanya Rusak -->
-      <div class="tab-panel" id="tab-rusak">
+      {{-- <div class="tab-panel" id="tab-rusak">
         <table>
           <thead>
             <tr>
@@ -570,7 +570,7 @@
             @endforelse
           </tbody>
         </table>
-      </div>
+      </div> --}}
 
       <!-- Tab Ringkasan Lokasi -->
       <div class="tab-panel" id="tab-lokasi">

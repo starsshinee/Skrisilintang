@@ -76,6 +76,13 @@ body {
   padding: 24px 32px; border-bottom: 1px solid var(--border); 
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
+/* PAGINATION */
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
 .search-wrap {
   flex: 1; min-width: 250px; max-width: 400px; 
   display: flex; align-items: center; gap: 12px; 
@@ -377,6 +384,12 @@ tr:hover { background: #f8faff; }
         </div>
       </div>
       @endif
+      <div class="table-footer">
+        <span>Menampilkan {{ $permintaan->firstItem() ?? 0 }}–{{ $permintaan->lastItem() ?? 0 }} dari {{ $permintaan->total() }} data</span>
+        <div class="pagination">
+          {{ $permintaan->appends(request()->query())->links() }}
+        </div>
+      </div>
     </div>
   </div>
 </main>

@@ -72,6 +72,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--body-bg);color:var(--txt)
 .btn-add:active{transform:translateY(0)}
 .btn-add svg{width:15px;height:15px;flex-shrink:0}
 
+
+
 /* ─── STATS ─── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .stat{
@@ -116,6 +118,14 @@ thead th{
 tbody td{padding:14px 16px;font-size:13px;border-bottom:0.5px solid var(--border);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover{background:#fafbff;transition:background .15s}
+
+/* PAGINATION */
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
 
 .foto-thumb{
   width:40px;height:40px;border-radius:9px;background:#f1f5f9;
@@ -502,12 +512,36 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
       </table>
     </div>
 
+    
     {{-- ✅ PAGINATION --}}
-    @isset($gedung)
-    <div style="margin-top:16px">
-      {{ $gedung->appends(request()->query())->links() }}
+    @if($gedung->hasPages())
+    <div class="table-footer">
+        <span>Menampilkan {{ ($gedung->currentPage() - 1) * $gedung->perPage() + 1 }}–{{ min($gedung->total(), $gedung->currentPage() * $gedung->perPage()) }} dari {{ $gedung->total() }} data</span>
+        <div class="pagination">
+          @if($gedung->onFirstPage())
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-left"></i></button>
+          @else
+            <a href="{{ $gedung->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+          @endif
+
+          @foreach($gedung->getUrlRange(max(1, $gedung->currentPage() - 2), min($gedung->lastPage(), $gedung->currentPage() + 2)) as $page => $url)
+            <a href="{{ $url }}" class="page-btn {{ $gedung->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
+          @endforeach
+
+          @if($gedung->hasMorePages())
+            <a href="{{ $gedung->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+          @else
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-right"></i></button>
+          @endif
+        </div>
+      </div>
+      @endif
+    <div class="table-footer">
+        <span>Menampilkan {{ $gedung->firstItem() ?? 0 }}–{{ $gedung->lastItem() ?? 0 }} dari {{ $gedung->total() }} data</span>
+        <div class="pagination">
+          {{ $gedung->appends(request()->query())->links() }}
+        </div>
     </div>
-    @endisset
  </div><!-- /content -->
 </main>
 

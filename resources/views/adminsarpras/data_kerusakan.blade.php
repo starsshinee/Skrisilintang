@@ -191,6 +191,13 @@
     box-shadow: var(--shadow-sm);
     overflow: hidden;
   }
+  /* PAGINATION */
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
 
   table {
     width: 100%;
@@ -684,10 +691,38 @@
 
     {{-- PAGINATION --}}
     @if($kerusakans->hasPages())
+    <div class="table-footer">
+        <span>Menampilkan {{ ($kerusakans->currentPage() - 1) * $kerusakans->perPage() + 1 }}–{{ min($kerusakans->total(), $kerusakans->currentPage() * $kerusakans->perPage()) }} dari {{ $kerusakans->total() }} data</span>
+        <div class="pagination">
+          @if($kerusakans->onFirstPage())
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-left"></i></button>
+          @else
+            <a href="{{ $kerusakans->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+          @endif
+
+          @foreach($kerusakans->getUrlRange(max(1, $kerusakans->currentPage() - 2), min($kerusakans->lastPage(), $kerusakans->currentPage() + 2)) as $page => $url)
+            <a href="{{ $url }}" class="page-btn {{ $kerusakans->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
+          @endforeach
+
+          @if($kerusakans->hasMorePages())
+            <a href="{{ $kerusakans->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+          @else
+            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-right"></i></button>
+          @endif
+        </div>
+      </div>
+      @endif
+    <div class="table-footer">
+        <span>Menampilkan {{ $kerusakans->firstItem() ?? 0 }}–{{ $kerusakans->lastItem() ?? 0 }} dari {{ $kerusakans->total() }} data</span>
+        <div class="pagination">
+          {{ $kerusakans->appends(request()->query())->links() }}
+        </div>
+      </div>
+    {{-- @if($kerusakans->hasPages())
     <div style="margin-top:24px;display:flex;justify-content:center;">
       {{ $kerusakans->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
-    @endif
+    @endif --}}
 
   </div>{{-- end .content --}}
 </main>

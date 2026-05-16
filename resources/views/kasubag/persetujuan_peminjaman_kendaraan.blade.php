@@ -18,6 +18,7 @@
     --gray-600: #475569; --gray-800: #1e293b;
     --sidebar-w: 240px;
   }
+  
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); display: flex; min-height: 100vh; }
   
   .topbar { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: flex-end; padding: 0 28px; gap: 16px; z-index: 9; }
@@ -28,23 +29,26 @@
   .user-info strong { font-size: 13px; font-weight: 600; display: block; }
   .user-info span { font-size: 11px; color: var(--gray-400); }
   
-  .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; max-width: 1200px; }
+  
+  .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; width: calc(100% - var(--sidebar-w)); }
+  
   .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
   .page-header-icon { width: 48px; height: 48px; background: var(--blue-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
   .page-header-icon svg { width: 24px; height: 24px; stroke: var(--blue); fill: none; stroke-width: 2; }
   .page-header-text h1 { font-size: 22px; font-weight: 700; }
   .page-header-text p { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
 
-  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; width: 100%; }
   .summary-card { background: #fff; padding: 20px 24px; border-radius: 16px; border: 1px solid var(--gray-200); display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
   .summary-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .summary-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 2; }
   .summary-info h3 { font-size: 12px; color: var(--gray-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
   .summary-info .num { font-size: 28px; font-weight: 700; color: var(--gray-800); line-height: 1; }
   
-  .section-label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--gray-800); margin-bottom: 16px; border-bottom: 2px solid var(--gray-200); padding-bottom: 10px; }
+  .section-label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--gray-800); margin-bottom: 16px; border-bottom: 2px solid var(--gray-200); padding-bottom: 10px; width: 100%; }
   
-  .req-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; transition: box-shadow .15s; }
+  /* PERBAIKAN: Memastikan kartu pengajuan mengambil porsi 100% lebar layar */
+  .req-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; transition: box-shadow .15s; width: 100%; }
   .req-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.05); }
   .req-card.highlighted { border: 2px solid var(--orange); background: #fffdf5; }
   .req-info { flex: 1; }
@@ -56,14 +60,16 @@
   .tag.danger { background: var(--red-light); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
 
   .req-name { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: var(--blue); }
-  .req-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; font-size: 12.5px; color: var(--gray-600); margin-bottom: 6px; }
+  .req-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 32px; font-size: 12.5px; color: var(--gray-600); margin-bottom: 6px; }
   .req-meta span strong { color: var(--gray-800); }
-  .req-purpose { font-size: 12.5px; color: var(--gray-600); background: rgba(255,255,255,0.5); padding: 8px 12px; border-radius: 8px; margin-top: 10px; border: 1px solid var(--gray-200); }
+  
+  /* PERBAIKAN: Mengatur peruntukan agar melebarkan ruangnya sendiri */
+  .req-purpose { font-size: 12.5px; color: var(--gray-600); background: var(--gray-50); padding: 10px 14px; border-radius: 8px; margin-top: 12px; border: 1px solid var(--gray-200); width: 100%; }
   .req-purpose span { color: var(--gray-800); font-weight: 500; }
   
-  .req-actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; flex-shrink: 0; min-width: 130px; }
+  .req-actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; flex-shrink: 0; min-width: 140px; }
   .btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; width: 100%; }
-  .btn-detail { background: var(--gray-100); color: var(--gray-600); margin-bottom: 4px;}
+  .btn-detail { background: var(--gray-100); color: var(--gray-600); }
   .btn-detail:hover { background: var(--gray-200); }
   .btn-detail svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
   .btn-approve { background: var(--green); color: #fff; }
@@ -105,7 +111,6 @@
     </div>
   @endif
 
-  <!-- SUMMARY CARDS -->
   <div class="summary-grid">
     <div class="summary-card">
       <div class="summary-icon" style="background: var(--orange-light);"><svg stroke="var(--orange)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
@@ -132,7 +137,6 @@
 
   <div class="section-label">Daftar Pengajuan Kendaraan</div>
 
-  <!-- LOOPING DATA PEMINJAMAN KENDARAAN -->
   @forelse($peminjaman as $item)
   <div class="req-card {{ $item->status === 'dalam_review' ? 'highlighted' : '' }}">
     <div class="req-info">
@@ -166,7 +170,6 @@
     </div>
     
     <div class="req-actions">
-      <!-- TOMBOL DETAIL DITAMBAHKAN DI SINI -->
       <button class="btn btn-detail" onclick="showDetailModal({{ $item->id }})">
         <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Lihat Detail
       </button>
@@ -188,14 +191,14 @@
           </button>
         </form>
       @else
-        <div style="background: var(--gray-100); color: var(--gray-600); padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; border: 1px dashed var(--gray-200); margin-top: auto;">
+        <div style="background: var(--gray-100); color: var(--gray-600); padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; border: 1px dashed var(--gray-200); margin-top: auto; width: 100%;">
             Telah Diproses
         </div>
       @endif
     </div>
   </div>
   @empty
-  <div style="text-align: center; padding: 60px 20px; border: 2px dashed var(--gray-200); border-radius: 14px; background: #fff;">
+  <div style="text-align: center; padding: 60px 20px; border: 2px dashed var(--gray-200); border-radius: 14px; background: #fff; width: 100%;">
       <h3 style="font-size: 16px; color: var(--gray-800); margin-bottom: 4px;">Semua Beres!</h3>
       <p style="color: var(--gray-400); font-size: 13px;">Belum ada pengajuan peminjaman kendaraan yang menunggu tinjauan Anda.</p>
   </div>
@@ -203,7 +206,6 @@
 
 </main>
 
-<!-- MODAL DETAIL KASUBAG -->
 <div id="detailModalKasubag" class="modal-overlay">
     <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
@@ -261,7 +263,6 @@
         loading.style.display = 'block';
         content.style.display = 'none';
 
-        // Mengambil data JSON dari route Kasubag
         fetch(`/kasubag/peminjaman-kendaraan/${id}/json`)
             .then(response => {
                 if (!response.ok) throw new Error('Akses ditolak atau data tidak ditemukan');

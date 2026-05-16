@@ -16,6 +16,8 @@
     --gray-600: #475569; --gray-800: #1e293b;
     --sidebar-w: 240px;
   }
+  .main { margin-left: var(--sidebar-w); padding: 32px; flex: 1; }
+  
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); display: flex; min-height: 100vh; }
   .sidebar { width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--gray-200); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
   .topbar { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: flex-end; padding: 0 28px; gap: 16px; z-index: 9; }

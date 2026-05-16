@@ -596,7 +596,7 @@ class PegawaiController extends Controller
     {
         // Mengambil data mutasi barang yang statusnya sudah disetujui/selesai
         // Disertai dengan informasi barang terkait
-        $mutasiBarang = \App\Models\MutasiBarang::with(['barang'])
+        $mutasiBarang = \App\Models\MutasiBarang::with(['asetTetap', 'user'])
             ->orderBy('tanggal_mutasi', 'desc')
             ->paginate(10);
 

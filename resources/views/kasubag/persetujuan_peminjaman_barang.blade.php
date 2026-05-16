@@ -20,8 +20,15 @@
   }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); display: flex; min-height: 100vh; }
   
-  .main { margin-left: var(--sidebar-w); padding: 32px; flex: 1; }
+  .topbar { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: flex-end; padding: 0 28px; gap: 16px; z-index: 9; }
+  .notif-btn { width: 38px; height: 38px; border-radius: 10px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; border: none; }
+  .notif-btn svg { width: 18px; height: 18px; stroke: var(--gray-600); fill: none; stroke-width: 2; }
+  .user-chip { display: flex; align-items: center; gap: 10px; background: var(--gray-100); border-radius: 10px; padding: 6px 12px 6px 6px; }
+  .user-avatar { width: 30px; height: 30px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
+  .user-info strong { font-size: 13px; font-weight: 600; display: block; }
+  .user-info span { font-size: 11px; color: var(--gray-400); }
   
+  .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; width: calc(100% - var(--sidebar-w)); }
   .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
   .page-header h1 { font-size: 22px; font-weight: 700; }
   .page-header p { font-size: 13.5px; color: var(--gray-400); margin-top: 4px; }
@@ -65,6 +72,14 @@
 <body>
 
 @include('partials.sidebar')
+
+<div class="topbar">
+  <button class="notif-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+  <div class="user-chip">
+    <div class="user-avatar">{{ substr(Auth::user()->name ?? 'K', 0, 1) }}</div>
+    <div class="user-info"><strong>{{ Auth::user()->name ?? 'Kasubag Umum' }}</strong><span>Kepala Sub Bagian</span></div>
+  </div>
+</div>
 
 <main class="main">
   <div class="page-header">

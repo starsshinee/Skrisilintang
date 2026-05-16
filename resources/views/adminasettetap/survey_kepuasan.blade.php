@@ -365,16 +365,7 @@
         <h1>Survey Kepuasan Layanan</h1>
         <p>{{ $surveys->total() }} survey ditemukan</p>
       </div>
-            <!-- TOMTOM B DOWNLOAD LAPORAN EXCEL -->
-      <a href="{{ route('adminasettetap.survey.excel-export', request()->query()) }}"
-         class="btn-download" 
-         id="downloadExcelBtn"
-         title="Download Laporan Excel">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-        </svg>
-        Download Excel
-      </a>
+  
     </div>
 
     <div class="table-card">

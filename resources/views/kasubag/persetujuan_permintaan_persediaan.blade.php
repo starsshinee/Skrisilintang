@@ -19,6 +19,7 @@
     --sidebar-w: 240px;
   }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); display: flex; min-height: 100vh; }
+  
   .sidebar { width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--gray-200); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
   
   .topbar { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: flex-end; padding: 0 28px; gap: 16px; z-index: 9; }
@@ -29,7 +30,7 @@
   .user-info strong { font-size: 13px; font-weight: 600; display: block; }
   .user-info span { font-size: 11px; color: var(--gray-400); }
   
-  .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; max-width: 1200px; }
+    .main { margin-left: var(--sidebar-w); margin-top: 60px; padding: 32px; flex: 1; width: calc(100% - var(--sidebar-w)); }
   .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
   .page-header-icon { width: 48px; height: 48px; background: var(--green-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
   .page-header-icon svg { width: 24px; height: 24px; stroke: var(--green); fill: none; stroke-width: 2; }
@@ -87,6 +88,7 @@
     <div class="user-info"><strong>{{ Auth::user()->name ?? 'Kasubag' }}</strong><span>Kepala Sub Bagian</span></div>
   </div>
 </div>
+
 
 <main class="main">
   <div class="page-header">
