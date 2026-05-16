@@ -138,6 +138,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'nip' => ['sometimes', 'nullable', 'string', 'max:30'],
+            'nomor_telepon' => ['sometimes', 'nullable', 'string', 'max:20'],
             'jabatan' => ['sometimes', 'nullable', 'string', 'max:255'],
             'unit_kerja_id' => ['sometimes', 'nullable', 'exists:unit_kerjas,id'],
             'signature' => ['sometimes', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
@@ -153,6 +154,9 @@ class AuthController extends Controller
         }
         if ($request->filled('nip')) {
             $user->nip = $request->nip;
+        }
+        if ($request->filled('nomor_telepon')) {
+            $user->nomor_telepon = $request->nomor_telepon;
         }
         if ($request->filled('jabatan')) {
             $user->jabatan = $request->jabatan;
