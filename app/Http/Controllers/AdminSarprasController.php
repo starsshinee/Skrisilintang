@@ -14,7 +14,7 @@ use App\Models\{
     Kerusakan,
     User
 };
-
+use App\Services\FonnteService;
 
 class AdminSarprasController extends Controller
 {
@@ -47,7 +47,7 @@ class AdminSarprasController extends Controller
 
         // ── Chart: Peminjaman per bulan (tahun ini) ──
         $chartData = [];
-        $bulanLabels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $bulanLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $maxMonthly = 1;
 
         for ($m = 1; $m <= 12; $m++) {
@@ -118,14 +118,25 @@ class AdminSarprasController extends Controller
 
         return view('adminsarpras.dashbord', compact(
             'user',
-            'totalGedung', 'gedungTersedia', 'gedungDigunakan',
-            'totalPeminjaman', 'peminjamanPending', 'peminjamanDalamReview',
-            'peminjamanDisetujui', 'peminjamanDitolak', 'peminjamanAktif',
-            'totalKerusakan', 'perluPerbaikan', 'rusakBerat', 'rusakRingan',
+            'totalGedung',
+            'gedungTersedia',
+            'gedungDigunakan',
+            'totalPeminjaman',
+            'peminjamanPending',
+            'peminjamanDalamReview',
+            'peminjamanDisetujui',
+            'peminjamanDitolak',
+            'peminjamanAktif',
+            'totalKerusakan',
+            'perluPerbaikan',
+            'rusakBerat',
+            'rusakRingan',
             'totalPendapatan',
             'chartBars',
-            'peminjamanTerbaru', 'aktivitasTerbaru',
-            'gedungBaruBulanIni', 'peminjamanBulanIni'
+            'peminjamanTerbaru',
+            'aktivitasTerbaru',
+            'gedungBaruBulanIni',
+            'peminjamanBulanIni'
         ));
     }
 
@@ -135,23 +146,32 @@ class AdminSarprasController extends Controller
         $query = Gedung::query();
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_gedung', 'like', '%'.$request->search.'%')
-                ->orWhere('lokasi', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_gedung', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%');
             });
         }
 
         if ($request->filled('kategori')) {
-        $query->kategori($request->kategori);
+            $query->kategori($request->kategori);
         }
 
         // Eager load peminjaman dengan filter bulan ini dan status aktif
-        $gedungs = $query->with(['peminjaman' => function($q) {
+        $gedungs = $query->with(['peminjaman' => function ($q) {
             $q->whereIn('status', ['disetujui', 'di setujui', 'berlangsung'])
-              ->whereMonth('tanggal_pinjam', now()->month)
-              ->whereYear('tanggal_pinjam', now()->year)
-              ->select('id', 'gedung_id', 'nama_lengkap', 'instansi_lembaga', 
-                       'tanggal_pinjam', 'tanggal_kembali', 'jam_mulai', 'jam_selesai', 'status');
+                ->whereMonth('tanggal_pinjam', now()->month)
+                ->whereYear('tanggal_pinjam', now()->year)
+                ->select(
+                    'id',
+                    'gedung_id',
+                    'nama_lengkap',
+                    'instansi_lembaga',
+                    'tanggal_pinjam',
+                    'tanggal_kembali',
+                    'jam_mulai',
+                    'jam_selesai',
+                    'status'
+                );
         }])->latest()->get();
 
         // Hitung statistik
@@ -166,7 +186,7 @@ class AdminSarprasController extends Controller
 
         // ✅ KONSISTEN - $gedung untuk view
         $gedung = $query->latest()->paginate(10);
-        
+
         $stats = [
             'total' => Gedung::count(),
             'tersedia' => Gedung::where('ketersediaan', 'Tersedia')->count(),
@@ -181,26 +201,26 @@ class AdminSarprasController extends Controller
     public function storeGedung(Request $request)
     {
         $validated = $request->validate([
-        'nama_gedung' => 'required|string|max:255',
-        'lokasi' => 'required|string|max:255',
-        'luas_bangunan' => 'required|string|max:100',
-        'tarif_sewa' => 'required|integer|min:0',
-        'kapasitas' => 'required|integer|min:1',
-        'ketersediaan' => 'required|in:Tersedia,Sedang Dipakai,Renovasi,Perlu Perbaikan',
-        'kategori' => 'required|in:ruang_sidang,mess,asrama,ruang_makan,aula,ruang_kelas',
-        'fasilitas' => 'nullable|string|max:1000',
-        'foto_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'nama_gedung' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'luas_bangunan' => 'required|string|max:100',
+            'tarif_sewa' => 'required|integer|min:0',
+            'kapasitas' => 'required|integer|min:1',
+            'ketersediaan' => 'required|in:Tersedia,Sedang Dipakai,Renovasi,Perlu Perbaikan',
+            'kategori' => 'required|in:ruang_sidang,mess,asrama,ruang_makan,aula,ruang_kelas',
+            'fasilitas' => 'nullable|string|max:1000',
+            'foto_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         $data = [
-        'nama_gedung' => $validated['nama_gedung'],
-        'lokasi' => $validated['lokasi'],
-        'luas_bangunan' => $validated['luas_bangunan'],
-        'tarif_sewa' => $validated['tarif_sewa'],
-        'kapasitas' => $validated['kapasitas'],
-        'ketersediaan' => $validated['ketersediaan'],
-        'kategori' => $validated['kategori'],
-        'fasilitas' => $validated['fasilitas'] ?? null,
+            'nama_gedung' => $validated['nama_gedung'],
+            'lokasi' => $validated['lokasi'],
+            'luas_bangunan' => $validated['luas_bangunan'],
+            'tarif_sewa' => $validated['tarif_sewa'],
+            'kapasitas' => $validated['kapasitas'],
+            'ketersediaan' => $validated['ketersediaan'],
+            'kategori' => $validated['kategori'],
+            'fasilitas' => $validated['fasilitas'] ?? null,
         ];
 
         //✅ UPLOAD FOTO TERpisah
@@ -302,11 +322,11 @@ class AdminSarprasController extends Controller
 
         // Search
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
-                ->orWhere('fasilitas', 'like', '%'.$request->search.'%')
-                ->orWhere('nama_fasilitas', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('instansi_lembaga', 'like', '%' . $request->search . '%')
+                    ->orWhere('fasilitas', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_fasilitas', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -325,7 +345,7 @@ class AdminSarprasController extends Controller
             }
 
             $adminId = auth()->id();
-            
+
             $request->validate([
                 'komentar' => 'nullable|string|max:1000'
             ]);
@@ -337,8 +357,19 @@ class AdminSarprasController extends Controller
                 'komentar' => $request->komentar
             ]);
 
+            $kasubag = User::where('role', 'kasubag')->first();
+            if ($kasubag && $kasubag->no_hp) {
+                $pesan = "*Persetujuan Peminjaman Gedung*\n\nYth. Kasubag,\nAdmin Sarpras meneruskan permintaan peminjaman gedung dari {$peminjaman->nama_lengkap}. Silakan login untuk persetujuan.";
+                FonnteService::sendMessage($kasubag->no_hp, $pesan);
+            }
+
+            if ($peminjaman->nomor_kontak) {
+                $pesan = "*Peminjaman Gedung Ditolak*\n\nHalo {$peminjaman->nama_lengkap},\nMaaf, permintaan peminjaman gedung Anda ditolak oleh Admin dengan catatan: {$request->komentar}";
+                FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+            }
+
             return response()->json([
-                'success' => true, 
+                'success' => true,
                 'message' => 'Peminjaman berhasil diteruskan ke Kasubag!'
             ]);
         } catch (\Exception $e) {
@@ -346,7 +377,7 @@ class AdminSarprasController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Server error: ' . $e->getMessage()
@@ -368,17 +399,17 @@ class AdminSarprasController extends Controller
 
             $adminId = auth()->id();
 
-        $peminjaman->update([
-            'status' => 'ditolak',
-            'reviewed_by_admin_id' => $adminId,
-            'komentar' => $request->komentar
-        ]);
+            $peminjaman->update([
+                'status' => 'ditolak',
+                'reviewed_by_admin_id' => $adminId,
+                'komentar' => $request->komentar
+            ]);
 
-        return response()->json([
-            'success' => true, 
-            'message' => 'Peminjaman berhasil ditolak!'
-        ]);
-    }catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman berhasil ditolak!'
+            ]);
+        } catch (\Exception $e) {
             \Log::error('Reject Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -428,11 +459,11 @@ class AdminSarprasController extends Controller
 
         // Ambil path lengkap file
         $filePath = storage_path('app/public/' . $peminjaman->surat_path);
-        
+
         // Nama file download (dengan timestamp dan nama peminjam)
         $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
-        $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." . 
-                        pathinfo($originalName, PATHINFO_EXTENSION);
+        $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." .
+            pathinfo($originalName, PATHINFO_EXTENSION);
 
         return response()->download($filePath, $downloadName);
     }
@@ -441,16 +472,30 @@ class AdminSarprasController extends Controller
     {
         // Query utama
         $query = PeminjamanGedung::with(['user', 'gedung', 'reviewer', 'approver'])
-            ->select('id', 'user_id', 'gedung_id', 'nama_lengkap', 'instansi_lembaga', 
-                    'tanggal_pinjam', 'tanggal_kembali', 'jam_mulai', 'jam_selesai',
-                    'status', 'komentar', 'total_pembayaran', 'surat_path', 'lama_peminjaman_hari', 'created_at');
+            ->select(
+                'id',
+                'user_id',
+                'gedung_id',
+                'nama_lengkap',
+                'instansi_lembaga',
+                'tanggal_pinjam',
+                'tanggal_kembali',
+                'jam_mulai',
+                'jam_selesai',
+                'status',
+                'komentar',
+                'total_pembayaran',
+                'surat_path',
+                'lama_peminjaman_hari',
+                'created_at'
+            );
 
         // Filters
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
-                ->orWhere('tujuan_penggunaan', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('instansi_lembaga', 'like', '%' . $request->search . '%')
+                    ->orWhere('tujuan_penggunaan', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -484,7 +529,7 @@ class AdminSarprasController extends Controller
 
         // Status bulan ini
         $bulanIniQuery = PeminjamanGedung::whereYear('tanggal_pinjam', now()->year)
-                                        ->whereMonth('tanggal_pinjam', now()->month);
+            ->whereMonth('tanggal_pinjam', now()->month);
         $statusBulanIni = [
             'disetujui' => $bulanIniQuery->where('status', 'disetujui')->count(),
             'pending' => $bulanIniQuery->clone()->whereIn('status', ['pending', 'dalam_review'])->count(),
@@ -501,13 +546,13 @@ class AdminSarprasController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $bulan = now()->subMonths($i);
             $count = PeminjamanGedung::whereYear('tanggal_pinjam', $bulan->year)
-                                    ->whereMonth('tanggal_pinjam', $bulan->month)
-                                    ->count();
+                ->whereMonth('tanggal_pinjam', $bulan->month)
+                ->count();
             $maxCount = PeminjamanGedung::whereYear('tanggal_pinjam', '>=', now()->subMonths(6)->year)
-                                    ->whereMonth('tanggal_pinjam', '>=', now()->subMonths(6)->month)
-                                    ->count();
+                ->whereMonth('tanggal_pinjam', '>=', now()->subMonths(6)->month)
+                ->count();
             $height = $maxCount > 0 ? ($count / $maxCount) * 100 : 0;
-            
+
             $trendData[] = [
                 'val' => $count,
                 'height' => $height,
@@ -517,7 +562,11 @@ class AdminSarprasController extends Controller
         }
 
         return view('adminsarpras.laporan_peminjaman_gedung', compact(
-            'peminjaman', 'stats', 'statusBulanIni', 'trendData', 'donutData'
+            'peminjaman',
+            'stats',
+            'statusBulanIni',
+            'trendData',
+            'donutData'
         ));
     }
 
@@ -527,7 +576,7 @@ class AdminSarprasController extends Controller
     public function generateSuratPerjanjianSewa(PeminjamanGedung $peminjaman)
     {
         // 1. Ambil data entitas yang terlibat
-        $admin = Auth::user(); 
+        $admin = Auth::user();
         $kepala = User::where('role', 'kepalabpmp')->first();
 
         // 2. Fungsi bantuan untuk mengubah tanda tangan menjadi Base64
@@ -543,19 +592,23 @@ class AdminSarprasController extends Controller
         // 3. Konversi signature menjadi Base64
         $ttdAdmin = $getBase64($admin->signature);
         $ttdKepala = $kepala ? $getBase64($kepala->signature) : null;
-        
+
         // Catatan: Jika tamu/peminjam memiliki kolom ttd, kita bisa memanggilnya di sini.
         // Berdasarkan skema tabel Anda sebelumnya, pendaftar meminjam lewat form dan mungkin tidak punya field signature di model User untuk tamu.
         // Jika ada, tambahkan logika untuk $ttdPeminjam di bawah ini.
-        $ttdPeminjam = null; 
+        $ttdPeminjam = null;
         if ($peminjaman->user && isset($peminjaman->user->signature)) {
-             $ttdPeminjam = $getBase64($peminjaman->user->signature);
+            $ttdPeminjam = $getBase64($peminjaman->user->signature);
         }
 
         // 4. Render tampilan PDF
         $pdf = Pdf::loadView('surat.peminjaman_gedung', compact(
-            'peminjaman', 'admin', 'kepala', 
-            'ttdAdmin', 'ttdKepala', 'ttdPeminjam'
+            'peminjaman',
+            'admin',
+            'kepala',
+            'ttdAdmin',
+            'ttdKepala',
+            'ttdPeminjam'
         ));
 
         // 5. Unduh file PDF
@@ -578,13 +631,13 @@ class AdminSarprasController extends Controller
             }
 
             $filename = 'SP_Sewa_Gedung_' . str_pad($peminjaman->id, 3, '0', STR_PAD_LEFT) . '_' . time() . '.pdf';
-            
+
             // Simpan file ke storage
             $path = $request->file('surat_bast')->storeAs('peminjaman_surat', $filename, 'public');
 
             // Update record
             $peminjaman->update([
-                'surat_perjanjian_path' => $path, 
+                'surat_perjanjian_path' => $path,
             ]);
 
             return back()->with('success', 'Surat Perjanjian BAST Final berhasil diunggah!');
@@ -598,17 +651,17 @@ class AdminSarprasController extends Controller
      */
     public function dataKerusakan(Request $request)
     {
-       $query = Kerusakan::query()
+        $query = Kerusakan::query()
             ->orderBy('tanggal_input', 'desc')
             ->orderBy('id', 'desc');
 
         // Search
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('kode_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('nup', 'like', '%'.$request->search.'%')
-                  ->orWhere('lokasi', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nup', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -740,12 +793,12 @@ class AdminSarprasController extends Controller
     public function destroyKerusakan($id)
     {
         $kerusakan = Kerusakan::findOrFail($id);
-        
+
         // Hapus foto
         if ($kerusakan->foto && Storage::disk('public')->exists($kerusakan->foto)) {
             Storage::disk('public')->delete($kerusakan->foto);
         }
-        
+
         $kerusakan->delete();
 
         return redirect()->route('adminsarpras.data-kerusakan')
@@ -783,7 +836,7 @@ class AdminSarprasController extends Controller
         // Filter bulan/tahun
         if ($request->filled('bulan') && $request->filled('tahun')) {
             $query->whereYear('tanggal_input', $request->tahun)
-                  ->whereMonth('tanggal_input', $request->bulan);
+                ->whereMonth('tanggal_input', $request->bulan);
         }
 
         // Filter kondisi
@@ -820,10 +873,10 @@ class AdminSarprasController extends Controller
 
         // Terapkan filter yang sama dengan tampilan web
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%')
-                ->orWhere('tujuan_penggunaan', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('instansi_lembaga', 'like', '%' . $request->search . '%')
+                    ->orWhere('tujuan_penggunaan', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -839,7 +892,7 @@ class AdminSarprasController extends Controller
 
         // Buat PDF
         $pdf = Pdf::loadView('adminsarpras.pdf_laporan_peminjaman', compact('peminjaman', 'totalPendapatan'))
-                ->setPaper('A4', 'landscape');
+            ->setPaper('A4', 'landscape');
 
         // Kembalikan file untuk di-download
         return $pdf->download('Laporan_Peminjaman_Gedung_' . now()->format('Y-m-d') . '.pdf');
@@ -855,7 +908,7 @@ class AdminSarprasController extends Controller
         // Terapkan filter yang sama dengan tampilan web
         if ($request->filled('bulan') && $request->filled('tahun')) {
             $query->whereYear('tanggal_input', $request->tahun)
-                  ->whereMonth('tanggal_input', $request->bulan);
+                ->whereMonth('tanggal_input', $request->bulan);
         }
 
         if ($request->filled('kondisi')) {
@@ -864,10 +917,10 @@ class AdminSarprasController extends Controller
 
         // Search (jika ada input search)
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('kode_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('lokasi', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -876,7 +929,7 @@ class AdminSarprasController extends Controller
 
         // Buat PDF
         $pdf = Pdf::loadView('adminsarpras.pdf_laporan_kerusakan', compact('kerusakans'))
-                ->setPaper('A4', 'landscape');
+            ->setPaper('A4', 'landscape');
 
         // Kembalikan file untuk di-download
         return $pdf->download('Laporan_Kerusakan_Sarpras_' . now()->format('Y-m-d') . '.pdf');

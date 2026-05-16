@@ -13,6 +13,7 @@ use App\Models\{
     PeminjamanKendaraan,
     PengembalianKendaraan
 };
+use App\Services\FonnteService;
 
 class KasubagController extends Controller
 {
@@ -26,7 +27,7 @@ class KasubagController extends Controller
 
         // 2. Hitung Statistik Kendaraan
         $kendaraanTotal = PeminjamanKendaraan::count();
-        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count(); 
+        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count();
         $kendaraanSetuju = PeminjamanKendaraan::where('status', 'disetujui')->count();
         $kendaraanTolak = PeminjamanKendaraan::where('status', 'ditolak')->count();
 
@@ -49,19 +50,19 @@ class KasubagController extends Controller
         $totalPermintaan = $barangTotal + $kendaraanTotal + $gedungTotal + $persediaanTotal;
 
         // 6. Ambil Data Pending Terbaru untuk di List (Mapping menjadi format seragam)
-        $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function($item) {
+        $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
-        $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function($item) {
+        $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
-        $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function($item) {
+        $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Gedung', 'nama_item' => $item->nama_fasilitas ?? $item->fasilitas, 'nama_peminjam' => $item->nama_lengkap, 'tanggal' => $item->created_at];
         });
 
-        $recentPersediaan = PermintaanPersediaan::with(['user', 'persediaan'])->whereIn('status', ['pending', 'diproses'])->latest()->take(3)->get()->map(function($item) {
+        $recentPersediaan = PermintaanPersediaan::with(['user', 'persediaan'])->whereIn('status', ['pending', 'diproses'])->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Persediaan', 'nama_item' => $item->persediaan->nama_barang ?? $item->nama_barang ?? 'Barang', 'nama_peminjam' => $item->user->name ?? $item->nama_lengkap ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
@@ -75,25 +76,32 @@ class KasubagController extends Controller
 
         // 7. Kirim data ke View
         return view('kasubag.dashbord', compact(
-            'totalPending', 'totalDisetujui', 'totalDitolak', 'totalPermintaan',
-            'barangTotal', 'barangPending',
-            'kendaraanTotal', 'kendaraanPending',
-            'gedungTotal', 'gedungPending',
-            'persediaanTotal', 'persediaanPending',
+            'totalPending',
+            'totalDisetujui',
+            'totalDitolak',
+            'totalPermintaan',
+            'barangTotal',
+            'barangPending',
+            'kendaraanTotal',
+            'kendaraanPending',
+            'gedungTotal',
+            'gedungPending',
+            'persediaanTotal',
+            'persediaanPending',
             'recentPending'
         ));
     }
 
     public function persetujuanPeminjamanGedung(Request $request)
     {
-       $query = PeminjamanGedung::with(['user', 'reviewer'])
+        $query = PeminjamanGedung::with(['user', 'reviewer'])
             ->whereIn('status', ['dalam_review', 'disetujui_kasubag'])
             ->orderBy('diteruskan_ke_kasubag_date', 'desc');
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                  ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('instansi_lembaga', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -122,6 +130,18 @@ class KasubagController extends Controller
             'approved_by_kasubag_date' => now(),
             'komentar' => $request->komentar
         ]);
+
+        // WhatsApp Notification for Approval
+        if ($peminjaman->nomor_kontak) {
+            $pesan = "*Peminjaman Gedung Disetujui!*\n\nHalo {$peminjaman->nama_lengkap},\nPengajuan peminjaman gedung Anda disetujui oleh Kasubag. Silakan tunggu Surat Perjanjian dari Admin Sarpras.";
+            FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+        }
+
+        // WhatsApp Notification for Rejection
+        if ($peminjaman->nomor_kontak) {
+            $pesan = "*Peminjaman Gedung Ditolak*\n\nHalo {$peminjaman->nama_lengkap},\nMaaf, pengajuan peminjaman gedung Anda ditolak oleh Kasubag dengan catatan: {$request->komentar}";
+            FonnteService::sendMessage($peminjaman->nomor_kontak, $pesan);
+        }
 
         return response()->json([
             'success' => true,
@@ -157,22 +177,22 @@ class KasubagController extends Controller
     public function downloadSurat(PeminjamanGedung $peminjaman)
     {
         if (!$peminjaman->surat_path || !Storage::disk('public')->exists($peminjaman->surat_path)) {
-        return back()->with('error', 'Surat peminjaman tidak ditemukan!');
-    }
+            return back()->with('error', 'Surat peminjaman tidak ditemukan!');
+        }
 
-    $filePath = storage_path('app/public/' . $peminjaman->surat_path);
-    $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
-    $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." . 
-                    pathinfo($originalName, PATHINFO_EXTENSION);
+        $filePath = storage_path('app/public/' . $peminjaman->surat_path);
+        $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
+        $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." .
+            pathinfo($originalName, PATHINFO_EXTENSION);
 
-    return response()->download($filePath, $downloadName);
+        return response()->download($filePath, $downloadName);
     }
 
     // Method untuk detail JSON (API)
     public function show(PeminjamanGedung $peminjaman)
     {
         $peminjaman->load(['user', 'gedung', 'reviewer', 'approver']);
-        
+
         return response()->json([
             'id' => $peminjaman->id,
             'gedung' => $peminjaman->gedung ? [
@@ -208,7 +228,7 @@ class KasubagController extends Controller
     // ====================================================================
     // PEMINJAMAN BARANG (ASET TETAP)
     // ====================================================================
-    
+
     public function persetujuanPeminjamanBarang(Request $request)
     {
         // 1. Hitung Statistik Ringkasan
@@ -233,9 +253,9 @@ class KasubagController extends Controller
     public function detailPeminjamanBarang($id)
     {
         $peminjaman = \App\Models\PeminjamanBarang::with('user')->findOrFail($id);
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'data' => $peminjaman
         ]);
     }
@@ -253,7 +273,6 @@ class KasubagController extends Controller
             $peminjaman->save(); // Simpan paksa mengabaikan fillable/guarded
 
             $pesan = 'Peminjaman berhasil disetujui.';
-            
         } elseif ($request->action == 'tolak') {
             // 🔥 CARA MANUAL UNTUK TOLAK
             $peminjaman->status = 'ditolak';
@@ -265,10 +284,20 @@ class KasubagController extends Controller
             $pesan = 'Peminjaman berhasil ditolak.';
         }
 
+        $pegawai = $peminjaman->user;
+        if ($pegawai && $pegawai->no_hp) {
+            if ($request->action == 'setuju') {
+                $pesan = "*Peminjaman Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan peminjaman Anda telah disetujui oleh Kasubag. Admin akan segera membuatkan Surat BAST.";
+            } else {
+                $pesan = "*Peminjaman Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan peminjaman Anda ditolak oleh Kasubag dengan catatan: " . ($request->komentar ?? '-');
+            }
+            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+        }
+
         return back()->with('success', $pesan);
     }
 
-     //PEMINJAMAN KENDARAAN
+    //PEMINJAMAN KENDARAAN
     public function persetujuanPeminjamanKendaraan()
     {
         // Mengambil data peminjaman kendaraan yang relevan untuk Kasubag
@@ -310,6 +339,16 @@ class KasubagController extends Controller
         $peminjaman->approved_by_kasubag_date = now();
         $peminjaman->save();
 
+        $pegawai = $peminjaman->user;
+        if ($pegawai && $pegawai->no_hp) {
+            if ($request->action == 'setuju') {
+                $pesan = "*Peminjaman Kendaraan Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan peminjaman kendaraan Anda telah disetujui oleh Kasubag. Admin akan segera membuatkan Surat BAST.";
+            } else {
+                $pesan = "*Peminjaman Kendaraan Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan peminjaman kendaraan Anda ditolak oleh Kasubag dengan catatan: " . ($request->komentar ?? '-');
+            }
+            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+        }
+
         return back()->with('success', $pesan);
     }
 
@@ -328,7 +367,7 @@ class KasubagController extends Controller
         ]);
     }
 
-     
+
     //PERMINTAAN PERSEDIAAN
     public function persetujuanPermintaanPersediaan()
     {
@@ -339,10 +378,10 @@ class KasubagController extends Controller
         ];
 
         $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
-                    ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
-                    ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") // Yang belum direview ditaruh paling atas
-                    ->latest()
-                    ->get();
+            ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
+            ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") // Yang belum direview ditaruh paling atas
+            ->latest()
+            ->get();
 
         // BENAR: Gunakan compact('permintaan') untuk mengirim data
         return view('kasubag.persetujuan_permintaan_persediaan', compact('permintaan', 'stats'));
@@ -366,6 +405,16 @@ class KasubagController extends Controller
             ]);
         }
 
+        $pegawai = $permintaan->user;
+        if ($pegawai && $pegawai->no_hp) {
+            if ($request->action === 'setuju') {
+                $pesan = "*Permintaan Persediaan Disetujui!*\n\nHalo {$pegawai->name},\nPermintaan persediaan Anda telah disetujui Kasubag.";
+            } else {
+                $pesan = "*Permintaan Persediaan Ditolak*\n\nHalo {$pegawai->name},\nMaaf, permintaan persediaan Anda ditolak oleh Kasubag.";
+            }
+            FonnteService::sendMessage($pegawai->no_hp, $pesan);
+        }
+
         return back()->with('success', 'Permintaan berhasil diproses!');
     }
 
@@ -376,7 +425,7 @@ class KasubagController extends Controller
     {
         // Ambil data beserta relasinya
         $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
-                        ->findOrFail($id);
+            ->findOrFail($id);
 
         return view('kasubag.detail_permintaan_persediaan', compact('permintaan'));
     }
