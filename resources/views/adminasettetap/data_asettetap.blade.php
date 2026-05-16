@@ -125,6 +125,28 @@
 
   .content { padding: 28px; flex: 1; }
 
+  /* TOMBOL IMPORT & HEADER ACTIONS */
+  .header-actions {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .btn-import {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 18px; border-radius: 10px;
+    background: var(--surface);
+    color: var(--blue); font-size: 13.5px; font-weight: 700;
+    font-family: inherit; border: 1.5px solid var(--blue); cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-import:hover { background: #EEF2FF; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,111,255,.15); }
+  .btn-import svg { width: 16px; height: 16px; fill: currentColor; }
+  
+  .upload-area {
+    border: 2px dashed var(--border); padding: 32px 20px; 
+    text-align: center; border-radius: 12px; background: #F8FAFF; 
+    margin-bottom: 12px; transition: border-color 0.2s;
+  }
+  .upload-area:hover { border-color: var(--blue); }
+
   /* ALERT */
   .alert {
     padding: 14px 18px; border-radius: 10px; margin-bottom: 20px;
@@ -363,6 +385,14 @@
         <h1>Data Aset Tetap</h1>
         <p>{{ $asetTetap->total() }} data ditemukan</p>
       </div>
+      <div class="header-actions">
+        <button class="btn-import" onclick="openModal('modal-import')">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Import Excel
+        </button>
+      </div>
       <a href="#modal-tambah" class="btn-tambah" onclick="openModal('modal-tambah')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Tambah Baru
@@ -551,6 +581,41 @@
                 </div>
               </div>
             </div>
+
+            {{-- MODAL IMPORT EXCEL --}}
+          <div id="modal-import" class="modal-overlay">
+            <div class="modal" style="max-width: 480px;">
+              <h2 class="modal-title">Import Data Excel</h2>
+              
+              <form action="{{ route('adminasettetap.data-aset-tetap.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="form-group">
+                  <label class="form-label">Pilih File Data Aset <span class="text-red-500">*</span></label>
+                  
+                  <div class="upload-area">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--blue)" style="opacity: 0.7; margin: 0 auto 12px;">
+                      <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    <input type="file" name="file_excel" id="file_excel" accept=".xlsx, .xls, .csv" class="form-input" style="background: white;" required>
+                  </div>
+                  
+                  <p style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">
+                    Unggah file dengan ekstensi <strong>.xlsx</strong> atau <strong>.csv</strong>. Pastikan format kolom sesuai dengan standar sistem. 
+                    <br>
+                    <a href="{{ route('adminasettetap.data-aset-tetap.template') }}" style="color: var(--blue); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 6px;">
+                      ↓ Unduh Template Excel
+                    </a>
+                  </p>
+                </div>
+
+                <div class="btn-group" style="margin-top: 24px;">
+                  <button type="button" class="btn btn-secondary" onclick="closeModal('modal-import')">Batal</button>
+                  <button type="submit" class="btn btn-primary" onclick="this.innerHTML='Mengunggah...';">Mulai Import</button>
+                </div>
+              </form>
+            </div>
+          </div>
 
             {{-- MODAL EDIT --}}
           <div id="modal-edit-{{ $aset->id }}" class="modal-overlay">

@@ -204,7 +204,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/data-persediaan/{persediaan}/edit', [AdminPersediaanController::class, 'edit'])->name('data-persediaan.edit');
         Route::put('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'update'])->name('data-persediaan.update');
         Route::delete('/data-persediaan/{persediaan}', [AdminPersediaanController::class, 'destroy'])->name('data-persediaan.destroy');
-        
+
+        // Rute untuk mengunduh template Excel khusus data persediaan
+        Route::get('/data-persediaan/template', [AdminPersediaanController::class, 'downloadTemplate'])->name('data-persediaan.template');
+        // Rute untuk memproses file Excel persediaan yang diunggah oleh admin
+        Route::post('/data-persediaan/import', [AdminPersediaanController::class, 'importPersediaan'])->name('data-persediaan.import');
+            
         // 📤 TRANSAKSI KELUAR
         Route::get('/transaksi-keluar', [AdminPersediaanController::class, 'transaksiKeluar'])->name('transaksi-keluar');
         Route::get('/transaksi-keluar/create', [AdminPersediaanController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
@@ -312,6 +317,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/pengaduan', [AdminAsettetapController::class, 'pengaduan'])->name('pengaduan');
             Route::get('/survey-kepuasan', [AdminAsettetapController::class, 'surveyKepuasan'])->name('survey-kepuasan');
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');  
+
+            // Rute untuk mengunduh template Excel format standar sistem
+            Route::get('/data-aset-tetap/template', [AdminAsettetapController::class, 'downloadTemplate'])->name('data-aset-tetap.template');
+            
+            // Rute untuk memproses file Excel yang diunggah oleh admin
+            Route::post('/data-aset-tetap/import', [AdminAsettetapController::class, 'importAset'])->name('data-aset-tetap.import');
 
             //PENGEMBALIAN BARANG
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');

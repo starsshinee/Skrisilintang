@@ -164,6 +164,28 @@
   .action-btn.danger:hover { background: #FEF2F2; border-color: var(--danger); }
   .action-btn svg { width: 16px; height: 16px; }
 
+  /* TOMBOL IMPORT & HEADER ACTIONS */
+  .header-actions {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .btn-import {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 18px; border-radius: 10px;
+    background: var(--surface);
+    color: var(--blue); font-size: 13.5px; font-weight: 700;
+    font-family: inherit; border: 1.5px solid var(--blue); cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-import:hover { background: #EEF2FF; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,111,255,.15); }
+  .btn-import svg { width: 16px; height: 16px; fill: currentColor; }
+  
+  .upload-area {
+    border: 2px dashed var(--border); padding: 32px 20px; 
+    text-align: center; border-radius: 12px; background: #F8FAFF; 
+    margin-bottom: 12px; transition: border-color 0.2s;
+  }
+  .upload-area:hover { border-color: var(--blue); }
+
   /* MODAL */
   .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -280,6 +302,14 @@
       <div>
         <h1>Data Persediaan</h1>
         <p>{{ $persediaan->total() }} data ditemukan</p>
+      </div>
+      <div class="header-actions">
+        <button onclick="openModal('importModal')" class="btn-import">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Import Excel
+        </button>
       </div>
       <button onclick="openModal('createModal')" class="btn-tambah">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
@@ -532,6 +562,41 @@
         Tutup
       </button>
     </div>
+  </div>
+</div>
+
+{{-- MODAL IMPORT EXCEL PERSEDIAAN --}}
+<div id="importModal" class="modal-overlay">
+  <div class="modal" style="max-width: 480px;">
+    <h2 class="modal-title">Import Data Persediaan</h2>
+    
+    <form action="{{ route('adminpersediaan.data-persediaan.import') }}" method="POST" enctype="multipart/form-data">
+      @csrf
+      
+      <div class="form-group">
+        <label class="form-label">Pilih File Excel/CSV <span style="color:var(--danger);">*</span></label>
+        
+        <div class="upload-area">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--blue)" style="opacity: 0.7; margin: 0 auto 12px;">
+            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+          </svg>
+          <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" class="form-input" style="background: white; padding: 10px;" required>
+        </div>
+        
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">
+          Unggah file dengan ekstensi <strong>.xlsx</strong> atau <strong>.csv</strong>. Pastikan format kolom sesuai dengan template.
+          <br>
+          <a href="{{ route('adminpersediaan.data-persediaan.template') }}" style="color: var(--blue); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 6px;">
+            ↓ Unduh Template Excel
+          </a>
+        </p>
+      </div>
+
+      <div class="btn-group" style="margin-top: 24px; justify-content: flex-end; display: flex; gap: 12px;">
+        <button type="button" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;" onclick="closeModal('importModal')">Batal</button>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--blue),#7C3AED); color:white; padding:12px 24px;" onclick="this.innerHTML='Mengunggah...';">Mulai Import</button>
+      </div>
+    </form>
   </div>
 </div>
 
