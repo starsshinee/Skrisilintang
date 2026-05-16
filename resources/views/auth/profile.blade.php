@@ -381,6 +381,9 @@
               {{ auth()->user()->jabatan ?? 'BPMP Provinsi Gorontalo' }} 
               - NIP: {{ auth()->user()->nip ?? '-' }}
             </p>
+            <p>
+              nomor telepon: {{ auth()->user()->nomor_telepon ?? '-' }}
+            </p>
             <label for="signature" class="avatar-upload-btn">
               <i class="fas fa-camera"></i> Ubah Foto
             </label>
@@ -406,23 +409,27 @@
               <input type="text" class="form-input" name="jabatan" value="{{ old('jabatan', auth()->user()->jabatan) }}">
             </div>
             <div class="form-group">
+              <div class="form-label"><i class="fas fa-phone-alt"></i> Nomor Telepon</div>
+              <input type="text" class="form-input" name="nomor_telepon" value="{{ old('nomor_telepon', auth()->user()->nomor_telepon) }}" maxlength="20">
+            </div>
+          </div>
+          <div class="form-grid-2">
+             <div class="form-group">
               <div class="form-label"><i class="fas fa-id-card"></i> NIP</div>
               <input type="text" class="form-input" name="nip" value="{{ old('nip', auth()->user()->nip) }}" maxlength="30">
               @error('nip') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
-          </div>
-          <div class="form-grid-2">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-envelope"></i> Email</div>
               <input type="email" class="form-input readonly" value="{{ auth()->user()->email ?? 'Belum diisi' }}" readonly>
             </div>
+          </div>
+
+          <div class="form-grid-2">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-calendar-check"></i> Bergabung</div>
               <input type="text" class="form-input readonly" value="{{ auth()->user()->created_at?->format('d M Y') }}" readonly>
             </div>
-          </div>
-
-          <div class="form-grid-2">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-users"></i> Unit Kerja</div>
               <select name="unit_kerja_id" class="form-select cursor-pointer">
