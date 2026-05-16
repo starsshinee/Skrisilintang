@@ -294,6 +294,12 @@
                         ],
                     ],
                 ],
+                [
+                    'href' => route('adminpersediaan.pengaturan-akun'),
+                    'label' => 'Pengaturan Akun',
+                    'icon' => 'fas fa-gear',
+                    'route' => 'adminpersediaan.pengaturan-akun',
+                ],
             ],
         ],
 
