@@ -134,22 +134,40 @@ tr:hover { background: #f8faff; }
 .bg-danger { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
 /* ACTION BUTTONS */
-.action-group { display: flex; gap: 6px; align-items: center; }
-.action-btn {
+/* .action-group { display: flex; gap: 6px; align-items: center; } */
+/* .action-btn {
   width: 36px; height: 36px; border-radius: 8px; 
   border: 1px solid var(--border); background: var(--card-bg); 
   display: inline-flex; align-items: center; justify-content: center; 
   cursor: pointer; transition: all 0.15s; color: var(--text-secondary);
   text-decoration: none;
-}
-.action-btn:hover { transform: translateY(-1px); }
+} */
+/* .action-btn:hover { transform: translateY(-1px); }
 .action-btn.detail:hover { background: #f1f5f9; border-color: var(--text-secondary); color: var(--text-primary); }
 .action-btn.teruskan:hover { background: #ecfdf5; border-color: var(--success); color: var(--success); }
 .action-btn.tolak:hover { background: #fef2f2; border-color: var(--danger); color: var(--danger); }
 .action-btn.generate:hover { background: #eff6ff; border-color: var(--primary); color: var(--primary); }
 .action-btn.upload:hover { background: #ecfdf5; border-color: var(--success); color: var(--success); }
 .action-btn.lihat:hover { background: #faf5ff; border-color: var(--purple); color: var(--purple); }
-.action-btn i { font-size: 14px; }
+.action-btn i { font-size: 14px; } */
+
+/* ===== STYLE TOMBOL ACTION BARU ===== */
+.action-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 14px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; transform: translateY(-1px); }
+.btn-outline svg { width: 15px; height: 15px; }
+.btn-detail { color: #0f172a; }
+.btn-detail svg { stroke: #0f172a; }
+.btn-cetak { color: #8b5cf6; }
+.btn-cetak svg { stroke: #8b5cf6; fill: none; }
+.btn-teruskan { color: #3b82f6; }
+.btn-teruskan svg { stroke: #3b82f6; fill: #3b82f6; }
+.btn-tolak { color: #ef4444; }
+.btn-tolak svg { stroke: #ef4444; }
+.btn-upload { color: #10b981; }
+.btn-upload svg { stroke: #10b981; }
+.btn-lihat { color: #f59e0b; }
+.btn-lihat i { font-size: 14px; }
 
 /* MODAL CSS */
 .modal-overlay {
@@ -310,39 +328,67 @@ tr:hover { background: #f8faff; }
                 
                 <td>
                   <div class="action-group">
-                    <button class="action-btn detail" onclick="showDetail({{ $item->id }})" title="Lihat Detail Lengkap">
-                      <i class="fas fa-eye"></i>
+                    {{-- Tombol Detail --}}
+                    <button class="btn-outline btn-detail" onclick="showDetail({{ $item->id }})">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <span>Detail</span>
                     </button>
 
                     @if($item->status === 'pending')
+                      {{-- Tombol Teruskan --}}
                       <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;">
                         @csrf
                         <input type="hidden" name="action" value="teruskan">
-                        <button type="submit" class="action-btn teruskan" title="Teruskan ke Kasubag">
-                          <i class="fas fa-forward"></i>
+                        <button type="submit" class="btn-outline btn-teruskan">
+                          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                          </svg>
+                          <span>Teruskan</span>
                         </button>
                       </form>
                       
+                      {{-- Tombol Tolak --}}
                       <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;" onclick="return confirm('Yakin menolak permintaan ini?')">
                         @csrf
                         <input type="hidden" name="action" value="tolak">
-                        <button type="submit" class="action-btn tolak" title="Tolak Permintaan">
-                          <i class="fas fa-times"></i>
+                        <button type="submit" class="btn-outline btn-tolak">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                          <span>Tolak</span>
                         </button>
                       </form>
 
                     @elseif(in_array($item->status, ['dalam_review', 'disetujui_kasubag', 'disetujui']))
-                      <a href="{{ route('adminpersediaan.surat-permintaan', $item->id) }}" class="action-btn generate" title="Generate Berita Acara PDF" target="_blank">
-                        <i class="fas fa-file-signature"></i>
+                      {{-- Tombol Cetak (Generate) --}}
+                      <a href="{{ route('adminpersediaan.surat-permintaan', $item->id) }}" class="btn-outline btn-cetak" target="_blank">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path>
+                          <polyline points="14,2 14,8 20,8"></polyline>
+                        </svg>
+                        <span>Cetak</span>
                       </a>
 
-                      <button type="button" onclick="openUploadModal({{ $item->id }})" class="action-btn upload" title="Upload Surat BAST Final">
-                        <i class="fas fa-upload"></i>
+                      {{-- Tombol Upload --}}
+                      <button type="button" onclick="openUploadModal({{ $item->id }})" class="btn-outline btn-upload">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17,8 12,3 7,8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>Upload</span>
                       </button>
 
                       @if($item->surat_bast_path)
-                      <a href="{{ asset('storage/' . $item->surat_bast_path) }}" class="action-btn lihat" title="Lihat Dokumen Final (BAST)" target="_blank">
+                      {{-- Tombol Lihat --}}
+                      <a href="{{ asset('storage/' . $item->surat_bast_path) }}" class="btn-outline btn-lihat" target="_blank">
                         <i class="fas fa-file-circle-check"></i>
+                        <span>Lihat</span>
                       </a>
                       @endif
                     @endif

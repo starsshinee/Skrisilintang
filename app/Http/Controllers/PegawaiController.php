@@ -476,7 +476,7 @@ class PegawaiController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function showPermintaanPersediaanJson($id)
     {
         // Pastikan menambahkan ->with('user')
         $permintaan = PermintaanPersediaan::with(['persediaan', 'user'])->find($id);

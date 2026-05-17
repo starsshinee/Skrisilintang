@@ -479,6 +479,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/permintaan-persediaan', [PegawaiController::class, 'storePermintaanPersediaan'])->name('permintaan-persediaan.store');
             Route::get('/permintaan-persediaan/{id}', [PegawaiController::class, 'detailPermintaanPersediaan'])->name('permintaan_persediaan.detail');
             Route::post('/permintaan-persediaan/{id}/cancel', [PegawaiController::class, 'cancelPermintaanPersediaan'])->name('permintaan_persediaan.cancel');
+            Route::get('/permintaan-persediaan/{id}/json', [PegawaiController::class, 'showPermintaanPersediaanJson']);
 
             //PENGATURAN AKUN
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');

@@ -1788,7 +1788,7 @@
       <div>
         <div class="history-card">
           <div class="history-header">
-            <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Peminjaman Saya</div>
+            <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Peminjaman Anda</div>
           </div>
           <div class="req-list">
 
