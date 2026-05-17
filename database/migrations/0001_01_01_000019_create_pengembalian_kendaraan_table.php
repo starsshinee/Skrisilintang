@@ -29,8 +29,17 @@ return new class extends Migration
             $table->string('foto_sesudah')->nullable();
             $table->decimal('biaya_denda', 10, 2)->default(0);
             $table->enum('status_pengembalian', [
-                'diproses', 'diterima', 'ditolak'
-            ])->default('diproses');
+                'lengkap',
+                'rusak_ringan',
+                'rusak_berat',
+                'hilang'
+            ])->default('lengkap');
+
+            $table->enum('status_verifikasi', [
+                'pending',
+                'diterima',
+                'ditolak'
+            ])->default('pending');
             $table->timestamps();
         });
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -9,7 +10,9 @@ use App\Models\{
     Gedung,
     PeminjamanGedung,
     PengembalianGedung,
+    User,
 };
+use App\Services\FonnteService;
 
 class TamuController extends Controller
 {
@@ -17,24 +20,24 @@ class TamuController extends Controller
     public function dashboard()
     {
         $user = auth()->user();
-        
+
         // Stats
         $stats = [
             'total' => $user->peminjamanGedung()->count(),
             'pending' => $user->peminjamanGedung()->where('status', 'pending')->count(),
             'approved' => $user->peminjamanGedung()->where('status', 'disetujui')->count(),
         ];
-        
+
         // Recent requests (5 terbaru)
         $peminjaman_terbaru = $user->peminjamanGedung()
             ->with('gedung')
             ->latest()
             ->limit(5)
             ->get();
-        
+
         // Notifications (optional)
         // $notifikasi = $user->notifications()->unread()->limit(5)->get();
-        
+
         return view('tamu.dashbord', compact('stats', 'peminjaman_terbaru'));
     }
 
@@ -114,7 +117,7 @@ class TamuController extends Controller
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
-            'jumlah_peserta' => 'required|integer|min:1', 
+            'jumlah_peserta' => 'required|integer|min:1',
             'alat_penunjang' => 'required|string|max:500',
             'tujuan_penggunaan' => 'required|string|max:1000',
             'nomor_kontak' => 'required|string|max:20',
@@ -162,6 +165,29 @@ class TamuController extends Controller
             'status_pembayaran' => 'belum_lunas',
             'cara_pembayaran' => 'e-billing',
         ]);
+
+        // --- NOTIFIKASI KE ADMIN SARPRAS ---
+        $adminSarpras = User::where('role', 'adminsarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            // Membersihkan format nomor telepon tujuan
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Permintaan Peminjaman GEDUNG Baru*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Terdapat pengajuan peminjaman gedung/fasilitas baru dengan detail sebagai berikut:\n\n";
+
+            $pesanAdmin .= "👤 *Pemohon:* {$validated['nama_lengkap']} ({$validated['instansi_lembaga']})\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$gedung->nama_gedung}\n";
+            $pesanAdmin .= "📅 *Tanggal:* {$validated['tanggal_pinjam']} s/d {$validated['tanggal_kembali']}\n";
+            $pesanAdmin .= "⏰ *Waktu:* {$validated['jam_mulai']} - {$validated['jam_selesai']}\n";
+            $pesanAdmin .= "👥 *Peserta:* {$validated['jumlah_peserta']} Orang\n";
+            $pesanAdmin .= "📝 *Kegiatan:* {$validated['tujuan_penggunaan']}\n";
+            $pesanAdmin .= "📞 *Kontak:* {$validated['nomor_kontak']}\n\n";
+
+            $pesanAdmin .= "Silakan login ke sistem untuk melakukan review pengajuan ini.";
+
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
 
         return response()->json([
             'success' => true,
@@ -229,7 +255,7 @@ class TamuController extends Controller
             // Pastikan hanya peminjam yang bisa membatalkan datanya sendiri
             if ($peminjaman->user_id !== auth()->id()) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Anda tidak memiliki akses untuk membatalkan permintaan ini.'
                 ], 403);
             }
@@ -237,7 +263,7 @@ class TamuController extends Controller
             // Pastikan hanya yang berstatus pending / dalam review yang bisa dibatalkan
             if (!in_array($peminjaman->status, ['pending', 'dalam_review'])) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Permintaan sudah diproses dan tidak dapat dibatalkan.'
                 ], 400);
             }
@@ -249,7 +275,6 @@ class TamuController extends Controller
                 'success' => true,
                 'message' => 'Permintaan peminjaman berhasil dibatalkan.'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -275,8 +300,8 @@ class TamuController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('nama_gedung', 'like', '%' . $request->search . '%')
-                  ->orWhere('lokasi', 'like', '%' . $request->search . '%')
-                  ->orWhere('fasilitas', 'like', '%' . $request->search . '%');
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%')
+                    ->orWhere('fasilitas', 'like', '%' . $request->search . '%');
             });
         }
 

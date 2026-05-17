@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,7 @@ use App\Models\{
     PeminjamanKendaraan,
     PengembalianKendaraan
 };
+use App\Services\FonnteService;
 
 class KasubagController extends Controller
 {
@@ -26,7 +28,7 @@ class KasubagController extends Controller
 
         // 2. Hitung Statistik Kendaraan
         $kendaraanTotal = PeminjamanKendaraan::count();
-        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count(); 
+        $kendaraanPending = PeminjamanKendaraan::where('status', 'pending')->count();
         $kendaraanSetuju = PeminjamanKendaraan::where('status', 'disetujui')->count();
         $kendaraanTolak = PeminjamanKendaraan::where('status', 'ditolak')->count();
 
@@ -49,19 +51,34 @@ class KasubagController extends Controller
         $totalPermintaan = $barangTotal + $kendaraanTotal + $gedungTotal + $persediaanTotal;
 
         // 6. Ambil Data Pending Terbaru untuk di List (Mapping menjadi format seragam)
-        $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function($item) {
+        $recentBarang = PeminjamanBarang::with('user')->where('status', 'diteruskan_kasubag')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Barang', 'nama_item' => $item->nama_barang, 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
-        $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function($item) {
-            return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
-        });
+        // $recentKendaraan = PeminjamanKendaraan::with(['kendaraan', 'user'])->where('status', 'pending')->latest()->take(3)->get()->map(function ($item) {
+        //     return ['tipe' => 'Kendaraan', 'nama_item' => $item->kendaraan->merek ?? 'Kendaraan', 'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
+        // });
 
-        $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function($item) {
+        $recentKendaraan = PeminjamanKendaraan::with(['user']) // Hapus 'kendaraan' dari sini
+            ->where('status', 'pending')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'tipe' => 'Kendaraan',
+                    // Ambil merek langsung dari $item. Jika kosong, fallback ke nama_barang atau teks default.
+                    'nama_item' => $item->merek ?? $item->nama_barang ?? 'Kendaraan',
+                    'nama_peminjam' => $item->user->name ?? 'Tamu/Pegawai',
+                    'tanggal' => $item->created_at
+                ];
+            });
+
+        $recentGedung = PeminjamanGedung::where('status', 'dalam_review')->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Gedung', 'nama_item' => $item->nama_fasilitas ?? $item->fasilitas, 'nama_peminjam' => $item->nama_lengkap, 'tanggal' => $item->created_at];
         });
 
-        $recentPersediaan = PermintaanPersediaan::with(['user', 'persediaan'])->whereIn('status', ['pending', 'diproses'])->latest()->take(3)->get()->map(function($item) {
+        $recentPersediaan = PermintaanPersediaan::with(['user', 'persediaan'])->whereIn('status', ['pending', 'diproses'])->latest()->take(3)->get()->map(function ($item) {
             return ['tipe' => 'Persediaan', 'nama_item' => $item->persediaan->nama_barang ?? $item->nama_barang ?? 'Barang', 'nama_peminjam' => $item->user->name ?? $item->nama_lengkap ?? 'Tamu/Pegawai', 'tanggal' => $item->created_at];
         });
 
@@ -75,25 +92,32 @@ class KasubagController extends Controller
 
         // 7. Kirim data ke View
         return view('kasubag.dashbord', compact(
-            'totalPending', 'totalDisetujui', 'totalDitolak', 'totalPermintaan',
-            'barangTotal', 'barangPending',
-            'kendaraanTotal', 'kendaraanPending',
-            'gedungTotal', 'gedungPending',
-            'persediaanTotal', 'persediaanPending',
+            'totalPending',
+            'totalDisetujui',
+            'totalDitolak',
+            'totalPermintaan',
+            'barangTotal',
+            'barangPending',
+            'kendaraanTotal',
+            'kendaraanPending',
+            'gedungTotal',
+            'gedungPending',
+            'persediaanTotal',
+            'persediaanPending',
             'recentPending'
         ));
     }
 
     public function persetujuanPeminjamanGedung(Request $request)
     {
-       $query = PeminjamanGedung::with(['user', 'reviewer'])
+        $query = PeminjamanGedung::with(['user', 'reviewer'])
             ->whereIn('status', ['dalam_review', 'disetujui_kasubag'])
             ->orderBy('diteruskan_ke_kasubag_date', 'desc');
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                  ->orWhere('instansi_lembaga', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('instansi_lembaga', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -117,11 +141,55 @@ class KasubagController extends Controller
         }
 
         $peminjaman->update([
-            'status' => 'disetujui_kasubag', // Ubah ke status yang sesuai model
+            'status' => 'disetujui_kasubag',
             'approved_by_kasubag_id' => auth()->id(),
             'approved_by_kasubag_date' => now(),
             'komentar' => $request->komentar
         ]);
+
+        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+        // 🔥 PARSING TANGGAL MENGGUNAKAN CARBON AGAR BERSIH (TANPA 00:00:00)
+        $tglPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y');
+        $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y');
+
+        // Ambil field jam terpisah
+        $jamMulai = $peminjaman->jam_mulai ?? '--:--';
+        $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
+
+        // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
+        if ($peminjaman->nomor_kontak) {
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+            $pesanTamu = "*Peminjaman Gedung DISETUJUI*\n\n";
+            $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+            $pesanTamu .= "Pengajuan peminjaman fasilitas Anda telah disetujui oleh Kasubag:\n\n";
+            $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanTamu .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+            $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
+            $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
+
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
+        }
+
+        // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
+        $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Info Persetujuan Kasubag (Gedung)*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman fasilitas dari Tamu:\n\n";
+            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanAdmin .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+            $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; // Menampilkan jam terpisah
+            $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
+
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
 
         return response()->json([
             'success' => true,
@@ -141,10 +209,45 @@ class KasubagController extends Controller
         }
 
         $peminjaman->update([
-            'status' => 'ditolak_kasubag',
+            'status' => 'ditolak',
             'approved_by_kasubag_id' => auth()->id(),
+            'approved_by_kasubag_date' => now(),
             'komentar' => $request->komentar
         ]);
+
+        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+        // --- 1. NOTIFIKASI KE TAMU (DITOLAK) ---
+        if ($peminjaman->nomor_kontak) {
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+            $pesanTamu = "*Peminjaman Gedung DITOLAK*\n\n";
+            $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+            $pesanTamu .= "Maaf, pengajuan peminjaman fasilitas Anda ditolak oleh Kasubag:\n\n";
+            $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanTamu .= "📅 *Tanggal:* {$peminjaman->tanggal_pinjam} s/d {$peminjaman->tanggal_kembali}\n";
+            $pesanTamu .= "💬 *Catatan Kasubag:* " . $request->komentar . "\n\n";
+            $pesanTamu .= "Silakan hubungi Admin Sarpras untuk informasi lebih lanjut.";
+
+            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
+        }
+
+        // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DITOLAK) ---
+        $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+        if ($adminSarpras && $adminSarpras->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+            $pesanAdmin = "*Info Penolakan Kasubag (Gedung)*\n\n";
+            $pesanAdmin .= "Halo Admin Sarpras,\n";
+            $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman fasilitas dari Tamu:\n\n";
+            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
+            $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
+            $pesanAdmin .= "💬 *Catatan Kasubag:* " . $request->komentar;
+
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
 
         return response()->json([
             'success' => true,
@@ -157,22 +260,22 @@ class KasubagController extends Controller
     public function downloadSurat(PeminjamanGedung $peminjaman)
     {
         if (!$peminjaman->surat_path || !Storage::disk('public')->exists($peminjaman->surat_path)) {
-        return back()->with('error', 'Surat peminjaman tidak ditemukan!');
-    }
+            return back()->with('error', 'Surat peminjaman tidak ditemukan!');
+        }
 
-    $filePath = storage_path('app/public/' . $peminjaman->surat_path);
-    $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
-    $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." . 
-                    pathinfo($originalName, PATHINFO_EXTENSION);
+        $filePath = storage_path('app/public/' . $peminjaman->surat_path);
+        $originalName = pathinfo($peminjaman->surat_path, PATHINFO_BASENAME);
+        $downloadName = "Surat_Peminjaman_{$peminjaman->nama_lengkap}_{$peminjaman->id}." .
+            pathinfo($originalName, PATHINFO_EXTENSION);
 
-    return response()->download($filePath, $downloadName);
+        return response()->download($filePath, $downloadName);
     }
 
     // Method untuk detail JSON (API)
     public function show(PeminjamanGedung $peminjaman)
     {
         $peminjaman->load(['user', 'gedung', 'reviewer', 'approver']);
-        
+
         return response()->json([
             'id' => $peminjaman->id,
             'gedung' => $peminjaman->gedung ? [
@@ -208,7 +311,7 @@ class KasubagController extends Controller
     // ====================================================================
     // PEMINJAMAN BARANG (ASET TETAP)
     // ====================================================================
-    
+
     public function persetujuanPeminjamanBarang(Request $request)
     {
         // 1. Hitung Statistik Ringkasan
@@ -233,9 +336,9 @@ class KasubagController extends Controller
     public function detailPeminjamanBarang($id)
     {
         $peminjaman = \App\Models\PeminjamanBarang::with('user')->findOrFail($id);
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'data' => $peminjaman
         ]);
     }
@@ -253,7 +356,6 @@ class KasubagController extends Controller
             $peminjaman->save(); // Simpan paksa mengabaikan fillable/guarded
 
             $pesan = 'Peminjaman berhasil disetujui.';
-            
         } elseif ($request->action == 'tolak') {
             // 🔥 CARA MANUAL UNTUK TOLAK
             $peminjaman->status = 'ditolak';
@@ -265,10 +367,59 @@ class KasubagController extends Controller
             $pesan = 'Peminjaman berhasil ditolak.';
         }
 
+        $pegawai = $peminjaman->user;
+        // 1. NOTIFIKASI KE PEGAWAI
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+            if ($request->action == 'setuju') {
+                $pesanPegawai = "*Peminjaman Barang DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan peminjaman barang Anda telah disetujui oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$peminjaman->jumlah}\n";
+                $pesanPegawai .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n\n";
+                $pesanPegawai .= "Admin akan segera membuatkan Surat BAST. Silakan cek sistem secara berkala.";
+            } else {
+                $pesanPegawai = "*Peminjaman Barang DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan peminjaman barang Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
+            }
+
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN ASET TETAP
+        // Saya gunakan whereIn agar aman jika penulisan rolenya 'adminasettetap' atau 'admin_aset_tetap'
+        $adminAset = \App\Models\User::whereIn('role', ['admin_aset_tetap', 'adminasettetap'])->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action == 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Barang)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman barang dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "Silakan login ke sistem untuk men-generate Surat BAST.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Barang)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman barang dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
+
         return back()->with('success', $pesan);
     }
 
-     //PEMINJAMAN KENDARAAN
+    //PEMINJAMAN KENDARAAN
     public function persetujuanPeminjamanKendaraan()
     {
         // Mengambil data peminjaman kendaraan yang relevan untuk Kasubag
@@ -310,6 +461,53 @@ class KasubagController extends Controller
         $peminjaman->approved_by_kasubag_date = now();
         $peminjaman->save();
 
+        $pegawai = $peminjaman->user;
+        // 1. NOTIFIKASI KE PEGAWAI
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+            if ($request->action == 'setuju') {
+                $pesanPegawai = "*Peminjaman Kendaraan DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan peminjaman kendaraan dinas Anda telah disetujui oleh Kasubag:\n\n";
+                $pesanPegawai .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n\n";
+                $pesanPegawai .= "Admin akan segera membuatkan Surat BAST. Silakan cek sistem secara berkala.";
+            } else {
+                $pesanPegawai = "*Peminjaman Kendaraan DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan peminjaman kendaraan dinas Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin untuk informasi lebih lanjut.";
+            }
+
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN ASET TETAP
+        $adminAset = \App\Models\User::whereIn('role', ['admin_aset_tetap', 'adminasettetap'])->first();
+        if ($adminAset && $adminAset->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminAset->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action == 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Kendaraan)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman kendaraan dinas dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "Silakan login ke sistem untuk men-generate Surat BAST Kendaraan.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Kendaraan)*\n\n";
+                $pesanAdmin .= "Halo Admin Aset Tetap,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* peminjaman kendaraan dinas dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
+
         return back()->with('success', $pesan);
     }
 
@@ -328,7 +526,7 @@ class KasubagController extends Controller
         ]);
     }
 
-     
+
     //PERMINTAAN PERSEDIAAN
     public function persetujuanPermintaanPersediaan()
     {
@@ -339,10 +537,10 @@ class KasubagController extends Controller
         ];
 
         $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
-                    ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
-                    ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") // Yang belum direview ditaruh paling atas
-                    ->latest()
-                    ->get();
+            ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
+            ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") // Yang belum direview ditaruh paling atas
+            ->latest()
+            ->get();
 
         // BENAR: Gunakan compact('permintaan') untuk mengirim data
         return view('kasubag.persetujuan_permintaan_persediaan', compact('permintaan', 'stats'));
@@ -366,6 +564,54 @@ class KasubagController extends Controller
             ]);
         }
 
+        $pegawai = $permintaan->user;
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+            if ($request->action === 'setuju') {
+                $pesanPegawai = "*Permintaan Persediaan DISETUJUI*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Permintaan barang persediaan Anda telah disetujui Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanPegawai .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin Persediaan untuk pengambilan barang.";
+            } else {
+                $pesanPegawai = "*Permintaan Persediaan DITOLAK*\n\n";
+                $pesanPegawai .= "Halo {$pegawai->name},\n";
+                $pesanPegawai .= "Maaf, permintaan barang persediaan Anda ditolak oleh Kasubag:\n\n";
+                $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanPegawai .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
+            }
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
+        }
+
+        // 2. NOTIFIKASI KE ADMIN PERSEDIAAN
+        $adminPersediaan = \App\Models\User::where('role', 'admin_persediaan')->first();
+        if ($adminPersediaan && $adminPersediaan->nomor_telepon) {
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
+            $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
+
+            if ($request->action === 'setuju') {
+                $pesanAdmin = "*Info Persetujuan Kasubag (Persediaan)*\n\n";
+                $pesanAdmin .= "Halo Admin Persediaan,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* permintaan barang persediaan dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanAdmin .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n\n";
+                $pesanAdmin .= "Silakan siapkan barang tersebut untuk diserahkan ke pegawai terkait.";
+            } else {
+                $pesanAdmin = "*Info Penolakan Kasubag (Persediaan)*\n\n";
+                $pesanAdmin .= "Halo Admin Persediaan,\n";
+                $pesanAdmin .= "Kasubag telah *MENOLAK* permintaan persediaan dari {$namaPegawai}:\n\n";
+                $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
+            }
+            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+        }
+
         return back()->with('success', 'Permintaan berhasil diproses!');
     }
 
@@ -376,7 +622,7 @@ class KasubagController extends Controller
     {
         // Ambil data beserta relasinya
         $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
-                        ->findOrFail($id);
+            ->findOrFail($id);
 
         return view('kasubag.detail_permintaan_persediaan', compact('permintaan'));
     }

@@ -1,59 +1,364 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Dokumentasi Models Sistem Manajemen Aset dan Persediaan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📋 Daftar Models dan Tabel Database
 
-## About Laravel
+### 1. **AssetTetap** (aset_tetap)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Deskripsi**: Menyimpan data aset tetap yang dimiliki organisasi
+**Relasi**:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- `hasMany(TransaksiMasukAssetTetap)` - Transaksi masuk aset
+- `hasMany(TransaksiKeluarAssetTetap)` - Transaksi keluar aset
+- `hasMany(PeminjamanKendaraan)` - Peminjaman kendaraan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Kolom Utama**:
 
-## Learning Laravel
+- kode_aset (unique)
+- nama_aset
+- kategori
+- jumlah
+- nilai_awal / nilai_sekarang
+- lokasi
+- status (aktif, nonaktif, rusak)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. **Persediaan** (persediaan)
 
-## Laravel Sponsors
+**Deskripsi**: Menyimpan data barang persediaan yang tersedia
+**Relasi**:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- `hasMany(PermintaanPersediaan)` - Permintaan barang
+- `hasMany(TransaksiMasukPersediaan)` - Transaksi masuk
+- `hasMany(TransaksiKeluarPersediaan)` - Transaksi keluar
 
-### Premium Partners
+**Kolom Utama**:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- kode_persediaan (unique)
+- nama_barang
+- kategori
+- satuan
+- jumlah_stok
+- jumlah_minimum
+- harga_satuan
+- status
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. **Gedung** (gedung)
 
-## Code of Conduct
+**Deskripsi**: Menyimpan data ruang/gedung yang dapat dipinjam
+**Relasi**:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- `hasMany(PeminjamanGedung)` - Peminjaman gedung
 
-## Security Vulnerabilities
+**Kolom Utama**:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- kode_gedung (unique)
+- nama_gedung
+- lokasi
+- luas_bangunan
+- tipe_ruang
+- kapasitas
+- fasilitas
+- status
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 4. **PeminjamanGedung** (peminjaman_gedung)
+
+**Deskripsi**: Mencatat peminjaman gedung/ruang
+**Relasi**:
+
+- `belongsTo(Gedung)` - Gedung yang dipinjam
+- `belongsTo(User)` - Peminjam
+- `hasMany(PengembalianBarang)` - Pengembalian barang
+
+**Kolom Utama**:
+
+- nomor_peminjaman (unique)
+- gedung_id
+- user_id
+- tanggal_mulai / tanggal_selesai
+- keperluan
+- status (pending, approved, rejected, selesai)
+
+---
+
+### 5. **PeminjamanKendaraan** (peminjaman_kendaraan)
+
+**Deskripsi**: Mencatat peminjaman kendaraan (aset tetap yang berupa kendaraan)
+**Relasi**:
+
+- `belongsTo(AssetTetap)` - Kendaraan yang dipinjam
+- `belongsTo(User)` - Peminjam
+- `hasMany(PengembalianKendaraan)` - Pengembalian kendaraan
+
+**Kolom Utama**:
+
+- nomor_peminjaman (unique)
+- aset_tetap_id
+- user_id
+- tanggal_mulai / tanggal_selesai_direncanakan
+- tujuan
+- sopir
+- jumlah_bahan_bakar
+- status (pending, approved, digunakan, dikembalikan)
+
+---
+
+### 6. **PermintaanPersediaan** (permintaan_persediaan)
+
+**Deskripsi**: Mencatat permintaan/pengajuan barang persediaan
+**Relasi**:
+
+- `belongsTo(Persediaan)` - Barang yang diminta
+- `belongsTo(User)` - Peminta
+- `hasMany(TransaksiKeluarPersediaan)` - Pengeluaran barang
+
+**Kolom Utama**:
+
+- nomor_permintaan (unique)
+- persediaan_id
+- user_id
+- jumlah_diminta
+- tanggal_permintaan / tanggal_dibutuhkan
+- keperluan
+- status (pending, approved, rejected, selesai)
+
+---
+
+### 7. **PengembalianBarang** (pengembalian_barang)
+
+**Deskripsi**: Mencatat pengembalian barang dari peminjaman gedung
+**Relasi**:
+
+- `belongsTo(PeminjamanGedung)` - Peminjaman terkait
+- `belongsTo(User)` - Yang mengembalikan
+
+**Kolom Utama**:
+
+- nomor_pengembalian (unique)
+- peminjaman_gedung_id
+- user_id
+- tanggal_pengembalian
+- kondisi (baik, rusak, hilang)
+- keterangan_kondisi
+- biaya_kerusakan
+- catatan
+
+---
+
+### 8. **PengembalianKendaraan** (pengembalian_kendaraan)
+
+**Deskripsi**: Mencatat pengembalian kendaraan dari peminjaman
+**Relasi**:
+
+- `belongsTo(PeminjamanKendaraan)` - Peminjaman terkait
+- `belongsTo(AssetTetap)` - Kendaraan
+- `belongsTo(User)` - Yang mengembalikan
+
+**Kolom Utama**:
+
+- nomor_pengembalian (unique)
+- peminjaman_kendaraan_id
+- aset_tetap_id
+- user_id
+- tanggal_pengembalian
+- km_awal / km_akhir
+- kondisi (baik, rusak, hilang)
+- keterangan_kondisi
+- biaya_perbaikan
+- catatan
+
+---
+
+### 9. **TransaksiMasukAssetTetap** (transaksi_masuk_aset_tetap)
+
+**Deskripsi**: Mencatat transaksi masuk/penerimaan aset tetap
+**Relasi**:
+
+- `belongsTo(AssetTetap)` - Aset yang masuk
+- `belongsTo(User)` - User pencatat
+
+**Kolom Utama**:
+
+- nomor_transaksi (unique)
+- aset_tetap_id
+- user_id
+- tanggal_masuk
+- supplier
+- nomor_referensi (PO, Faktur, dll)
+- jumlah_masuk
+- nilai_perolehan
+- keterangan
+
+---
+
+### 10. **TransaksiMasukPersediaan** (transaksi_masuk_persediaan)
+
+**Deskripsi**: Mencatat transaksi masuk/penerimaan persediaan
+**Relasi**:
+
+- `belongsTo(Persediaan)` - Persediaan yang masuk
+- `belongsTo(User)` - User pencatat
+
+**Kolom Utama**:
+
+- nomor_transaksi (unique)
+- persediaan_id
+- user_id
+- tanggal_masuk
+- supplier
+- nomor_referensi
+- jumlah_masuk
+- harga_satuan
+- keterangan
+
+---
+
+### 11. **TransaksiKeluarPersediaan** (transaksi_keluar_persediaan)
+
+**Deskripsi**: Mencatat transaksi keluar/pengeluaran persediaan
+**Relasi**:
+
+- `belongsTo(Persediaan)` - Persediaan yang keluar
+- `belongsTo(PermintaanPersediaan)` - Permintaan terkait (opsional)
+- `belongsTo(User)` - User pencatat
+
+**Kolom Utama**:
+
+- nomor_transaksi (unique)
+- persediaan_id
+- permintaan_persediaan_id (nullable)
+- user_id
+- tanggal_keluar
+- jumlah_keluar
+- penerima
+- tujuan
+- keterangan
+
+---
+
+### 12. **TransaksiKeluarAssetTetap** (transaksi_keluar_aset_tetap)
+
+**Deskripsi**: Mencatat transaksi keluar/pengeluaran aset tetap
+**Relasi**:
+
+- `belongsTo(AssetTetap)` - Aset yang keluar
+- `belongsTo(User)` - User pencatat
+
+**Kolom Utama**:
+
+- nomor_transaksi (unique)
+- aset_tetap_id
+- user_id
+- tanggal_keluar
+- jumlah_keluar
+- alasan_keluar (dijual, dihapuskan, dipindahkan, rusak)
+- penerima
+- keterangan
+
+---
+
+## 🔄 Alur Proses Utama Sistem
+
+### **Alur Manajemen Aset Tetap**
+
+1. Aset masuk melalui **TransaksiMasukAssetTetap**
+2. Aset dapat dipinjam melalui **PeminjamanKendaraan** (khusus kendaraan)
+3. Pengembalian dicatat di **PengembalianKendaraan**
+4. Aset keluar melalui **TransaksiKeluarAssetTetap**
+
+### **Alur Manajemen Persediaan**
+
+1. Persediaan masuk melalui **TransaksiMasukPersediaan**
+2. User membuat **PermintaanPersediaan**
+3. Persediaan dikeluarkan melalui **TransaksiKeluarPersediaan** (terhubung dengan permintaan)
+4. Stok persediaan berkurang setiap ada pengeluaran
+
+### **Alur Peminjaman Gedung**
+
+1. User membuat **PeminjamanGedung** (status: pending)
+2. Admin approve/reject permintaan
+3. Barang/perlengkapan gedung dikembalikan melalui **PengembalianBarang**
+4. Kondisi barang dicatat (baik/rusak/hilang)
+
+### **Alur Peminjaman Kendaraan**
+
+1. User membuat **PeminjamanKendaraan** (status: pending)
+2. Admin approve/reject permintaan
+3. Kendaraan digunakan oleh peminjam
+4. Kendaraan dikembalikan melalui **PengembalianKendaraan**
+5. Kondisi kendaraan (km, rusak) dicatat
+
+---
+
+## 🗄️ Catatan Teknis
+
+### Constraints Penting:
+
+- Foreign key `constrained('tabel')->onDelete('cascade')`: Jika parent dihapus, child otomatis terhapus
+- Foreign key `nullable()->constrained('tabel')->onDelete('set null')`: Jika parent dihapus, child ForeignKey diset NULL
+- Kolom `nomor_*` menggunakan UNIQUE untuk memastikan uniqueness nomor transaksi
+
+### Timestamps:
+
+Semua tabel memiliki `created_at` dan `updated_at` otomatis dari Laravel
+
+### Status Values:
+
+- **AssetTetap**: aktif, nonaktif, rusak
+- **Persediaan**: aktif, nonaktif
+- **PeminjamanGedung**: pending, approved, rejected, selesai
+- **PeminjamanKendaraan**: pending, approved, digunakan, dikembalikan
+- **PermintaanPersediaan**: pending, approved, rejected, selesai
+- **Pengembalian**: baik, rusak, hilang
+- **Alasan Keluar Aset**: dijual, dihapuskan, dipindahkan, rusak
+
+---
+
+## 📝 Cara Menggunakan Models
+
+```php
+// Import Model
+use App\Models\AssetTetap;
+
+// Create
+$asset = AssetTetap::create([
+    'kode_aset' => 'AT001',
+    'nama_aset' => 'Laptop Dell',
+    'kategori' => 'Elektronik',
+    'jumlah' => 1,
+]);
+
+// Read
+$assets = AssetTetap::all();
+$asset = AssetTetap::find(1);
+
+// Update
+$asset->update(['status' => 'nonaktif']);
+
+// Delete
+$asset->delete();
+
+// Relasi
+$transaksiMasuk = $asset->transaksiMasuk()->get();
+```
+
+---
+
+## 🚀 Langkah Selanjutnya (Jika Diperlukan)
+
+1. Buat **Controllers** untuk setiap model
+2. Buat **Resources** untuk API response
+3. Buat **Requests** untuk validation
+4. Buat **Routes** di `routes/web.php` atau `routes/api.php`
+5. Buat **Views** untuk UI
+6. Jalankan migrations: `php artisan migrate`
+
+## 🚀 Running Job Notifikasi
+
+```php
+php artisan queue:work
+```

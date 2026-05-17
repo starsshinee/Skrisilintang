@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PersediaanTemplateExport;
+use App\Imports\PersediaanImport;
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +18,14 @@ use App\Models\{
     TransaksiKeluarPersediaan,
     TransaksiMasukPersediaan,
 };
-  
+use App\Services\FonnteService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminPersediaanController extends Controller
 {
     public function dashboard()
     {
-        
+
         $bulanIni = now()->month;
         $tahunIni = now()->year;
 
@@ -31,9 +35,9 @@ class AdminPersediaanController extends Controller
 
         // 2. Transaksi Bulan Ini
         $masukBulanIni = \App\Models\TransaksiMasukPersediaan::whereMonth('tanggal_input', $bulanIni)
-                            ->whereYear('tanggal_input', $tahunIni)->count();
+            ->whereYear('tanggal_input', $tahunIni)->count();
         $keluarBulanIni = \App\Models\TransaksiKeluarPersediaan::whereMonth('tanggal_input', $bulanIni)
-                            ->whereYear('tanggal_input', $tahunIni)->count();
+            ->whereYear('tanggal_input', $tahunIni)->count();
 
         // 3. Status Permintaan Persediaan
         $permintaanPending = \App\Models\PermintaanPersediaan::whereIn('status', ['pending', 'dalam_review'])->count();
@@ -46,7 +50,7 @@ class AdminPersediaanController extends Controller
         $maxChart = 1; // Mencegah division by zero
         for ($i = 1; $i <= 12; $i++) {
             $count = \App\Models\TransaksiKeluarPersediaan::whereMonth('tanggal_input', $i)
-                        ->whereYear('tanggal_input', $tahunIni)->count();
+                ->whereYear('tanggal_input', $tahunIni)->count();
             $chartData[$i] = $count;
             if ($count > $maxChart) {
                 $maxChart = $count;
@@ -54,9 +58,17 @@ class AdminPersediaanController extends Controller
         }
 
         return view('adminpersediian.dashbord', compact(
-            'totalPersediaan', 'totalNilaiPersediaan', 'masukBulanIni', 'keluarBulanIni',
-            'permintaanPending', 'permintaanDisetujui', 'permintaanDitolak', 'totalPermintaan',
-            'chartData', 'maxChart', 'tahunIni'
+            'totalPersediaan',
+            'totalNilaiPersediaan',
+            'masukBulanIni',
+            'keluarBulanIni',
+            'permintaanPending',
+            'permintaanDisetujui',
+            'permintaanDitolak',
+            'totalPermintaan',
+            'chartData',
+            'maxChart',
+            'tahunIni'
         ));
     }
 
@@ -64,12 +76,12 @@ class AdminPersediaanController extends Controller
     public function dataPersediaan(Request $request)
     {
         $query = Persediaan::query();
-        
+
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('kode_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kategori', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -154,7 +166,7 @@ class AdminPersediaanController extends Controller
 
     // 📤 Transaksi Keluar
     //=========TRANSAKSI KELUAR PERSEDIAAN========//
-    
+
     /** INDEX - Tampilkan daftar transaksi keluar */
     public function transaksiKeluar(Request $request)
     {
@@ -162,12 +174,12 @@ class AdminPersediaanController extends Controller
 
         // Search
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('kode_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-                  ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
-                  ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
-                  ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nomor_transaksi', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_kategori', 'like', '%' . $request->search . '%')
+                    ->orWhere('kategori', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -182,7 +194,7 @@ class AdminPersediaanController extends Controller
         }
 
         $transaksi = $query->latest('tanggal_input')->paginate(10);
-        
+
         return view('adminpersediian.transaksi_keluar', compact('transaksi'));
     }
 
@@ -190,9 +202,9 @@ class AdminPersediaanController extends Controller
     public function createTransaksiKeluar()
     {
         $persediaan = Persediaan::select('kode_barang', 'nama_barang')
-                               ->orderBy('kategori')
-                               ->get();
-        
+            ->orderBy('kategori')
+            ->get();
+
         return view('adminpersediian.form_transaksi_keluar', compact('persediaan'));
     }
 
@@ -214,7 +226,7 @@ class AdminPersediaanController extends Controller
         $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
         if (!$persediaan || $persediaan->jumlah < $request->jumlah_keluar) {
             return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
-                        ->withInput();
+                ->withInput();
         }
 
         // Simpan transaksi
@@ -227,6 +239,35 @@ class AdminPersediaanController extends Controller
             ->with('success', 'Transaksi keluar berhasil disimpan!');
     }
 
+    // ========== DOWNLOAD TEMPLATE EXCEL PERSEDIAAN ==========
+    public function downloadTemplate()
+    {
+        return Excel::download(new PersediaanTemplateExport, 'Template_Import_Persediaan.xlsx');
+    }
+
+    // ========== PROSES IMPORT EXCEL PERSEDIAAN ==========
+    public function importPersediaan(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file_excel.mimes'    => 'Format file harus .xlsx, .xls, atau .csv.',
+            'file_excel.max'      => 'Ukuran file maksimal 5MB.'
+        ]);
+
+        try {
+            Excel::import(new PersediaanImport, $request->file('file_excel'));
+
+            return redirect()->route('adminpersediaan.data-persediaan')
+                ->with('success', 'Data Persediaan berhasil diimport secara massal!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            return back()->withErrors(['error' => 'Gagal mengimpor file! Pastikan format tabel sesuai dengan template.']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Terjadi kesalahan sistem: ' . $e->getMessage()]);
+        }
+    }
+
     /** SHOW - Detail transaksi */
     public function showTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
     {
@@ -237,9 +278,9 @@ class AdminPersediaanController extends Controller
     public function editTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
     {
         $persediaan = Persediaan::select('kode_barang', 'nama_barang')
-                               ->orderBy('kategori')
-                               ->get();
-        
+            ->orderBy('kategori')
+            ->get();
+
         return view('adminpersediian.form_transaksi_keluar', [
             'transaksi' => $transaksiKeluar,
             'persediaan' => $persediaan
@@ -262,43 +303,43 @@ class AdminPersediaanController extends Controller
         ]);
 
         // 🔥 VALIDASI STOK: Cek apakah kode barang berubah
-    $persediaanLama = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
-    $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        $persediaanLama = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
+        $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
 
-    // Cek stok persediaan BARU
-    if (!$persediaanBaru || $persediaanBaru->jumlah < $request->jumlah_keluar) {
-        return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
-                    ->withInput();
-    }
-
-    // 🔥 Backup data lama untuk adjust stok
-    $oldJumlahKeluar = $transaksiKeluar->jumlah_keluar;
-    $oldKodeBarang = $transaksiKeluar->kode_barang;
-    $kodeBarangBerubah = $oldKodeBarang !== $request->kode_barang;
-
-    // 🔥 SATU KALI UPDATE SAJA - Biarkan mutator handle total
-    $transaksiKeluar->update($request->all());
-
-    //🔥 Adjust stok persediaan
-    if ($kodeBarangBerubah) {
-        // Kembalikan stok BARANG LAMA
-        if ($persediaanLama) {
-            $persediaanLama->increment('jumlah', $oldJumlahKeluar);
+        // Cek stok persediaan BARU
+        if (!$persediaanBaru || $persediaanBaru->jumlah < $request->jumlah_keluar) {
+            return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
+                ->withInput();
         }
-        // Kurangi stok BARANG BARU
-        $persediaanBaru->decrement('jumlah', $request->jumlah_keluar);
-    } else {
-        // Sama barang, adjust selisih jumlah
-        $selisih = $oldJumlahKeluar - $request->jumlah_keluar;
-        if ($selisih > 0) {
-            $persediaanBaru->increment('jumlah', $selisih);
-        } elseif ($selisih < 0) {
-            $persediaanBaru->decrement('jumlah', abs($selisih));
-        }
-    }
 
-    return redirect()->route('adminpersediaan.transaksi-keluar')
-        ->with('success', 'Transaksi keluar berhasil diupdate!');
+        // 🔥 Backup data lama untuk adjust stok
+        $oldJumlahKeluar = $transaksiKeluar->jumlah_keluar;
+        $oldKodeBarang = $transaksiKeluar->kode_barang;
+        $kodeBarangBerubah = $oldKodeBarang !== $request->kode_barang;
+
+        // 🔥 SATU KALI UPDATE SAJA - Biarkan mutator handle total
+        $transaksiKeluar->update($request->all());
+
+        //🔥 Adjust stok persediaan
+        if ($kodeBarangBerubah) {
+            // Kembalikan stok BARANG LAMA
+            if ($persediaanLama) {
+                $persediaanLama->increment('jumlah', $oldJumlahKeluar);
+            }
+            // Kurangi stok BARANG BARU
+            $persediaanBaru->decrement('jumlah', $request->jumlah_keluar);
+        } else {
+            // Sama barang, adjust selisih jumlah
+            $selisih = $oldJumlahKeluar - $request->jumlah_keluar;
+            if ($selisih > 0) {
+                $persediaanBaru->increment('jumlah', $selisih);
+            } elseif ($selisih < 0) {
+                $persediaanBaru->decrement('jumlah', abs($selisih));
+            }
+        }
+
+        return redirect()->route('adminpersediaan.transaksi-keluar')
+            ->with('success', 'Transaksi keluar berhasil diupdate!');
     }
 
     /** DESTROY - Hapus transaksi keluar */
@@ -317,19 +358,19 @@ class AdminPersediaanController extends Controller
     }
 
     // 📥 Transaksi Masuk Persediaan
-/** INDEX - Tampilkan daftar transaksi masuk */
+    /** INDEX - Tampilkan daftar transaksi masuk */
     public function transaksiMasuk(Request $request)
     {
         $query = TransaksiMasukPersediaan::query();
 
         // Search
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('kode_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('no', 'like', '%'.$request->search.'%')
-                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
-                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('no', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_kategori', 'like', '%' . $request->search . '%')
+                    ->orWhere('kategori', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -344,7 +385,7 @@ class AdminPersediaanController extends Controller
         }
 
         $transaksi = $query->latest('tanggal_input')->paginate(10);
-        
+
         return view('adminpersediian.transaksi_masuk', compact('transaksi'));
     }
 
@@ -483,36 +524,36 @@ class AdminPersediaanController extends Controller
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil dihapus!');
     }
-    
+
     //PERMINTAAN PERSEDIAAN
     public function permintaanPersediaan(Request $request)
     {
-       $query = PermintaanPersediaan::with(['user', 'persediaan', 'reviewedBy'])
-                               ->latest();
+        $query = PermintaanPersediaan::with(['user', 'persediaan', 'reviewedBy'])
+            ->latest();
 
-    if ($request->filled('search')) {
-        $query->where(function($q) use ($request) {
-            $q->whereHas('persediaan', fn($x) => $x->where('nama_barang', 'like', '%'.$request->search.'%'))
-              ->orWhere('nama_lengkap', 'like', '%'.$request->search.'%');
-        });
-    }
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('persediaan', fn($x) => $x->where('nama_barang', 'like', '%' . $request->search . '%'))
+                    ->orWhere('nama_lengkap', 'like', '%' . $request->search . '%');
+            });
+        }
 
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-    $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
-                    ->latest()
-                    ->get();
+        $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
+            ->latest()
+            ->get();
 
-    $permintaan = $query->paginate(10);
-    return view('adminpersediian.permintaan_persediaan', compact('permintaan'));
+        $permintaan = $query->paginate(10);
+        return view('adminpersediian.permintaan_persediaan', compact('permintaan'));
     }
 
     public function showPermintaan($id)
     {
         $permintaan = PermintaanPersediaan::with(['persediaan', 'user', 'reviewedBy', 'approvedByKasubag'])
-                        ->findOrFail($id);
+            ->findOrFail($id);
 
         return view('adminpersediian.detail_permintaan', compact('permintaan'));
     }
@@ -523,21 +564,67 @@ class AdminPersediaanController extends Controller
             return back()->with('error', 'Permintaan sudah diproses!');
         }
 
+        $namaPegawai = $permintaan->user->name ?? 'Pegawai';
+
         if ($request->action === 'teruskan') {
+            // --- 1. JIKA DITERUSKAN KE KASUBAG ---
             $permintaan->update([
                 'status' => 'dalam_review',
                 'reviewed_by_adminpersediaan_id' => Auth::id(),
             ]);
-            
-            return back()->with('success', 'Permintaan diteruskan ke Kasubag!');
+
+            $pesanFlash = 'Permintaan diteruskan ke Kasubag!';
+
+            // Notifikasi ke Kasubag
+            $kasubag = User::where('role', 'kasubag')->first();
+
+            // Catatan: Pastikan kolom di database Anda 'nomor_telepon' atau 'no_hp'
+            // Jika sebelumnya pakai nomor_telepon, ganti $kasubag->no_hp jadi $kasubag->nomor_telepon
+            if ($kasubag && $kasubag->nomor_telepon) {
+                // Bersihkan format nomor WA
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+
+                $pesanWa = "*Persetujuan Permintaan Persediaan*\n\n";
+                $pesanWa .= "Yth. Kasubag,\n";
+                $pesanWa .= "Admin Persediaan meneruskan permintaan barang persediaan untuk disetujui:\n\n";
+                $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
+                $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
+
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
+            }
+        } else {
+            // --- 2. JIKA DITOLAK OLEH ADMIN ---
+            $permintaan->update([
+                'status' => 'ditolak',
+                'reviewed_by_adminpersediaan_id' => Auth::id(),
+                // Jika ada field komentar penolakan dari admin persediaan, bisa ditambahkan di sini:
+                // 'komentar' => $request->komentar, 
+            ]);
+
+            $pesanFlash = 'Permintaan berhasil ditolak!';
+
+            // Notifikasi Penolakan ke Pegawai
+            $pegawai = $permintaan->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+                $pesanWa = "*Permintaan Persediaan DITOLAK Admin*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Maaf, pengajuan barang persediaan Anda telah *ditolak* oleh Admin Persediaan.\n\n";
+                $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "💬 *Catatan:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanWa .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
+
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
+            }
         }
 
-        $permintaan->update([
-            'status' => 'ditolak',
-            'reviewed_by_adminpersediaan_id' => Auth::id(),
-        ]);
-
-        return back()->with('success', 'Permintaan ditolak!');
+        // Return dieksekusi paling akhir, setelah WA dikirim
+        return back()->with('success', $pesanFlash);
     }
 
     // 1. FUNGSI GENERATE SURAT (Dilengkapi TTD Base64)
@@ -545,7 +632,7 @@ class AdminPersediaanController extends Controller
     {
         // Ambil data user terkait
         $peminjam = $permintaan->user;
-        $admin = Auth::user(); 
+        $admin = Auth::user();
         $kasubag = User::where('role', 'kasubag')->first(); // Ambil akun kasubag
         $kepala = User::where('role', 'kepalabpmp')->first(); // Ambil akun kepala
 
@@ -567,8 +654,15 @@ class AdminPersediaanController extends Controller
 
         // Load View PDF
         $pdf = PDF::loadView('surat.permintaan_persediaan', compact(
-            'permintaan', 'peminjam', 'admin', 'kasubag', 'kepala',
-            'ttdPeminjam', 'ttdAdmin', 'ttdKasubag', 'ttdKepala'
+            'permintaan',
+            'peminjam',
+            'admin',
+            'kasubag',
+            'kepala',
+            'ttdPeminjam',
+            'ttdAdmin',
+            'ttdKasubag',
+            'ttdKepala'
         ));
 
         return $pdf->download('Berita_Acara_Permintaan_' . $permintaan->id . '.pdf');
@@ -637,7 +731,7 @@ class AdminPersediaanController extends Controller
         }
 
         // 6. Data Tab Gabungan (Dikelompokkan berdasarkan Pemohon)
-        $summaryData = $permintaan->groupBy('nama_lengkap')->map(function($group) {
+        $summaryData = $permintaan->groupBy('nama_lengkap')->map(function ($group) {
             return [
                 'total' => $group->count(),
                 'disetujui' => $group->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
@@ -647,21 +741,28 @@ class AdminPersediaanController extends Controller
         });
 
         return view('adminpersediian.laporan_permintaan_persediaan', compact(
-            'permintaan', 'stats', 'statsBulanIni', 'approvalRate', 'avgItems', 'monthlyData', 'maxMonth', 'summaryData'
+            'permintaan',
+            'stats',
+            'statsBulanIni',
+            'approvalRate',
+            'avgItems',
+            'monthlyData',
+            'maxMonth',
+            'summaryData'
         ));
     }
     // LAPORAN TRANSAKSI MASUK
 
-        public function laporanTransaksiMasuk(Request $request)
+    public function laporanTransaksiMasuk(Request $request)
     {
         $query = TransaksiMasukPersediaan::query();
-        
+
         // Filters...
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('kode_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('kode_transaksi', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_transaksi', 'like', '%' . $request->search . '%');
             });
         }
         if ($request->filled('tanggal_input')) {
@@ -683,70 +784,70 @@ class AdminPersediaanController extends Controller
     {
         $query = TransaksiMasukPersediaan::query();
 
-    // Filter sama persis
-    if ($request->filled('search')) {
-        $query->where(function($q) use ($request) {
-            $q->where('kode_barang', 'like', '%'.$request->search.'%')
-              ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-              ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
-              ->orWhere('kategori', 'like', '%'.$request->search.'%');
-        });
-    }
-
-    if ($request->filled('tanggal_input')) {
-        $query->whereDate('tanggal_input', $request->tanggal_input);
-    }
-
-    if ($request->filled('kode_kategori')) {
-        $query->where('kode_kategori', $request->kode_kategori);
-    }
-
-    $transaksi = $query->latest()->get(); // Semua data untuk PDF
-    
-    $stats = [
-        'total_transaksi' => $transaksi->count(),
-        'total_nilai' => $transaksi->sum('total'),
-        'total_item' => $transaksi->sum('jumlah_masuk'),
-    ];
-
-    // ✅ PAKAI BLADE YANG SUDAH ADA!
-    $pdf = PDF::loadView('adminpersediian.laporan_transaksimasuk_pdf', compact('transaksi', 'stats'));
-    
-    $filename = 'Laporan_Transaksi_Masuk_' . now()->format('d-m-Y_His') . '.pdf';
-    
-    return $pdf->download($filename);
-    }
-    /**
- * LAPORAN TRANSAKSI KELUAR - Index dengan chart & stats
- */
-    public function laporanTransaksiKeluar(Request $request)
-    {
-        $query = TransaksiKeluarPersediaan::query();
-        
-        // Filters
+        // Filter sama persis
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('kode_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nama_barang', 'like', '%'.$request->search.'%')
-                ->orWhere('nomor_transaksi', 'like', '%'.$request->search.'%')
-                ->orWhere('kode_kategori', 'like', '%'.$request->search.'%')
-                ->orWhere('kategori', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_kategori', 'like', '%' . $request->search . '%')
+                    ->orWhere('kategori', 'like', '%' . $request->search . '%');
             });
         }
-        
+
         if ($request->filled('tanggal_input')) {
             $query->whereDate('tanggal_input', $request->tanggal_input);
         }
-        
+
+        if ($request->filled('kode_kategori')) {
+            $query->where('kode_kategori', $request->kode_kategori);
+        }
+
+        $transaksi = $query->latest()->get(); // Semua data untuk PDF
+
+        $stats = [
+            'total_transaksi' => $transaksi->count(),
+            'total_nilai' => $transaksi->sum('total'),
+            'total_item' => $transaksi->sum('jumlah_masuk'),
+        ];
+
+        // ✅ PAKAI BLADE YANG SUDAH ADA!
+        $pdf = PDF::loadView('adminpersediian.laporan_transaksimasuk_pdf', compact('transaksi', 'stats'));
+
+        $filename = 'Laporan_Transaksi_Masuk_' . now()->format('d-m-Y_His') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+    /**
+     * LAPORAN TRANSAKSI KELUAR - Index dengan chart & stats
+     */
+    public function laporanTransaksiKeluar(Request $request)
+    {
+        $query = TransaksiKeluarPersediaan::query();
+
+        // Filters
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('nomor_transaksi', 'like', '%' . $request->search . '%')
+                    ->orWhere('kode_kategori', 'like', '%' . $request->search . '%')
+                    ->orWhere('kategori', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('tanggal_input')) {
+            $query->whereDate('tanggal_input', $request->tanggal_input);
+        }
+
         if ($request->filled('kode_kategori')) {
             $query->where('kode_kategori', $request->kode_kategori);
         }
 
         $transaksi = $query->latest()->paginate(10);
-        
+
         // 📊 CHART & STATS DATA
         $chartData = [];
-        
+
         // 1. Chart: Total Keluar per Bulan (12 bulan terakhir)
         $startDate = now()->subMonths(11)->startOfMonth();
         $monthlyData = TransaksiKeluarPersediaan::selectRaw('
@@ -759,22 +860,22 @@ class AdminPersediaanController extends Controller
             ->orderBy('bulan')
             ->get()
             ->keyBy('bulan');
-        
+
         $chartData['monthly'] = [
             'labels' => [],
             'jumlah_data' => [],
             'nilai_data' => []
         ];
-        
-        for($i = 11; $i >= 0; $i--) {
+
+        for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i)->format('Y-m');
             $monthName = now()->subMonths($i)->translatedFormat('M Y');
-            
+
             $chartData['monthly']['labels'][] = $monthName;
             $chartData['monthly']['jumlah_data'][] = (int)($monthlyData[$date]->total_jumlah ?? 0);
             $chartData['monthly']['nilai_data'][] = (int)($monthlyData[$date]->total_nilai ?? 0);
         }
-        
+
         // 2. Top 5 Kategori (berdasarkan jumlah keluar)
         $chartData['top_kategori'] = TransaksiKeluarPersediaan::selectRaw('
                 kode_kategori, kategori,
@@ -787,7 +888,7 @@ class AdminPersediaanController extends Controller
             ->orderByDesc('total_jumlah')
             ->limit(5)
             ->get();
-        
+
         // 3. Summary Stats
         $chartData['summary'] = [
             'total_transaksi' => TransaksiKeluarPersediaan::count(),
@@ -809,10 +910,10 @@ class AdminPersediaanController extends Controller
         // Terapkan filter yang sama dengan web
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('kode_barang', 'like', "%{$search}%")
-                  ->orWhere('nama_barang', 'like', "%{$search}%")
-                  ->orWhere('nomor_transaksi', 'like', "%{$search}%");
+                    ->orWhere('nama_barang', 'like', "%{$search}%")
+                    ->orWhere('nomor_transaksi', 'like', "%{$search}%");
             });
         }
         if ($request->filled('tanggal_input')) {
@@ -827,7 +928,7 @@ class AdminPersediaanController extends Controller
 
         // Generate PDF
         $pdf = Pdf::loadView('adminpersediian.pdf_laporan_transaksi_keluar', compact('transaksi'))
-                  ->setPaper('A4', 'landscape');
+            ->setPaper('A4', 'landscape');
 
         return $pdf->download('Laporan_Transaksi_Keluar_' . now()->format('Y-m-d') . '.pdf');
     }
@@ -846,11 +947,11 @@ class AdminPersediaanController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%'.$request->search.'%')
-                  ->orWhereHas('persediaan', function($p) use ($request) {
-                      $p->where('nama_barang', 'like', '%'.$request->search.'%');
-                  });
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhereHas('persediaan', function ($p) use ($request) {
+                        $p->where('nama_barang', 'like', '%' . $request->search . '%');
+                    });
             });
         }
 
@@ -863,7 +964,7 @@ class AdminPersediaanController extends Controller
 
         // Generate PDF
         $pdf = Pdf::loadView('adminpersediian.pdf_laporan_permintaan', compact('permintaan', 'totalItemDisetujui', 'totalTransaksiDisetujui'))
-                  ->setPaper('A4', 'landscape');
+            ->setPaper('A4', 'landscape');
 
         // Download file
         return $pdf->download('Laporan_Permintaan_Persediaan_' . now()->format('Y-m-d') . '.pdf');

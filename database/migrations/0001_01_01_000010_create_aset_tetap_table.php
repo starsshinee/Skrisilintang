@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('aset_tetap', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal_input')->default(now()->format('Y-m-d'));
-            $table->string('kode_barang')->unique();
-            $table->string('nup')->unique();
+            $table->string('kode_barang');
+            $table->string('nup');
             $table->string('nama_barang');
             $table->string('merek')->nullable();
             $table->string('kategori');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('kondisi', ['baik', 'rusak ringan', 'rusak berat'])->default('Baik');
             $table->enum('status', ['Tersedia', 'Keluar', 'Rusak', 'Dipinjam'])->nullable()->default('Tersedia');
             $table->timestamps();
-            
+
             $table->index(['kode_barang', 'nup', 'nama_barang']);
         });
     }

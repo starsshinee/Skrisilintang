@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
-
+use App\Exports\AsetTetapTemplateExport;
+use App\Imports\AsetTetapImport;
+use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,6 +28,7 @@ use App\Models\{
     PeminjamanKendaraan,
     PengembalianKendaraan,
 };
+use App\Services\FonnteService;
 
 class AdminAsettetapController extends Controller
 {
@@ -43,10 +45,10 @@ class AdminAsettetapController extends Controller
         ];
 
         $recentPengembalian = PengembalianBarang::with('peminjamanBarang', 'user')
-        ->where('status_verifikasi', 'pending')
-        ->latest()
-        ->limit(5)
-        ->get();
+            ->where('status_verifikasi', 'pending')
+            ->latest()
+            ->limit(5)
+            ->get();
 
         return view('adminasettetap.dashbord', compact('stats', 'recentPengembalian'));
     }
@@ -55,15 +57,15 @@ class AdminAsettetapController extends Controller
     public function dataAsetTetap(Request $request)
     {
         $query = AssetTetap::query()
-            ->when($request->filled('search'), function($q) use ($request) {
-                $q->where(function($subQ) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where(function ($subQ) use ($request) {
                     $subQ->where('nama_barang', 'like', "%{$request->search}%")
                         ->orWhere('kode_barang', 'like', "%{$request->search}%")
                         ->orWhere('nup', 'like', "%{$request->search}%")
                         ->orWhere('merek', 'like', "%{$request->search}%");
                 });
             })
-            ->when($request->filled('kondisi'), function($q) use ($request) {
+            ->when($request->filled('kondisi'), function ($q) use ($request) {
                 $q->where('kondisi', $request->kondisi);
             })
             ->orderBy('created_at', 'desc');
@@ -71,9 +73,9 @@ class AdminAsettetapController extends Controller
         $asetTetap = $query->paginate(15)->withQueryString();
 
         $asetTetapOptions = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'nup', 'lokasi', 'kondisi', 'merek', 'tanggal_perolehan', 'nilai_perolehan')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->where('status', 'Tersedia')
-                ->orWhereNull('status');
+                    ->orWhereNull('status');
             })
             ->orderBy('nama_barang', 'asc')
             ->orderBy('kode_barang', 'asc')
@@ -81,6 +83,37 @@ class AdminAsettetapController extends Controller
 
         // ✅ FIXED: Pass asetTetapOptions to view
         return view('adminasettetap.data_asettetap', compact('asetTetap', 'asetTetapOptions'));
+    }
+
+    // ========== DOWNLOAD TEMPLATE EXCEL ==========
+    public function downloadTemplate()
+    {
+        // Akan langsung mendownload file berekstensi .xlsx dengan desain dari class AsetTetapTemplateExport
+        return Excel::download(new AsetTetapTemplateExport, 'Template_Import_Aset_Tetap.xlsx');
+    }
+
+    // ========== PROSES IMPORT EXCEL ==========
+    public function importAset(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file_excel.mimes'    => 'Format file harus .xlsx, .xls, atau .csv.',
+            'file_excel.max'      => 'Ukuran file maksimal 5MB.'
+        ]);
+
+        try {
+            Excel::import(new AsetTetapImport, $request->file('file_excel'));
+
+            return redirect()->route('adminasettetap.data-aset-tetap')
+                ->with('success', 'Data Aset Tetap berhasil diimport secara massal!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            // Menangkap error jika header file Excel tidak sesuai standar
+            return back()->with('error', 'Gagal mengimpor file! Pastikan format tabel sesuai dengan template.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
     }
 
     // ========== CREATE ==========
@@ -94,7 +127,7 @@ class AdminAsettetapController extends Controller
     {
         $validated = $request->validate([
             'tanggal_input' => 'required|date|before_or_equal:today',
-            'kode_barang' => 'required|string|max:50|unique:aset_tetap,kode_barang',
+            'kode_barang' => 'required|string|max:50',
             'nup' => 'nullable|string|max:50',
             'nama_barang' => 'required|string|max:255',
             'merek' => 'nullable|string|max:100',
@@ -113,7 +146,7 @@ class AdminAsettetapController extends Controller
             ->with('success', 'Aset tetap berhasil ditambahkan!');
     }
 
-        // ========== SHOW (Detail) ==========
+    // ========== SHOW (Detail) ==========
     public function showDataAsetTetap(AssetTetap $aset)
     {
         return view('adminasettetap.data_asettetap_show', compact('aset'));
@@ -159,7 +192,7 @@ class AdminAsettetapController extends Controller
     }
 
 
-     // ========== TRANSAKSI MASUK ✅ FIXED ==========
+    // ========== TRANSAKSI MASUK ✅ FIXED ==========
     public function TransaksiMasuk(Request $request)
     {
         $kondisiOptions = ['baik', 'rusak_ringan', 'rusak_berat'];
@@ -173,17 +206,17 @@ class AdminAsettetapController extends Controller
         // ✅ FIXED: Filter null + eager loading + whereNotNull
         $query = TransaksiMasukAssetTetap::with(['user'])
             ->whereNotNull('id') // Pastikan ada data
-            ->when($request->filled('search'), function($q) use ($request) {
-                $q->where(function($subQ) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where(function ($subQ) use ($request) {
                     $subQ->where('kode_barang', 'like', "%{$request->search}%")
-                         ->orWhere('nup', 'like', "%{$request->search}%")
-                         ->orWhere('nama_barang', 'like', "%{$request->search}%");
+                        ->orWhere('nup', 'like', "%{$request->search}%")
+                        ->orWhere('nama_barang', 'like', "%{$request->search}%");
                 });
             })
-            ->when($request->filled('kondisi'), function($q) use ($request) {
+            ->when($request->filled('kondisi'), function ($q) use ($request) {
                 $q->where('kondisi', $request->kondisi);
             })
-            ->when($request->filled('kategori'), function($q) use ($request) {
+            ->when($request->filled('kategori'), function ($q) use ($request) {
                 $q->where('kategori', 'like', "%{$request->kategori}%");
             })
             ->orderBy('created_at', 'desc');
@@ -193,33 +226,33 @@ class AdminAsettetapController extends Controller
         // ✅ FIXED: Transform dengan null safety
         $transaksi->getCollection()->transform(function ($item) {
             if (!$item) return null;
-            
+
             $tanggalInput = $item->tanggal_input ?? $item->created_at;
-            $item->tanggal_input_formatted = $tanggalInput 
-            ? Carbon::parse($tanggalInput)->format('d/m/Y'): '-';
-            
+            $item->tanggal_input_formatted = $tanggalInput
+                ? Carbon::parse($tanggalInput)->format('d/m/Y') : '-';
+
             try {
-                $item->tanggal_perolehan_formatted = $item->tanggal_perolehan 
+                $item->tanggal_perolehan_formatted = $item->tanggal_perolehan
                     ? Carbon::parse($item->tanggal_perolehan)->format('d/m/Y')
                     : '-';
             } catch (\Exception $e) {
                 $item->tanggal_perolehan_formatted = '-';
                 Log::warning("Error parsing tanggal_perolehan: " . $item->id, ['error' => $e->getMessage()]);
             }
-            
-            $item->nilai_format = $item->nilai_perolehan 
+
+            $item->nilai_format = $item->nilai_perolehan
                 ? 'Rp ' . number_format($item->nilai_perolehan, 0, ',', '.')
                 : '-';
-            
+
             // Kondisi badge
             $kondisi = $item->kondisi ?? 'unknown';
-            $item->kondisi_badge = match($kondisi) {
+            $item->kondisi_badge = match ($kondisi) {
                 'baik' => ['color' => 'success', 'icon' => 'fa-check-circle', 'text' => 'Baik'],
                 'rusak_ringan' => ['color' => 'warning', 'icon' => 'fa-exclamation-triangle', 'text' => 'Rusak Ringan'],
                 'rusak_berat' => ['color' => 'danger', 'icon' => 'fa-times-circle', 'text' => 'Rusak Berat'],
                 default => ['color' => 'secondary', 'icon' => 'fa-question-circle', 'text' => 'Tidak Diketahui']
             };
-            
+
             return $item;
         })->reject(fn($item) => is_null($item)); // ✅ Remove null items
 
@@ -235,7 +268,7 @@ class AdminAsettetapController extends Controller
     public function storeTransaksiMasuk(Request $request)
     {
         $validated = $request->validate([
-            
+
             'kode_barang' => 'required|string|max:100',
             'nup' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nup',
             'nama_barang' => 'required|string|max:255',
@@ -247,7 +280,7 @@ class AdminAsettetapController extends Controller
             'lokasi' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
         ]);
-        
+
         TransaksiMasukAssetTetap::create($validated);
 
         return redirect()->route('adminasettetap.transaksi-masuk')
@@ -291,22 +324,21 @@ class AdminAsettetapController extends Controller
 
         return redirect()->route('adminasettetap.transaksi-masuk')
             ->with('success', 'Transaksi masuk aset tetap berhasil dihapus!');
-
     }
     // ========== TRANSAKSI KELUAR ASET TETAP ==========
     public function TransaksiKeluar(Request $request)
     {
         $query = TransaksiKeluarAssetTetap::with(['asetTetap', 'user'])
-            ->when($request->filled('search'), function($q) use ($request) {
-                $q->where(function($subQ) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where(function ($subQ) use ($request) {
                     $subQ->where('kode_barang', 'like', "%{$request->search}%")
-                         ->orWhere('nup', 'like', "%{$request->search}%")
-                         ->orWhere('nama_barang', 'like', "%{$request->search}%")
-                         ->orWhere('nomor_sk', 'like', "%{$request->search}%")
-                         ->orWhere('keterangan', 'like', "%{$request->search}%");
+                        ->orWhere('nup', 'like', "%{$request->search}%")
+                        ->orWhere('nama_barang', 'like', "%{$request->search}%")
+                        ->orWhere('nomor_sk', 'like', "%{$request->search}%")
+                        ->orWhere('keterangan', 'like', "%{$request->search}%");
                 });
             })
-            ->when($request->filled('status'), function($q) use ($request) {
+            ->when($request->filled('status'), function ($q) use ($request) {
                 $q->where('status', $request->status);
             })
             ->orderBy('tanggal_input', 'desc');
@@ -323,8 +355,8 @@ class AdminAsettetapController extends Controller
         });
 
         $asetTetapOptions = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'nup')
-        ->orderBy('nama_barang')
-        ->get();
+            ->orderBy('nama_barang')
+            ->get();
 
         return view('adminasettetap.transaksi_keluar', compact('transaksi', 'asetTetapOptions'));
     }
@@ -332,9 +364,9 @@ class AdminAsettetapController extends Controller
     public function createTransaksiKeluar()
     {
         $asetTetap = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'nup', 'lokasi', 'kondisi')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->where('status', 'Tersedia')
-                ->orWhereNull('status');
+                    ->orWhereNull('status');
             })
             ->orderBy('nama_barang', 'asc')
             ->orderBy('kode_barang', 'asc')
@@ -346,9 +378,9 @@ class AdminAsettetapController extends Controller
     public function editTransaksiKeluar(TransaksiKeluarAssetTetap $transaksi)
     {
         $asetTetapOptions = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'nup', 'lokasi', 'kondisi')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->where('status', 'Tersedia')
-                ->orWhereNull('status');
+                    ->orWhereNull('status');
             })
             ->orWhere('id', $transaksi->aset_tetap_id)
             ->orderBy('nama_barang', 'asc')
@@ -369,7 +401,7 @@ class AdminAsettetapController extends Controller
 
         try {
             $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
-            
+
             // Pastikan aset masih tersedia
             if ($aset->status !== 'Tersedia') {
                 return back()->withErrors(['aset_tetap_id' => 'Aset tidak tersedia untuk transaksi keluar']);
@@ -397,7 +429,6 @@ class AdminAsettetapController extends Controller
 
             return redirect()->route('adminasettetap.transaksi-keluar')
                 ->with('success', 'Transaksi keluar aset tetap berhasil ditambahkan!');
-
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
@@ -451,7 +482,6 @@ class AdminAsettetapController extends Controller
 
             return redirect()->route('adminasettetap.transaksi-keluar')
                 ->with('success', 'Transaksi keluar aset tetap berhasil diupdate!');
-
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal mengupdate data: ' . $e->getMessage()]);
         }
@@ -461,28 +491,27 @@ class AdminAsettetapController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // 1. Restore status aset menjadi 'Tersedia'
             $aset = AssetTetap::find($transaksi->aset_tetap_id);
             if ($aset) {
                 $aset->update(['status' => 'Tersedia']);
             }
-            
+
             // 2. Hapus transaksi keluar
             $transaksi->delete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('adminasettetap.transaksi-keluar')
                 ->with('success', 'Transaksi keluar aset tetap berhasil dihapus! Aset telah dikembalikan ke status Tersedia.');
-                
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error delete transaksi keluar: ' . $e->getMessage(), [
                 'transaksi_id' => $transaksi->id,
                 'aset_id' => $transaksi->aset_tetap_id
             ]);
-            
+
             return back()->withErrors(['error' => 'Gagal menghapus data: ' . $e->getMessage()]);
         }
     }
@@ -491,11 +520,17 @@ class AdminAsettetapController extends Controller
     // ========== AJAX Methods untuk Transaksi Keluar ==========
     public function getAsetData($id)
     {
-        
+
         try {
             $aset = AssetTetap::select([
-                'id', 'kode_barang', 'nup', 'nama_barang', 'merek', 
-                'tanggal_perolehan', 'nilai_perolehan', 'lokasi'
+                'id',
+                'kode_barang',
+                'nup',
+                'nama_barang',
+                'merek',
+                'tanggal_perolehan',
+                'nilai_perolehan',
+                'lokasi'
             ])->findOrFail($id);
 
             return response()->json([
@@ -516,7 +551,7 @@ class AdminAsettetapController extends Controller
     public function editJson($id)  // ✅ RENAME dari editTransaksiKeluarJson
     {
         $transaksi = TransaksiKeluarAssetTetap::with('asetTetap')->findOrFail($id);
-        
+
         return response()->json([
             'aset_tetap_id' => $transaksi->aset_tetap_id,
             'tanggal_input' => $transaksi->tanggal_input?->format('Y-m-d'),
@@ -531,7 +566,7 @@ class AdminAsettetapController extends Controller
     {
         try {
             $transaksi = TransaksiKeluarAssetTetap::with('asetTetap')->findOrFail($transaksiId);
-            
+
             return response()->json([
                 'kode_barang' => $transaksi->asetTetap->kode_barang ?? '-',
                 'nup' => $transaksi->asetTetap->nup ?? '-',
@@ -553,7 +588,7 @@ class AdminAsettetapController extends Controller
     public function editTransaksiKeluarJson(TransaksiKeluarAssetTetap $transaksi)
     {
         $transaksi->load('asetTetap');
-        
+
         return response()->json([
             'aset_tetap_id' => $transaksi->aset_tetap_id,
             'tanggal_input' => $transaksi->tanggal_input?->format('Y-m-d'),
@@ -574,10 +609,10 @@ class AdminAsettetapController extends Controller
     public function mutasiBarang(Request $request)
     {
         $query = MutasiBarang::with(['asetTetap', 'user'])
-            ->when($request->filled('search'), function($q) use ($request) {
-                $q->where(function($subQ) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where(function ($subQ) use ($request) {
                     $subQ->where('no_mutasi', 'like', "%{$request->search}%")
-                        ->orWhereHas('asetTetap', function($asetQ) use ($request) {
+                        ->orWhereHas('asetTetap', function ($asetQ) use ($request) {
                             $asetQ->where('kode_barang', 'like', "%{$request->search}%")
                                 ->orWhere('nama_barang', 'like', "%{$request->search}%");
                         })
@@ -619,9 +654,9 @@ class AdminAsettetapController extends Controller
         DB::beginTransaction();
         try {
             $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
-            
+
             $noMutasi = 'MUT-' . now()->format('Ymd') . '-' . str_pad(MutasiBarang::count() + 1, 4, '0', STR_PAD_LEFT);
-            
+
             MutasiBarang::create([
                 'no_mutasi' => $noMutasi,
                 'aset_tetap_id' => $validated['aset_tetap_id'],
@@ -636,9 +671,9 @@ class AdminAsettetapController extends Controller
 
             // Update lokasi aset
             $aset->update(['lokasi' => $validated['lokasi_akhir']]);
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Mutasi barang berhasil disimpan!'
@@ -657,10 +692,10 @@ class AdminAsettetapController extends Controller
     public function mutasiBarangShow($id)
     {
         $mutasi = MutasiBarang::with(['asetTetap', 'user'])->findOrFail($id);
-        
+
         $mutasi->tanggal_mutasi_formatted = $mutasi->tanggal_mutasi?->format('d/m/Y');
         $mutasi->tanggal_input = $mutasi->created_at?->format('d/m/Y H:i');
-        
+
         return response()->json($mutasi);
     }
 
@@ -668,7 +703,7 @@ class AdminAsettetapController extends Controller
     public function mutasiBarangEdit($id)
     {
         $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
-        
+
         return response()->json([
             'id' => $mutasi->id,
             'aset_tetap_id' => $mutasi->aset_tetap_id,
@@ -696,7 +731,7 @@ class AdminAsettetapController extends Controller
         try {
             $mutasi = MutasiBarang::findOrFail($id);
             $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
-            
+
             $mutasi->update([
                 'aset_tetap_id' => $validated['aset_tetap_id'],
                 'kode_barang' => $aset->kode_barang,
@@ -709,9 +744,9 @@ class AdminAsettetapController extends Controller
 
             // Update lokasi aset
             $aset->update(['lokasi' => $validated['lokasi_akhir']]);
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Mutasi barang berhasil diupdate!'
@@ -731,16 +766,16 @@ class AdminAsettetapController extends Controller
         DB::beginTransaction();
         try {
             $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
-            
+
             // Rollback lokasi aset ke lokasi awal
             if ($mutasi->asetTetap) {
                 $mutasi->asetTetap->update(['lokasi' => $mutasi->lokasi_awal]);
             }
-            
+
             $mutasi->delete();
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Mutasi barang berhasil dihapus!'
@@ -758,24 +793,24 @@ class AdminAsettetapController extends Controller
     public function getAsetTetapData($id)
     {
         $aset = AssetTetap::select(['id', 'kode_barang', 'nama_barang', 'lokasi'])->findOrFail($id);
-        
+
         return response()->json([
             'kode_barang' => $aset->kode_barang,
             'nama_barang' => $aset->nama_barang,
             'lokasi_sekarang' => $aset->lokasi
         ]);
     }
-    
+
 
     // ========== PEMINJAMAN BARANG ==========
     // Tampilan Peminjaman Barang Admin
     public function PeminjamanBarang(Request $request)
     {
         $query = PeminjamanBarang::with(['user'])
-            ->when($request->search, function($q, $search) {
+            ->when($request->search, function ($q, $search) {
                 $q->where('kode_barang', 'like', "%{$search}%")
-                  ->orWhere('nama_barang', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn($qb) => $qb->where('name', 'like', "%{$search}%"));
+                    ->orWhere('nama_barang', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($qb) => $qb->where('name', 'like', "%{$search}%"));
             });
 
         // Filter status (contoh: Semua Status, Diterima, Pending, Ditolak)
@@ -792,7 +827,7 @@ class AdminAsettetapController extends Controller
         }
 
         $peminjamanBarang = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
-        
+
         return view('adminasettetap.peminjaman_barang', compact('peminjamanBarang'));
     }
 
@@ -800,7 +835,7 @@ class AdminAsettetapController extends Controller
     public function reviewPeminjaman(Request $request, $id)
     {
         $peminjaman = PeminjamanBarang::findOrFail($id);
-        
+
         if ($request->action == 'teruskan') {
             // 🔥 KITA UBAH CARANYA JADI MANUAL SEPERTI INI (Pasti Tembus)
             $peminjaman->status = 'diteruskan_kasubag';
@@ -809,7 +844,25 @@ class AdminAsettetapController extends Controller
             $peminjaman->save(); // Simpan paksa ke database
 
             $pesan = 'Peminjaman diteruskan ke Kasubag untuk persetujuan.';
-            
+
+            $kasubag = User::where('role', 'kasubag')->first();
+            if ($kasubag && $kasubag->nomor_telepon) {
+                $namaPegawai = $peminjaman->user->name ?? 'Pegawai';
+
+                // Detail Pesan ke Kasubag
+                $pesanWa = "*Persetujuan Peminjaman BARANG*\n\n";
+                $pesanWa .= "Yth. Kasubag,\n";
+                $pesanWa .= "Admin Aset Tetap meneruskan permintaan peminjaman barang untuk disetujui:\n\n";
+                $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
+                $pesanWa .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanWa .= "🔢 *Jumlah:* {$peminjaman->jumlah}\n";
+                $pesanWa .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n";
+                $pesanWa .= "📝 *Keperluan:* {$peminjaman->deskripsi_peruntukan}\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
+
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
+            }
         } elseif ($request->action == 'tolak') {
             // 🔥 CARA MANUAL UNTUK TOLAK
             $peminjaman->status = 'ditolak';
@@ -818,6 +871,22 @@ class AdminAsettetapController extends Controller
             $peminjaman->save(); // Simpan paksa ke database
 
             $pesan = 'Peminjaman berhasil ditolak.';
+
+            $pegawai = $peminjaman->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+
+                // Detail Pesan Penolakan ke Pegawai
+                $pesanWa = "*Peminjaman DITOLAK Admin*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Maaf, pengajuan peminjaman barang Anda telah *ditolak* oleh Admin.\n\n";
+                $pesanWa .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanWa .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n";
+                $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanWa .= "Silakan hubungi Admin Aset Tetap jika ada pertanyaan lebih lanjut.";
+
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
+            }
         }
 
         return back()->with('success', $pesan);
@@ -840,7 +909,7 @@ class AdminAsettetapController extends Controller
 
             $file = $request->file('surat_bast');
             $filename = 'BAST_Pinjam_' . $peminjaman->kode_barang . '_' . time() . '.pdf';
-            
+
             // Simpan ke storage/app/public/surat_peminjaman
             $path = $file->storeAs('surat_peminjaman', $filename, 'public');
 
@@ -882,14 +951,14 @@ class AdminAsettetapController extends Controller
         // 4. Load View khusus untuk Surat Peminjaman Barang
         // Pastikan file view ini ada di resources/views/surat/peminjaman_barang.blade.php
         $pdf = Pdf::loadView('surat.peminjaman_barang', compact(
-            'peminjaman', 
-            'peminjam', 
-            'admin', 
-            'kasubag', 
+            'peminjaman',
+            'peminjam',
+            'admin',
+            'kasubag',
             'kepala',
-            'ttdPeminjam', 
-            'ttdAdmin', 
-            'ttdKasubag', 
+            'ttdPeminjam',
+            'ttdAdmin',
+            'ttdKasubag',
             'ttdKepala'
         ))->setPaper('a4', 'portrait');
 
@@ -899,20 +968,20 @@ class AdminAsettetapController extends Controller
     }
 
     // ========== PENGEMBALIAN BARANG ==========
-        public function PengembalianBarang(Request $request)
+    public function PengembalianBarang(Request $request)
     {
         $query = PengembalianBarang::with([
-                'peminjamanBarang', 
-                'user', 
-                'adminVerifier'
-            ])
+            'peminjamanBarang',
+            'user',
+            'adminVerifier'
+        ])
             ->when($request->kondisi, fn($q, $k) => $q->kondisi($k))
             ->when($request->status_verifikasi, fn($q, $s) => $q->where('status_verifikasi', $s))
             ->when($request->search, fn($q, $s) => $q->search($s))
             ->orderBy('tanggal_pengembalian_aktual', 'desc');
 
         $pengembalianbarang = $query->paginate(10)->withQueryString();
-        
+
         return view('adminasettetap.pengembalian_barang', compact('pengembalianbarang'));
     }
 
@@ -920,7 +989,7 @@ class AdminAsettetapController extends Controller
     public function verifikasiPengembalianBarang(Request $request, $id)
     {
         $pengembalian = PengembalianBarang::findOrFail($id);
-        
+
         $request->validate([
             'status_verifikasi' => 'required|in:diterima,ditolak',
             'komentar_admin' => 'nullable|string'
@@ -936,16 +1005,41 @@ class AdminAsettetapController extends Controller
         // Update status tabel peminjaman utama
         if ($request->status_verifikasi === 'diterima') {
             $pengembalian->peminjamanBarang->update(['status' => 'dikembalikan']);
-            
+
             // Kembalikan stok jika diperlukan
             $aset = $pengembalian->peminjamanBarang->barang;
-            if($aset) {
+            if ($aset) {
                 $aset->status = 'Tersedia'; // Sesuaikan dengan alur bisnis Anda
                 $aset->save();
             }
         } else {
             // Jika ditolak, kembalikan status ke disetujui agar pegawai merevisi pengembalian
             $pengembalian->peminjamanBarang->update(['status' => 'disetujui']);
+        }
+
+        $pegawai = $pengembalian->user;
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $namaBarang = $pengembalian->peminjamanBarang->nama_barang ?? 'Barang';
+
+            if ($request->status_verifikasi === 'diterima') {
+                $pesanWa = "*Pengembalian Barang DITERIMA*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Terima kasih, laporan pengembalian barang Anda telah diverifikasi dan *Diterima* oleh Admin.\n\n";
+                $pesanWa .= "📦 *Barang:* {$namaBarang}\n";
+                $pesanWa .= "📅 *Tgl Kembali:* {$pengembalian->tanggal_pengembalian_aktual}\n";
+                $pesanWa .= "🔍 *Kondisi:* " . ucfirst($pengembalian->kondisi_barang) . "\n\n";
+                $pesanWa .= "Status peminjaman Anda sekarang telah selesai.";
+            } else {
+                $pesanWa = "*Pengembalian Barang DITOLAK/REVISI*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Laporan pengembalian barang Anda *Ditolak* oleh Admin.\n\n";
+                $pesanWa .= "📦 *Barang:* {$namaBarang}\n";
+                $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar_admin ?? '-') . "\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memperbaiki data laporan pengembalian Anda.";
+            }
+
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
         }
 
         return back()->with('success', 'Verifikasi pengembalian berhasil disimpan!');
@@ -960,43 +1054,75 @@ class AdminAsettetapController extends Controller
     public function cetakSuratPengembalianBarang($id)
     {
         $pengembalian = PengembalianBarang::with(['peminjamanBarang', 'user', 'adminVerifier'])->findOrFail($id);
-        
+
         // Pastikan status sudah diterima agar bisa dicetak
         if ($pengembalian->status_verifikasi !== 'diterima') {
             abort(403, 'Hanya pengembalian yang disetujui yang dapat dicetak.');
         }
 
         $pdf = Pdf::loadView('surat.pengembalian_barang', compact('pengembalian'))->setPaper('a4', 'portrait');
-        
+
         $fileName = 'Surat_Pengembalian_' . $pengembalian->peminjamanBarang->kode_barang . '.pdf';
         return $pdf->stream($fileName);
     }
 
     // ========== PEMINJAMAN KENDARAAN ==========
-     public function PeminjamanKendaraan(Request $request)
+    public function PeminjamanKendaraan(Request $request)
     {
         $peminjamanKendaraan = PeminjamanKendaraan::with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('adminasettetap.peminjaman_kendaraan', compact('peminjamanKendaraan'));
     }
 
     public function reviewPeminjamanKendaraan(Request $request, $id)
     {
         $peminjaman = PeminjamanKendaraan::findOrFail($id);
-        
+
         if ($request->action == 'teruskan') {
             $peminjaman->status = 'dalam_review';
             $peminjaman->reviewed_by_adminasettetap_id = auth()->id();
             $peminjaman->diteruskan_ke_kasubag_date = now();
             $peminjaman->save();
             $msg = 'Permintaan diteruskan ke Kasubag.';
+
+            $kasubag = User::where('role', 'kasubag')->first();
+            if ($kasubag && $kasubag->nomor_telepon) {
+                $namaPegawai = $peminjaman->user->name ?? 'Pegawai';
+
+                $pesanWa = "*Persetujuan Peminjaman KENDARAAN*\n\n";
+                $pesanWa .= "Yth. Kasubag,\n";
+                $pesanWa .= "Admin Aset Tetap meneruskan permintaan peminjaman kendaraan dinas untuk disetujui:\n\n";
+                $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
+                $pesanWa .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanWa .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n";
+                $pesanWa .= "📅 *Tgl Kembali:* {$peminjaman->tanggal_pengembalian}\n";
+                $pesanWa .= "📝 *Keperluan:* {$peminjaman->deskripsi_peruntukan}\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
+
+                $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
+            }
         } else {
             $peminjaman->status = 'ditolak';
             $peminjaman->komentar = $request->komentar;
             $peminjaman->save();
             $msg = 'Permintaan ditolak.';
+
+            $pegawai = $peminjaman->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $pesanWa = "*Peminjaman Kendaraan DITOLAK Admin*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Maaf, pengajuan peminjaman kendaraan dinas Anda telah *ditolak* oleh Admin.\n\n";
+                $pesanWa .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanWa .= "📅 *Tgl Pinjam:* {$peminjaman->tanggal_peminjaman}\n";
+                $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanWa .= "Silakan hubungi Admin Aset Tetap jika ada pertanyaan lebih lanjut.";
+
+                $noHpAdmin = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+                SendFonnteNotification::dispatch($noHpAdmin, $pesanWa);
+            }
         }
 
         return back()->with('success', $msg);
@@ -1019,9 +1145,9 @@ class AdminAsettetapController extends Controller
     {
         // 1. Ambil data pihak terkait
         // Data peminjam sudah otomatis terambil dari relasi (jika sudah diset di model)
-        $peminjam = $peminjaman->user; 
+        $peminjam = $peminjaman->user;
         $admin = auth()->user(); // Admin yang sedang login dan mencetak surat
-        $kasubag = User::where('role', 'kasubag')->first(); 
+        $kasubag = User::where('role', 'kasubag')->first();
         $kepala = User::where('role', 'kepalabpmp')->first(); // Pastikan rolenya sesuai dengan database Anda
 
         // 2. Fungsi bantuan untuk mengubah tanda tangan (lokal) menjadi Base64 agar bisa dirender DomPDF
@@ -1043,23 +1169,23 @@ class AdminAsettetapController extends Controller
         // 4. Load View khusus untuk Surat Peminjaman Kendaraan
         // Sesuaikan path 'surat.peminjaman_kendaraan' dengan lokasi file blade Berita Acara Anda
         $pdf = Pdf::loadView('surat.peminjaman_kendaraan', compact(
-            'peminjaman', 
-            'peminjam', 
-            'admin', 
-            'kasubag', 
+            'peminjaman',
+            'peminjam',
+            'admin',
+            'kasubag',
             'kepala',
-            'ttdPeminjam', 
-            'ttdAdmin', 
-            'ttdKasubag', 
+            'ttdPeminjam',
+            'ttdAdmin',
+            'ttdKasubag',
             'ttdKepala'
         ))->setPaper('a4', 'portrait');
 
         // 5. Tampilkan PDF (Stream) atau Download Otomatis
         $fileName = 'BA_Pinjam_Kendaraan_' . ($peminjaman->kode_barang ?? $peminjaman->id) . '_' . time() . '.pdf';
-        
+
         // Gunakan ->stream() jika ingin melihat preview di browser dulu
         // Gunakan ->download() jika ingin file langsung terunduh ke komputer
-        return $pdf->stream($fileName); 
+        return $pdf->stream($fileName);
     }
 
     public function showJsonKendaraan($id)
@@ -1077,38 +1203,38 @@ class AdminAsettetapController extends Controller
         ]);
     }
 
-    
+
     // ========== PENGEMBALIAN KENDARAAN ==========
     public function PengembalianKendaraan(Request $request)
     {
         $query = PengembalianKendaraan::with([
-                'peminjamanKendaraan', 
-                'peminjamanKendaraan.user',
-                'user',
-                'admin' // verified_by_admin_id
-            ])
-            ->when($request->kondisi, function($q, $kondisi) {
+            'peminjamanKendaraan',
+            'peminjamanKendaraan.user',
+            'user',
+            'admin' // verified_by_admin_id
+        ])
+            ->when($request->kondisi, function ($q, $kondisi) {
                 $q->where('kondisi_kendaraan', $kondisi);
             })
-            ->when($request->status, function($q, $status) { // ✅ Ganti status_verifikasi → status_pengembalian
+            ->when($request->status, function ($q, $status) { // ✅ Ganti status_verifikasi → status_pengembalian
                 $q->where('status_pengembalian', $status);
             })
-            ->when($request->search, function($q, $search) {
-                $q->whereHas('peminjamanKendaraan.kendaraan', function($qb) use ($search) {
+            ->when($request->search, function ($q, $search) {
+                $q->whereHas('peminjamanKendaraan.kendaraan', function ($qb) use ($search) {
                     $qb->where('nopol', 'like', "%{$search}%")
-                       ->orWhere('merk', 'like', "%{$search}%")
-                       ->orWhere('tipe', 'like', "%{$search}%");
+                        ->orWhere('merk', 'like', "%{$search}%")
+                        ->orWhere('tipe', 'like', "%{$search}%");
                 })
-                ->orWhereHas('peminjamanKendaraan.user', function($qb) use ($search) {
-                    $qb->where('name', 'like', "%{$search}%")
-                       ->orWhere('email', 'like', "%{$search}%");
-                })
-                ->orWhere('catatan', 'like', "%{$search}%");
+                    ->orWhereHas('peminjamanKendaraan.user', function ($qb) use ($search) {
+                        $qb->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhere('catatan', 'like', "%{$search}%");
             })
             ->orderBy('tanggal_pengembalian_aktual', 'desc');
 
         $pengembalianKendaraan = $query->paginate(10)->withQueryString();
-        
+
         return view('adminasettetap.pengembalian_kendaraan', compact('pengembalianKendaraan'));
     }
 
@@ -1116,25 +1242,25 @@ class AdminAsettetapController extends Controller
     public function verifikasiPengembalianKendaraan(Request $request, $id)
     {
         $pengembalian = PengembalianKendaraan::findOrFail($id);
-        
+
         $request->validate([
-            'status_pengembalian' => 'required|in:diterima,ditolak',
+            'status_verifikasi' => 'required|in:diterima,ditolak',
             'komentar_admin' => 'nullable|string'
         ]);
 
         $pengembalian->update([
-            'status_pengembalian' => $request->status_pengembalian,
+            'status_verifikasi' => $request->status_verifikasi,
             'komentar_admin' => $request->komentar_admin,
             'verified_by_admin_id' => auth()->id(),
             'verified_at' => now()
         ]);
 
-        if ($request->status_pengembalian === 'diproses') {
+        if ($request->status_verifikasi === 'pending') {
             $pengembalian->peminjamanKendaraan()->update(['status' => 'diterima']);
-            
+
             // Kembalikan stok jika diperlukan
             $aset = $pengembalian->peminjamanKendaraan()->barang;
-            if($aset) {
+            if ($aset) {
                 $aset->status = 'Tersedia'; // Sesuaikan dengan alur bisnis Anda
                 $aset->save();
             }
@@ -1143,9 +1269,33 @@ class AdminAsettetapController extends Controller
             $pengembalian->peminjamanKendaraan->update(['status' => 'disetujui']);
         }
 
-        return back()->with('success', 'Verifikasi pengembalian kendaraan berhasil disimpan!');
+        $pegawai = $pengembalian->user;
+        if ($pegawai && $pegawai->nomor_telepon) {
+            $namaKendaraan = $pengembalian->peminjamanKendaraan->nama_barang ?? 'Kendaraan';
 
-        
+            // Status pada kendaraan biasanya menggunakan 'diproses' / 'diterima'
+            if ($request->status_verifikasi === 'diterima' || $request->status_verifikasi === 'pending') {
+                $pesanWa = "*Pengembalian Kendaraan DITERIMA*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Terima kasih, laporan pengembalian kendaraan dinas Anda telah diverifikasi dan *Diterima* oleh Admin.\n\n";
+                $pesanWa .= "🚗 *Kendaraan:* {$namaKendaraan}\n";
+                $pesanWa .= "📅 *Tgl Kembali:* {$pengembalian->tanggal_pengembalian_aktual}\n";
+                $pesanWa .= "🔍 *Kondisi:* " . ucfirst($pengembalian->kondisi_kendaraan) . "\n\n";
+                $pesanWa .= "Status peminjaman kendaraan Anda sekarang telah selesai.";
+            } else {
+                $pesanWa = "*Pengembalian Kendaraan DITOLAK/REVISI*\n\n";
+                $pesanWa .= "Halo {$pegawai->name},\n";
+                $pesanWa .= "Laporan pengembalian kendaraan dinas Anda *Ditolak* oleh Admin.\n\n";
+                $pesanWa .= "🚗 *Kendaraan:* {$namaKendaraan}\n";
+                $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar_admin ?? '-') . "\n\n";
+                $pesanWa .= "Silakan login ke sistem untuk memperbaiki data laporan pengembalian atau foto kendaraan Anda.";
+            }
+
+            $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
+        }
+
+        return back()->with('success', 'Verifikasi pengembalian kendaraan berhasil disimpan!');
     }
 
     public function showPengembalianKendaraanJsonAdmin($id)
@@ -1157,14 +1307,14 @@ class AdminAsettetapController extends Controller
     public function cetakSuratPengembalianKendaraan($id)
     {
         $pengembalian = PengembalianKendaraan::with(['peminjamanKendaraan', 'user', 'admin'])->findOrFail($id);
-        
+
         // Ambil data user admin dan kepala dari tabel users
         $admin = auth()->user();
         $kepala = \App\Models\User::where('role', 'kepalabpmp')->first();
 
         $pdf = Pdf::loadView('surat.pengembalian_kendaraan', compact('pengembalian', 'admin', 'kepala'))
-                ->setPaper('a4', 'portrait');
-        
+            ->setPaper('a4', 'portrait');
+
         $kodeBarang = $pengembalian->peminjamanKendaraan->nama_barang ?? 'Kendaraan';
         return $pdf->stream('Surat_Pengembalian_' . $kodeBarang . '.pdf');
     }
@@ -1173,7 +1323,7 @@ class AdminAsettetapController extends Controller
     public function laporanPeminjamanKendaraan(Request $request)
     {
         $query = PeminjamanKendaraan::with(['kendaraan', 'user', 'sopir'])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_pinjam', [Carbon::parse($start), Carbon::parse($end)]);
             });
@@ -1186,11 +1336,11 @@ class AdminAsettetapController extends Controller
     public function laporanPengembalianKendaraan(Request $request)
     {
         $query = PengembalianKendaraan::with([
-            'peminjamanKendaraan.kendaraan', 
+            'peminjamanKendaraan.kendaraan',
             'peminjamanKendaraan.user',
             'user'
         ])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_pengembalian_aktual', [Carbon::parse($start), Carbon::parse($end)]);
             })
@@ -1203,7 +1353,7 @@ class AdminAsettetapController extends Controller
     // ========== COMMON: Update Status (UPDATED) ==========
     public function updateStatus(Request $request, $id)
     {
-        $model = match($request->type) {
+        $model = match ($request->type) {
             'peminjaman-barang' => PeminjamanBarang::findOrFail($id),
             'pengembalian-barang' => PengembalianBarang::findOrFail($id),
             'peminjaman-kendaraan' => PeminjamanKendaraan::findOrFail($id),
@@ -1240,7 +1390,7 @@ class AdminAsettetapController extends Controller
     public function laporanPeminjamanBarang(Request $request)
     {
         $query = PeminjamanBarang::with(['barang', 'user'])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_peminjaman', [Carbon::parse($start), Carbon::parse($end)]);
             });
@@ -1252,7 +1402,7 @@ class AdminAsettetapController extends Controller
     public function laporanTransaksiMasuk(Request $request)
     {
         $query = TransaksiMasukAssetTetap::with(['aset', 'pemasok'])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_transaksi', [Carbon::parse($start), Carbon::parse($end)]);
             });
@@ -1264,7 +1414,7 @@ class AdminAsettetapController extends Controller
     public function laporanTransaksiKeluar(Request $request)
     {
         $query = TransaksiKeluarAssetTetap::with(['aset', 'penerima'])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_transaksi', [Carbon::parse($start), Carbon::parse($end)]);
             });
@@ -1276,7 +1426,7 @@ class AdminAsettetapController extends Controller
     public function laporanMutasiAsetTetap(Request $request)
     {
         $query = MutasiBarang::with(['barangAsal', 'barangTujuan'])
-            ->when($request->date_range, function($q, $range) {
+            ->when($request->date_range, function ($q, $range) {
                 [$start, $end] = explode(' - ', $range);
                 $q->whereBetween('tanggal_mutasi', [Carbon::parse($start), Carbon::parse($end)]);
             });
@@ -1286,55 +1436,55 @@ class AdminAsettetapController extends Controller
     }
 
 
-     // ========== PENGADUAN ==========
+    // ========== PENGADUAN ==========
     //====landing page====//
     public function landingpage()
-{
-    // 1. Total Item BMN (Gabungan Aset Tetap dan Master Barang Persediaan)
-    $totalAset = AssetTetap::count();
-    $totalPersediaan = Persediaan::count();
-    $totalItemBMN = $totalAset + $totalPersediaan;
+    {
+        // 1. Total Item BMN (Gabungan Aset Tetap dan Master Barang Persediaan)
+        $totalAset = AssetTetap::count();
+        $totalPersediaan = Persediaan::count();
+        $totalItemBMN = $totalAset + $totalPersediaan;
 
-    // 2. Nilai Aset Terkelola (Menjumlahkan kolom harga_perolehan/nilai pada aset tetap)
-    // Asumsi nama kolomnya adalah 'harga_perolehan'
-    $nilaiAsetTotal = AssetTetap::sum('nilai_perolehan'); // Ganti dengan nama kolom yang sesuai di database Anda
-    $formattedNilaiAset = number_format($nilaiAsetTotal / 1000000000, 1); // Konversi ke Milyar (M)
+        // 2. Nilai Aset Terkelola (Menjumlahkan kolom harga_perolehan/nilai pada aset tetap)
+        // Asumsi nama kolomnya adalah 'harga_perolehan'
+        $nilaiAsetTotal = AssetTetap::sum('nilai_perolehan'); // Ganti dengan nama kolom yang sesuai di database Anda
+        $formattedNilaiAset = number_format($nilaiAsetTotal / 1000000000, 1); // Konversi ke Milyar (M)
 
-    // 3. Transaksi Bulan Ini (Jumlah Peminjaman + Permintaan Persediaan bulan ini)
-    $transaksiAset = PeminjamanBarang::whereMonth('created_at', Carbon::now()->month)->count();
-    $transaksiPersediaan = PermintaanPersediaan::whereMonth('created_at', Carbon::now()->month)->count();
-    $totalTransaksiBulanIni = $transaksiAset + $transaksiPersediaan;
+        // 3. Transaksi Bulan Ini (Jumlah Peminjaman + Permintaan Persediaan bulan ini)
+        $transaksiAset = PeminjamanBarang::whereMonth('created_at', Carbon::now()->month)->count();
+        $transaksiPersediaan = PermintaanPersediaan::whereMonth('created_at', Carbon::now()->month)->count();
+        $totalTransaksiBulanIni = $transaksiAset + $transaksiPersediaan;
 
-    // 4. Kondisi Baik (Persentase aset tetap yang kondisinya 'Baik')
-    $asetBaik = AssetTetap::where('kondisi', 'Baik')->count();
-    $persentaseKondisiBaik = $totalAset > 0 ? round(($asetBaik / $totalAset) * 100, 1) : 0;
+        // 4. Kondisi Baik (Persentase aset tetap yang kondisinya 'Baik')
+        $asetBaik = AssetTetap::where('kondisi', 'Baik')->count();
+        $persentaseKondisiBaik = $totalAset > 0 ? round(($asetBaik / $totalAset) * 100, 1) : 0;
 
-    // Data pengaduan untuk live tracking (dari langkah sebelumnya)
-    $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
+        // Data pengaduan untuk live tracking (dari langkah sebelumnya)
+        $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
 
-    return view('welcome', compact(
-        'pengaduans', 
-        'totalItemBMN', 
-        'formattedNilaiAset', 
-        'totalTransaksiBulanIni', 
-        'persentaseKondisiBaik'
-    ));
-}
-     public function index()
+        return view('welcome', compact(
+            'pengaduans',
+            'totalItemBMN',
+            'formattedNilaiAset',
+            'totalTransaksiBulanIni',
+            'persentaseKondisiBaik'
+        ));
+    }
+    public function index()
     {
         // Mengambil 6 pengaduan terbaru dari database
         $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
 
         // Passing variabel $pengaduans ke file blade landing page Anda
-        return view('welcome', compact('pengaduans')); 
+        return view('welcome', compact('pengaduans'));
     }
-        public function pengaduan(Request $request)
+    public function pengaduan(Request $request)
     {
         $query = Pengaduan::query()
-            ->when($request->filled('search'), function($q) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
                 $q->search($request->search);
             })
-            ->when($request->filled('status'), function($q) use ($request) {
+            ->when($request->filled('status'), function ($q) use ($request) {
                 $q->status($request->status);
             })
             ->orderBy('created_at', 'desc');
@@ -1368,122 +1518,122 @@ class AdminAsettetapController extends Controller
         return redirect()->route('adminasettetap.pengaduan')
             ->with('success', 'Status pengaduan #' . $pengaduan->id . ' berhasil diupdate!');
     }
-    
+
     //=======PENGADUAN STORE FRONDEND-=====
     public function pengaduanStore(Request $request)
     {
-    $validated = $request->validate([
-        'nama_lengkap' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'telepon' => 'required|string|max:20',
-        'kategori' => 'required|in:peminjaman_barang,pengembalian_barang,peminjaman_kendaraan,pengembalian_kendaraan,peminjaman_gedung,pengembalian_gedung,persediaan,sistem,layanan,lainnya',
-        'deskripsi' => 'required|string|max:5000',
-        'setuju_kebijakan' => 'required|accepted',
-    ], [
-        'nama_lengkap.required' => 'Nama lengkap wajib diisi',
-        'email.required' => 'Email wajib diisi',
-        'email.email' => 'Format email tidak valid',
-        'telepon.required' => 'Nomor telepon wajib diisi',
-        'kategori.required' => 'Pilih kategori pengaduan',
-        'deskripsi.required' => 'Deskripsi pengaduan wajib diisi',
-        'setuju_kebijakan.accepted' => 'Anda harus menyetujui kebijakan privasi',
-    ]);
+        $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'telepon' => 'required|string|max:20',
+            'kategori' => 'required|in:peminjaman_barang,pengembalian_barang,peminjaman_kendaraan,pengembalian_kendaraan,peminjaman_gedung,pengembalian_gedung,persediaan,sistem,layanan,lainnya',
+            'deskripsi' => 'required|string|max:5000',
+            'setuju_kebijakan' => 'required|accepted',
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'telepon.required' => 'Nomor telepon wajib diisi',
+            'kategori.required' => 'Pilih kategori pengaduan',
+            'deskripsi.required' => 'Deskripsi pengaduan wajib diisi',
+            'setuju_kebijakan.accepted' => 'Anda harus menyetujui kebijakan privasi',
+        ]);
 
-    try {
-        Pengaduan::create($validated);
-        
-        return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
+        try {
+            Pengaduan::create($validated);
 
-    } catch (\Exception $e) {
-        // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
-        return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
-    }
-
+            return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
+        } catch (\Exception $e) {
+            // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
+            return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
+        }
     }
 
     // ========== SURVEY KEPUASAN ==========
-public function surveyKepuasan(Request $request)
-{
-    $query = SurveyKepuasan::query()
-        ->when($request->filled('search'), function($q) use ($request) {
-            $q->search($request->search);
-        })
-        ->when($request->filled('kepuasan'), function($q) use ($request) {
-            $q->kepuasan($request->kepuasan);
-        })
-        ->orderBy('created_at', 'desc');
+    public function surveyKepuasan(Request $request)
+    {
+        $query = SurveyKepuasan::query()
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->search($request->search);
+            })
+            ->when($request->filled('kepuasan'), function ($q) use ($request) {
+                $q->kepuasan($request->kepuasan);
+            })
+            ->orderBy('created_at', 'desc');
 
-    $surveys = $query->paginate(15)->withQueryString();
+        $surveys = $query->paginate(15)->withQueryString();
 
-    return view('adminasettetap.survey_kepuasan', compact('surveys'));
-}
+        return view('adminasettetap.survey_kepuasan', compact('surveys'));
+    }
 
-public function surveyShow(SurveyKepuasan $survey)
-{
-    return view('adminasettetap.survey_show', compact('survey'));
-}
+    public function surveyShow(SurveyKepuasan $survey)
+    {
+        return view('adminasettetap.survey_show', compact('survey'));
+    }
 
-public function surveyDestroy(SurveyKepuasan $survey)
-{
-    $survey->delete();
+    public function surveyDestroy(SurveyKepuasan $survey)
+    {
+        $survey->delete();
 
-    return redirect()->route('adminasettetap.survey-kepuasan')
-        ->with('success', 'Survey kepuasan berhasil dihapus!');
-}
+        return redirect()->route('adminasettetap.survey-kepuasan')
+            ->with('success', 'Survey kepuasan berhasil dihapus!');
+    }
 
-// ========== FRONTEND SURVEY STORE ==========
-public function surveyStore(Request $request)
-{
-    $validated = $request->validate([
-        'nama' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'kepuasan' => 'required|in:sangat_puas,puas,cukup,kurang_puas,tidak_puas',
-        'aspek_memuaskan' => 'nullable|string|max:2000',
-        'saran' => 'nullable|string|max:2000',
-    ], [
-        'nama.required' => 'Nama wajib diisi',
-        'email.required' => 'Email wajib diisi',
-        'email.email' => 'Format email tidak valid',
-        'kepuasan.required' => 'Rating kepuasan wajib dipilih',
-    ]);
-
-    try {
-        SurveyKepuasan::create([
-            'nama' => $validated['nama'],
-            'email' => $validated['email'],
-            'kepuasan' => $validated['kepuasan'],
-            'aspek_memuaskan' => $validated['aspek_memuaskan'],
-            'saran' => $validated['saran'],
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
+    // ========== FRONTEND SURVEY STORE ==========
+    public function surveyStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'kepuasan' => 'required|in:sangat_puas,puas,cukup,kurang_puas,tidak_puas',
+            'aspek_memuaskan' => 'nullable|string|max:2000',
+            'saran' => 'nullable|string|max:2000',
+        ], [
+            'nama.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'kepuasan.required' => 'Rating kepuasan wajib dipilih',
         ]);
 
-       return redirect()->back()->with('success', 'Terima kasih atas feedback Anda! Survey berhasil dikirim.');
+        try {
+            SurveyKepuasan::create([
+                'nama' => $validated['nama'],
+                'email' => $validated['email'],
+                'kepuasan' => $validated['kepuasan'],
+                'aspek_memuaskan' => $validated['aspek_memuaskan'],
+                'saran' => $validated['saran'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
-    } catch (\Exception $e) {
-        // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
-        return redirect()->back()->with('error', 'Gagal menyimpan survey. Silakan coba lagi.')->withInput();
-    }
+            return redirect()->back()->with('success', 'Terima kasih atas feedback Anda! Survey berhasil dikirim.');
+        } catch (\Exception $e) {
+            // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
+            return redirect()->back()->with('error', 'Gagal menyimpan survey. Silakan coba lagi.')->withInput();
+        }
     }
 
     public function getSurveyStats()
     {
-    $totalSurvey = SurveyKepuasan::count();
-    
-    // Rating mapping
-    $ratings = [
-        'sangat_puas' => 5, 'puas' => 4, 'cukup' => 3, 
-        'kurang_puas' => 2, 'tidak_puas' => 1
-    ];
-    
-    // Breakdown per tingkat
-    $surveyStats = [];
-    foreach($ratings as $label => $score) {
-        $surveyStats[$label] = SurveyKepuasan::where('kepuasan', $label)->count();
-    }
-    
-    // Rata-rata rating
-    $rataRataRating = SurveyKepuasan::avg(DB::raw("
+        $totalSurvey = SurveyKepuasan::count();
+
+        // Rating mapping
+        $ratings = [
+            'sangat_puas' => 5,
+            'puas' => 4,
+            'cukup' => 3,
+            'kurang_puas' => 2,
+            'tidak_puas' => 1
+        ];
+
+        // Breakdown per tingkat
+        $surveyStats = [];
+        foreach ($ratings as $label => $score) {
+            $surveyStats[$label] = SurveyKepuasan::where('kepuasan', $label)->count();
+        }
+
+        // Rata-rata rating
+        $rataRataRating = SurveyKepuasan::avg(DB::raw("
         CASE 
             WHEN kepuasan = 'sangat_puas' THEN 5
             WHEN kepuasan = 'puas' THEN 4
@@ -1493,25 +1643,28 @@ public function surveyStore(Request $request)
             ELSE 0 
         END
     "));
-    
-    // Quote terbaik (sangat puas)
-    $quoteTerbaik = SurveyKepuasan::where('kepuasan', 'sangat_puas')
-        ->whereNotNull('aspek_memuaskan')
-        ->orderBy('created_at', 'desc')
-        ->first(['aspek_memuaskan', 'nama']);
-    
-    // Trend bulan ini (contoh)
-    $trendBulanIni = '+12%';
-    
-    return compact(
-        'totalSurvey', 'surveyStats', 'rataRataRating', 
-        'quoteTerbaik', 'trendBulanIni'
-    );
+
+        // Quote terbaik (sangat puas)
+        $quoteTerbaik = SurveyKepuasan::where('kepuasan', 'sangat_puas')
+            ->whereNotNull('aspek_memuaskan')
+            ->orderBy('created_at', 'desc')
+            ->first(['aspek_memuaskan', 'nama']);
+
+        // Trend bulan ini (contoh)
+        $trendBulanIni = '+12%';
+
+        return compact(
+            'totalSurvey',
+            'surveyStats',
+            'rataRataRating',
+            'quoteTerbaik',
+            'trendBulanIni'
+        );
     }
 
     // public function exportExcel(Request $request)
     // {
     // return Excel::download(new SurveyExport($request), 'survey.excel-export' . now()->format('d-m-Y') . '.xlsx');
     // }
-    
+
 }

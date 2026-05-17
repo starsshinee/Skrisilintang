@@ -25,6 +25,7 @@ class PengembalianKendaraan extends Model
         'user_id',
         'verified_by_admin_id',
         'komentar_admin',
+        'status_verifikasi',
         'verified_at'
     ];
 
