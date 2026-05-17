@@ -354,26 +354,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/peminjaman-barang/{id}/upload-bast', [AdminAsettetapController::class, 'uploadSuratBast'])->name('peminjaman-barang.upload-bast');
             Route::get('/peminjaman-barang/{peminjaman}/generate-surat', [AdminAsettetapController::class, 'generateSuratPeminjaman'])->name('peminjaman-barang.print');
 
-            // Laporan
-            Route::prefix('adminasettetap/laporan')->group(function () {
-                Route::get('/', [LaporanController::class, 'index'])->name('laporan');
-
-                // Rute Download dengan parameter
-                Route::get('/download-transaksi-masuk', [LaporanController::class, 'downloadTransaksiMasuk'])->name('transaksi-masuk.download');
-                Route::get('/download-transaksi-keluar', [LaporanController::class, 'downloadTransaksiKeluar'])->name('transaksi-keluar.download');
-                Route::get('/download-pengaduan', [LaporanController::class, 'downloadPengaduan'])->name('pengaduan.download');
-                Route::get('/download-survey', [LaporanController::class, 'downloadSurvey'])->name('survey.download');
-                Route::get('/download-peminjaman', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
-                Route::get('/download-pengembalian', [LaporanController::class, 'downloadPengembalian'])->name('pengembalian.download');
-                Route::get('/download-all', [LaporanController::class, 'downloadAll'])->name('adminasettetap.all.download');
-                Route::get('/download-mutasi', [LaporanController::class, 'downloadMutasi'])->name('mutasi.download');
-            });
-
-            // Route::get('/laporan-transaksi-masuk', [AdminAsettetapController::class, 'laporanTransaksiMasuk'])->name('laporan-transaksi-masuk');  
-            // Route::get('/laporan-transaksi-keluar', [AdminAsettetapController::class, 'laporanTransaksiKeluar'])->name('laporan-transaksi-keluar');
-            // Route::get('/laporan-mutasi-barang', [AdminAsettetapController::class, 'laporanMutasiAsetTetap'])->name('laporan-mutasi-barang');
-            // Route::get('/laporan-peminjaman-pengembalian', [AdminAsettetapController::class, 'laporanPeminjamanpengembalian'])->name('laporan-peminjaman-pengembalian');
-
             // ========== CRUD DATA ASET TETAP ==========
             Route::get('/data-aset-tetap/create', [AdminAsettetapController::class, 'createDataAsetTetap'])->name('data-aset-tetap.create');
             Route::post('/data-aset-tetap', [AdminAsettetapController::class, 'storeDataAsetTetap'])->name('data-aset-tetap.store');
@@ -382,24 +362,6 @@ Route::middleware('auth')->group(function () {
             Route::put('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'updateDataAsetTetap'])->name('data-aset-tetap.update');
             Route::delete('/data-aset-tetap/{aset}', [AdminAsettetapController::class, 'destroyDataAsetTetap'])->name('data-aset-tetap.destroy');
 
-
-
-            // ========== CRUD TRANSAKSI KELUAR ASET TETAP ==========
-            // ========== TRANSAKSI KELUAR ==========
-            Route::get('/adminasettetap/transaksi-keluar', [AdminAsettetapController::class, 'TransaksiKeluar'])->name('transaksi-keluar');
-            Route::get('/adminasettetap/transaksi-keluar/create', [AdminAsettetapController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
-            Route::post('/adminasettetap/transaksi-keluar', [AdminAsettetapController::class, 'storeTransaksiKeluar'])->name('transaksi-keluar.store');
-
-            // ✅ SATU ROUTE UNTUK AUTO-FILL
-            Route::get('/aset-tetap/{id}', [AdminAsettetapController::class, 'getAsetData'])->name('admin-aset-data');
-
-            // // Detail & Edit JSON
-            Route::get('transaksi-keluar/{id}/show-aset', [AdminAsettetapController::class, 'showWithAset'])->name('transaksi-keluar.show-aset');
-            Route::get('transaksi-keluar/{id}/edit-json', [AdminAsettetapController::class, 'editJson'])->name('transaksi-keluar.edit-json');
-
-            // ✅ DELETE ROUTE - TAMBAHAN BARU
-            Route::delete('transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
-
             // ========== CRUD TRANSAKSI MASUK ASET TETAP ==========
             Route::get('/transaksi-masuk/create', [AdminAsettetapController::class, 'createTransaksiMasuk'])->name('transaksi-masuk.create');
             Route::post('/transaksi-masuk', [AdminAsettetapController::class, 'storeTransaksiMasuk'])->name('transaksi-masuk.store');
@@ -407,6 +369,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/transaksi-masuk/{transaksi}/edit', [AdminAsettetapController::class, 'editTransaksiMasuk'])->name('transaksi-masuk.edit');
             Route::put('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'updateTransaksiMasuk'])->name('transaksi-masuk.update');
             Route::delete('/transaksi-masuk/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiMasuk'])->name('transaksi-masuk.destroy');
+            
+            
+            // ========== CRUD TRANSAKSI KELUAR ASET TETAP ==========
+            Route::get('/transaksi-keluar/create', [AdminAsettetapController::class, 'createTransaksiKeluar'])->name('transaksi-keluar.create');
+            Route::post('/transaksi-keluar', [AdminAsettetapController::class, 'storeTransaksiKeluar'])->name('transaksi-keluar.store');
+            Route::put('/transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'updateTransaksiKeluar'])->name('transaksi-keluar.update');
+            Route::delete('/transaksi-keluar/{transaksi}', [AdminAsettetapController::class, 'destroyTransaksiKeluar'])->name('transaksi-keluar.destroy');
+
+            // ========== AJAX & JSON ENDPOINTS ==========
+            // Route untuk mendapatkan data aset (Auto-Fill)
+            Route::get('/aset-tetap/{id}', [AdminAsettetapController::class, 'getAsetData'])->name('aset-data');
+            // Route untuk mengambil detail transaksi (Modal Detail)
+            Route::get('/transaksi-keluar/{id}/show-aset', [AdminAsettetapController::class, 'showWithAset'])->name('transaksi-keluar.show-aset');
+            // Route untuk mengambil data transaksi lama (Modal Edit)
+            Route::get('/transaksi-keluar/{id}/edit-json', [AdminAsettetapController::class, 'editJson'])->name('transaksi-keluar.edit-json');
 
             //CRUD MUTASI BARANG
             // Mutasi Barang Routes
@@ -438,6 +415,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/peminjaman/download', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
             Route::get('/dashboard-summary/download', [LaporanController::class, 'downloadDashboardSummary'])->name('dashboard.download');
             Route::get('/all/download', [LaporanController::class, 'downloadAll'])->name('all.download');
+
+            // Laporan
+            Route::prefix('adminasettetap/laporan')->group(function () {
+                Route::get('/', [LaporanController::class, 'index'])->name('laporan');
+
+                // Rute Download dengan parameter
+                Route::get('/download-transaksi-masuk', [LaporanController::class, 'downloadTransaksiMasuk'])->name('transaksi-masuk.download');
+                Route::get('/download-transaksi-keluar', [LaporanController::class, 'downloadTransaksiKeluar'])->name('transaksi-keluar.download');
+                Route::get('/download-pengaduan', [LaporanController::class, 'downloadPengaduan'])->name('pengaduan.download');
+                Route::get('/download-survey', [LaporanController::class, 'downloadSurvey'])->name('survey.download');
+                Route::get('/download-peminjaman', [LaporanController::class, 'downloadPeminjaman'])->name('peminjaman.download');
+                Route::get('/download-pengembalian', [LaporanController::class, 'downloadPengembalian'])->name('pengembalian.download');
+                Route::get('/download-all', [LaporanController::class, 'downloadAll'])->name('adminasettetap.all.download');
+                Route::get('/download-mutasi', [LaporanController::class, 'downloadMutasi'])->name('mutasi.download');
+            });
         });
 
 

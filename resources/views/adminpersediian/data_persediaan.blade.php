@@ -363,19 +363,18 @@
             data-kategori="{{ $item->kategori }}"
             data-kode-barang="{{ $item->kode_barang }}"
             data-nama-barang="{{ $item->nama_barang }}"
-            data-tanggal-masuk="{{ $item->tanggal_masuk }}"
-            data-harga-satuan="{{ $item->harga_satuan }}"
-            data-harga-total="{{ $item->harga_total }}"
+            data-tanggal-masuk="{{ $item->tanggal_masuk->format('Y-m-d') }}" {{-- Format standar input date --}}
+            data-harga-satuan="{{ $item->harga_satuan }}" {{-- Nilai mentah: 10000 --}}
+            data-harga-total="{{ $item->harga_satuan * $item->jumlah }}" {{-- Nilai mentah total --}}
             data-jumlah="{{ $item->jumlah }}">
-            <!-- CORRECT -->
             <td><strong>{{ $persediaan->firstItem() + $loop->index }}</strong></td>
             <td><strong>{{ $item->kode_kategori }}</strong></td>
             <td>{{ $item->kategori }}</td>
             <td><strong>{{ $item->kode_barang }}</strong></td>
             <td>{{ Str::limit($item->nama_barang, 30) }}</td>
             <td>{{ $item->tanggal_masuk->format('d/m/Y') }}</td>
-            <td class="font-mono">{{ $item->harga_satuan }}</td>
-            <td class="font-mono font-semibold text-green-600">{{ $item->harga_total }}</td>
+            <td class="font-mono">{{ $item->harga_satuan_format }}</td>
+          <td class="font-mono font-semibold text-green-600">{{ $item->harga_total_format }}</td>
             <td><strong class="text-lg">{{ number_format($item->jumlah) }}</strong></td>
             <td>
               <a href="#" onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
@@ -402,9 +401,6 @@
                 <path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm2-8h6v6h-6v-6zm0-2V4h6v4h-6zM5 8V5h2V3H5V1H3v2H1v1.99L3 8h2zm16 6V8c0-1.1-.9-2-2-2h-1v2h1v2h1v1h-1v2h1c1.1 0 2-.9 2-2z"/>
               </svg>
               <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Belum ada data persediaan</div>
-              {{-- <button onclick="openModal('createModal')" class="btn-tambah" style="padding: 12px 24px;">
-                Tambah persediaan pertama
-              </button> --}}
             </td>
           </tr>
           @endforelse
@@ -424,8 +420,6 @@
 {{-- MODAL TAMBAH --}}
 <div id="createModal" class="modal-overlay">
   <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
-    
-    {{-- HEADER --}}
     <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
@@ -443,12 +437,9 @@
       </div>
     </div>
 
-    {{-- FORM --}}
     <form id="createForm" method="POST" action="{{ route('adminpersediaan.data-persediaan.store') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
       @csrf
       <div style="padding:28px; overflow-y:auto; flex:1;">
-
-        {{-- KATEGORI --}}
         <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:24px;">
           <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:4px 10px;">Data Kategori</span>
         </div>
@@ -465,7 +456,6 @@
           </div>
         </div>
 
-        {{-- BARANG --}}
         <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin:24px 0;">
           <span style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border-radius:4px; padding:4px 10px; color:var(--success);">Data Barang</span>
         </div>
@@ -477,12 +467,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-                        <input type="text" name="nama_barang" class="form-input" placeholder="Nama lengkap barang persediaan" maxlength="200" required>
+            <input type="text" name="nama_barang" class="form-input" placeholder="Nama lengkap barang persediaan" maxlength="200" required>
             @error('nama_barang') <span class="error-text">{{ $message }}</span> @enderror
           </div>
         </div>
 
-        {{-- TANGGAL & HARGA --}}
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Tanggal Masuk <span style="color:var(--danger);">*</span></label>
@@ -499,7 +488,6 @@
           </div>
         </div>
 
-        {{-- JUMLAH & TOTAL --}}
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Jumlah <span style="color:var(--danger);">*</span></label>
@@ -514,10 +502,8 @@
             </div>
           </div>
         </div>
-
       </div>
 
-      {{-- FOOTER --}}
       <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
         <div style="font-size:12px; color:var(--muted); flex:1;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" style="vertical-align:middle; margin-right:4px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
@@ -565,24 +551,20 @@
   </div>
 </div>
 
-{{-- MODAL IMPORT EXCEL PERSEDIAAN --}}
+{{-- MODAL IMPORT EXCEL --}}
 <div id="importModal" class="modal-overlay">
   <div class="modal" style="max-width: 480px;">
     <h2 class="modal-title">Import Data Persediaan</h2>
-    
     <form action="{{ route('adminpersediaan.data-persediaan.import') }}" method="POST" enctype="multipart/form-data">
       @csrf
-      
       <div class="form-group">
         <label class="form-label">Pilih File Excel/CSV <span style="color:var(--danger);">*</span></label>
-        
         <div class="upload-area">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--blue)" style="opacity: 0.7; margin: 0 auto 12px;">
             <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
           </svg>
           <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" class="form-input" style="background: white; padding: 10px;" required>
         </div>
-        
         <p style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">
           Unggah file dengan ekstensi <strong>.xlsx</strong> atau <strong>.csv</strong>. Pastikan format kolom sesuai dengan template.
           <br>
@@ -591,7 +573,6 @@
           </a>
         </p>
       </div>
-
       <div class="btn-group" style="margin-top: 24px; justify-content: flex-end; display: flex; gap: 12px;">
         <button type="button" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;" onclick="closeModal('importModal')">Batal</button>
         <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--blue),#7C3AED); color:white; padding:12px 24px;" onclick="this.innerHTML='Mengunggah...';">Mulai Import</button>
@@ -603,11 +584,10 @@
 {{-- MODAL EDIT --}}
 <div id="editModal" class="modal-overlay">
   <div class="modal" style="max-width:620px; padding:0;">
-    {{-- Header sama seperti create modal --}}
     <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#FEF3C7,#FEF2F2); flex-shrink:0;">
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#FBBF24); display:flex; align-items:center; justify-content:center;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#F59E0B); display:flex; align-items:center; justify-content:center;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
           </div>
           <div>
@@ -625,10 +605,8 @@
       @csrf
       @method('PUT')
       <div style="padding:28px; overflow-y:auto; flex:1;">
-        {{-- Form fields sama persis seperti create, tapi dengan ID untuk edit --}}
         <input type="hidden" name="id" id="editId">
         
-        {{-- KATEGORI --}}
         <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:24px;">
           <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:4px 10px;">Data Kategori</span>
         </div>
@@ -643,45 +621,44 @@
           </div>
         </div>
 
-        <!-- Inside edit modal form, after the kategori fields -->
-<div class="form-row">
-  <div class="form-group">
-    <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
-    <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" maxlength="50" required>
-  </div>
-  <div class="form-group">
-    <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-    <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" maxlength="200" required>
-  </div>
-</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" maxlength="50" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" maxlength="200" required>
+          </div>
+        </div>
 
-<div class="form-row">
-  <div class="form-group">
-    <label class="form-label">Tanggal Masuk <span style="color:var(--danger);">*</span></label>
-    <input type="date" name="tanggal_masuk" id="editTanggalMasuk" class="form-input" required>
-  </div>
-  <div class="form-group">
-    <label class="form-label">Harga Satuan <span style="color:var(--danger);">*</span></label>
-    <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
-      <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-      <input type="text" name="harga_satuan" id="editHargaSatuan" step="0.01" min="0" class="form-input-price" placeholder="0" required style="border-left:none; border-radius:0 10px 10px 0;">
-    </div>
-  </div>
-</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Masuk <span style="color:var(--danger);">*</span></label>
+            <input type="date" name="tanggal_masuk" id="editTanggalMasuk" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan <span style="color:var(--danger);">*</span></label>
+            <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
+              <input type="text" name="harga_satuan" id="editHargaSatuan" placeholder="0" required style="border-left:none; border-radius:0 10px 10px 0;" class="form-input-price">
+            </div>
+          </div>
+        </div>
 
-<div class="form-row">
-  <div class="form-group">
-    <label class="form-label">Jumlah <span style="color:var(--danger);">*</span></label>
-    <input type="number" name="jumlah" id="editJumlah" min="1" class="form-input" placeholder="1" required onchange="calculateTotalEdit()">
-  </div>
-  <div class="form-group">
-    <label class="form-label">Harga Total</label>
-    <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
-      <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:1.5px solid var(--border); background:#ECFDF5; white-space:nowrap;">Rp</span>
-      <input type="text" id="editHargaTotal" class="form-input-price" readonly style="border-left:none; border-radius:0 10px 10px 0; background:#F0FDF4; color:var(--success); font-weight:600;">
-    </div>
-  </div>
-</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah <span style="color:var(--danger);">*</span></label>
+            <input type="number" name="jumlah" id="editJumlah" min="1" class="form-input" placeholder="1" required onchange="calculateTotalEdit()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Total</label>
+            <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:1.5px solid var(--border); background:#ECFDF5; white-space:nowrap;">Rp</span>
+              <input type="text" id="editHargaTotal" class="form-input-price" readonly style="border-left:none; border-radius:0 10px 10px 0; background:#F0FDF4; color:var(--success); font-weight:600;">
+            </div>
+          </div>
+        </div>
       </div>
       
       <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px;">
@@ -728,8 +705,6 @@
 </div>
 
 <script>
-let persediaanData = {};
-
 // Close modal & ESC key
 document.querySelectorAll('.modal-overlay').forEach(modal => {
   modal.addEventListener('click', e => {
@@ -754,7 +729,7 @@ function closeModal(modalId = null) {
   if (modalId === 'editModal') document.getElementById('editForm').reset();
 }
 
-// 🔥 UTILITY FUNCTIONS - Handle angka BESAR
+// 🔥 UTILITY FUNCTIONS
 function getRawNumber(selector) {
   const input = typeof selector === 'string' ? document.querySelector(selector) : selector;
   return input ? parseFloat((input.value || '').replace(/[^\d.,]/g, '')) || 0 : 0;
@@ -771,7 +746,7 @@ function parseDatasetNumber(value) {
   return parseFloat((value || '0').replace(/[^\d.]/g, '')) || 0;
 }
 
-// 🔥 CALCULATE - Fixed untuk angka besar
+// 🔥 CALCULATE
 function calculateTotal() {
   const hargaSatuanRaw = getRawNumber('[name="harga_satuan"]');
   const jumlahRaw = parseFloat(document.querySelector('[name="jumlah"]')?.value) || 0;
@@ -786,9 +761,8 @@ function calculateTotalEdit() {
   document.getElementById('editHargaTotal').value = formatCurrency(total);
 }
 
-// 🔥 EVENT HANDLERS - Pemisahan input vs blur
+// 🔥 EVENT HANDLERS
 document.addEventListener('input', function(e) {
-  // HANYA calculate, TIDAK format input!
   if (e.target.matches('[name="jumlah"], [name="harga_satuan"], #editJumlah, #editHargaSatuan')) {
     setTimeout(() => {
       if (e.target.matches('[name="jumlah"], [name="harga_satuan"]')) calculateTotal();
@@ -798,26 +772,27 @@ document.addEventListener('input', function(e) {
 }, true);
 
 document.addEventListener('blur', function(e) {
-  // FORMAT HANYA saat blur (keluar input)
   if (e.target.classList.contains('form-input-price')) {
     const rawValue = getRawNumber(e.target);
     e.target.value = formatCurrency(rawValue);
   }
 }, true);
 
-// 🔥 DETAIL MODAL - Fixed dataset parsing
+// 🔥 DETAIL MODAL - FIXED FORMATTING HERE
 function populateDetailModal(data) {
   document.getElementById('detailTitle').textContent = `Kode: ${data.kode_barang}`;
   
+  // Membaca data angka mentah dari dataset lalu diformat ulang dengan rapi ke Rupiah
+  const formattedHargaSatuan = formatCurrency(parseDatasetNumber(data.harga_satuan));
+  const formattedHargaTotal = formatCurrency(parseDatasetNumber(data.harga_total));
+
   document.getElementById('detailContent').innerHTML = `
-    <div style="display:flex; flex-direction:column; gap:16px;">
-      <!-- Kategori -->
+    <div style="display:flex; flex-direction:column; gap:16px; width: 100%;">
       <div style="display:flex; gap:16px; align-items:center;">
         <div style="width:100px; padding:8px 12px; background:#F0F9FF; border-radius:8px; font-weight:700; color:var(--blue); font-size:13px; text-align:center; white-space:nowrap;">${data.kode_kategori}</div>
         <div style="font-weight:600; color:var(--text); font-size:14px;">${data.kategori}</div>
       </div>
       
-      <!-- Kode & Nama -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
         <div>
           <div style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:8px;">Kode Barang</div>
@@ -829,7 +804,6 @@ function populateDetailModal(data) {
         </div>
       </div>
       
-      <!-- Stats Grid -->
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; padding:20px; background:#F8FAFF; border-radius:12px; border:1px solid var(--border);">
         <div>
           <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Tanggal Masuk</div>
@@ -841,19 +815,20 @@ function populateDetailModal(data) {
         </div>
         <div>
           <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Harga Satuan</div>
-          <div style="font-weight:600; font-size:15px; color:var(--text);">Rp ${formatCurrency(parseDatasetNumber(data.harga_satuan))}</div>
+          <div style="font-weight:600; font-size:15px; color:var(--text);">Rp ${formattedHargaSatuan}</div>
         </div>
         <div>
           <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Harga Total</div>
           <div style="font-weight:700; font-size:18px; color:var(--blue); background:linear-gradient(135deg,#EEF2FF,#E0E7FF); padding:8px 12px; border-radius:8px; display:inline-block;">
-            Rp ${formatCurrency(parseDatasetNumber(data.harga_total))}
+            Rp ${formattedHargaTotal}
           </div>
         </div>
       </div>
-    `;
+    </div>
+  `;
 }
 
-// 🔥 OPEN MODALS - Fixed dataset access
+// 🔥 OPEN MODALS
 function openDetail(id) {
   const row = document.querySelector(`tr[data-id="${id}"]`);
   if (!row) return alert('Data tidak ditemukan!');
@@ -895,7 +870,6 @@ function openEdit(id) {
   form.action = `{{ route('adminpersediaan.data-persediaan.update', ':id') }}`.replace(':id', id);
 
   populateEditModal(persediaan);
-  document.getElementById('editForm').action = `{{ route('adminpersediaan.data-persediaan.update', ':id') }}`.replace(':id', id);
   openModal('editModal');
 }
 
@@ -908,7 +882,6 @@ function refreshCsrfToken() {
 
 function confirmDelete(id) {
   refreshCsrfToken();
-
   const row = document.querySelector(`tr[data-id="${id}"]`);
   if (!row) return alert('Data tidak ditemukan!');
   
@@ -941,41 +914,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-/* Tambahan CSS untuk form styling */
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 .form-group { display: flex; flex-direction: column; }
-.form-label { 
-  font-size: 13px; font-weight: 600; color: var(--text); 
-  margin-bottom: 8px; 
-}
+.form-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
 .form-input { 
   width: 100%; padding: 14px 16px; border-radius: 12px;
   border: 2px solid var(--border); background: var(--bg);
   font-family: inherit; font-size: 14px; transition: all .2s;
-  box-sizing: border-box;
-  ime-mode: disabled;
-  min-width: 0;
-  white-space: nowrap;
+  box-sizing: border-box; min-width: 0; white-space: nowrap;
 }
 .form-input:focus { 
   outline: none; border-color: var(--blue); 
-  box-shadow: 0 0 0 4px rgba(79,111,255,0.1);
-  background: white;
-
+  box-shadow: 0 0 0 4px rgba(79,111,255,0.1); background: white;
 }
-.error-text { 
-  font-size: 12px; color: var(--danger); margin-top: 6px; 
-  font-weight: 500;
-}
+.error-text { font-size: 12px; color: var(--danger); margin-top: 6px; font-weight: 500; }
 .modal-overlay.show { opacity: 1; visibility: visible; }
-.modal-overlay.show .modal { 
-  transform: scale(1) translateY(0); 
-}
+.modal-overlay.show .modal { transform: scale(1) translateY(0); }
 @media (max-width: 768px) {
   .form-row { grid-template-columns: 1fr; }
   .main { margin-left: 0; }
 }
 </style>
-
 </body>
 </html>

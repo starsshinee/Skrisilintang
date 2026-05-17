@@ -263,10 +263,8 @@ class AdminSarprasController extends Controller
 
         $gedung->update($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Gedung berhasil diupdate!'
-        ]);
+       return redirect()->route('adminsarpras.data-gedung')->with('success', 'Gedung berhasil diupdate!');
+
     }
 
     // Hapus gedung
@@ -688,9 +686,7 @@ class AdminSarprasController extends Controller
         return back()->with('error', 'Gagal mengunggah surat perjanjian.');
     }
 
-    /**
-     * Daftar semua data kerusakan ✅ FIXED
-     */
+    //====DATA KERUSAKAN=========
     public function dataKerusakan(Request $request)
     {
         $query = Kerusakan::query()
@@ -795,7 +791,7 @@ class AdminSarprasController extends Controller
     }
 
     /**
-     * Update data kerusakan (AJAX untuk modal)
+     * Update data kerusakan (Sekarang menggunakan redirect normal, bukan AJAX JSON)
      */
     public function updateKerusakanAjax(Request $request, $id)
     {
@@ -823,10 +819,9 @@ class AdminSarprasController extends Controller
 
         $kerusakan->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Data berhasil diupdate!'
-        ]);
+        // ✅ PERUBAHAN DI SINI: Mengubah JSON menjadi Redirect
+        return redirect()->route('adminsarpras.data-kerusakan')
+            ->with('success', 'Data kerusakan berhasil diupdate!');
     }
 
     /**
@@ -848,7 +843,7 @@ class AdminSarprasController extends Controller
     }
 
     /**
-     * API untuk modal EDIT (JSON)
+     * API untuk modal EDIT (JSON) - Tetap dibiarkan karena dipakai untuk mengambil data ke dalam form modal
      */
     public function editKerusakanJson($id)
     {
@@ -858,7 +853,7 @@ class AdminSarprasController extends Controller
     }
 
     /**
-     * API untuk modal DETAIL (JSON)
+     * API untuk modal DETAIL (JSON) - Tetap dibiarkan karena dipakai untuk menampilkan detail
      */
     public function showKerusakanJson($id)
     {

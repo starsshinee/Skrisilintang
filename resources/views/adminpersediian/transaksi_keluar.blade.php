@@ -284,8 +284,7 @@
               data-nama_barang="{{ $item->nama_barang }}"
               data-jumlah_keluar="{{ $item->jumlah_keluar }}"
               data-harga="{{ $item->harga }}"
-              data-total="{{ $item->total }}"
-              data-keterangan="{{ $item->keterangan ?? '' }}">
+              data-total="{{ $item->total }}">
               <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
               <td><strong>{{ $item->nomor_transaksi }}</strong></td>
               <td>{{ $item->tanggal_input_format ?? $item->tanggal_input }}</td>
@@ -296,7 +295,6 @@
               <td><strong class="text-lg text-red-600">{{ number_format($item->jumlah_keluar) }}</strong></td>
               <td class="font-mono">{{ isset($item->harga_format) ? $item->harga_format : 'Rp ' . number_format($item->harga) }}</td>
               <td class="font-mono font-semibold text-red-600">{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total) }}</td>
-              <td>{{ Str::limit($item->keterangan, 30) }}</td>
               <td>
                 <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
                   <svg viewBox="0 0 24 24" fill="#4F6FFF"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
@@ -311,7 +309,7 @@
             </tr>
             @empty
             <tr>
-              <td colspan="11" style="text-align:center; padding:60px; color:var(--muted);">
+              <td colspan="12" style="text-align:center; padding:60px; color:var(--muted);">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
                   <path d="M7 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H7v10zm2-8h6v6h-6v-6zm0-2V4h6v4h-6zM5 8V5h2V3H5V1H3v2H1v1.99L3 8h2z"/>
                 </svg>
@@ -356,33 +354,52 @@
       @csrf
       <div style="padding:28px; overflow-y:auto; flex:1;">
 
-        {{-- Seksi Kategori --}}
+        {{-- Seksi Pilih Barang Master --}}
         <div class="section-label" style="margin-bottom:24px;">
+          <span class="section-label-inner green">Data Barang Master</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Pilih Barang Persediaan <span style="color:var(--danger);">*</span></label>
+            <select id="create_select_barang" class="form-select" required onchange="autofillMasterData(this.value)">
+              <option value="">-- Pilih Kode / Nama Barang --</option>
+              @foreach($masterPersediaan as $item)
+                <option value="{{ $item['kode_barang'] }}" 
+                        data-nama="{{ $item['nama_barang'] }}"
+                        data-kodekat="{{ $item['kode_kategori'] }}"
+                        data-kat="{{ $item['kategori'] }}"
+                        data-harga="{{ $item['harga_satuan'] }}"
+                        data-stok="{{ $item['stok_tersedia'] ?? 0 }}">
+                  {{ $item['kode_barang'] }} - {{ $item['nama_barang'] }} (Stok: {{ $item['stok_tersedia'] ?? 0 }})
+                </option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang</label>
+            <input type="text" name="kode_barang" id="create_kode_barang" class="form-input" readonly style="background: #F1F5F9; color: #64748B;" placeholder="Otomatis">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang</label>
+            <input type="text" name="nama_barang" id="create_nama_barang" class="form-input" readonly style="background: #F1F5F9; color: #64748B;" placeholder="Otomatis">
+          </div>
+        </div>
+
+        {{-- Seksi Kategori --}}
+        <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
           <span class="section-label-inner">Data Kategori</span>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kode_kategori" id="create_kode_kategori" class="form-input" placeholder="Cth: ATK, ELK" maxlength="10" required>
+            <label class="form-label">Kode Kategori</label>
+            <input type="text" name="kode_kategori" id="create_kode_kategori" class="form-input" readonly style="background: #F1F5F9; color: #64748B;" placeholder="Otomatis">
           </div>
           <div class="form-group">
-            <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kategori" id="create_kategori" class="form-input" placeholder="Alat Tulis Kantor, dll" required>
-          </div>
-        </div>
-
-        {{-- Seksi Barang --}}
-        <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
-          <span class="section-label-inner green">Data Barang</span>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kode_barang" id="create_kode_barang" class="form-input" placeholder="Cth: ATK001" maxlength="20" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nama_barang" id="create_nama_barang" class="form-input" placeholder="Nama lengkap barang" required>
+            <label class="form-label">Nama Kategori</label>
+            <input type="text" name="kategori" id="create_kategori" class="form-input" readonly style="background: #F1F5F9; color: #64748B;" placeholder="Otomatis">
           </div>
         </div>
 
@@ -393,7 +410,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nomor_transaksi" id="create_nomor_transaksi" class="form-input" placeholder="Nomor transaksi" maxlength="20" required>
+            <input type="text" name="nomor_transaksi" id="create_nomor_transaksi" class="form-input" placeholder="Nomor transaksi" maxlength="50" required>
           </div>
           <div class="form-group">
             <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
@@ -407,19 +424,13 @@
             <input type="number" name="jumlah_keluar" id="create_jumlah_keluar" class="form-input" min="1" placeholder="0" required oninput="calculateTotal('create')">
           </div>
           <div class="form-group">
-            <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
-            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
-              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-              <input type="number" name="harga" id="create_harga" min="0" step="1000" placeholder="0" required oninput="calculateTotal('create')"
-                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
+            <label class="form-label">Harga Satuan (Rp)</label>
+            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:#F1F5F9;">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#E2E8F0; white-space:nowrap;">Rp</span>
+              <input type="number" name="harga" id="create_harga" readonly
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:#F1F5F9; color: #64748B;">
             </div>
           </div>
-        </div>
-
-        {{-- Keterangan --}}
-        <div class="form-group" style="margin-bottom:20px;">
-          <label class="form-label">Keterangan</label>
-          <textarea name="keterangan" id="create_keterangan" class="form-textarea" placeholder="Masukkan keterangan transaksi keluar..."></textarea>
         </div>
 
         {{-- Total --}}
@@ -481,7 +492,7 @@
     <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#FEF3C7,#FEF2F2); flex-shrink:0;">
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#FBBF24); display:flex; align-items:center; justify-content:center;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#F59E0B); display:flex; align-items:center; justify-content:center;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
           </div>
           <div>
@@ -507,7 +518,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kode_kategori" id="edit_kode_kategori" class="form-input" maxlength="10" required>
+            <input type="text" name="kode_kategori" id="edit_kode_kategori" class="form-input" maxlength="20" required>
           </div>
           <div class="form-group">
             <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
@@ -521,7 +532,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kode_barang" id="edit_kode_barang" class="form-input" maxlength="20" required>
+            <input type="text" name="kode_barang" id="edit_kode_barang" class="form-input" maxlength="50" required>
           </div>
           <div class="form-group">
             <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
@@ -535,7 +546,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nomor_transaksi" id="edit_nomor_transaksi" class="form-input" maxlength="20" required>
+            <input type="text" name="nomor_transaksi" id="edit_nomor_transaksi" class="form-input" maxlength="50" required>
           </div>
           <div class="form-group">
             <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
@@ -552,17 +563,11 @@
             <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
             <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
               <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-              <input type="number" name="harga" id="edit_harga" min="0" step="1000" required oninput="calculateTotal('edit')"
+              <input type="number" name="harga" id="edit_harga" min="0" required oninput="calculateTotal('edit')"
                 style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
             </div>
           </div>
         </div>
-
-        <div class="form-group" style="margin-bottom:20px;">
-          <label class="form-label">Keterangan</label>
-          <textarea name="keterangan" id="edit_keterangan" class="form-textarea" placeholder="Masukkan keterangan transaksi keluar..."></textarea>
-        </div>
-
         {{-- Total --}}
         <div style="display:flex; align-items:center; border:2px solid #FECACA; border-radius:12px; overflow:hidden; background:#FFF5F5;">
           <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--danger); border-right:2px solid #FECACA; background:#FEF2F2; white-space:nowrap;">Total</span>
@@ -609,13 +614,50 @@
 
 <script>
   function formatRupiah(angka) {
-    return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+    return 'Rp ' + new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(angka);
   }
 
   function calculateTotal(prefix) {
     const jumlah = parseInt(document.getElementById(prefix + '_jumlah_keluar').value) || 0;
     const harga  = parseInt(document.getElementById(prefix + '_harga').value) || 0;
     document.getElementById(prefix + '_total_display').value = formatRupiah(jumlah * harga);
+  }
+
+  // 🔥 FUNGSI AUTOFILL DARI DROP-DOWN DATA MASTER (SUDAH FIX STOK)
+  function autofillMasterData(kodeBarang) {
+    const select = document.getElementById('create_select_barang');
+    const selectedOption = select.options[select.selectedIndex];
+
+    if (!kodeBarang) {
+      document.getElementById('create_kode_barang').value = '';
+      document.getElementById('create_nama_barang').value = '';
+      document.getElementById('create_kode_kategori').value = '';
+      document.getElementById('create_kategori').value = '';
+      document.getElementById('create_harga').value = 0;
+      document.getElementById('create_jumlah_keluar').max = '';
+      document.getElementById('create_jumlah_keluar').placeholder = '0';
+      calculateTotal('create');
+      return;
+    }
+
+    const namaBarang   = selectedOption.getAttribute('data-nama');
+    const kodeKategori = selectedOption.getAttribute('data-kodekat');
+    const kategori     = selectedOption.getAttribute('data-kat');
+    const hargaSatuan  = selectedOption.getAttribute('data-harga');
+    const stokTersedia = selectedOption.getAttribute('data-stok'); // Membaca data-stok tanpa typo spasi
+
+    document.getElementById('create_kode_barang').value = kodeBarang;
+    document.getElementById('create_nama_barang').value = namaBarang;
+    document.getElementById('create_kode_kategori').value = kodeKategori;
+    document.getElementById('create_kategori').value = kategori;
+    document.getElementById('create_harga').value = Math.round(parseFloat(hargaSatuan));
+    
+    // 🔥 Validasi Front-End Sisa Stok Aktif Berdasarkan Pilihan Dropdown
+    const inputJumlah = document.getElementById('create_jumlah_keluar');
+    inputJumlah.max = stokTersedia;
+    inputJumlah.placeholder = `Maksimal ${stokTersedia}`;
+
+    calculateTotal('create');
   }
 
   function openModal(id) {
@@ -628,20 +670,25 @@
     document.body.style.overflow = '';
   }
 
-  // Klik luar modal
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   });
 
-  // ESC
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // Set tanggal hari ini saat buka modal create
-  document.querySelector('[onclick="openModal(\'createModal\')"]')?.addEventListener('click', () => {
+  // Pemicu Klik Tambah Baru
+  document.querySelector('[onclick="openModal(\'createModal\')"]').addEventListener('click', () => {
+    document.getElementById('createForm').reset();
+    document.getElementById('create_select_barang').value = ''; 
     document.getElementById('create_tanggal_input').value = new Date().toISOString().split('T')[0];
     document.getElementById('create_total_display').value = 'Rp 0';
-    document.getElementById('createForm').reset();
-    document.getElementById('create_tanggal_input').value = new Date().toISOString().split('T')[0];
+    
+    document.getElementById('create_kode_barang').value = '';
+    document.getElementById('create_nama_barang').value = '';
+    document.getElementById('create_kode_kategori').value = '';
+    document.getElementById('create_kategori').value = '';
+    document.getElementById('create_jumlah_keluar').placeholder = '0';
+    document.getElementById('create_jumlah_keluar').max = '';
   });
 
   // ——— DETAIL ———
@@ -649,16 +696,16 @@
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
     const d = {
-        nomor: row.dataset.nomorTransaksi,           // ✅ snake_case → camelCase
-        tanggal: row.dataset.tanggalInput,
-        kode_kategori: row.dataset.kodeKategori,
+        nomor: row.dataset.nomor_transaksi,
+        tanggal: row.dataset.tanggal_input,
+        kode_kategori: row.dataset.kode_kategori,
         kategori: row.dataset.kategori,
-        kode_barang: row.dataset.kodeBarang,
-        nama_barang: row.dataset.namaBarang,
-        jumlah: parseInt(row.dataset.jumlahKeluar),
-        harga: parseFloat(row.dataset.harga),
-        total: parseFloat(row.dataset.total),
-        keterangan: row.dataset.keterangan || '-',
+        kode_barang: row.dataset.kode_barang,
+        nama_barang: row.dataset.nama_barang,
+        jumlah: parseInt(row.dataset.jumlah_keluar) || 0,
+        harga: parseFloat(row.dataset.harga) || 0,
+        total: parseFloat(row.dataset.total) || 0,
+        
     };
 
     document.getElementById('detailSubtitle').textContent = `No. Transaksi: ${d.nomor}`;
@@ -693,10 +740,7 @@
           <div style="font-size:11px; color:var(--danger); font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Total</div>
           <div style="font-size:22px; font-weight:800; color:var(--danger);">${formatRupiah(d.total)}</div>
         </div>
-        <div style="background:var(--bg); border-radius:10px; padding:16px; grid-column:1/-1;">
-          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Keterangan</div>
-          <div style="font-size:14px; font-weight:500; color:var(--text); white-space:pre-wrap;">${d.keterangan}</div>
-        </div>
+       
       </div>
     `;
     openModal('detailModal');
@@ -708,18 +752,17 @@
     if (!row) return;
     const d = {
         id: id,
-        nomor_transaksi: row.dataset.nomorTransaksi,
-        tanggal_input: row.dataset.tanggalInput,
-        kode_kategori: row.dataset.kodeKategori,
+        nomor_transaksi: row.dataset.nomor_transaksi,
+        tanggal_input: row.dataset.tanggal_input,
+        kode_kategori: row.dataset.kode_kategori,
         kategori: row.dataset.kategori,
-        kode_barang: row.dataset.kodeBarang,
-        nama_barang: row.dataset.namaBarang,
-        jumlah_keluar: row.dataset.jumlahKeluar,
-        harga: row.dataset.harga,
-        keterangan: row.dataset.keterangan || '',
+        kode_barang: row.dataset.kode_barang,
+        nama_barang: row.dataset.nama_barang,
+        jumlah_keluar: row.dataset.jumlah_keluar,
+        harga: Math.round(parseFloat(row.dataset.harga) || 0),
+       
     };
 
-    // Populate form
     document.getElementById('edit_id').value = d.id;
     document.getElementById('edit_nomor_transaksi').value = d.nomor_transaksi;
     document.getElementById('edit_tanggal_input').value = d.tanggal_input;
@@ -729,13 +772,10 @@
     document.getElementById('edit_nama_barang').value = d.nama_barang;
     document.getElementById('edit_jumlah_keluar').value = d.jumlah_keluar;
     document.getElementById('edit_harga').value = d.harga;
-    document.getElementById('edit_keterangan').value = d.keterangan;
+    
     
     document.getElementById('editSubtitle').textContent = `Kode Barang: ${d.kode_barang}`;
-    
-    // Update form action
-    document.getElementById('editForm').action = 
-        `{{ route('adminpersediaan.transaksi-keluar.update', ':id') }}`.replace(':id', d.id);
+    document.getElementById('editForm').action = `{{ route('adminpersediaan.transaksi-keluar.update', ':id') }}`.replace(':id', d.id);
 
     calculateTotal('edit');
     openModal('editModal');
@@ -745,10 +785,8 @@
   function confirmDelete(id) {
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
-    document.getElementById('deleteTitle').textContent =
-      `No: ${row.dataset.nomorTransaksi} — ${row.dataset.namaBarang}`;
-    document.getElementById('deleteForm').action =
-      `{{ route('adminpersediaan.transaksi-keluar.destroy', ':id') }}`.replace(':id', id);
+    document.getElementById('deleteTitle').textContent = `No: ${row.dataset.nomor_transaksi} — ${row.dataset.nama_barang}`;
+    document.getElementById('deleteForm').action = `{{ route('adminpersediaan.transaksi-keluar.destroy', ':id') }}`.replace(':id', id);
     openModal('deleteModal');
   }
 </script>

@@ -134,7 +134,7 @@
                         <th>Informasi Barang</th>
                         <th>Tanggal Mutasi</th>
                         <th>Arah Perpindahan</th>
-                        <th>Keterangan</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -145,8 +145,8 @@
                         </td>
                         <td>
                             <div class="item-info">
-                                <span class="item-name">{{ $mutasi->barang->nama_barang ?? 'Barang Tidak Diketahui' }}</span>
-                                <span class="item-nup">NUP: {{ $mutasi->barang->nup ?? '-' }}</span>
+                                <span class="item-name">{{ $mutasi->nama_barang ?? 'Barang Tidak Diketahui' }}</span>
+                                <span class="item-nup">Kode Barang: {{ $mutasi->kode_barang ?? '-' }}</span>
                             </div>
                         </td>
                         <td>
@@ -166,9 +166,7 @@
                                 </span>
                             </div>
                         </td>
-                        <td style="color: var(--text-secondary); font-style: italic; font-size: 12px;">
-                            {{ $mutasi->keterangan ?? 'Tanpa keterangan' }}
-                        </td>
+                       
                     </tr>
                     @empty
                     <tr>

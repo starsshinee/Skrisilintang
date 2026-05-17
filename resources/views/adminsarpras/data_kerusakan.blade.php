@@ -19,6 +19,8 @@
     --text-primary:  #0f172a;
     --text-secondary:#475569;
     --text-tertiary: #94a3b8;
+    --success:       #10B981;
+    --danger:        #EF4444;
     --shadow-sm: 0 1px 3px rgba(15,23,42,.07), 0 1px 2px rgba(15,23,42,.04);
     --shadow-md: 0 4px 16px rgba(15,23,42,.09);
     --radius:    12px;
@@ -35,7 +37,6 @@
 
   /* ===== LAYOUT — sidebar already handled by partials.sidebar ===== */
   .main {
-    /* keep whatever margin your sidebar partial sets */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -118,51 +119,36 @@
   }
 
   /* ─── HEADER ─── */
-.page-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
-.page-hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
-.page-hdr p{font-size:13px;color:var(--muted);margin-top:2px}
+  .page-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+  .page-hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+  .page-hdr p{font-size:13px;color:var(--text-tertiary);margin-top:2px}
 
-  /* ===== FLASH ALERTS ===== */
-  .alert-flash {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    margin-bottom: 18px;
-    font-size: 13.5px;
-    font-weight: 500;
+  /* ===== ALERT (Format Persediaan) ===== */
+  .alert {
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; font-weight: 600;
   }
-  .alert-success-flash {
-    background: #ecfdf5;
-    color: #10b981;
-    border: 1px solid #a7f3d0;
-  }
-  .alert-error-flash {
-    background: #fef2f2;
-    color: #ef4444;
-    border: 1px solid #fecaca;
-  }
+  .alert-success { background: #ECFDF5; color: var(--success); border: 1px solid #BBF7D0; }
+  .alert-danger { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; }
 
   /* ===== TOOLBAR ===== */
-  /* ─── TOOLBAR ─── */
-.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.search-box{position:relative;flex:1;min-width:200px}
-.search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--hint);pointer-events:none}
-.search-box input{
-  width:100%;padding:10px 12px 10px 36px;
-  border:0.5px solid var(--border2);border-radius:var(--r);
-  font-size:13px;font-family:inherit;background:var(--surface);color:var(--txt);
-  outline:none;transition:border-color .15s,box-shadow .15s;
-}
-.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.search-box input::placeholder{color:var(--hint)}
-.filter-select{
-  padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--r);
-  font-size:13px;font-family:inherit;background:var(--surface);color:var(--txt);
-  outline:none;cursor:pointer;transition:border-color .15s;
-}
-.filter-select:focus{border-color:var(--primary)}
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .search-box{position:relative;flex:1;min-width:200px}
+  .search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--text-tertiary);pointer-events:none}
+  .search-box input{
+    width:100%;padding:10px 12px 10px 36px;
+    border:0.5px solid var(--border);border-radius:10px;
+    font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-primary);
+    outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,107,218,.1)}
+  .search-box input::placeholder{color:var(--text-tertiary)}
+  .filter-select{
+    padding:10px 14px;border:0.5px solid var(--border);border-radius:10px;
+    font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-primary);
+    outline:none;cursor:pointer;transition:border-color .15s;
+  }
+  .filter-select:focus{border-color:var(--primary)}
 
   .btn-primary {
     display: inline-flex;
@@ -196,7 +182,7 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 20px;
     border-top: 1px solid var(--border);
-    font-size: 13px; color: var(--muted);
+    font-size: 13px; color: var(--text-tertiary);
   }
 
   table {
@@ -273,7 +259,6 @@
   .badge-hancur::before       { background:#e11d48; }
 
   /* ===== KODE BARANG MONOSPACE PILL ===== */
-  /* (keeps the inline style from Blade but upgrades the look) */
   tbody td span[style*="monospace"] {
     font-size: 12px !important;
     background: var(--bg) !important;
@@ -301,7 +286,7 @@
   }
   .act-btn.view  { border-color: #bfdbfe; color: var(--primary); }
   .act-btn.view:hover  { background: var(--primary-light); }
-  /* edit button — green */
+  
   .act-btn[style*="#10b981"] {
     border-color: #a7f3d0 !important;
     color: #10b981 !important;
@@ -312,8 +297,6 @@
   }
   .act-btn.del   { border-color: #fecaca; color: #ef4444; }
   .act-btn.del:hover   { background: #fef2f2; }
-
-  /* photo action button */
   .act-btn.photo { border-color: #e0e7ff; color: #6366f1; }
   .act-btn.photo:hover { background: #eef2ff; }
 
@@ -519,36 +502,32 @@
 
   <div class="content">
 
-    {{-- FLASH MESSAGES --}}
-    @if (session('success'))
-    <div class="alert-flash alert-success-flash" role="alert">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-        {{ session('success') }}
-      </div>
-      <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:18px;color:inherit;line-height:1;">&times;</button>
+    {{-- ▼▼▼ BLOK ALERT BERHASIL DIPERBARUI ▼▼▼ --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+      </svg>
+      {{ session('success') }}
     </div>
     @endif
 
-    @if (session('error'))
-    <div class="alert-flash alert-error-flash" role="alert">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
-        </svg>
-        {{ session('error') }}
-      </div>
-      <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:18px;color:inherit;line-height:1;">&times;</button>
+    @if($errors->any())
+    <div class="alert alert-danger">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      @foreach($errors->all() as $error)
+        <div>{{ $error }}</div>
+      @endforeach
     </div>
     @endif
+    {{-- ▲▲▲ BATAS BLOK ALERT ▲▲▲ --}}
 
-  {{-- -header --}}
     <div class="page-hdr">
       <div>
         <h1>Data Kerusakan</h1>
-        <p>Kelola data gedung yang mengalami kerusakan</p>
+        <p>Kelola data barang yang mengalami kerusakan</p>
       </div>
       <button class="btn-primary" onclick="openModal('create')">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -690,39 +669,12 @@
     </div>
 
     {{-- PAGINATION --}}
-    @if($kerusakans->hasPages())
-    <div class="table-footer">
-        <span>Menampilkan {{ ($kerusakans->currentPage() - 1) * $kerusakans->perPage() + 1 }}–{{ min($kerusakans->total(), $kerusakans->currentPage() * $kerusakans->perPage()) }} dari {{ $kerusakans->total() }} data</span>
-        <div class="pagination">
-          @if($kerusakans->onFirstPage())
-            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-left"></i></button>
-          @else
-            <a href="{{ $kerusakans->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
-          @endif
-
-          @foreach($kerusakans->getUrlRange(max(1, $kerusakans->currentPage() - 2), min($kerusakans->lastPage(), $kerusakans->currentPage() + 2)) as $page => $url)
-            <a href="{{ $url }}" class="page-btn {{ $kerusakans->currentPage() == $page ? 'active' : '' }}">{{ $page }}</a>
-          @endforeach
-
-          @if($kerusakans->hasMorePages())
-            <a href="{{ $kerusakans->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
-          @else
-            <button class="page-btn" disabled style="opacity:0.5; cursor:not-allowed;"><i class="fas fa-chevron-right"></i></button>
-          @endif
-        </div>
-      </div>
-      @endif
     <div class="table-footer">
         <span>Menampilkan {{ $kerusakans->firstItem() ?? 0 }}–{{ $kerusakans->lastItem() ?? 0 }} dari {{ $kerusakans->total() }} data</span>
         <div class="pagination">
           {{ $kerusakans->appends(request()->query())->links() }}
         </div>
       </div>
-    {{-- @if($kerusakans->hasPages())
-    <div style="margin-top:24px;display:flex;justify-content:center;">
-      {{ $kerusakans->appends(request()->query())->links('pagination::bootstrap-5') }}
-    </div>
-    @endif --}}
 
   </div>{{-- end .content --}}
 </main>
@@ -817,7 +769,7 @@
 </div>
 
 {{-- ============================================================ --}}
-{{--  MODAL DETAIL                                                 --}}
+{{--  MODAL DETAIL                                                --}}
 {{-- ============================================================ --}}
 <div class="modal-overlay" id="detailModal">
   <div class="modal">
@@ -867,7 +819,7 @@
 </div>
 
 {{-- ============================================================ --}}
-{{--  JAVASCRIPT — tidak ada perubahan logika                     --}}
+{{--  JAVASCRIPT                                                  --}}
 {{-- ============================================================ --}}
 <script>
 let currentKerusakanId = null;
@@ -1015,35 +967,10 @@ document.getElementById('foto').addEventListener('change', function (e) {
   reader.readAsDataURL(file);
 });
 
-/* ---------- Form submit (edit via AJAX) ---------- */
-document.getElementById('crudForm').addEventListener('submit', function (e) {
-  if (!isEditMode) return;
-  e.preventDefault();
 
-  const formData = new FormData(this);
-
-  fetch(this.action, {
-    method : 'POST',
-    body   : formData,
-    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value }
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (data.success) {
-      location.reload();
-    } else {
-      alert('Error: ' + (data.message || 'Terjadi kesalahan'));
-    }
-  })
-  .catch(err => {
-    console.error('Submit error:', err);
-    alert('Gagal menyimpan data. Periksa koneksi dan coba lagi.');
-  });
-});
-
-/* ---------- Auto-hide flash alerts ---------- */
+/* ---------- Auto-hide alerts ---------- */
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.alert-flash').forEach(el => {
+  document.querySelectorAll('.alert').forEach(el => {
     setTimeout(() => {
       el.style.transition = 'opacity .4s';
       el.style.opacity = '0';

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPANDU - Transaksi Masuk</title>
@@ -333,17 +334,16 @@
         <tbody>
           @forelse($transaksi as $index => $item)
           <tr data-id="{{ $item->id }}"
-              data-no="{{ $item->no }}"
-              data-tanggal-input="{{ $item->tanggal_input }}"
+              data-no="{{ $transaksi->firstItem() + $loop->index }}"
+              data-tanggal-input="{{ $item->tanggal_input ? $item->tanggal_input->format('Y-m-d') : '' }}"
               data-kode-kategori="{{ $item->kode_kategori }}"
               data-kategori="{{ $item->kategori }}"
               data-kode-barang="{{ $item->kode_barang }}"
               data-nama-barang="{{ $item->nama_barang }}"
               data-jumlah-masuk="{{ $item->jumlah_masuk }}"
-              data-harga-satuan="{{ $item->harga_satuan }}"
-              data-total="{{ $item->total }}">
+              data-harga-satuan="{{ $item->getRawOriginal('harga_satuan') ?? $item->harga_satuan }}"
+              data-total="{{ $item->getRawOriginal('total') ?? $item->total }}">
               <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
-            {{-- <td><strong>{{ $item->no }}</strong></td> --}}
               <td>{{ $item->tanggal_input_format }}</td>
               <td>{{ $item->kode_kategori }}</td>
               <td>{{ $item->kategori }}</td>
@@ -363,321 +363,315 @@
                   <svg viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                 </button>
               </td>
-            </tr>
-            @empty
-            <tr>
-              <td colspan="10" style="text-align:center; padding:60px; color:var(--muted);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
-                  <path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 16.22.86 14 .86c-1.3 0-2.35.64-3 1.6C10.35 1.5 9.3.86 8 .86 5.78.86 4 2.54 4 4.66c0 .46.11.9.18 1.34H2c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
-                </svg>
-                <div style="font-size:15px; font-weight:700; margin-bottom:8px;">Belum ada transaksi masuk</div>
-              </td>
-            </tr>
-            @endforelse
-          </tbody>
-        </table>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="10" style="text-align:center; padding:60px; color:var(--muted);">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin:0 auto 16px; opacity:.4; display:block;">
+                <path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 16.22.86 14 .86c-1.3 0-2.35.64-3 1.6C10.35 1.5 9.3.86 8 .86 5.78.86 4 2.54 4 4.66c0 .46.11.9.18 1.34H2c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+              </svg>
+              <div style="font-size:15px; font-weight:700; margin-bottom:8px;">Belum ada transaksi masuk</div>
+            </td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
 
-        <div class="table-footer">
-          <span>Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data</span>
-          <div>{{ $transaksi->appends(request()->query())->links() }}</div>
-        </div>
+      <div class="table-footer">
+        <span>Menampilkan {{ $transaksi->firstItem() ?? 0 }}–{{ $transaksi->lastItem() ?? 0 }} dari {{ $transaksi->total() }} data</span>
+        <div>{{ $transaksi->appends(request()->query())->links() }}</div>
       </div>
-    </div>
-  </main>
-
-  {{-- ===================== MODAL CREATE ===================== --}}
-  <div id="createModal" class="modal-overlay">
-    <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
-
-      {{-- Header --}}
-      <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--blue),#7C3AED); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(79,111,255,.35); flex-shrink:0;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            </div>
-            <div>
-              <div style="font-size:17px; font-weight:800; color:var(--text);">Tambah Transaksi Masuk</div>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Isi data transaksi masuk barang persediaan</div>
-            </div>
-          </div>
-          <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-          </button>
-        </div>
-      </div>
-
-      {{-- Form --}}
-      <form id="createForm" method="POST" action="{{ route('adminpersediaan.transaksi-masuk') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
-        @csrf
-        <div style="padding:28px; overflow-y:auto; flex:1;">
-
-          {{-- Seksi Kategori --}}
-          <div class="section-label" style="margin-bottom:24px;">
-            <span class="section-label-inner">Data Kategori</span>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kode_kategori" id="create_kode_kategori" class="form-input" placeholder="Cth: ATK, ELK" maxlength="10" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kategori" id="create_kategori" class="form-input" placeholder="Alat Tulis Kantor, dll" required>
-            </div>
-          </div>
-
-          {{-- Seksi Barang --}}
-          <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
-            <span class="section-label-inner green">Data Barang</span>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kode_barang" id="create_kode_barang" class="form-input" placeholder="Cth: ATK001" maxlength="20" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="nama_barang" id="create_nama_barang" class="form-input" placeholder="Nama lengkap barang" required>
-            </div>
-          </div>
-
-          {{-- Tanggal & Harga Satuan --}}
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
-              <input type="date" name="tanggal_input" id="create_tanggal_input" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
-              <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
-                <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-                <input type="number" name="harga_satuan" id="create_harga_satuan" min="0" step="1000" placeholder="0" required oninput="calculateTotal('create')"
-                  style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
-              </div>
-            </div>
-          </div>
-
-          {{-- Jumlah & Total --}}
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Jumlah Masuk <span style="color:var(--danger);">*</span></label>
-              <input type="number" name="jumlah_masuk" id="create_jumlah_masuk" class="form-input" min="1" placeholder="1" required oninput="calculateTotal('create')">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Total</label>
-              <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
-                <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
-                <input type="text" id="create_total_display" readonly
-                  style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {{-- Footer --}}
-        <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
-          <div style="font-size:12px; color:var(--muted); flex:1;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" style="vertical-align:middle; margin-right:4px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-            Kolom bertanda <strong style="color:var(--danger);">*</strong> wajib diisi
-          </div>
-          <button type="button" onclick="closeModal('createModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Batal</button>
-          <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--blue),#7C3AED); color:white; box-shadow:0 4px 14px rgba(79,111,255,.35); padding:12px 28px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-right:6px; vertical-align:middle;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-            Simpan Transaksi
-          </button>
-        </div>
-      </form>
     </div>
   </div>
+</main>
 
-  {{-- ===================== MODAL DETAIL ===================== --}}
-  <div id="detailModal" class="modal-overlay">
-    <div class="modal" style="max-width:580px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+{{-- ===================== MODAL CREATE ===================== --}}
+<div id="createModal" class="modal-overlay">
+  <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
+
+    {{-- Header --}}
+    <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#EEF2FF,#E0E7FF); display:flex; align-items:center; justify-content:center;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--blue),#7C3AED); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(79,111,255,.35); flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           </div>
           <div>
-            <h3 style="font-size:18px; font-weight:800; color:var(--text); margin:0;">Detail Transaksi Masuk</h3>
-            <p id="detailSubtitle" style="font-size:13px; color:var(--muted); margin:4px 0 0 0;"></p>
+            <div style="font-size:17px; font-weight:800; color:var(--text);">Tambah Transaksi Masuk</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Isi data transaksi masuk barang persediaan</div>
           </div>
         </div>
-        <button onclick="closeModal('detailModal')" style="width:36px; height:36px; border-radius:10px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </div>
-
-      <div id="detailContent"></div>
-
-      <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
-        <button onclick="closeModal('detailModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Tutup</button>
-      </div>
     </div>
-  </div>
 
-  {{-- ===================== MODAL EDIT ===================== --}}
-  <div id="editModal" class="modal-overlay">
-    <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18);">
+    {{-- Form --}}
+    <form id="createForm" method="POST" action="{{ route('adminpersediaan.transaksi-masuk') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      @csrf
+      <div style="padding:28px; overflow-y:auto; flex:1;">
 
-      {{-- Header --}}
-      <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#FEF3C7,#FEF2F2); flex-shrink:0;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#FBBF24); display:flex; align-items:center; justify-content:center;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
-            </div>
-            <div>
-              <div style="font-size:17px; font-weight:800; color:var(--text);">Edit Transaksi Masuk</div>
-              <div id="editSubtitle" style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;"></div>
-            </div>
+        <div class="section-label"><span class="section-label-inner">Data Kategori</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Kategori *</label>
+            <input type="text" name="kode_kategori" id="create_kode_kategori" class="form-input" placeholder="Cth: ATK, ELK" maxlength="10" required>
           </div>
-          <button onclick="closeModal('editModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-          </button>
+          <div class="form-group">
+            <label class="form-label">Nama Kategori *</label>
+            <input type="text" name="kategori" id="create_kategori" class="form-input" placeholder="Alat Tulis Kantor, dll" required>
+          </div>
         </div>
-      </div>
 
-      <form id="editForm" method="POST" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
-        @method('PUT')
-        <div style="padding:28px; overflow-y:auto; flex:1;">
-          <input type="hidden" name="id" id="edit_id">
+        <div class="section-label"><span class="section-label-inner green">Data Barang</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang *</label>
+            <input type="text" name="kode_barang" id="create_kode_barang" class="form-input" placeholder="Cth: ATK001" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang *</label>
+            <input type="text" name="nama_barang" id="create_nama_barang" class="form-input" placeholder="Nama lengkap barang" required>
+          </div>
+        </div>
 
-          <div class="section-label" style="margin-bottom:24px;">
-            <span class="section-label-inner">Data Kategori</span>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Input *</label>
+            <input type="date" name="tanggal_input" id="create_tanggal_input" class="form-input" required>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Kode Kategori <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kode_kategori" id="edit_kode_kategori" class="form-input" maxlength="10" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Kategori <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kategori" id="edit_kategori" class="form-input" required>
-            </div>
-          </div>
-
-          <div class="section-label" style="margin-top:8px; margin-bottom:24px;">
-            <span class="section-label-inner green">Data Barang</span>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Kode Barang <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="kode_barang" id="edit_kode_barang" class="form-input" maxlength="20" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-              <input type="text" name="nama_barang" id="edit_nama_barang" class="form-input" required>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
-              <input type="date" name="tanggal_input" id="edit_tanggal_input" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
-              <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
-                <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
-                <input type="number" name="harga_satuan" id="edit_harga_satuan" min="0" step="1000" placeholder="0" required oninput="calculateTotal('edit')"
-                  style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Jumlah Masuk <span style="color:var(--danger);">*</span></label>
-              <input type="number" name="jumlah_masuk" id="edit_jumlah_masuk" class="form-input" min="1" required oninput="calculateTotal('edit')">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Total</label>
-              <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
-                <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
-                <input type="text" id="edit_total_display" readonly
-                  style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
-              </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan (Rp) *</label>
+            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
+              <input type="text" name="harga_satuan" id="create_harga_satuan" placeholder="0" required oninput="calculateTotal('create')" class="form-input form-input-price"
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
             </div>
           </div>
         </div>
 
-        <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
-          <button type="button" onclick="closeModal('editModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:12px 24px;">Batal</button>
-          <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--warning),#F59E0B); color:white; box-shadow:0 4px 14px rgba(245,158,11,.35); padding:12px 28px;">
-            Update Transaksi
-          </button>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah Masuk *</label>
+            <input type="number" name="jumlah_masuk" id="create_jumlah_masuk" class="form-input" min="1" placeholder="1" required oninput="calculateTotal('create')">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total</label>
+            <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
+              <input type="text" id="create_total_display" readonly
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
-  </div>
 
-  {{-- ===================== MODAL DELETE ===================== --}}
-  <div id="deleteModal" class="modal-overlay">
-    <div class="modal" style="max-width:480px;">
-      <div style="text-align:center; margin-bottom:24px;">
-        <div style="width:72px; height:72px; border-radius:20px; background:linear-gradient(135deg,#FEF2F2,#FEE2E2); margin:0 auto 20px; display:flex; align-items:center; justify-content:center;">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-        </div>
-        <h3 style="font-size:20px; font-weight:800; color:var(--text); margin-bottom:8px;">Hapus Transaksi?</h3>
-        <p style="color:var(--muted); font-size:14px; line-height:1.6; max-width:360px; margin:0 auto;">
-          Data transaksi ini akan dihapus permanen dan tidak dapat dipulihkan kembali.
-        </p>
-        <p id="deleteTitle" style="font-weight:700; color:var(--danger); margin-top:12px; font-size:15px;"></p>
       </div>
 
-      <form id="deleteForm" method="POST">
-        @csrf @method('DELETE')
-        <div style="display:flex; gap:12px; justify-content:flex-end;">
-          <button type="button" onclick="closeModal('deleteModal')" class="btn" style="background:var(--bg); color:var(--text); border:1.5px solid var(--border); padding:14px 28px;">Batal</button>
-          <button type="submit" class="btn" style="background:linear-gradient(135deg,var(--danger),#DC2626); color:white; padding:14px 28px; box-shadow:0 4px 14px rgba(239,68,68,.35);">
-            Hapus Permanen
-          </button>
+      <div style="padding:20px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-shrink:0;">
+        <div style="font-size:12px; color:var(--muted); flex:1;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" style="vertical-align:middle; margin-right:4px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          Kolom bertanda <strong style="color:var(--danger);">*</strong> wajib diisi
         </div>
-      </form>
+        <button type="button" onclick="closeModal('createModal')" class="btn btn-cancel">Batal</button>
+        <button type="submit" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-right:6px; vertical-align:middle;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+          Simpan Transaksi
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ===================== MODAL DETAIL ===================== --}}
+<div id="detailModal" class="modal-overlay">
+  <div class="modal" style="max-width:580px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#EEF2FF,#E0E7FF); display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:18px; font-weight:800; color:var(--text); margin:0;">Detail Transaksi Masuk</h3>
+          <p id="detailSubtitle" style="font-size:13px; color:var(--muted); margin:4px 0 0 0;"></p>
+        </div>
+      </div>
+      <button onclick="closeModal('detailModal')" style="width:36px; height:36px; border-radius:10px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <div id="detailContent"></div>
+
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+      <button onclick="closeModal('detailModal')" class="btn btn-cancel">Tutup</button>
     </div>
   </div>
+</div>
+
+{{-- ===================== MODAL EDIT ===================== --}}
+<div id="editModal" class="modal-overlay">
+  <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18);">
+
+    {{-- Header --}}
+    <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#FEF3C7,#FEF2F2); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--warning),#FBBF24); display:flex; align-items:center; justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:17px; font-weight:800; color:var(--text);">Edit Transaksi Masuk</div>
+            <div id="editSubtitle" style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;"></div>
+          </div>
+        </div>
+        <button onclick="closeModal('editModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <form id="editForm" method="POST" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      @csrf
+      @method('PUT')
+      <div style="padding:28px; overflow-y:auto; flex:1;">
+        <input type="hidden" name="id" id="edit_id">
+
+        <div class="section-label"><span class="section-label-inner">Data Kategori</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Kategori *</label>
+            <input type="text" name="kode_kategori" id="edit_kode_kategori" class="form-input" maxlength="10" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Kategori *</label>
+            <input type="text" name="kategori" id="edit_kategori" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="section-label"><span class="section-label-inner green">Data Barang</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Barang *</label>
+            <input type="text" name="kode_barang" id="edit_kode_barang" class="form-input" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Barang *</label>
+            <input type="text" name="nama_barang" id="edit_nama_barang" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Input *</label>
+            <input type="date" name="tanggal_input" id="edit_tanggal_input" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan (Rp) *</label>
+            <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
+              <input type="text" name="harga_satuan" id="edit_harga_satuan" placeholder="0" required oninput="calculateTotal('edit')" class="form-input form-input-price"
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; background:var(--bg);">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah Masuk *</label>
+            <input type="number" name="jumlah_masuk" id="edit_jumlah_masuk" class="form-input" min="1" required oninput="calculateTotal('edit')">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total</label>
+            <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
+              <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
+              <input type="text" id="edit_total_display" readonly
+                style="border:none; outline:none; width:100%; padding:14px 16px; font-family:inherit; font-size:14px; font-weight:700; color:var(--success); background:#F0FDF4;" value="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px 28px; border-top:1px solid var(--border); text-align:right;">
+        <button type="button" onclick="closeModal('editModal')" class="btn btn-cancel">Batal</button>
+        <button type="submit" class="btn" style="background:var(--warning); color:white; box-shadow:0 4px 14px rgba(245,158,11,.35); padding:12px 28px;">
+          Update Transaksi
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ===================== MODAL DELETE ===================== --}}
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal" style="max-width:480px;">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="width:72px; height:72px; border-radius:20px; background:linear-gradient(135deg,#FEF2F2,#FEE2E2); margin:0 auto 20px; display:flex; align-items:center; justify-content:center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="#EF4444"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </div>
+      <h3 style="font-size:20px; font-weight:800; color:var(--text); margin-bottom:8px;">Hapus Transaksi?</h3>
+      <p style="color:var(--muted); font-size:14px; line-height:1.6; max-width:380px; margin:0 auto;">
+        Data transaksi ini akan dihapus permanen dan tidak dapat dipulihkan kembali.
+      </p>
+      <p id="deleteTitle" style="font-weight:700; color:var(--danger); margin-top:12px; font-size:15px;"></p>
+    </div>
+
+    <form id="deleteForm" method="POST">
+      @csrf @method('DELETE')
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button type="button" onclick="closeModal('deleteModal')" class="btn btn-cancel">Batal</button>
+        <button type="submit" class="btn btn-danger">Hapus Permanen</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
-  // ——— Helpers ———
+  function refreshCsrfToken() {
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    document.querySelectorAll('input[name="_token"]').forEach(el => { el.value = token; });
+  }
+
+  function getRawNumber(selector) {
+    const input = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    return input ? parseFloat((input.value || '').replace(/[^\d]/g, '')) || 0 : 0;
+  }
+
   function formatRupiah(angka) {
-    return new Intl.NumberFormat('id-ID').format(angka);
+    return new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(angka);
   }
 
   function calculateTotal(prefix) {
     const jumlah  = parseInt(document.getElementById(prefix + '_jumlah_masuk').value)  || 0;
-    const harga   = parseInt(document.getElementById(prefix + '_harga_satuan').value)  || 0;
+    const harga   = getRawNumber('#' + prefix + '_harga_satuan');
     document.getElementById(prefix + '_total_display').value = formatRupiah(jumlah * harga);
   }
 
-  // ——— Modal open/close (pola sama dengan Data Persediaan) ———
+  document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('form-input-price')) {
+      const rawValue = getRawNumber(e.target);
+      e.target.value = rawValue > 0 ? formatRupiah(rawValue) : '';
+    }
+  }, true);
+
   function openModal(id) {
     document.getElementById(id).classList.add('show');
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal(id = null) {
+  function closeModal() {
     document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
     document.body.style.overflow = '';
   }
 
-  // Klik di luar modal
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   });
 
-  // ESC
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ——— CREATE ———
-  // (tombol "Tambah Baru" langsung memanggil openModal('createModal'))
-  document.getElementById('createForm').addEventListener('submit', function() {
-    // set default tanggal jika kosong
-  });
-  // Set tanggal hari ini saat modal dibuka
-  document.querySelector('[onclick="openModal(\'createModal\')"]')?.addEventListener('click', () => {
+  document.querySelector('[onclick="openModal(\'createModal\')"]').addEventListener('click', () => {
+    document.getElementById('createForm').reset();
     document.getElementById('create_tanggal_input').value = new Date().toISOString().split('T')[0];
     document.getElementById('create_total_display').value = '0';
   });
@@ -693,9 +687,9 @@
       kategori:      row.dataset.kategori,
       kode_barang:   row.dataset.kodeBarang,
       nama_barang:   row.dataset.namaBarang,
-      jumlah_masuk:  parseInt(row.dataset.jumlahMasuk),
-      harga_satuan:  parseInt(row.dataset.hargaSatuan),
-      total:         parseInt(row.dataset.total),
+      jumlah_masuk:  parseInt(row.dataset.jumlahMasuk) || 0,
+      harga_satuan:  parseFloat(row.dataset.hargaSatuan) || 0,
+      total:         parseFloat(row.dataset.total) || 0,
     };
 
     document.getElementById('detailSubtitle').textContent = `Kode Barang: ${d.kode_barang}`;
@@ -739,44 +733,53 @@
   function openEdit(id) {
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
-    const d = {
-      id:            row.dataset.id,
-      no:            row.dataset.no,
-      tanggal_input: row.dataset.tanggalInput,
-      kode_kategori: row.dataset.kodeKategori,
-      kategori:      row.dataset.kategori,
-      kode_barang:   row.dataset.kodeBarang,
-      nama_barang:   row.dataset.namaBarang,
-      jumlah_masuk:  row.dataset.jumlahMasuk,
-      harga_satuan:  row.dataset.hargaSatuan,
-    };
 
-    document.getElementById('edit_id').value             = d.id;
-    document.getElementById('edit_tanggal_input').value  = d.tanggal_input;
-    document.getElementById('edit_kode_kategori').value  = d.kode_kategori;
-    document.getElementById('edit_kategori').value       = d.kategori;
-    document.getElementById('edit_kode_barang').value    = d.kode_barang;
-    document.getElementById('edit_nama_barang').value    = d.nama_barang;
-    document.getElementById('edit_jumlah_masuk').value   = d.jumlah_masuk;
-    document.getElementById('edit_harga_satuan').value   = d.harga_satuan;
-    document.getElementById('editSubtitle').textContent  = `Kode Barang: ${d.kode_barang}`;
-    document.getElementById('editForm').action = `{{ route('adminpersediaan.transaksi-masuk.update', ':id') }}`.replace(':id', d.id);
+    const form = document.getElementById('editForm');
+    form.action = `{{ route('adminpersediaan.transaksi-masuk.update', ':id') }}`.replace(':id', id);
 
+    document.getElementById('edit_id').value             = row.dataset.id;
+    document.getElementById('edit_tanggal_input').value  = row.dataset.tanggalInput;
+    document.getElementById('edit_kode_kategori').value  = row.dataset.kodeKategori;
+    document.getElementById('edit_kategori').value       = row.dataset.kategori;
+    document.getElementById('edit_kode_barang').value    = row.dataset.kodeBarang;
+    document.getElementById('edit_nama_barang').value    = row.dataset.namaBarang;
+    document.getElementById('edit_jumlah_masuk').value   = row.dataset.jumlahMasuk;
+    
+    // 🔥 FIX UTAMA DI JS: Membaca dataset berupa nilai numerik mentah database asli (75000), lalu diubah visualnya jadi format rupiah "75.000" di input form edit
+    document.getElementById('edit_harga_satuan').value   = formatRupiah(parseFloat(row.dataset.hargaSatuan) || 0);
+    
+    document.getElementById('editSubtitle').textContent  = `Kode Barang: ${row.dataset.kodeBarang}`;
+
+    refreshCsrfToken();
     calculateTotal('edit');
     openModal('editModal');
   }
 
+  document.getElementById('editForm').addEventListener('submit', function(e) {
+    let tokenInput = this.querySelector('input[name="_token"]');
+    if (!tokenInput) {
+      tokenInput = document.createElement('input');
+      tokenInput.setAttribute('type', 'hidden');
+      tokenInput.setAttribute('name', '_token');
+      this.appendChild(tokenInput);
+    }
+    tokenInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  });
+
   // ——— DELETE ———
   function confirmDelete(id) {
+    refreshCsrfToken();
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
-    document.getElementById('deleteTitle').textContent =
-      `Kode: ${row.dataset.kodeBarang} — ${row.dataset.namaBarang}`;
-    document.getElementById('deleteForm').action =
-      `{{ route('adminpersediaan.transaksi-masuk.destroy', ':id') }}`.replace(':id', id);
+    document.getElementById('deleteTitle').textContent = `Kode: ${row.dataset.kodeBarang} — ${row.dataset.namaBarang}`;
+    document.getElementById('deleteForm').action = `{{ route('adminpersediaan.transaksi-masuk.destroy', ':id') }}`.replace(':id', id);
     openModal('deleteModal');
   }
 </script>
 
+<style>
+  .modal-overlay.show { opacity: 1; visibility: visible; }
+  .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+</style>
 </body>
 </html>

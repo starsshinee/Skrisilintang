@@ -101,8 +101,14 @@ class AdminPersediaanController extends Controller
 
     public function store(Request $request)
     {
+        // Bersihkan titik ribuan dan pastikan jika ada koma desimal (,00) dibersihkan dengan benar
+        $clean_harga = str_replace('.', '', $request->harga_satuan);
+        if (strpos($clean_harga, ',') !== false) {
+            $clean_harga = explode(',', $clean_harga)[0]; // Mengambil angka sebelum koma desimal
+        }
+
         $request->merge([
-            'harga_satuan' => str_replace('.', '', $request->harga_satuan)
+            'harga_satuan' => $clean_harga
         ]);
 
         $request->validate([
@@ -135,8 +141,14 @@ class AdminPersediaanController extends Controller
 
     public function update(Request $request, Persediaan $persediaan)
     {
+        // Bersihkan titik ribuan dan pastikan jika ada koma desimal (,00) dibersihkan dengan benar
+        $clean_harga = str_replace('.', '', $request->harga_satuan);
+        if (strpos($clean_harga, ',') !== false) {
+            $clean_harga = explode(',', $clean_harga)[0]; // Mengambil angka sebelum koma desimal
+        }
+
         $request->merge([
-            'harga_satuan' => str_replace('.', '', $request->harga_satuan)
+            'harga_satuan' => $clean_harga
         ]);
 
         $request->validate([
@@ -195,7 +207,21 @@ class AdminPersediaanController extends Controller
 
         $transaksi = $query->latest('tanggal_input')->paginate(10);
 
-        return view('adminpersediian.transaksi_keluar', compact('transaksi'));
+        // 🔥 AMBIL DATA MASTER PERSEDIAAN UNTUK DROPDOWN DI MODAL INDEX
+    // Menggunakan getRawOriginal() agar harga_satuan murni berupa nominal numerik asli database (tanpa embel-embel string "Rp")
+    $masterPersediaan = \App\Models\Persediaan::orderBy('nama_barang')->get()->map(function($item) {
+        return [
+            'kode_barang'   => $item->kode_barang,
+            'nama_barang'   => $item->nama_barang,
+            'kode_kategori' => $item->kode_kategori,
+            'kategori'      => $item->kategori,
+            'harga_satuan'  => (float) $item->getRawOriginal('harga_satuan'),
+            'stok_tersedia' => (int) $item->jumlah
+        ];
+    });
+    
+    return view('adminpersediian.transaksi_keluar', compact('transaksi', 'masterPersediaan'));
+
     }
 
     /** CREATE - Tampilkan form tambah */
@@ -395,48 +421,43 @@ class AdminPersediaanController extends Controller
         return view('adminpersediian.form_transaksi_masuk');
     }
 
-    /** STORE - Simpan transaksi masuk */
     public function storeTransaksiMasuk(Request $request)
     {
+        // 1. Ambil input harga satuan mentah
+        $raw_harga = $request->harga_satuan;
+
+        // 2. Jika input mengandung koma desimal (seperti 75.000,00), buang bagian setelah koma
+        if (strpos($raw_harga, ',') !== false) {
+            $raw_harga = explode(',', $raw_harga)[0];
+        }
+
+        // 3. Bersihkan titik ribuan agar murni menjadi angka numerik (contoh: 75.000 menjadi 75000)
+        $clean_harga = str_replace('.', '', $raw_harga);
+
+        // 4. Masukkan kembali ke dalam request sebelum validasi dijalankan
+        $request->merge([
+            'harga_satuan' => $clean_harga
+        ]);
+
+        // 5. Validasi data transaksi
         $request->validate([
             'tanggal_input' => 'required|date',
             'kode_kategori' => 'required|string|max:20',
-            'kategori' => 'required|string|max:100',
-            'kode_barang' => 'required|string|max:50',
-            'nama_barang' => 'required|string|max:200',
-            'jumlah_masuk' => 'required|integer|min:1',
-            'harga_satuan' => 'required|numeric|min:0',
-            'created_by' => 'nullable|string|max:100',
+            'kategori'      => 'required|string|max:100',
+            'kode_barang'   => 'required|string|max:50',
+            'nama_barang'   => 'required|string|max:200',
+            'jumlah_masuk'  => 'required|integer|min:1',
+            'harga_satuan'  => 'required|numeric|min:0',
         ]);
 
-        // Cek apakah barang sudah ada di persediaan
-        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
-
-        if ($persediaan) {
-            // Update persediaan yang sudah ada
-            $persediaan->setRawAttributes([
-                'harga_total' => ($persediaan->getRawOriginal('harga_total') ?? 0) + ($request->harga_satuan * $request->jumlah_masuk)
-            ]);
-            $persediaan->save();
-        } else {
-            // Buat persediaan baru
-            Persediaan::create([
-                'kode_kategori' => $request->kode_kategori,
-                'kategori' => $request->kategori,
-                'kode_barang' => $request->kode_barang,
-                'nama_barang' => $request->nama_barang,
-                'tanggal_masuk' => $request->tanggal_input,
-                'harga_satuan' => $request->harga_satuan,
-                'jumlah' => $request->jumlah_masuk,
-                'harga_total' => $request->harga_satuan * $request->jumlah_masuk,
-            ]);
-        }
-
-        // Simpan transaksi masuk
-        TransaksiMasukPersediaan::create($request->all() + [
-            'total' => $request->harga_satuan * $request->jumlah_masuk,
-            'user_id' => auth()->id() ?? null,
+        // 6. Simpan transaksi (Pastikan field total dihitung murni secara otomatis)
+        $total = $request->harga_satuan * $request->jumlah_masuk;
+        
+        \App\Models\TransaksiMasukPersediaan::create($request->all() + [
+            'total' => $total
         ]);
+
+        // Tambahkan logika update/increment stok ke master data persediaan di sini jika diperlukan
 
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil disimpan!');
@@ -454,54 +475,48 @@ class AdminPersediaanController extends Controller
         return view('adminpersediian.form_transaksi_masuk', compact('transaksiMasuk'));
     }
 
-    /** UPDATE - Update transaksi */
-    public function updateTransaksiMasuk(Request $request, TransaksiMasukPersediaan $transaksiMasuk)
+    /** UPDATE - Update transaksi masuk */
+    public function updateTransaksiMasuk(Request $request, $id)
     {
+        // 1. Temukan data transaksi masuk yang akan diubah
+        $transaksiMasuk = \App\Models\TransaksiMasukPersediaan::findOrFail($id);
+
+        // 2. Ambil input harga satuan mentah dari form edit
+        $raw_harga = $request->harga_satuan;
+
+        // 3. Jika input mengandung koma desimal, buang bagian setelah koma
+        if (strpos($raw_harga, ',') !== false) {
+            $raw_harga = explode(',', $raw_harga)[0];
+        }
+
+        // 4. Bersihkan titik ribuan agar kembali menjadi angka clean (75.000 -> 75000)
+        $clean_harga = str_replace('.', '', $raw_harga);
+
+        // 5. Masukkan kembali ke request
+        $request->merge([
+            'harga_satuan' => $clean_harga
+        ]);
+
+        // 6. Jalankan validasi
         $request->validate([
             'tanggal_input' => 'required|date',
             'kode_kategori' => 'required|string|max:20',
-            'kategori' => 'required|string|max:100',
-            'kode_barang' => 'required|string|max:50',
-            'nama_barang' => 'required|string|max:200',
-            'jumlah_masuk' => 'required|integer|min:1',
-            'harga_satuan' => 'required|numeric|min:0',
-            'created_by' => 'nullable|string|max:100',
+            'kategori'      => 'required|string|max:100',
+            'kode_barang'   => 'required|string|max:50',
+            'nama_barang'   => 'required|string|max:200',
+            'jumlah_masuk'  => 'required|integer|min:1',
+            'harga_satuan'  => 'required|numeric|min:0',
         ]);
 
-        // Backup data lama untuk adjust persediaan
-        $oldJumlah = $transaksiMasuk->jumlah_masuk;
-        $oldKodeBarang = $transaksiMasuk->kode_barang;
+        // 7. Hitung ulang total
+        $total = $request->harga_satuan * $request->jumlah_masuk;
 
-        // Update transaksi
+        // Tambahkan logika adjustment stok ke master persediaan di sini jika diperlukan
+
+        // 8. Update ke database
         $transaksiMasuk->update($request->all() + [
-            'total' => $request->harga_satuan * $request->jumlah_masuk,
+            'total' => $total
         ]);
-
-        // Adjust persediaan lama (kurangi jumlah lama)
-        $persediaanLama = Persediaan::where('kode_barang', $oldKodeBarang)->first();
-        if ($persediaanLama) {
-            $persediaanLama->decrement('jumlah', $oldJumlah);
-            if ($persediaanLama->jumlah == 0) {
-                $persediaanLama->delete();
-            }
-        }
-
-        // Update persediaan baru
-        $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
-        if ($persediaanBaru) {
-            $persediaanBaru->increment('jumlah', $request->jumlah_masuk);
-        } else {
-            Persediaan::create([
-                'kode_kategori' => $request->kode_kategori,
-                'kategori' => $request->kategori,
-                'kode_barang' => $request->kode_barang,
-                'nama_barang' => $request->nama_barang,
-                'tanggal_masuk' => $request->tanggal_input,
-                'harga_satuan' => $request->harga_satuan,
-                'jumlah' => $request->jumlah_masuk,
-                'harga_total' => $request->harga_satuan * $request->jumlah_masuk,
-            ]);
-        }
 
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil diupdate!');

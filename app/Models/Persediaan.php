@@ -30,32 +30,26 @@ class Persediaan extends Model
         'jumlah' => 'integer',
     ];
 
-    // Accessor untuk format harga satuan
-    // Accessor untuk format harga satuan
-    protected function hargaSatuan(): Attribute
+    /**
+     * Accessor Virtual baru agar tidak merusak nilai asli database.
+     * Dipanggil di Blade Tabel menggunakan: $item->harga_satuan_format
+     */
+    protected function hargaSatuanFormat(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => 'Rp ' . number_format($value, 2, ',', '.'),
+            get: fn () => 'Rp ' . number_format($this->harga_satuan, 0, ',', '.'),
         );
     }
 
-    // Accessor untuk format harga total 
-    protected function hargaTotal(): Attribute
+    /**
+     * Accessor Virtual baru untuk harga total.
+     * Dipanggil di Blade Tabel menggunakan: $item->harga_total_format
+     */
+    protected function hargaTotalFormat(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => 'Rp ' . number_format($value, 2, ',', '.'),
+            get: fn () => 'Rp ' . number_format($this->harga_satuan * $this->jumlah, 0, ',', '.'),
         );
-    }
-
-    // Auto calculate harga_total using RAW database values
-    public function getHargaTotalAttribute($value)
-    {
-        $rawHargaSatuan = $this->getRawOriginal('harga_satuan');
-        $rawJumlah = $this->getRawOriginal('jumlah');
-        
-        $total = $rawHargaSatuan * $rawJumlah;
-        
-        return 'Rp ' . number_format($total, 2, ',', '.');
     }
 
     // Scope untuk filter kategori

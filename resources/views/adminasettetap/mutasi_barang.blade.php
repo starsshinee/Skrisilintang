@@ -640,10 +640,7 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan" id="keterangan" rows="3" class="form-control" placeholder="Masukkan keterangan mutasi (opsional)...">{{ old('keterangan') }}</textarea>
-                    </div>
+                   
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -795,7 +792,7 @@ class  MutasiManager  {
             document.getElementById('lokasi_awal').value = data.lokasi_awal;
             document.getElementById('lokasi_akhir').value = data.lokasi_akhir;
             document.getElementById('tanggal_mutasi').value = data.tanggal_mutasi;
-            document.getElementById('keterangan').value = data.keterangan || '';
+            
             
             if (this.modal) {
                 this.modal.show();
@@ -893,17 +890,6 @@ class  MutasiManager  {
                         <p>${data.user?.name || '-'}</p>
                     </div>
                 </div>
-                ${data.keterangan ? `
-                <div class="detail-item" style="grid-column: 1 / -1;">
-                    <div class="detail-icon" style="background: rgba(107, 114, 128, 0.1); color: var(--gray-600);">
-                        <i class="fas fa-sticky-note"></i>
-                    </div>
-                    <div class="detail-content">
-                        <h6>Keterangan</h6>
-                        <p>${data.keterangan}</p>
-                    </div>
-                </div>
-                ` : ''}
             </div>
         `;
     }
