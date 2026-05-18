@@ -214,7 +214,7 @@
                 // ],
                 [
                     'href' => route('adminasettetap.laporan'),
-                    'label' => 'Dashboard Analitik',
+                    'label' => 'Laporan & Statistik',
                     'icon' => 'fas fa-chart-pie',
                     'route' => 'adminasettetap.laporan',
                 ],

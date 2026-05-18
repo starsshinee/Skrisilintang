@@ -196,14 +196,14 @@
 
         <!-- 2. Transaksi Masuk -->
         <div class="stat-card card-masuk">
-            <div class="stat-icon"><i class="fas fa-arrow-down-to-bracket"></i></div>
+            <div class="stat-icon"><i class="fas fa-inbox"></i></div>
             <div class="stat-value">{{ number_format($stats['transaksiMasuk']) }}</div>
             <div class="stat-label">Total Transaksi Masuk</div>
         </div>
 
         <!-- 3. Peminjaman Barang Aktif -->
         <div class="stat-card card-pinjam">
-            <div class="stat-icon"><i class="fas fa-hand-holding-box"></i></div>
+            <div class="stat-icon"><i class="fas fa-people-carry-box"></i></div>
             <div class="stat-value">{{ number_format($stats['peminjamanBarangAktif']) }}</div>
             <div class="stat-label">Barang Sedang Dipinjam</div>
         </div>

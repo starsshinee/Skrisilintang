@@ -247,7 +247,7 @@
           <a href="#fitur"     class="text-blue-100 hover:text-white text-sm font-medium transition">Fitur</a>
           <a href="#statistik" class="text-blue-100 hover:text-white text-sm font-medium transition">Statistik</a>
           <a href="#fasilitas" class="text-blue-100 hover:text-white text-sm font-medium transition">Fasilitas</a>
-          <a href="#pengaduan-survey" class="text-blue-100 hover:text-white text-sm font-medium transition">Pengaduan</a>
+          {{-- <a href="#pengaduan-survey" class="text-blue-100 hover:text-white text-sm font-medium transition">Pengaduan</a> --}}
           <a href="#kontak"    class="text-blue-100 hover:text-white text-sm font-medium transition">Kontak</a>
         </div>
         <div class="flex items-center gap-3">
@@ -264,7 +264,7 @@
       <a href="#fitur"     class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Fitur</a>
       <a href="#statistik" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Statistik</a>
       <a href="#fasilitas" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Fasilitas</a>
-      <a href="#pengaduan-survey" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Pengaduan</a>
+      {{-- <a href="#pengaduan-survey" class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Pengaduan</a> --}}
       <a href="#kontak"    class="block py-2 text-blue-100 text-sm" onclick="document.getElementById('mobileMenu').classList.add('hidden')">Kontak</a>
       <div class="flex gap-2 mt-3 pt-3 border-t border-white/10">
         <a href="{{ route('login') }}"    class="flex-1 text-center text-white text-sm font-semibold py-2 rounded-lg border border-white/20 hover:bg-white/10 transition">Masuk</a>
@@ -460,7 +460,7 @@
     </div>
   </section>
 
-  <section id="pengaduan-survey" class="py-20 bg-slate-50">
+  {{-- <section id="pengaduan-survey" class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="grid lg:grid-cols-2 gap-12 mb-16">
@@ -804,7 +804,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> --}}
 
   <section id="kontak" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
