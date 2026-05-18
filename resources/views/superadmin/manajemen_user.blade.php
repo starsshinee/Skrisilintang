@@ -186,7 +186,7 @@
             <td>
               <span class="role-badge role-{{ $user->role }}">
                 {{ match($user->role) {
-                  'superadmin' => 'Super Admin', 'kepalabpmp' => 'Kepala BPMP', 'kasubag' => 'Kasubag TU',
+                  'superadmin' => 'Super Admin', 'kepalabpmp' => 'Kepala BPMP', 'kasubag' => 'Kasubag Umum',
                   'adminpersediaan' => 'Admin Persediaan', 'adminsarpras' => 'Admin Sarpras',
                   'adminasettetap' => 'Admin Aset Tetap', 'pegawai' => 'Pegawai', 'tamu' => 'Tamu',
                   default => $user->role

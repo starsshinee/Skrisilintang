@@ -357,7 +357,7 @@
         ],
         'kasubag' => [
             'bgGradient' => 'from-indigo-900 to-indigo-800',
-            'badgeText' => 'Ka Subag',
+            'badgeText' => 'Kasubag Umum',
             'badgeColor' => 'bg-indigo-500/20 text-indigo-300',
             'navItems' => [
                 [

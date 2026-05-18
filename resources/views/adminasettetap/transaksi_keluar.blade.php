@@ -364,7 +364,7 @@
                         <div class="col-md-6"><label class="form-label">Merek</label><input type="text" id="merek" class="form-control" readonly></div>
                         <div class="col-md-6"><label class="form-label">Tanggal Perolehan</label><input type="date" id="tanggal_perolehan" class="form-control" readonly></div>
                         <div class="col-md-6">
-                            <label class="form-label">Nilai Mutasi Perolehan</label>
+                            <label class="form-label">Nilai Perolehan</label>
                             <div class="input-prefix-wrap"><span class="prefix">Rp</span><input type="number" id="nilai_perolehan" readonly></div>
                         </div>
                         <div class="col-12"><label class="form-label">Lokasi Ruangan Terakhir</label><input type="text" id="lokasi" class="form-control" readonly></div>
@@ -373,7 +373,7 @@
                     {{-- Seksi 3: Legalitas SK --}}
                     <div class="modal-section-label red"><span>Legalitas Dokumen SK</span></div>
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Nomor SK Penghapusan/Mutasi</label><input type="text" name="nomor_sk" id="nomor_sk" class="form-control" placeholder="SK-001/BPMP/2026"></div>
+                        <div class="col-md-6"><label class="form-label">Nomor SK Penghapusan</label><input type="text" name="nomor_sk" id="nomor_sk" class="form-control" placeholder="SK-001/BPMP/2026"></div>
                         <div class="col-md-6"><label class="form-label">Tanggal SK Resmi</label><input type="date" name="tanggal_sk" id="tanggal_sk" class="form-control"></div>
                         <div class="col-12"><label class="form-label">Keterangan Tambahan Alasan Keluar</label><textarea name="keterangan" id="keterangan" rows="3" class="form-control" placeholder="Ketik alasan penghapusan aset atau tujuan mutasi keluar..."></textarea></div>
                     </div>
@@ -551,8 +551,8 @@ window.openDetailModal = function(id) {
                 <div class="detail-grid">
                     <div class="detail-item"><label>Kode Barang</label><span>${data.kode_barang}</span></div>
                     <div class="detail-item"><label>NUP (Nomor Urut Pendaftaran)</label><span>${data.nup}</span></div>
-                    <div class="detail-item"><label>Nama Barang BMN</label><span>${data.nama_barang}</span></div>
-                    <div class="detail-item"><label>Merek Pabrikan</label><span>${data.merek}</span></div>
+                    <div class="detail-item"><label>Nama Barang</label><span>${data.nama_barang}</span></div>
+                    <div class="detail-item"><label>Merek/Type</label><span>${data.merek}</span></div>
                     <div class="detail-item"><label>Tanggal Perolehan Awal</label><span>${data.tanggal_perolehan_format}</span></div>
                     <div class="detail-item"><label>Nilai Perolehan Awal</label><span>${data.nilai_format}</span></div>
                     <div class="detail-item full"><label>Lokasi Penempatan Ruangan</label><span>${data.lokasi}</span></div>
