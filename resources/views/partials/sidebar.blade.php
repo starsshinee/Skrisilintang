@@ -41,10 +41,10 @@
                     'route' => 'pegawai.dashboard',
                 ],
                 [
-                    'href' => route('pegawai.info-mutasi'),
-                    'label' => 'Info Mutasi Barang',
+                    'href' => route('pegawai.ajuan-mutasi.index'),
+                    'label' => 'Ajuan Mutasi',
                     'icon' => 'fas fa-map-marker-alt',
-                    'route' => 'pegawai.info-mutasi',
+                    'route' => 'pegawai.ajuan-mutasi.index',
                 ],
                 [
                     'href' => route('pegawai.peminjaman-barang'),
@@ -160,6 +160,13 @@
                 ],
 
                 [
+                    'href' => route('adminasettetap.info-ajuan.index'),
+                    'label' => 'Info Ajuan Mutasi',
+                    'icon' => 'fas fa-map-marker-alt',
+                    'route' => 'adminasettetap.info-ajuan.index',
+                ],
+
+                [
                     'label' => 'Manajemen Peminjaman',
                     'icon' => 'fas fa-exchange-alt',
                     'route' => 'NONE',
@@ -193,18 +200,18 @@
                         ],
                     ],
                 ],
-                [
-                    'href' => route('adminasettetap.pengaduan'),
-                    'label' => 'Pengaduan',
-                    'icon' => 'fas fa-flag',
-                    'route' => 'adminasettetap.pengaduan',
-                ],
-                [
-                    'href' => route('adminasettetap.survey-kepuasan'),
-                    'label' => 'Survey Kepuasan',
-                    'icon' => 'fas fa-chart-line',
-                    'route' => 'adminasettetap.survey-kepuasan',
-                ],
+                // [
+                //     'href' => route('adminasettetap.pengaduan'),
+                //     'label' => 'Pengaduan',
+                //     'icon' => 'fas fa-flag',
+                //     'route' => 'adminasettetap.pengaduan',
+                // ],
+                // [
+                //     'href' => route('adminasettetap.survey-kepuasan'),
+                //     'label' => 'Survey Kepuasan',
+                //     'icon' => 'fas fa-chart-line',
+                //     'route' => 'adminasettetap.survey-kepuasan',
+                // ],
                 [
                     'href' => route('adminasettetap.laporan'),
                     'label' => 'Dashboard Analitik',

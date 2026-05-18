@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminSarprasController;
 use App\Http\Controllers\AdminAsettetapController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\AjuanMutasiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KepalaBPMPController;
 use App\Http\Controllers\KasubagController;
@@ -328,6 +329,11 @@ Route::middleware('auth')->group(function () {
             // Rute untuk memproses file Excel yang diunggah oleh admin
             Route::post('/data-aset-tetap/import', [AdminAsettetapController::class, 'importAset'])->name('data-aset-tetap.import');
 
+            // Route untuk fitur Info Ajuan Mutasi
+            Route::get('info-ajuan', [AdminAsettetapController::class, 'infoAjuanIndex'])->name('info-ajuan.index');
+            Route::get('info-ajuan/{id}', [AdminAsettetapController::class, 'infoAjuanShow'])->name('info-ajuan.show');
+            Route::delete('info-ajuan/{id}', [AdminAsettetapController::class, 'infoAjuanDestroy'])->name('info-ajuan.destroy');
+
             //PENGEMBALIAN BARANG
             Route::get('/pengembalian-barang', [AdminAsettetapController::class, 'PengembalianBarang'])->name('pengembalian-barang');
             Route::post('/pengembalian-barang/{id}/verifikasi', [AdminAsettetapController::class, 'verifikasiPengembalianBarang'])->name('pengembalian-barang.verifikasi');
@@ -444,7 +450,15 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:pegawai,superadmin')
         ->group(function () {
             Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
-            Route::get('/info-mutasi', [PegawaiController::class, 'infoMutasi'])->name('info-mutasi');
+
+            // 1. Route API autofill Aset Tetap
+            Route::get('ajuan-mutasi/aset/{id}', [AjuanMutasiController::class, 'getAsetTetapData'])->name('ajuan-mutasi.aset');
+
+            // 2. Route Resource CRUD
+            Route::resource('ajuan-mutasi', AjuanMutasiController::class)->except(['create', 'show']);
+
+            // 3. Route pop-up detail
+            Route::get('ajuan-mutasi/{id}', [AjuanMutasiController::class, 'show'])->name('ajuan-mutasi.show');
 
             //PEMINJAMAN BARANG
             Route::get('/peminjaman-barang', [PegawaiController::class, 'peminjamanBarang'])->name('peminjaman-barang');
@@ -484,6 +498,11 @@ Route::middleware('auth')->group(function () {
             //PENGATURAN AKUN
             Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
+
+        //Ajuan Mutasi
+            Route::resource('ajuan-mutasi', AjuanMutasiController::class)->except(['create', 'show']);
+            Route::get('ajuan-mutasi/{id}', [AjuanMutasiController::class, 'show']);
+            Route::get('ajuan-mutasi/aset/{id}', [AjuanMutasiController::class, 'getAsetTetapData']);
 
     // ──────────────────────────────────────────────────────────────────
     // TAMU – akses baca saja

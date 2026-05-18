@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MutasiBarang extends Model
+class AjuanMutasi extends Model
 {
     use HasFactory;
 
-    protected $table = 'mutasi_barang';
+    protected $table = 'ajuan_mutasi';
     
     protected $fillable = [
         'aset_tetap_id',
@@ -32,7 +32,7 @@ class MutasiBarang extends Model
     // Relasi
     public function asetTetap(): BelongsTo
     {
-        return $this->belongsTo(AssetTetap::class, 'asset_tetap_id');
+        return $this->belongsTo(AssetTetap::class, 'aset_tetap_id');
     }
 
     public function user(): BelongsTo
@@ -50,15 +50,16 @@ class MutasiBarang extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where('kode_barang', 'like', "%{$search}%")
+                     ->orWhere('nup', 'like', "%{$search}%") 
                      ->orWhere('nama_barang', 'like', "%{$search}%")
                      ->orWhere('lokasi_awal', 'like', "%{$search}%")
                      ->orWhere('lokasi_akhir', 'like', "%{$search}%");
     }
 
     // Accessors
-    public function getNoMutasiAttribute(): string
+    public function getNoAjuanAttribute(): string
     {
-        return 'MT-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        return 'AJN-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
 
     public function getLokasiPerubahanAttribute(): string

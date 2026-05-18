@@ -1,5 +1,5 @@
 <?php
-// database/migrations/xxxx_create_mutasi_barang_table.php
+
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,11 +9,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('mutasi_barang')) {
+        if (Schema::hasTable('ajuan_mutasi')) {
             return;
         }
 
-        Schema::create('mutasi_barang', function (Blueprint $table) {
+        Schema::create('ajuan_mutasi', function (Blueprint $table) {
             $table->id();
             
             // Relasi
@@ -38,7 +38,7 @@ return new class extends Migration
         });
             
         // INDEX DENGAN NAMA PENDEK (✅ Anti error MySQL)
-        Schema::table('mutasi_barang', function (Blueprint $table) {
+        Schema::table('ajuan_mutasi', function (Blueprint $table) {
             $table->index('kode_barang', 'idx_kode');
             $table->index('tanggal_mutasi', 'idx_tgl');
             $table->index(['lokasi_awal', 'lokasi_akhir'], 'idx_lokasi');
@@ -48,6 +48,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('mutasi_barang');
+        Schema::dropIfExists('ajuan_mutasi');
     }
 };

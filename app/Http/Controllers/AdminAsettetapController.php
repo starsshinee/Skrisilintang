@@ -27,6 +27,7 @@ use App\Models\{
     PengembalianBarang,
     PeminjamanKendaraan,
     PengembalianKendaraan,
+    AjuanMutasi
 };
 use App\Services\FonnteService;
 
@@ -560,33 +561,34 @@ class AdminAsettetapController extends Controller
     }
 
     // ========== MUTASI BARANG ==========
-    public function mutasiBarang(Request $request)
+   public function mutasiBarang(Request $request)
     {
         $query = MutasiBarang::with(['asetTetap', 'user'])
             ->when($request->filled('search'), function ($q) use ($request) {
                 $q->where(function ($subQ) use ($request) {
-                    $subQ->where('no_mutasi', 'like', "%{$request->search}%")
+                    $subQ->where('nup', 'like', "%{$request->search}%")
+                        ->orWhere('lokasi_awal', 'like', "%{$request->search}%")
+                        ->orWhere('lokasi_akhir', 'like', "%{$request->search}%")
                         ->orWhereHas('asetTetap', function ($asetQ) use ($request) {
                             $asetQ->where('kode_barang', 'like', "%{$request->search}%")
                                 ->orWhere('nama_barang', 'like', "%{$request->search}%");
-                        })
-                        ->orWhere('lokasi_awal', 'like', "%{$request->search}%")
-                        ->orWhere('lokasi_akhir', 'like', "%{$request->search}%");
+                        });
                 });
             })
             ->orderBy('tanggal_mutasi', 'desc');
 
-        $mutasi_barang = $query->paginate(15)->withQueryString();
+        // Batasi 20 data per halaman sesuai request
+        $mutasi_barang = $query->paginate(20)->withQueryString();
 
-        // Transform data untuk view
+        // Transform data untuk format tanggal di view
         $mutasi_barang->getCollection()->transform(function ($item) {
             $item->tanggal_mutasi_formatted = $item->tanggal_mutasi?->format('d/m/Y');
             $item->tanggal_input = $item->created_at?->format('d/m/Y H:i');
             return $item;
         });
 
-        // Aset tetap untuk dropdown
-        $asetTetap = AssetTetap::select('id', 'kode_barang', 'nama_barang', 'lokasi')
+        // Ambil data untuk dropdown pencarian Tom Select
+        $asetTetap = AssetTetap::select('id', 'kode_barang', 'nup', 'nama_barang', 'lokasi', 'kondisi')
             ->orderBy('nama_barang', 'asc')
             ->orderBy('kode_barang', 'asc')
             ->get();
@@ -594,7 +596,7 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.mutasi_barang', compact('mutasi_barang', 'asetTetap'));
     }
 
-    // ✅ FIXED: Store (POST /mutasi-barang)
+    // ✅ STORE: Menyimpan data mutasi baru (Tanpa no_mutasi)
     public function mutasiBarangStore(Request $request)
     {
         $validated = $request->validate([
@@ -609,21 +611,20 @@ class AdminAsettetapController extends Controller
         try {
             $aset = AssetTetap::findOrFail($validated['aset_tetap_id']);
 
-            $noMutasi = 'MUT-' . now()->format('Ymd') . '-' . str_pad(MutasiBarang::count() + 1, 4, '0', STR_PAD_LEFT);
-
             MutasiBarang::create([
-                'no_mutasi' => $noMutasi,
                 'aset_tetap_id' => $validated['aset_tetap_id'],
-                'kode_barang' => $aset->kode_barang,
-                'nama_barang' => $aset->nama_barang,
-                'lokasi_awal' => $validated['lokasi_awal'],
-                'lokasi_akhir' => $validated['lokasi_akhir'],
-                'tanggal_mutasi' => $validated['tanggal_mutasi'],
-                'keterangan' => $validated['keterangan'],
-                'user_id' => Auth::id(),
+                'kode_barang'   => $aset->kode_barang,
+                'nup'           => $aset->nup,
+                'nama_barang'   => $aset->nama_barang,
+                'lokasi_awal'   => $validated['lokasi_awal'],
+                'lokasi_akhir'  => $validated['lokasi_akhir'],
+                'kondisi'       => $aset->kondisi,
+                'tanggal_mutasi'=> $validated['tanggal_mutasi'],
+                'keterangan'    => $validated['keterangan'],
+                'user_id'       => Auth::id(),
             ]);
 
-            // Update lokasi aset
+            // Update lokasi terkini di tabel aset_tetap
             $aset->update(['lokasi' => $validated['lokasi_akhir']]);
 
             DB::commit();
@@ -642,7 +643,7 @@ class AdminAsettetapController extends Controller
         }
     }
 
-    // ✅ FIXED: Show/Detail (GET /mutasi-barang/{id})
+    // ✅ SHOW: Detail mutasi berdasarkan ID
     public function mutasiBarangShow($id)
     {
         $mutasi = MutasiBarang::with(['asetTetap', 'user'])->findOrFail($id);
@@ -653,24 +654,26 @@ class AdminAsettetapController extends Controller
         return response()->json($mutasi);
     }
 
-    // ✅ FIXED: Edit (GET /mutasi-barang/{id}/edit)
+    // ✅ EDIT: Mengambil data JSON untuk form edit modal
     public function mutasiBarangEdit($id)
     {
         $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
 
         return response()->json([
-            'id' => $mutasi->id,
+            'id'            => $mutasi->id,
             'aset_tetap_id' => $mutasi->aset_tetap_id,
-            'lokasi_awal' => $mutasi->lokasi_awal,
-            'lokasi_akhir' => $mutasi->lokasi_akhir,
-            'tanggal_mutasi' => $mutasi->tanggal_mutasi?->format('Y-m-d'),
-            'keterangan' => $mutasi->keterangan ?? '',
-            'kode_barang' => $mutasi->kode_barang,
-            'nama_barang' => $mutasi->nama_barang
+            'lokasi_awal'   => $mutasi->lokasi_awal,
+            'lokasi_akhir'  => $mutasi->lokasi_akhir,
+            'tanggal_mutasi'=> $mutasi->tanggal_mutasi?->format('Y-m-d'),
+            'keterangan'    => $mutasi->keterangan ?? '',
+            'kode_barang'   => $mutasi->kode_barang,
+            'nup'           => $mutasi->nup,
+            'nama_barang'   => $mutasi->nama_barang,
+            'kondisi'       => $mutasi->kondisi
         ]);
     }
 
-    // ✅ FIXED: Update (PUT /mutasi-barang/{id})
+    // ✅ UPDATE: Memperbarui data mutasi (Tanpa no_mutasi)
     public function mutasiBarangUpdate(Request $request, $id)
     {
         $validated = $request->validate([
@@ -688,15 +691,17 @@ class AdminAsettetapController extends Controller
 
             $mutasi->update([
                 'aset_tetap_id' => $validated['aset_tetap_id'],
-                'kode_barang' => $aset->kode_barang,
-                'nama_barang' => $aset->nama_barang,
-                'lokasi_awal' => $validated['lokasi_awal'],
-                'lokasi_akhir' => $validated['lokasi_akhir'],
-                'tanggal_mutasi' => $validated['tanggal_mutasi'],
-                'keterangan' => $validated['keterangan'],
+                'kode_barang'   => $aset->kode_barang,
+                'nup'           => $aset->nup,
+                'nama_barang'   => $aset->nama_barang,
+                'lokasi_awal'   => $validated['lokasi_awal'],
+                'lokasi_akhir'  => $validated['lokasi_akhir'],
+                'kondisi'       => $aset->kondisi,
+                'tanggal_mutasi'=> $validated['tanggal_mutasi'],
+                'keterangan'    => $validated['keterangan'],
             ]);
 
-            // Update lokasi aset
+            // Selaraskan lokasi terbaru di data induk aset tetap
             $aset->update(['lokasi' => $validated['lokasi_akhir']]);
 
             DB::commit();
@@ -714,14 +719,14 @@ class AdminAsettetapController extends Controller
         }
     }
 
-    // ✅ FIXED: Delete (DELETE /mutasi-barang/{id})
+    // ✅ DESTROY: Menghapus data mutasi dan mengembalikan lokasi aset ke semula
     public function mutasiBarangDestroy($id)
     {
         DB::beginTransaction();
         try {
             $mutasi = MutasiBarang::with('asetTetap')->findOrFail($id);
 
-            // Rollback lokasi aset ke lokasi awal
+            // Rollback lokasi aset ke lokasi awal sebelum mutasi ini terjadi
             if ($mutasi->asetTetap) {
                 $mutasi->asetTetap->update(['lokasi' => $mutasi->lokasi_awal]);
             }
@@ -743,18 +748,92 @@ class AdminAsettetapController extends Controller
         }
     }
 
-    // ✅ FIXED: Get Aset Data (GET /mutasi-barang/aset/{id})
+    // ✅ API AUTOFILL: Mengambil data spesifik aset tetap saat dropdown dipilih
     public function getAsetTetapData($id)
     {
-        $aset = AssetTetap::select(['id', 'kode_barang', 'nama_barang', 'lokasi'])->findOrFail($id);
+        $aset = AssetTetap::select(['id', 'kode_barang', 'nup', 'nama_barang', 'lokasi', 'kondisi'])->findOrFail($id);
 
         return response()->json([
-            'kode_barang' => $aset->kode_barang,
-            'nama_barang' => $aset->nama_barang,
+            'kode_barang'     => $aset->kode_barang,
+            'nup'             => $aset->nup,
+            'nama_barang'     => $aset->nama_barang,
+            'kondisi'         => $aset->kondisi,
             'lokasi_sekarang' => $aset->lokasi
         ]);
     }
 
+
+    // 1. Menampilkan daftar ajuan
+    public function infoAjuanIndex(Request $request)
+    {
+        $query = AjuanMutasi::with(['asetTetap', 'user'])
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where(function ($subQ) use ($request) {
+                    $subQ->where('nup', 'like', "%{$request->search}%")
+                        ->orWhere('lokasi_awal', 'like', "%{$request->search}%")
+                        ->orWhere('lokasi_akhir', 'like', "%{$request->search}%")
+                        ->orWhere('keterangan', 'like', "%{$request->search}%")
+                        // Pencarian berdasarkan nama pegawai
+                        ->orWhereHas('user', function ($userQ) use ($request) {
+                            $userQ->where('name', 'like', "%{$request->search}%");
+                        })
+                        ->orWhereHas('asetTetap', function ($asetQ) use ($request) {
+                            $asetQ->where('kode_barang', 'like', "%{$request->search}%")
+                                ->orWhere('nama_barang', 'like', "%{$request->search}%");
+                        });
+                });
+            })
+            ->orderBy('created_at', 'desc');
+
+        $ajuan_mutasi = $query->paginate(20)->withQueryString();
+
+        $ajuan_mutasi->getCollection()->transform(function ($item) {
+            $item->tanggal_mutasi_formatted = $item->tanggal_mutasi?->format('d/m/Y');
+            $item->tanggal_input = $item->created_at?->format('d/m/Y H:i');
+            return $item;
+        });
+
+        return view('adminasettetap.info_ajuan', compact('ajuan_mutasi'));
+    }
+
+    // 2. Menampilkan detail ajuan untuk modal pop-up
+    public function infoAjuanShow($id)
+    {
+        $ajuan = AjuanMutasi::with(['asetTetap', 'user'])->findOrFail($id);
+
+        $ajuan->tanggal_mutasi_formatted = $ajuan->tanggal_mutasi?->format('d/m/Y');
+        $ajuan->tanggal_input = $ajuan->created_at?->format('d/m/Y H:i');
+
+        return response()->json($ajuan);
+    }
+
+    // 3. Menghapus / Menolak ajuan
+    public function infoAjuanDestroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            $ajuan = AjuanMutasi::with('asetTetap')->findOrFail($id);
+
+            if ($ajuan->asetTetap) {
+                $ajuan->asetTetap->update(['lokasi' => $ajuan->lokasi_awal]);
+            }
+
+            $ajuan->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data ajuan mutasi berhasil dihapus/ditolak!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus ajuan'
+            ], 500);
+        }
+    }
 
     // ========== PEMINJAMAN BARANG ==========
     // Tampilan Peminjaman Barang Admin
