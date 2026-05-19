@@ -189,7 +189,6 @@ class AdminPersediaanController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->where('kode_barang', 'like', '%' . $request->search . '%')
                     ->orWhere('nama_barang', 'like', '%' . $request->search . '%')
-                    ->orWhere('nomor_transaksi', 'like', '%' . $request->search . '%')
                     ->orWhere('kode_kategori', 'like', '%' . $request->search . '%')
                     ->orWhere('kategori', 'like', '%' . $request->search . '%');
             });
@@ -238,7 +237,6 @@ class AdminPersediaanController extends Controller
     public function storeTransaksiKeluar(Request $request)
     {
         $request->validate([
-            'nomor_transaksi' => 'required|string|max:50|unique:transaksi_keluar_persediaan,nomor_transaksi',
             'tanggal_input' => 'required|date',
             'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
@@ -317,8 +315,6 @@ class AdminPersediaanController extends Controller
     public function updateTransaksiKeluar(Request $request, TransaksiKeluarPersediaan $transaksiKeluar)
     {
         $request->validate([
-            'nomor_transaksi' => ['required', 'string', 'max:50', Rule::unique('transaksi_keluar_persediaan', 'nomor_transaksi')->ignore($transaksiKeluar->id)],
-            'tanggal_input' => 'required|date',
             'kode_kategori' => 'required|string|max:20',
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50',

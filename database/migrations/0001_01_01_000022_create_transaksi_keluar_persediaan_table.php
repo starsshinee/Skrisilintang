@@ -16,9 +16,6 @@ return new class extends Migration
         Schema::create('transaksi_keluar_persediaan', function (Blueprint $table) {
             $table->id();
             
-            // Sesuai kolom tabel: No (auto increment)
-            $table->string('nomor_transaksi')->unique();
-            
             // Kolom sesuai header tabel
             $table->date('tanggal_input');           // Tanggal Input
             $table->string('kode_kategori');         // Kota Kategori

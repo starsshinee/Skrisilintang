@@ -241,7 +241,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8">
             <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
           </svg>
-          <input type="text" name="search" placeholder="Cari nomor, kode barang, nama barang..." value="{{ request('search') }}">
+          <input type="text" name="search" placeholder="Cari kode barang, nama barang..." value="{{ request('search') }}">
         </form>
 
         <form method="GET" action="{{ route('adminpersediaan.transaksi-keluar') }}" style="display:flex; gap:12px;">
@@ -260,7 +260,6 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Nomor Transaksi</th>
             <th>Tanggal Input</th>
             <th>Kode Kategori</th>
             <th>Kategori</th>
@@ -269,14 +268,12 @@
             <th>Jumlah Keluar</th>
             <th>Harga</th>
             <th>Total</th>
-            <th>Keterangan</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
           @forelse($transaksi as $index => $item)
           <tr data-id="{{ $item->id }}"
-              data-nomor_transaksi="{{ $item->nomor_transaksi }}"
               data-tanggal_input="{{ $item->tanggal_input ? $item->tanggal_input->format('Y-m-d') : '' }}"
               data-kode_kategori="{{ $item->kode_kategori }}"
               data-kategori="{{ $item->kategori }}"
@@ -286,7 +283,6 @@
               data-harga="{{ $item->harga }}"
               data-total="{{ $item->total }}">
               <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
-              <td><strong>{{ $item->nomor_transaksi }}</strong></td>
               <td>{{ $item->tanggal_input_format ?? $item->tanggal_input }}</td>
               <td>{{ $item->kode_kategori }}</td>
               <td>{{ $item->kategori }}</td>
@@ -408,10 +404,6 @@
           <span class="section-label-inner red">Data Transaksi</span>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nomor_transaksi" id="create_nomor_transaksi" class="form-input" placeholder="Nomor transaksi" maxlength="50" required>
-          </div>
           <div class="form-group">
             <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
             <input type="date" name="tanggal_input" id="create_tanggal_input" class="form-input" required>
@@ -544,10 +536,6 @@
           <span class="section-label-inner red">Data Transaksi</span>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nomor Transaksi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nomor_transaksi" id="edit_nomor_transaksi" class="form-input" maxlength="50" required>
-          </div>
           <div class="form-group">
             <label class="form-label">Tanggal Input <span style="color:var(--danger);">*</span></label>
             <input type="date" name="tanggal_input" id="edit_tanggal_input" class="form-input" required>
@@ -696,7 +684,6 @@
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
     const d = {
-        nomor: row.dataset.nomor_transaksi,
         tanggal: row.dataset.tanggal_input,
         kode_kategori: row.dataset.kode_kategori,
         kategori: row.dataset.kategori,
@@ -752,7 +739,6 @@
     if (!row) return;
     const d = {
         id: id,
-        nomor_transaksi: row.dataset.nomor_transaksi,
         tanggal_input: row.dataset.tanggal_input,
         kode_kategori: row.dataset.kode_kategori,
         kategori: row.dataset.kategori,
@@ -764,7 +750,6 @@
     };
 
     document.getElementById('edit_id').value = d.id;
-    document.getElementById('edit_nomor_transaksi').value = d.nomor_transaksi;
     document.getElementById('edit_tanggal_input').value = d.tanggal_input;
     document.getElementById('edit_kode_kategori').value = d.kode_kategori;
     document.getElementById('edit_kategori').value = d.kategori;
@@ -785,7 +770,7 @@
   function confirmDelete(id) {
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if (!row) return;
-    document.getElementById('deleteTitle').textContent = `No: ${row.dataset.nomor_transaksi} — ${row.dataset.nama_barang}`;
+    document.getElementById('deleteTitle').textContent = `No: — ${row.dataset.nama_barang}`;
     document.getElementById('deleteForm').action = `{{ route('adminpersediaan.transaksi-keluar.destroy', ':id') }}`.replace(':id', id);
     openModal('deleteModal');
   }
