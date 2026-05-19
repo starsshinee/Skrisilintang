@@ -775,7 +775,8 @@ class AdminAsettetapController extends Controller
                         ->orWhere('keterangan', 'like', "%{$request->search}%")
                         // Pencarian berdasarkan nama pegawai
                         ->orWhereHas('user', function ($userQ) use ($request) {
-                            $userQ->where('name', 'like', "%{$request->search}%");
+                            $userQ->where('name', 'like', "%{$request->search}%")
+                            ->orWhere('unit_kerja_id', 'like', "%{$request->search}%");
                         })
                         ->orWhereHas('asetTetap', function ($asetQ) use ($request) {
                             $asetQ->where('kode_barang', 'like', "%{$request->search}%")
@@ -800,6 +801,7 @@ class AdminAsettetapController extends Controller
     public function infoAjuanShow($id)
     {
         $ajuan = AjuanMutasi::with(['asetTetap', 'user'])->findOrFail($id);
+        $ajuan = AjuanMutasi::with(['asetTetap', 'user.unitKerja'])->findOrFail($id);
 
         $ajuan->tanggal_mutasi_formatted = $ajuan->tanggal_mutasi?->format('d/m/Y');
         $ajuan->tanggal_input = $ajuan->created_at?->format('d/m/Y H:i');

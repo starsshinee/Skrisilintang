@@ -18,7 +18,7 @@ return new class extends Migration
             
             // Relasi
             $table->foreignId('aset_tetap_id')->constrained('aset_tetap')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');  
             
             // Data Utama
             $table->string('kode_barang');

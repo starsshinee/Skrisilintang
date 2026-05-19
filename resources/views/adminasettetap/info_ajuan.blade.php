@@ -27,8 +27,8 @@
     <div class="content">
         <div class="page-top">
             <div>
-                <h1>Daftar Ajuan Mutasi Pegawai</h1>
-                <p class="text-muted">Kelola dan tinjau permohonan mutasi barang dari seluruh pegawai</p>
+                <h1>Daftar Ajuan Mutasi Barang</h1>
+                <p class="text-muted">Kelola dan tinjau informasi ajuan mutasi barang dari seluruh pegawai</p>
             </div>
             <div class="badge bg-primary px-3 py-2" style="border-radius: 10px;">{{ $ajuan_mutasi->total() }} Ajuan Masuk</div>
         </div>
@@ -65,9 +65,12 @@
                         @forelse($ajuan_mutasi as $item)
                         <tr>
                             <td>
-                                <span class="badge-user">
+                                <span class="fw-bold">
                                     <i class="fas fa-user-circle"></i> {{ $item->user->name ?? 'User dihapus' }}
                                 </span>
+                                <p><span class="text-muted" style="font-size: 11.5px; font-weight: 600;">
+                                    <i class="fas fa-building me-1"></i> {{ optional($item->user->unitKerja)->nama_unit ?? 'Unit Kerja Tidak Tercatat' }}
+                                </span></p>
                             </td>
                             <td>{{ $item->tanggal_mutasi_formatted }}</td>
                             <td>
