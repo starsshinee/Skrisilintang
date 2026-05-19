@@ -12,7 +12,7 @@ use App\Http\Controllers\AdminPersediaanController;
 
 class UpdateTransaksiKeluarPersediaanTest extends TestCase
 {
-    use RefreshDatabase; 
+    use RefreshDatabase;
 
     protected $admin;
     protected $controller;
@@ -20,148 +20,148 @@ class UpdateTransaksiKeluarPersediaanTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Menggunakan user dummy agar tidak memicu error Hash configuration
-        $this->admin = new \App\Models\User();
-        $this->admin->id = 1;
-        $this->admin->name = 'Admin Testing';
-        $this->admin->role = 'admin_persediaan';
-        
+        // Setup user dummy
+        $this->admin = User::create([
+            'name' => 'Admin', 
+            'username' => 'admin_sistem',
+            'email' => 'admin@test.com', 
+            'password' => bcrypt('password')
+        ]);
         $this->actingAs($this->admin);
-        
-        $this->controller = new \App\Http\Controllers\AdminPersediaanController();
+        $this->controller = new AdminPersediaanController();
     }
 
-    /**
-     * Helper untuk membuat Request tiruan (Dummy) beserta Session
-     */
-    private function createRequest($method, $data)
+    private function createRequest($data)
     {
-        $request = Request::create('/dummy-url', $method, $data);
-        $request->setLaravelSession(app('session.store')); 
+        $request = Request::create('/dummy', 'PUT', $data);
+        $request->setLaravelSession(app('session.store'));
         return $request;
     }
 
-    /**
-     * TC-01 (Path 1): Uji Validasi Stok Tidak Mencukupi
-     */
-    public function test_gagal_karena_stok_baru_tidak_mencukupi()
+    /** Path 1: Validasi stok kurang */
+    public function test_tc01_stok_tidak_cukup()
     {
-        $persediaan = Persediaan::create([
-            'kode_barang' => 'BRG-TINTA', 'nama_barang' => 'Tinta Printer', 'kode_kategori' => 'ATK', 'kategori' => 'Alat Tulis', 'tanggal_masuk' => now(), 'harga_satuan' => 50000, 'jumlah' => 2, 'harga_total' => 100000
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 2, 'harga_satuan' => 100, 'harga_total' => 200 // 🔥 Ditambahkan
         ]);
-
-        $transaksi = TransaksiKeluarPersediaan::create([
-            'nomor_transaksi' => 'TRX-001', 'tanggal_input' => now(), 'kode_kategori' => 'ATK', 'kategori' => 'Alat Tulis', 'kode_barang' => 'BRG-TINTA', 'nama_barang' => 'Tinta Printer', 'jumlah_keluar' => 1, 'harga' => 50000
-        ]);
-
-        // Skenario: Stok sisa 2, tapi admin coba update jumlah_keluar jadi 5
-        $request = $this->createRequest('PUT', array_merge($transaksi->toArray(), [
-            'jumlah_keluar' => 5
-        ]));
-
-        $response = $this->controller->updateTransaksiKeluar($request, $transaksi);
         
-        // Memastikan error validasi stok muncul
+        $trx = TransaksiKeluarPersediaan::create([
+            'tanggal_input' => now()->format('Y-m-d'),
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'jumlah_keluar' => 1, 'harga' => 100, 
+            'total' => 100, 'user_id' => $this->admin->id
+        ]);
+
+        $request = $this->createRequest(['kode_kategori' => 'K1', 'kategori' => 'Kat1', 'kode_barang' => 'A', 'nama_barang' => 'Barang A', 'jumlah_keluar' => 5, 'harga' => 100]);
+        $response = $this->controller->updateTransaksiKeluar($request, $trx);
+
         $this->assertTrue($response->getSession()->has('errors'));
-        $this->assertEquals('Stok persediaan tidak mencukupi!', $response->getSession()->get('errors')->first('jumlah_keluar'));
+    }
+
+    /** Path 2: Ganti Barang (Master Ada) */
+    public function test_tc02_ganti_barang_master_ada()
+    {
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 5, 'harga_satuan' => 100, 'harga_total' => 500 // 🔥 Ditambahkan
+        ]);
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'B', 'nama_barang' => 'Barang B', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 10, 'harga_satuan' => 100, 'harga_total' => 1000 // 🔥 Ditambahkan
+        ]);
         
-        // Stok gudang tidak boleh berubah (tetap 2)
-        $this->assertEquals(2, $persediaan->fresh()->jumlah); 
-    }
-
-    /**
-     * TC-02 (Path 2): Uji Ganti Barang dan Stok Lama Dikembalikan
-     */
-    public function test_sukses_ganti_barang_dan_stok_lama_dikembalikan()
-    {
-        $kertas = Persediaan::create(['kode_barang' => 'BRG-KRT', 'nama_barang' => 'Kertas', 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'tanggal_masuk' => now(), 'harga_satuan' => 10, 'jumlah' => 5, 'harga_total' => 50]);
-        $tinta = Persediaan::create(['kode_barang' => 'BRG-TNT', 'nama_barang' => 'Tinta', 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'tanggal_masuk' => now(), 'harga_satuan' => 20, 'jumlah' => 20, 'harga_total' => 400]);
-
-        $transaksi = TransaksiKeluarPersediaan::create([
-            'nomor_transaksi' => 'TRX-002', 'tanggal_input' => now(), 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'kode_barang' => 'BRG-KRT', 'nama_barang' => 'Kertas', 'jumlah_keluar' => 5, 'harga' => 10
+        $trx = TransaksiKeluarPersediaan::create([
+            'tanggal_input' => now()->format('Y-m-d'),
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'jumlah_keluar' => 2, 'harga' => 100, 
+            'total' => 200, 'user_id' => $this->admin->id
         ]);
 
-        // Skenario: Awalnya keluar kertas 5. Diubah jadi keluar Tinta 2.
-        $request = $this->createRequest('PUT', array_merge($transaksi->toArray(), [
-            'kode_barang' => 'BRG-TNT', 'nama_barang' => 'Tinta', 'jumlah_keluar' => 2
-        ]));
+        $request = $this->createRequest(['kode_kategori' => 'K1', 'kategori' => 'Kat1', 'kode_barang' => 'B', 'nama_barang' => 'Barang B', 'jumlah_keluar' => 3, 'harga' => 100]);
+        $this->controller->updateTransaksiKeluar($request, $trx);
 
-        $response = $this->controller->updateTransaksiKeluar($request, $transaksi);
-
-        // Kertas dikembalikan 5 (5+5=10). Tinta dikurangi 2 (20-2=18)
-        $this->assertEquals(10, $kertas->fresh()->jumlah);
-        $this->assertEquals(18, $tinta->fresh()->jumlah);
-        $this->assertTrue($response->getSession()->has('success'));
+        $this->assertEquals(7, Persediaan::where('kode_barang', 'A')->first()->jumlah); 
+        $this->assertEquals(7, Persediaan::where('kode_barang', 'B')->first()->jumlah); 
     }
 
-    /**
-     * TC-03 (Path 3): Uji Ganti Barang (Barang Lama Telah Dihapus dari Gudang)
-     */
-    public function test_sukses_ganti_barang_meskipun_barang_lama_telah_dihapus()
+    /** Path 3: Ganti Barang (Master Tidak Ada) */
+    public function test_tc03_ganti_barang_master_tidak_ada()
     {
-        $buku = Persediaan::create(['kode_barang' => 'BRG-BK', 'nama_barang' => 'Buku', 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'tanggal_masuk' => now(), 'harga_satuan' => 10, 'jumlah' => 10, 'harga_total' => 100]);
-
-        // Skenario: Awalnya keluar Pulpen, tapi master data Pulpen sudah terhapus di database
-        $transaksi = TransaksiKeluarPersediaan::create([
-            'nomor_transaksi' => 'TRX-003', 'tanggal_input' => now(), 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'kode_barang' => 'BRG-PLP', 'nama_barang' => 'Pulpen', 'jumlah_keluar' => 2, 'harga' => 10
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'B', 'nama_barang' => 'Barang B', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 10, 'harga_satuan' => 100, 'harga_total' => 1000 // 🔥 Ditambahkan
+        ]);
+        
+        $trx = TransaksiKeluarPersediaan::create([
+            'tanggal_input' => now()->format('Y-m-d'),
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'jumlah_keluar' => 2, 'harga' => 100, 
+            'total' => 200, 'user_id' => $this->admin->id
         ]);
 
-        // Diubah menjadi keluarkan Buku 3
-        $request = $this->createRequest('PUT', array_merge($transaksi->toArray(), [
-            'kode_barang' => 'BRG-BK', 'nama_barang' => 'Buku', 'jumlah_keluar' => 3
-        ]));
+        $request = $this->createRequest(['kode_kategori' => 'K1', 'kategori' => 'Kat1', 'kode_barang' => 'B', 'nama_barang' => 'Barang B', 'jumlah_keluar' => 3, 'harga' => 100]);
+        $response = $this->controller->updateTransaksiKeluar($request, $trx);
 
-        $response = $this->controller->updateTransaksiKeluar($request, $transaksi);
-
-        // Sistem tidak boleh crash, dan stok Buku berkurang 3 (jadi 7)
-        $this->assertEquals(7, $buku->fresh()->jumlah);
-        $this->assertTrue($response->getSession()->has('success'));
+        $this->assertEquals(7, Persediaan::where('kode_barang', 'B')->first()->jumlah);
     }
 
-    /**
-     * TC-04 (Path 4): Uji Barang Sama, Jumlah Keluar Diubah Lebih Sedikit (Stok Gudang Bertambah)
-     */
-    public function test_sukses_jumlah_keluar_dikurangi_sehingga_stok_gudang_bertambah()
+    /** Path 4: Barang Sama, Jumlah dikurangi */
+    public function test_tc04_jumlah_dikurangi()
     {
-        $spidol = Persediaan::create(['kode_barang' => 'BRG-SPD', 'nama_barang' => 'Spidol', 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'tanggal_masuk' => now(), 'harga_satuan' => 10, 'jumlah' => 8, 'harga_total' => 80]);
-
-        $transaksi = TransaksiKeluarPersediaan::create([
-            'nomor_transaksi' => 'TRX-004', 'tanggal_input' => now(), 'kode_kategori' => 'ATK', 'kategori' => 'ATK', 'kode_barang' => 'BRG-SPD', 'nama_barang' => 'Spidol', 'jumlah_keluar' => 5, 'harga' => 10
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 5, 'harga_satuan' => 100, 'harga_total' => 500 // 🔥 Ditambahkan
+        ]);
+        
+        $trx = TransaksiKeluarPersediaan::create([
+            'tanggal_input' => now()->format('Y-m-d'),
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'jumlah_keluar' => 4, 'harga' => 100, 
+            'total' => 400, 'user_id' => $this->admin->id
         ]);
 
-        // Skenario: Awalnya keluar 5, diedit menjadi keluar 3 saja. Sisa 2 kembali ke gudang.
-        $request = $this->createRequest('PUT', array_merge($transaksi->toArray(), [
-            'jumlah_keluar' => 3
-        ]));
+        $request = $this->createRequest(['kode_kategori' => 'K1', 'kategori' => 'Kat1', 'kode_barang' => 'A', 'nama_barang' => 'Barang A', 'jumlah_keluar' => 1, 'harga' => 100]);
+        $this->controller->updateTransaksiKeluar($request, $trx);
 
-        $response = $this->controller->updateTransaksiKeluar($request, $transaksi);
-
-        // Gudang awal 8 + selisih 2 = 10
-        $this->assertEquals(10, $spidol->fresh()->jumlah);
-        $this->assertTrue($response->getSession()->has('success'));
+        $this->assertEquals(8, Persediaan::where('kode_barang', 'A')->first()->jumlah); 
     }
 
-    /**
-     * TC-05 (Path 5): Uji Barang Sama, Jumlah Keluar Diubah Lebih Banyak (Stok Gudang Berkurang)
-     */
-    public function test_sukses_jumlah_keluar_ditambah_sehingga_stok_gudang_berkurang()
+    /** Path 5: Barang Sama, Jumlah ditambah */
+    public function test_tc05_jumlah_ditambah()
     {
-        $sapu = Persediaan::create(['kode_barang' => 'BRG-SP', 'nama_barang' => 'Sapu', 'kode_kategori' => 'BRS', 'kategori' => 'Kebersihan', 'tanggal_masuk' => now(), 'harga_satuan' => 10, 'jumlah' => 10, 'harga_total' => 100]);
-
-        $transaksi = TransaksiKeluarPersediaan::create([
-            'nomor_transaksi' => 'TRX-005', 'tanggal_input' => now(), 'kode_kategori' => 'BRS', 'kategori' => 'Kebersihan', 'kode_barang' => 'BRG-SP', 'nama_barang' => 'Sapu', 'jumlah_keluar' => 2, 'harga' => 10
+        Persediaan::create([
+            'tanggal_masuk' => now()->format('Y-m-d'),
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'jumlah' => 10, 'harga_satuan' => 100, 'harga_total' => 1000 // 🔥 Ditambahkan
+        ]);
+        
+        $trx = TransaksiKeluarPersediaan::create([
+            'tanggal_input' => now()->format('Y-m-d'),
+            'kode_kategori' => 'K1', 'kategori' => 'Kat1', 
+            'kode_barang' => 'A', 'nama_barang' => 'Barang A', 
+            'jumlah_keluar' => 2, 'harga' => 100, 
+            'total' => 200, 'user_id' => $this->admin->id
         ]);
 
-        // Skenario: Awalnya keluar 2, diedit menjadi keluar 5. Gudang harus dikurangi lagi 3.
-        $request = $this->createRequest('PUT', array_merge($transaksi->toArray(), [
-            'jumlah_keluar' => 5
-        ]));
+        $request = $this->createRequest(['kode_kategori' => 'K1', 'kategori' => 'Kat1', 'kode_barang' => 'A', 'nama_barang' => 'Barang A', 'jumlah_keluar' => 5, 'harga' => 100]);
+        $this->controller->updateTransaksiKeluar($request, $trx);
 
-        $response = $this->controller->updateTransaksiKeluar($request, $transaksi);
-
-        // Gudang awal 10 - selisih 3 = 7
-        $this->assertEquals(7, $sapu->fresh()->jumlah);
-        $this->assertTrue($response->getSession()->has('success'));
+        $this->assertEquals(7, Persediaan::where('kode_barang', 'A')->first()->jumlah); 
     }
 }

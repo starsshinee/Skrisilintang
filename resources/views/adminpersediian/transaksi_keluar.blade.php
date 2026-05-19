@@ -695,12 +695,11 @@
         
     };
 
-    document.getElementById('detailSubtitle').textContent = `No. Transaksi: ${d.nomor}`;
+    document.getElementById('detailSubtitle').textContent = `Detail Transaksi`; // Ubah subtitle
     document.getElementById('detailContent').innerHTML = `
       <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px;">
         <div style="padding:8px 14px; background:#EEF2FF; border-radius:8px; font-weight:800; color:var(--blue); font-size:13px;">${d.kode_kategori}</div>
         <div style="font-weight:600; color:var(--text);">${d.kategori}</div>
-        <div style="margin-left:auto; padding:6px 12px; background:#FEF2F2; border-radius:8px; font-size:12px; color:var(--danger); font-weight:700;">${d.nomor}</div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
         <div style="background:var(--bg); border-radius:10px; padding:16px;">

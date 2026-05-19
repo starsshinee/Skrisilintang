@@ -311,8 +311,9 @@ class AdminPersediaanController extends Controller
         ]);
     }
 
-    /** UPDATE - Update transaksi */
-    public function updateTransaksiKeluar(Request $request, TransaksiKeluarPersediaan $transaksiKeluar)
+    /** UPDATE - Update transaksi */    
+    public function updateTransaksiKeluar(Request $request, 
+    TransaksiKeluarPersediaan $transaksiKeluar)
     {
         $request->validate([
             'kode_kategori' => 'required|string|max:20',
@@ -350,7 +351,8 @@ class AdminPersediaanController extends Controller
             }
             // Kurangi stok BARANG BARU
             $persediaanBaru->decrement('jumlah', $request->jumlah_keluar);
-        } else {
+        } 
+        else {
             // Sama barang, adjust selisih jumlah
             $selisih = $oldJumlahKeluar - $request->jumlah_keluar;
             if ($selisih > 0) {
@@ -359,7 +361,6 @@ class AdminPersediaanController extends Controller
                 $persediaanBaru->decrement('jumlah', abs($selisih));
             }
         }
-
         return redirect()->route('adminpersediaan.transaksi-keluar')
             ->with('success', 'Transaksi keluar berhasil diupdate!');
     }

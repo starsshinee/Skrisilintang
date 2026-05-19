@@ -13,7 +13,6 @@ class TransaksiKeluarPersediaan extends Model
     protected $table = 'transaksi_keluar_persediaan';
     
     protected $fillable = [
-        'nomor_transaksi',
         'tanggal_input',     // ✅ Sesuai "Tanggal Input"
         'kode_kategori',     // ✅ Sesuai "Kota Kategori"
         'kategori',          // ✅ Sesuai "Kategori"
