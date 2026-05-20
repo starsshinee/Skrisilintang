@@ -185,15 +185,6 @@
   }
   .filter-select:focus { border-color: var(--blue); }
 
-  .btn-filter {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: var(--bg);
-    font-family: inherit; font-size: 13px; color: #64748B; cursor: pointer;
-    transition: all .15s;
-  }
-  .btn-filter:hover { border-color: var(--blue); color: var(--blue); }
-
   table { width: 100%; border-collapse: collapse; }
   thead tr { background: #F8FAFF; }
   th {
@@ -212,15 +203,6 @@
   tr:last-child td { border-bottom: none; }
   tbody tr { transition: background .15s; }
   tbody tr:hover { background: #F8FAFF; }
-
-  /* STATUS BADGE */
-  .status-badge {
-    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .5px;
-  }
-  .status-baikk { background: #ECFDF5; color: var(--success); }
-  .status-rusak { background: #FEF2F2; color: var(--danger); }
-  .status-perawatan { background: #FEF3C7; color: var(--warning); }
 
   /* ACTION BUTTONS */
   td:last-child { white-space: nowrap; }
@@ -247,7 +229,6 @@
     transform: scale(.9) translateY(-20px); transition: all .2s;
   }
   .modal-overlay.show .modal { transform: scale(1) translateY(0); }
-  .modal-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 20px; }
   .form-group { margin-bottom: 20px; }
   .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .form-input, .form-select {
@@ -275,7 +256,6 @@
     background: var(--danger); color: white;
   }
   .btn-danger:hover { background: #DC2626; }
-  .btn-group { display: flex; gap: 12px; justify-content: flex-end; }
 
   /* PAGINATION */
   .table-footer {
@@ -285,17 +265,6 @@
     font-size: 13px; color: var(--muted);
   }
   .pagination { display: flex; align-items: center; gap: 6px; }
-  .page-btn {
-    padding: 6px 12px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-family: inherit; font-size: 13px; color: #64748B;
-    cursor: pointer; transition: all .15s;
-  }
-  .page-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
-  .page-btn.active {
-    background: var(--blue); border-color: var(--blue);
-    color: white; font-weight: 700;
-  }
 
   @media (max-width: 768px) {
     .main { margin-left: 0; }
@@ -304,23 +273,6 @@
     .form-row { grid-template-columns: 1fr; }
     .page-top { flex-direction: column; gap: 16px; align-items: stretch; }
   }
-  /* MODAL HEADER & BODY */
-.modal-header { padding: 0 0 20px; }
-.modal-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.modal-subtitle { font-size: 13px; color: var(--muted); }
-.modal-body { padding-bottom: 24px; }
-.detail-content { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-.detail-label { font-size: 13px; font-weight: 600; color: var(--muted); min-width: 140px; }
-.detail-value { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; text-align: right; }
-.badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: capitalize; }
-.badge-success { background: #ECFDF5; color: var(--success); }
-.badge-warning { background: #FEF3C7; color: var(--warning); }
-.badge-danger { background: #FEF2F2; color: var(--danger); }
-.btn-modal { padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .2s; font-family: inherit; }
-.modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
-.status-baikk { background: #ECFDF5; color: var(--success); }
-.status-rusak { background: #FEF2F2; color: var(--danger); }
-.status-perawatan { background: #FEF3C7; color: var(--warning); }
 </style>
 </head>
 <body>
@@ -329,7 +281,6 @@
 @include('partials.sidebar')
 
 <main class="main">
-  <!-- Topbar sama persis -->
   <div class="topbar">
     <span class="topbar-title">Transaksi Masuk Aset Tetap</span>
     <div class="topbar-right">
@@ -357,7 +308,7 @@
     @if($errors->any())
     <div class="alert alert-danger">
       <i class="fas fa-exclamation-triangle"></i>
-      <ul>
+      <ul style="padding-left: 1rem; margin: 0;">
         @foreach($errors->all() as $error)
           <li>{{ $error }}</li>
         @endforeach
@@ -365,7 +316,6 @@
     </div>
     @endif
 
-    <!-- Page Top sama persis -->
     <div class="page-top">
       <div>
         <h1>Transaksi Masuk Aset Tetap</h1>
@@ -373,16 +323,15 @@
       </div>
       <button onclick="openModal('createModal')" class="btn-tambah">
         <i class="fas fa-plus"></i>
-        Tambah Transaksi
+        Tambah Transaksi & Aset Baru
       </button>
     </div>
 
-    <!-- Table sama persis, hanya ubah action buttons -->
     <div class="table-card">
       <div class="table-toolbar">
         <form method="GET" class="search-wrap" style="max-width: 400px;">
-          <i class="fas fa-search"></i>
-          <input type="text" name="search" placeholder="Cari kode barang, NUP..." 
+          <i class="fas fa-search" style="color: var(--muted);"></i>
+          <input type="text" name="search" placeholder="Cari kode barang, NUP, nama..." 
                  value="{{ request('search') }}">
         </form>
         <div class="filter-group">
@@ -397,77 +346,78 @@
         </div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Tanggal Input</th>
-            <th>Kode Barang</th>
-            <th>NUP</th>
-            <th>Nama Barang</th>
-            <th>Merek</th>
-            <th>Kategori</th>
-            <th>Tanggal Perolehan</th>
-            <th>Nilai Perolehan</th>
-            <th>Kondisi</th>
-            <th>Lokasi</th>
-            <th>Jumlah</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($transaksi as $index => $item)
-          <tr>
-            <td><strong>{{ $transaksi->firstItem() + $index }}</strong></td>
-            <td>{{ $item?->tanggal_input_formatted }}</td>
-            <td>{{ $item->kode_barang}}</td>
-            <td>{{ $item->nup}}</td>
-            <td>{{ $item->nama_barang}}</td>
-            <td>{{ $item->merek }}</td>
-            <td>{{ $item->kategori}}</td>
-            <td>{{ $item->tanggal_perolehan_formatted}}</td>
-            <td class="nilai">{{ $item->nilai_format}}</td>
-            <td>
-              <span class="badge badge-{{ $item->kondisi_badge['color'] }}">
-                <i class="fas {{ $item->kondisi_badge['icon'] }} me-1"></i>
-                {{ $item->kondisi_badge['text'] }}
-              </span>
-            </td>
-            <td>{{ $item->lokasi }}</td>
-            <td><strong>{{ $item->jumlah }}</strong></td>
-            <td>
-              <div class="action-buttons">
-                  <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                    </svg>
-                  </button>
-                  <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    </svg>
-                  </button>
-                  <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                    </svg>
-                  </button>
-              </div>
-            </td>
-          </tr>
-          @empty
-          <tr>
-            <td colspan="17" class="text-center py-8">
-              <i class="fas fa-inbox text-4xl text-muted mb-3 block"></i>
-              <div class="text-muted">Belum ada data transaksi masuk aset tetap</div>
-              <button onclick="openModal('createModal')" class="btn-tambah mt-3 inline-block">
-                Tambah transaksi pertama
-              </button>
-            </td>
-          </tr>
-          @endforelse
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tanggal Input</th>
+              <th>Kode Barang</th>
+              <th>NUP</th>
+              <th>Nama Barang</th>
+              <th>Merek</th>
+              <th>Kategori</th>
+              <th>Tanggal Perolehan</th>
+              <th>Nilai Perolehan</th>
+              <th>Kondisi</th>
+              <th>Lokasi</th>
+              <th>Jumlah</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            @forelse($transaksi as $index => $item)
+            <tr>
+              <td><strong>{{ $transaksi->firstItem() + $index }}</strong></td>
+              <td>{{ $item?->tanggal_input_formatted }}</td>
+              <td>{{ $item->kode_barang}}</td>
+              <td>{{ $item->nup}}</td>
+              <td>{{ $item->nama_barang}}</td>
+              <td>{{ $item->merek ?? '-' }}</td>
+              <td>{{ $item->kategori}}</td>
+              <td>{{ $item->tanggal_perolehan_formatted}}</td>
+              <td class="nilai">{{ $item->nilai_format}}</td>
+              <td>
+                <span style="padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; background: rgba({{ $item->kondisi_badge['color'] == 'success' ? '16,185,129' : ($item->kondisi_badge['color'] == 'warning' ? '245,158,11' : '239,68,68') }}, 0.1); color: var(--{{ $item->kondisi_badge['color'] }});">
+                  <i class="fas {{ $item->kondisi_badge['icon'] }} me-1"></i>
+                  {{ $item->kondisi_badge['text'] }}
+                </span>
+              </td>
+              <td>{{ $item->lokasi }}</td>
+              <td><strong>{{ $item->jumlah }}</strong></td>
+              <td>
+                <div class="action-buttons">
+                    <button onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                      </svg>
+                    </button>
+                    <button onclick="openEdit({{ $item->id }})" class="action-btn" title="Edit">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      </svg>
+                    </button>
+                    <button onclick="confirmDelete({{ $item->id }})" class="action-btn danger" title="Hapus">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                      </svg>
+                    </button>
+                </div>
+              </td>
+            </tr>
+            @empty
+            <tr>
+              <td colspan="13" style="text-align: center; padding: 40px;">
+                <div style="color: var(--muted); margin-bottom: 12px;">Belum ada data transaksi masuk aset tetap</div>
+                <button onclick="openModal('createModal')" class="btn-tambah" style="margin: 0 auto;">
+                  Tambah transaksi pertama
+                </button>
+              </td>
+            </tr>
+            @endforelse
+          </tbody>
+        </table>
+      </div>
 
       <div class="table-footer">
         <span>{{ $transaksi->total() }} data tersedia</span>
@@ -480,10 +430,9 @@
 </main>
 
 {{-- MODAL CREATE --}}
-{{-- MODAL CREATE --}}
 <div id="createModal" class="modal-overlay">
   <div class="modal" style="max-width:620px; padding:0; display:flex; flex-direction:column; max-height:92vh; overflow:hidden; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,.18),0 8px 24px rgba(79,111,255,.12);">
-
+    
     {{-- HEADER --}}
     <div style="padding:22px 28px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#F8FAFF,#EEF2FF); flex-shrink:0;">
       <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -493,10 +442,10 @@
           </div>
           <div>
             <div style="font-size:17px; font-weight:800; color:var(--text);">Tambah Transaksi Masuk</div>
-            <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Isi data transaksi masuk aset tetap baru</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;">Pencatatan akan otomatis ditambahkan ke Master Aset Tetap</div>
           </div>
         </div>
-        <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;" onmouseover="this.style.background='#FEF2F2';this.style.color='#EF4444';this.style.borderColor='#FECACA'" onmouseout="this.style.background='var(--surface)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+        <button onclick="closeModal('createModal')" style="width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .15s;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </div>
@@ -505,11 +454,9 @@
     {{-- FORM BODY --}}
     <form id="createForm" method="POST" action="{{ route('adminasettetap.transaksi-masuk.store') }}" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
       @csrf
-
       <div style="padding:20px 28px; overflow-y:auto; flex:1;">
-
-        {{-- SECTION: Identifikasi Transaksi --}}
-        <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:0;">
+        
+        <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px;">
           <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Identifikasi Transaksi</span>
         </div>
         <div class="form-row">
@@ -523,7 +470,6 @@
           </div>
         </div>
 
-        {{-- SECTION: Data Barang --}}
         <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:4px;">
           <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Data Barang</span>
         </div>
@@ -540,19 +486,24 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Nama Barang <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="nama_barang" class="form-input" placeholder="Nama lengkap aset tetap" required>
+            <input type="text" name="nama_barang" class="form-input" placeholder="Nama lengkap aset" required>
           </div>
           <div class="form-group">
             <label class="form-label">Merek <span style="color:var(--muted); font-weight:500; font-size:11px;">(opsional)</span></label>
-            <input type="text" name="merek" class="form-input" placeholder="Merek / brand aset">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Kategori <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="kategori" class="form-input" placeholder="Contoh: Aset Tetap" required>
+            <input type="text" name="merek" class="form-input" placeholder="Merek / brand">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label class="form-label">Kategori <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="kategori" class="form-input" placeholder="Kategori Aset" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lokasi <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="lokasi" class="form-input" placeholder="Ruangan penempatan" required>
+          </div>
+        </div>
+        <div class="form-group">
             <label class="form-label">Kondisi <span style="color:var(--danger);">*</span></label>
             <select name="kondisi" class="form-select" required>
               <option value="">Pilih Kondisi</option>
@@ -560,14 +511,8 @@
               <option value="{{ $kondisi }}">{{ ucwords(str_replace('_', ' ', $kondisi)) }}</option>
               @endforeach
             </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Lokasi <span style="color:var(--danger);">*</span></label>
-            <input type="text" name="lokasi" class="form-input" placeholder="Ruangan / gedung lokasi aset" required>
-          </div>
         </div>
 
-        {{-- SECTION: Data Perolehan --}}
         <div style="font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; padding-bottom:10px; border-bottom:1.5px solid var(--border); margin-bottom:16px; margin-top:4px;">
           <span style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius:4px; padding:2px 8px;">Data Perolehan</span>
         </div>
@@ -578,37 +523,26 @@
           </div>
           <div class="form-group">
             <label class="form-label">Nilai Perolehan</label>
-            <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg); transition:all .15s;" onfocusin="this.style.borderColor='var(--blue)';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,111,255,.1)'" onfocusout="this.style.borderColor='var(--border)';this.style.background='var(--bg)';this.style.boxShadow='none'">
-              <span style="padding:10px 12px; font-size:12.5px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F0F4FF; white-space:nowrap;">Rp</span>
-              <input type="number" name="nilai_perolehan" step="0.01" min="0" placeholder="0" style="flex:1; border:none; background:transparent; padding:10px 14px; font-family:inherit; font-size:13.5px; color:var(--text); outline:none;">
+            <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
+              <span style="padding:10px 12px; font-size:12.5px; font-weight:700; color:var(--muted); border-right:1.5px solid var(--border); background:#F0F4FF;">Rp</span>
+              <input type="number" name="nilai_perolehan" step="0.01" min="0" placeholder="0" style="flex:1; border:none; background:transparent; padding:10px 14px; font-family:inherit; outline:none;">
             </div>
           </div>
         </div>
       </div>
 
       {{-- FOOTER --}}
-      <div style="padding:16px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; gap:12px;">
-        <div style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          Kolom bertanda <strong style="color:var(--danger); margin:0 2px;">*</strong> wajib diisi
-        </div>
+      <div style="padding:16px 28px; border-top:1px solid var(--border); background:#FAFBFF; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+        <div style="font-size:12px; color:var(--muted);">Kolom bertanda <strong style="color:var(--danger);">*</strong> wajib diisi</div>
         <div style="display:flex; gap:10px;">
-          <button type="button" class="btn btn-cancel" onclick="closeModal('createModal')">
-            Batal
-          </button>
-          <button type="submit" class="btn btn-primary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-            Simpan Transaksi
-          </button>
+          <button type="button" class="btn btn-cancel" onclick="closeModal('createModal')">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Data Baru</button>
         </div>
       </div>
-
     </form>
   </div>
 </div>
 
-
-{{-- MODAL DETAIL --}}
 {{-- MODAL DETAIL --}}
 <div id="detailModal" class="modal-overlay">
   <div class="modal" style="max-width: 550px;">
@@ -622,20 +556,16 @@
           </div>
           <div>
             <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin: 0;">Detail Transaksi</h3>
-            <p style="font-size: 13px; color: var(--muted); margin: 4px 0 0;" id="detailSubtitle">Lihat detail lengkap transaksi</p>
+            <p style="font-size: 13px; color: var(--muted); margin: 4px 0 0;">Lihat detail lengkap transaksi</p>
           </div>
         </div>
-        <button onclick="closeModal('detailModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); transition: all .15s;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
+        <button onclick="closeModal('detailModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </div>
       <div id="detailContent" style="padding: 8px 0;"></div>
       <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
-        <button onclick="closeModal('detailModal')" class="btn btn-cancel" style="padding: 12px 28px;">
-          Tutup
-        </button>
+        <button onclick="closeModal('detailModal')" class="btn btn-cancel">Tutup</button>
       </div>
     </div>
   </div>
@@ -643,109 +573,101 @@
 
 {{-- MODAL EDIT --}}
 <div id="editModal" class="modal-overlay">
-  <div class="modal" style="max-width: 620px;">
-    <div style="padding: 0; display: flex; flex-direction: column; max-height: 92vh; overflow: hidden; border-radius: 20px;">
-      <div style="padding: 24px 28px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #F8FAFF, #EEF2FF); flex-shrink: 0;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #F59E0B, #FBBF24); display: flex; align-items: center; justify-content: center;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-              </svg>
-            </div>
-            <div>
-              <h3 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">Edit Transaksi Masuk</h3>
-              <p style="font-size: 12px; color: var(--muted); margin: 2px 0 0;" id="editSubtitle">Update data transaksi aset tetap</p>
-            </div>
+  <div class="modal" style="max-width: 620px; padding: 0; display: flex; flex-direction: column; max-height: 92vh; border-radius: 20px;">
+    <div style="padding: 24px 28px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #F8FAFF, #EEF2FF);">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #F59E0B, #FBBF24); display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
           </div>
-          <button onclick="closeModal('editModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          </button>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">Edit Transaksi Masuk</h3>
+            <p style="font-size: 12px; color: var(--warning); margin: 2px 0 0; font-weight: 600;">Data akan diperbarui pada Master Aset Tetap juga!</p>
+          </div>
+        </div>
+        <button onclick="closeModal('editModal')" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <form id="editForm" method="POST" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+      @csrf @method('PUT')
+      <div style="padding: 24px 28px; overflow-y: auto; flex: 1;">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Input <span style="color: var(--danger);">*</span></label>
+            <input type="date" name="tanggal_input" id="editTanggalInput" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kode Barang <span style="color: var(--danger);">*</span></label>
+            <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">NUP <span style="color: var(--danger);">*</span></label>
+            <input type="text" name="nup" id="editNup" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jumlah <span style="color: var(--danger);">*</span></label>
+            <input type="number" name="jumlah" id="editJumlah" class="form-input" min="1" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nama Barang <span style="color: var(--danger);">*</span></label>
+            <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Merek</label>
+            <input type="text" name="merek" id="editMerek" class="form-input">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kategori <span style="color: var(--danger);">*</span></label>
+            <input type="text" name="kategori" id="editKategori" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kondisi <span style="color: var(--danger);">*</span></label>
+            <select name="kondisi" id="editKondisi" class="form-select" required>
+              <option value="">Pilih Kondisi</option>
+              @foreach($kondisiOptions as $kondisi)
+              <option value="{{ $kondisi }}">{{ ucwords(str_replace('_', ' ', $kondisi)) }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Lokasi <span style="color: var(--danger);">*</span></label>
+            <input type="text" name="lokasi" id="editLokasi" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tanggal Perolehan</label>
+            <input type="date" name="tanggal_perolehan" id="editTanggalPerolehan" class="form-input">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Nilai Perolehan</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--muted);">Rp</span>
+            <input type="number" name="nilai_perolehan" id="editNilaiPerolehan" class="form-input" step="0.01" min="0" style="padding-left: 48px;">
+          </div>
         </div>
       </div>
 
-      <form id="editForm" method="POST" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-        @csrf @method('PUT')
-        <input type="hidden" name="id" id="editId">
-        
-        <div style="padding: 24px 28px; overflow-y: auto; flex: 1;">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Tanggal Input <span style="color: var(--danger);">*</span></label>
-              <input type="date" name="tanggal_input" id="editTanggalInput" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Kode Barang <span style="color: var(--danger);">*</span></label>
-              <input type="text" name="kode_barang" id="editKodeBarang" class="form-input" required>
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">NUP <span style="color: var(--danger);">*</span></label>
-              <input type="text" name="nup" id="editNup" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Jumlah <span style="color: var(--danger);">*</span></label>
-              <input type="number" name="jumlah" id="editJumlah" class="form-input" min="1" required>
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Nama Barang <span style="color: var(--danger);">*</span></label>
-              <input type="text" name="nama_barang" id="editNamaBarang" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Merek</label>
-              <input type="text" name="merek" id="editMerek" class="form-input">
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Kategori <span style="color: var(--danger);">*</span></label>
-              <input type="text" name="kategori" id="editKategori" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Kondisi <span style="color: var(--danger);">*</span></label>
-              <select name="kondisi" id="editKondisi" class="form-select" required>
-                <option value="">Pilih Kondisi</option>
-                @foreach($kondisiOptions as $kondisi)
-                <option value="{{ $kondisi }}">{{ ucwords(str_replace('_', ' ', $kondisi)) }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Lokasi <span style="color: var(--danger);">*</span></label>
-              <input type="text" name="lokasi" id="editLokasi" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Tanggal Perolehan</label>
-              <input type="date" name="tanggal_perolehan" id="editTanggalPerolehan" class="form-input">
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Nilai Perolehan</label>
-            <div style="position: relative;">
-              <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--muted); pointer-events: none;">Rp</span>
-              <input type="number" name="nilai_perolehan" id="editNilaiPerolehan" class="form-input" step="0.01" min="0" style="padding-left: 48px;">
-            </div>
-          </div>
-        </div>
-
-        <div style="padding: 20px 28px; border-top: 1px solid var(--border); background: #FAFBFF; display: flex; gap: 12px; justify-content: flex-end;">
-          <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Batal</button>
-          <button type="submit" class="btn btn-primary">Update Transaksi</button>
-        </div>
-      </form>
-    </div>
+      <div style="padding: 20px 28px; border-top: 1px solid var(--border); background: #FAFBFF; display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Batal</button>
+        <button type="submit" class="btn btn-primary">Update Data (Sinkron Master)</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -753,22 +675,24 @@
 <div id="deleteModal" class="modal-overlay">
   <div class="modal" style="max-width: 450px;">
     <div style="padding: 32px 28px 24px;">
-      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px;">
-        <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #FEF2F2, #FECACA); display: flex; align-items: center; justify-content: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #FEF2F2, #FECACA); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="#EF4444">
             <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
           </svg>
         </div>
-        <div style="text-align: center;">
-          <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin: 0 0 8px;">Hapus Transaksi?</h3>
-          <p style="font-size: 14px; color: var(--text); margin: 0; max-width: 320px;">Data transaksi masuk aset tetap ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+        <div>
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--danger); margin: 0 0 8px;">Batalkan Transaksi?</h3>
+          <p style="font-size: 13.5px; color: var(--text); margin: 0; line-height: 1.5;">
+            <b>PERHATIAN:</b> Membatalkan transaksi ini juga akan <b>menghapus barang tersebut dari Master Data Aset Tetap</b> secara permanen!
+          </p>
         </div>
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button onclick="closeModal('deleteModal')" class="btn btn-cancel">Batal</button>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 28px;">
+        <button onclick="closeModal('deleteModal')" class="btn btn-cancel">Kembali</button>
         <form id="deleteForm" method="POST" style="display: contents;">
           @csrf @method('DELETE')
-          <button type="submit" class="btn btn-danger" style="padding: 12px 28px;">Hapus Transaksi</button>
+          <button type="submit" class="btn btn-danger" style="padding: 12px 24px;">Ya, Hapus Semua</button>
         </form>
       </div>
     </div>
@@ -776,8 +700,8 @@
 </div>
 
 <script>
-// Data transaksi untuk modal
-let transaksiData = {};
+// Data Transaksi yang Di-Inject langsung dari Laravel via JSON 
+const dataTransaksi = @json($transaksi->items());
 
 function openModal(modalId) {
   document.getElementById(modalId).classList.add('show');
@@ -795,159 +719,92 @@ function closeModal(modalId = null) {
   document.body.style.overflow = 'auto';
 }
 
-// DETAIL - Menggunakan data dari table (tidak perlu AJAX)
 function openDetail(id) {
-  // Cari row yang sesuai dengan ID
-  const row = document.querySelector(`button[onclick="openDetail(${id})"]`).closest('tr');
-  const cells = row.querySelectorAll('td');
-  
-  const data = {
-    id: id,
-    tanggal_input: cells[1].textContent.trim(),
-    kode_barang: cells[2].textContent.trim(),
-    nup: cells[3].textContent.trim(),
-    nama_barang: cells[4].textContent.trim(),
-    merek: cells[5].textContent.trim(),
-    kategori: cells[6].textContent.trim(),
-    tanggal_perolehan: cells[7].textContent.trim(),
-    nilai_perolehan: cells[8].textContent.replace(/[^\d]/g, ''),
-    kondisi: cells[9].querySelector('.status-badge')?.className.match(/status-(\w+)/)?.[1] || 'baik',
-    lokasi: cells[10].textContent.trim(),
-    jumlah: cells[11].textContent.trim()
-  };
-  
-  populateDetailModal(data);
-  openModal('detailModal');
-}
-
-function populateDetailModal(data) {
-  const kondisiColors = {
-    'baikk': { color: 'success', text: 'Baik' },
-    'rusak': { color: 'danger', text: 'Rusak' },
-    'perawatan': { color: 'warning', text: 'Perawatan' }
-  };
-  
-  const kondisi = kondisiColors[data.kondisi] || { color: 'info', text: data.kondisi };
-  
-  document.getElementById('detailContent').innerHTML = `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-      <div>
-        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Identifikasi</div>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div><strong>Kode Barang:</strong> <span style="color: var(--blue); font-weight: 700;">${data.kode_barang}</span></div>
-          <div><strong>NUP:</strong> ${data.nup}</div>
-          <div><strong>Tanggal Input:</strong> ${data.tanggal_input}</div>
+  const item = dataTransaksi.find(x => x.id === id);
+  if (item) {
+    document.getElementById('detailContent').innerHTML = `
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Identifikasi</div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div><strong>Kode Barang:</strong> <span style="color: var(--blue); font-weight: 700;">${item.kode_barang}</span></div>
+            <div><strong>NUP:</strong> ${item.nup}</div>
+            <div><strong>Tanggal Input:</strong> ${item.tanggal_input_formatted || '-'}</div>
+          </div>
         </div>
-      </div>
-      <div>
-        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Data Barang</div>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div><strong>Nama Barang:</strong> ${data.nama_barang}</div>
-          <div><strong>Merek:</strong> ${data.merek || '-'}</div>
-          <div><strong>Kategori:</strong> ${data.kategori}</div>
-          <div><strong>Jumlah:</strong> <span style="color: var(--blue); font-weight: 700;">${data.jumlah}</span></div>
-        </div>
-      </div>
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-      <div>
-        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Lokasi & Kondisi</div>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div><strong>Lokasi:</strong> ${data.lokasi}</div>
-          <div><strong>Kondisi:</strong> 
-            <span class="status-badge status-${kondisi.color}" style="margin-left: 8px;">
-              ${kondisi.text}
-            </span>
+        <div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Data Barang</div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div><strong>Nama Barang:</strong> ${item.nama_barang}</div>
+            <div><strong>Merek:</strong> ${item.merek || '-'}</div>
+            <div><strong>Kategori:</strong> ${item.kategori}</div>
+            <div><strong>Jumlah:</strong> <span style="color: var(--blue); font-weight: 700;">${item.jumlah}</span></div>
           </div>
         </div>
       </div>
-      <div>
-        <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Perolehan</div>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div><strong>Tanggal Perolehan:</strong> ${data.tanggal_perolehan}</div>
-          <div><strong>Nilai Perolehan:</strong> <span style="color: var(--success); font-weight: 700;">Rp ${parseInt(data.nilai_perolehan || 0).toLocaleString('id-ID')}</span></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Lokasi & Kondisi</div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div><strong>Lokasi:</strong> ${item.lokasi}</div>
+            <div><strong>Kondisi:</strong> 
+              <span style="margin-left: 8px; font-weight: 700; font-size: 12px; color: var(--${item.kondisi_badge.color}); text-transform: uppercase;">
+                ${item.kondisi_badge.text}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 12px;">Perolehan</div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div><strong>Tanggal Perolehan:</strong> ${item.tanggal_perolehan_formatted || '-'}</div>
+            <div><strong>Nilai Perolehan:</strong> <span style="color: var(--success); font-weight: 700;">${item.nilai_format || '-'}</span></div>
+          </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+    openModal('detailModal');
+  }
 }
 
-// EDIT - Menggunakan data dari table
 function openEdit(id) {
-  const row = document.querySelector(`button[onclick="openEdit(${id})"]`).closest('tr');
-  const cells = row.querySelectorAll('td');
-  
-  const data = {
-    id: id,
-    tanggal_input: cells[1].textContent.trim(),
-    kode_barang: cells[2].textContent.trim(),
-    nup: cells[3].textContent.trim(),
-    nama_barang: cells[4].textContent.trim(),
-    merek: cells[5].textContent.trim(),
-    kategori: cells[6].textContent.trim(),
-    tanggal_perolehan: cells[7].textContent.trim(),
-    nilai_perolehan: cells[8].textContent.replace(/[^\d]/g, ''),
-    kondisi: cells[9].querySelector('.status-badge')?.className.match(/status-(\w+)/)?.[1] || 'baik',
-    lokasi: cells[10].textContent.trim(),
-    jumlah: cells[11].textContent.trim()
-  };
-  
-  populateEditModal(data);
-  document.getElementById('editForm').action = `/adminasettetap/transaksi-masuk/${id}`;
-  openModal('editModal');
+  const item = dataTransaksi.find(x => x.id === id);
+  if (item) {
+    // Fungsi ekstraksi YYYY-MM-DD aman dari data string
+    const extractDate = (dateString) => dateString ? dateString.substring(0, 10) : '';
+
+    document.getElementById('editTanggalInput').value = extractDate(item.tanggal_input);
+    document.getElementById('editKodeBarang').value = item.kode_barang;
+    document.getElementById('editNup').value = item.nup;
+    document.getElementById('editNamaBarang').value = item.nama_barang;
+    document.getElementById('editMerek').value = item.merek || '';
+    document.getElementById('editKategori').value = item.kategori;
+    document.getElementById('editKondisi').value = item.kondisi;
+    document.getElementById('editJumlah').value = item.jumlah;
+    document.getElementById('editLokasi').value = item.lokasi;
+    document.getElementById('editTanggalPerolehan').value = extractDate(item.tanggal_perolehan);
+    document.getElementById('editNilaiPerolehan').value = item.nilai_perolehan || '';
+
+    document.getElementById('editForm').action = `/adminasettetap/transaksi-masuk/${id}`;
+    openModal('editModal');
+  }
 }
 
-function populateEditModal(data) {
-  document.getElementById('editId').value = data.id;
-  document.getElementById('editTanggalInput').value = data.tanggal_input.split('/').reverse().join('-') || '';
-  document.getElementById('editKodeBarang').value = data.kode_barang;
-  document.getElementById('editNup').value = data.nup;
-  document.getElementById('editNamaBarang').value = data.nama_barang;
-  document.getElementById('editMerek').value = data.merek;
-  document.getElementById('editKategori').value = data.kategori;
-  document.getElementById('editKondisi').value = data.kondisi;
-  document.getElementById('editJumlah').value = data.jumlah;
-  document.getElementById('editLokasi').value = data.lokasi;
-  
-  // Format tanggal untuk input date
-  const [day, month, year] = data.tanggal_perolehan.split('/');
-  document.getElementById('editTanggalPerolehan').value = year && month && day ? `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}` : '';
-  document.getElementById('editNilaiPerolehan').value = data.nilai_perolehan || '';
-  
-  document.getElementById('editSubtitle').textContent = `Edit #${data.kode_barang}`;
-}
-
-// DELETE - Form biasa tanpa JS
 function confirmDelete(id) {
   document.getElementById('deleteForm').action = `/adminasettetap/transaksi-masuk/${id}`;
   openModal('deleteModal');
 }
 
-// Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
-  // Close on overlay click
   document.querySelectorAll('.modal-overlay').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) closeModal();
     });
   });
 
-  // Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeModal();
   });
-
-  // Edit form submit
-  const editForm = document.getElementById('editForm');
-  if (editForm) {
-    editForm.addEventListener('submit', function(e) {
-      if (!confirm('Yakin ingin menyimpan perubahan?')) {
-        e.preventDefault();
-        return;
-      }
-      // Form akan submit normal ke server
-    });
-  }
 });
 </script>
 

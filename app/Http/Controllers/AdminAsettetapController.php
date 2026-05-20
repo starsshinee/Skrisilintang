@@ -186,12 +186,15 @@ class AdminAsettetapController extends Controller
     // ========== DESTROY ==========
     public function destroyDataAsetTetap(AssetTetap $aset)
     {
+        // Cek apakah aset sedang terikat dengan tabel lain
+        if ($aset->transaksiKeluar()->exists() || $aset->peminjamanBarang()->exists() || $aset->mutasiBarang()->exists()) {
+            return back()->withErrors(['error' => 'Aset tidak bisa dihapus permanen karena memiliki riwayat transaksi/peminjaman. Jika barang rusak/hilang, silakan gunakan fitur Transaksi Keluar.']);
+        }
+
         $aset->delete();
-
-        return redirect()->route('adminasettetap.data-aset-tetap')
-            ->with('success', 'Aset tetap berhasil dihapus!');
+        return redirect()->route('adminasettetap.data-aset-tetap')->with('success', 'Aset tetap berhasil dihapus!');
     }
-
+    
 
     // ========== TRANSAKSI MASUK ✅ FIXED ==========
     public function TransaksiMasuk(Request $request)
@@ -266,28 +269,6 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.transaksi_masuk_create');
     }
 
-    public function storeTransaksiMasuk(Request $request)
-    {
-        $validated = $request->validate([
-
-            'kode_barang' => 'required|string|max:100',
-            'nup' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nup',
-            'nama_barang' => 'required|string|max:255',
-            'merek' => 'nullable|string|max:100',
-            'kategori' => 'required|string|max:100',
-            'tanggal_perolehan' => 'nullable|date',
-            'nilai_perolehan' => 'nullable|numeric|min:0',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
-            'lokasi' => 'required|string|max:255',
-            'jumlah' => 'required|integer|min:1',
-        ]);
-
-        TransaksiMasukAssetTetap::create($validated);
-
-        return redirect()->route('adminasettetap.transaksi-masuk')
-            ->with('success', 'Transaksi masuk aset tetap berhasil ditambahkan!');
-    }
-
     public function showTransaksiMasuk(TransaksiMasukAssetTetap $transaksi)
     {
         return view('adminasettetap.transaksi_masuk_show', compact('transaksi'));
@@ -298,6 +279,57 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.transaksi_masuk_edit', compact('transaksi'));
     }
 
+    // ========== SIMPAN TRANSAKSI MASUK & TAMBAH KE MASTER ASET ==========
+    public function storeTransaksiMasuk(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_barang' => 'required|string|max:100',
+            'nup' => 'required|string|max:100|unique:transaksi_masuk_aset_tetap,nup',
+            'nama_barang' => 'required|string|max:255',
+            'merek' => 'nullable|string|max:100',
+            'kategori' => 'required|string|max:100',
+            'tanggal_perolehan' => 'nullable|date',
+            'nilai_perolehan' => 'nullable|numeric|min:0',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
+            'lokasi' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
+            'tanggal_input' => 'nullable|date', // Tambahkan validasi tanggal input
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Simpan barang sebagai data baru di tabel master AssetTetap
+            $aset = AssetTetap::create([
+                'kode_barang' => $validated['kode_barang'],
+                'nup' => $validated['nup'],
+                'nama_barang' => $validated['nama_barang'],
+                'merek' => $validated['merek'],
+                'kategori' => $validated['kategori'],
+                'tanggal_perolehan' => $validated['tanggal_perolehan'],
+                'nilai_perolehan' => $validated['nilai_perolehan'],
+                'kondisi' => $validated['kondisi'],
+                'lokasi' => $validated['lokasi'],
+                'jumlah' => $validated['jumlah'],
+                'tanggal_input' => $validated['tanggal_input'] ?? now(),
+                'status' => 'Tersedia' // Aset langsung tersedia
+            ]);
+
+            // 2. Simpan histori ke tabel transaksi_masuk_aset_tetap (kaitkan ID Master)
+            $validated['aset_tetap_id'] = $aset->id; 
+            TransaksiMasukAssetTetap::create($validated);
+
+            DB::commit();
+
+            return redirect()->route('adminasettetap.transaksi-masuk')
+                ->with('success', 'Barang baru berhasil ditambahkan ke Master Aset Tetap dan dicatat sebagai Transaksi Masuk!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    // ========== UPDATE TRANSAKSI MASUK SINKRON MASTER ASET ==========
     public function updateTransaksiMasuk(Request $request, TransaksiMasukAssetTetap $transaksi)
     {
         $validated = $request->validate([
@@ -311,20 +343,72 @@ class AdminAsettetapController extends Controller
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'lokasi' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
+            'tanggal_input' => 'nullable|date',
         ]);
 
-        $transaksi->update($validated);
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('adminasettetap.transaksi-masuk')
-            ->with('success', 'Transaksi masuk aset tetap berhasil diupdate!');
+            // 1. Update data di histori Transaksi Masuk
+            $transaksi->update($validated);
+
+            // 2. Sinkronisasikan perubahan ke tabel Master Aset Tetap
+            if ($transaksi->aset_tetap_id) {
+                $aset = AssetTetap::find($transaksi->aset_tetap_id);
+                if ($aset) {
+                    $aset->update([
+                        'kode_barang' => $validated['kode_barang'],
+                        'nup' => $validated['nup'],
+                        'nama_barang' => $validated['nama_barang'],
+                        'merek' => $validated['merek'],
+                        'kategori' => $validated['kategori'],
+                        'tanggal_perolehan' => $validated['tanggal_perolehan'],
+                        'nilai_perolehan' => $validated['nilai_perolehan'],
+                        'kondisi' => $validated['kondisi'],
+                        'lokasi' => $validated['lokasi'],
+                        'jumlah' => $validated['jumlah'],
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('adminasettetap.transaksi-masuk')
+                ->with('success', 'Histori transaksi dan data master aset tetap berhasil diupdate!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal mengupdate data: ' . $e->getMessage()])->withInput();
+        }
     }
 
+    // ========== HAPUS TRANSAKSI MASUK & MASTER ASET ==========
     public function destroyTransaksiMasuk(TransaksiMasukAssetTetap $transaksi)
     {
-        $transaksi->delete();
+        try {
+            DB::beginTransaction();
+            
+            // Hapus Master Aset Tetap nya juga, HANYA JIKA barang belum pernah digunakan
+            if ($transaksi->aset_tetap_id) {
+                $aset = AssetTetap::find($transaksi->aset_tetap_id);
+                if ($aset) {
+                    // Proteksi: cegah penghapusan jika barang sedang dipinjam atau sudah dihapuskan
+                    if ($aset->status != 'Tersedia') {
+                        return back()->withErrors(['error' => 'Transaksi tidak dapat dibatalkan. Barang sedang dipinjam atau sudah dikeluarkan.']);
+                    }
+                    $aset->delete();
+                }
+            }
+            
+            $transaksi->delete();
 
-        return redirect()->route('adminasettetap.transaksi-masuk')
-            ->with('success', 'Transaksi masuk aset tetap berhasil dihapus!');
+            DB::commit();
+
+            return redirect()->route('adminasettetap.transaksi-masuk')
+                ->with('success', 'Transaksi masuk dibatalkan. Barang dihapus dari data Master Aset Tetap!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menghapus data: ' . $e->getMessage()]);
+        }
     }
     
     // ========== INDEX TRANSAKSI KELUAR ASET TETAP ==========
