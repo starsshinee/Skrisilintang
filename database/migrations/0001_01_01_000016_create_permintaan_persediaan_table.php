@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('jumlah_diminta');
             $table->date('tanggal_permintaan');
-            $table->date('tanggal_dibutuhkan')->nullable();
+            
             $table->text('tujuan_penggunaan')->nullable();
             
             

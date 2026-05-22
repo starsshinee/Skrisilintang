@@ -209,14 +209,6 @@
                 <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
               @enderror
             </div>
-            <div class="form-group">
-              <div class="form-label"><i class="fas fa-calendar-check"></i> Tanggal Dibutuhkan <span class="req">*</span></div>
-              <input type="date" class="form-input @error('tanggal_dibutuhkan') border-red-500 @enderror" 
-                     name="tanggal_dibutuhkan" value="{{ old('tanggal_dibutuhkan') }}" required>
-              @error('tanggal_dibutuhkan')
-                <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
-              @enderror
-            </div>
           </div>
 
           <div class="form-group">
@@ -461,10 +453,6 @@
                 <div style="flex: 1;">
                   <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">Tanggal Permintaan</div>
                   <div id="detailTglPermintaan" style="font-weight: 600; color: var(--text-primary);">-</div>
-                </div>
-                <div style="flex: 1;">
-                  <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">Tanggal Dibutuhkan</div>
-                  <div id="detailTglDibutuhkan" style="font-weight: 600; color: var(--text-primary);">-</div>
                 </div>
               </div>
             </div>
@@ -837,7 +825,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailJumlah').textContent = data.jumlah_diminta + ' unit';
     
     document.getElementById('detailTglPermintaan').textContent = data.tanggal_permintaan ? new Date(data.tanggal_permintaan).toLocaleDateString('id-ID') : '-';
-    document.getElementById('detailTglDibutuhkan').textContent = data.tanggal_dibutuhkan ? new Date(data.tanggal_dibutuhkan).toLocaleDateString('id-ID') : '-';
     
     document.getElementById('detailTujuan').textContent = data.tujuan_penggunaan || '-';
     

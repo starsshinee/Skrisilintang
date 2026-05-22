@@ -105,13 +105,13 @@
         <div class="download-section">
             <div class="section-title" style="margin-top:0"><i class="fas fa-download"></i> Download Laporan PDF</div>
             <div class="download-grid">
-                <a href="{{ route('kepalabpmp.laporan.download-persediaan', ['start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" class="download-btn">
-                    <div class="dl-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><i class="fas fa-boxes"></i></div>
-                    <div class="dl-info"><span class="dl-title">Laporan Persediaan</span><span class="dl-desc">Data persediaan & transaksi</span></div>
-                </a>
                 <a href="{{ route('kepalabpmp.laporan.download-aset-tetap', ['start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" class="download-btn">
                     <div class="dl-icon" style="background:linear-gradient(135deg,#f97316,#ea580c)"><i class="fas fa-warehouse"></i></div>
                     <div class="dl-info"><span class="dl-title">Laporan Aset Tetap</span><span class="dl-desc">Data aset, mutasi & peminjaman</span></div>
+                </a>
+                <a href="{{ route('kepalabpmp.laporan.download-persediaan', ['start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" class="download-btn">
+                    <div class="dl-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><i class="fas fa-boxes"></i></div>
+                    <div class="dl-info"><span class="dl-title">Laporan Persediaan</span><span class="dl-desc">Data persediaan & transaksi</span></div>
                 </a>
                 <a href="{{ route('kepalabpmp.laporan.download-sarpras', ['start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" class="download-btn">
                     <div class="dl-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)"><i class="fas fa-building"></i></div>
@@ -122,6 +122,46 @@
                     <div class="dl-info"><span class="dl-title">Laporan Lengkap</span><span class="dl-desc">Semua data dalam 1 dokumen</span></div>
                 </a>
             </div>
+        </div>
+
+        {{-- ══════════ ADMIN ASET TETAP ══════════ --}}
+        <div class="section-title"><i class="fas fa-warehouse"></i> Data Admin Aset Tetap</div>
+        <div class="summary-grid">
+            <div class="summary-box">
+                <div class="marker" style="background:linear-gradient(135deg,#f97316,#ea580c)"><i class="fas fa-database"></i></div>
+                <div class="summary-info"><div class="summary-value">{{ number_format($asetTetap['total_aset']) }}</div><div class="summary-label">Total Aset</div></div>
+            </div>
+            <div class="summary-box">
+                <div class="marker" style="background:linear-gradient(135deg,#14b8a6,#0d9488)"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="summary-info"><div class="summary-value">Rp {{ number_format($asetTetap['total_nilai'], 0, ',', '.') }}</div><div class="summary-label">Nilai Aset</div></div>
+            </div>
+            <div class="summary-box">
+                <div class="marker" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fas fa-exchange-alt"></i></div>
+                <div class="summary-info"><div class="summary-value">{{ $asetTetap['mutasi'] }}</div><div class="summary-label">Mutasi Barang</div></div>
+            </div>
+            <div class="summary-box">
+                <div class="marker" style="background:linear-gradient(135deg,#ec4899,#db2777)"><i class="fas fa-handshake"></i></div>
+                <div class="summary-info"><div class="summary-value">{{ $asetTetap['peminjaman_barang_aktif'] + $asetTetap['peminjaman_kendaraan_aktif'] }}</div><div class="summary-label">Peminjaman Aktif</div></div>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="data-card-header"><h2><i class="fas fa-arrow-circle-down"></i> Transaksi Masuk Aset Tetap Terbaru</h2></div>
+            <table class="data-table">
+                <thead><tr><th>Tanggal</th><th>Nama Barang</th><th>Kategori</th><th>Nilai Perolehan</th></tr></thead>
+                <tbody>
+                @forelse($asetTetap['recent_masuk'] as $item)
+                    <tr>
+                        <td>{{ $item->tanggal_perolehan ? \Carbon\Carbon::parse($item->tanggal_perolehan)->format('d/m/Y') : '-' }}</td>
+                        <td>{{ $item->nama_barang }}</td>
+                        <td>{{ $item->kategori ?? '-' }}</td>
+                        <td>Rp {{ number_format($item->nilai_perolehan ?? 0, 0, ',', '.') }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:24px">Belum ada data</td></tr>
+                @endforelse
+                </tbody>
+            </table>
         </div>
 
         {{-- ══════════ ADMIN PERSEDIAAN ══════════ --}}
@@ -166,45 +206,6 @@
             </table>
         </div>
 
-        {{-- ══════════ ADMIN ASET TETAP ══════════ --}}
-        <div class="section-title"><i class="fas fa-warehouse"></i> Data Admin Aset Tetap</div>
-        <div class="summary-grid">
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#f97316,#ea580c)"><i class="fas fa-database"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ number_format($asetTetap['total_aset']) }}</div><div class="summary-label">Total Aset</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#14b8a6,#0d9488)"><i class="fas fa-money-bill-wave"></i></div>
-                <div class="summary-info"><div class="summary-value">Rp {{ number_format($asetTetap['total_nilai'], 0, ',', '.') }}</div><div class="summary-label">Nilai Aset</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fas fa-exchange-alt"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $asetTetap['mutasi'] }}</div><div class="summary-label">Mutasi Barang</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#ec4899,#db2777)"><i class="fas fa-handshake"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $asetTetap['peminjaman_barang_aktif'] + $asetTetap['peminjaman_kendaraan_aktif'] }}</div><div class="summary-label">Peminjaman Aktif</div></div>
-            </div>
-        </div>
-
-        <div class="data-card">
-            <div class="data-card-header"><h2><i class="fas fa-arrow-circle-down"></i> Transaksi Masuk Aset Tetap Terbaru</h2></div>
-            <table class="data-table">
-                <thead><tr><th>Tanggal</th><th>Nama Barang</th><th>Kategori</th><th>Nilai Perolehan</th></tr></thead>
-                <tbody>
-                @forelse($asetTetap['recent_masuk'] as $item)
-                    <tr>
-                        <td>{{ $item->tanggal_perolehan ? \Carbon\Carbon::parse($item->tanggal_perolehan)->format('d/m/Y') : '-' }}</td>
-                        <td>{{ $item->nama_barang }}</td>
-                        <td>{{ $item->kategori ?? '-' }}</td>
-                        <td>Rp {{ number_format($item->nilai_perolehan ?? 0, 0, ',', '.') }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:24px">Belum ada data</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
 
         {{-- ══════════ ADMIN SARPRAS ══════════ --}}
         <div class="section-title"><i class="fas fa-building"></i> Data Admin Sarpras</div>
@@ -255,27 +256,6 @@
                 @endforelse
                 </tbody>
             </table>
-        </div>
-
-        {{-- ══════════ PENGADUAN & SURVEY ══════════ --}}
-        <div class="section-title"><i class="fas fa-chart-pie"></i> Pengaduan & Survey Kepuasan</div>
-        <div class="summary-grid">
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-exclamation-triangle"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $pengaduan['total'] }}</div><div class="summary-label">Total Pengaduan</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-spinner"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $pengaduan['diproses'] }}</div><div class="summary-label">Diproses</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fas fa-star"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $survey['total'] }}</div><div class="summary-label">Total Survey</div></div>
-            </div>
-            <div class="summary-box">
-                <div class="marker" style="background:linear-gradient(135deg,#14b8a6,#0d9488)"><i class="fas fa-chart-line"></i></div>
-                <div class="summary-info"><div class="summary-value">{{ $survey['rata_rata'] }}/5</div><div class="summary-label">Rata-rata Kepuasan</div></div>
-            </div>
         </div>
 
         {{-- ══════════ CHARTS ══════════ --}}

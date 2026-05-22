@@ -75,6 +75,7 @@
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->tanggal_perolehan ? \Carbon\Carbon::parse($item->tanggal_perolehan)->format('d/m/Y') : '-' }}</td>
                     <td>{{ $item->nama_barang }}</td>
+                    <td>{{ $item->kondisi ?? '-' }}</td>
                     <td>{{ $item->kategori ?? '-' }}</td>
                     <td>Rp {{ number_format($item->nilai_perolehan ?? 0,0,',','.') }}</td>
                 </tr>

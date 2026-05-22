@@ -42,8 +42,7 @@
                 <td><div class="val">{{ number_format($persediaan_stats['total_item']) }}</div><div class="lbl">Item Persediaan</div></td>
                 <td><div class="val">{{ number_format($aset_stats['total_aset']) }}</div><div class="lbl">Aset Tetap</div></td>
                 <td><div class="val">{{ number_format($sarpras_stats['total_gedung']) }}</div><div class="lbl">Gedung</div></td>
-                <td><div class="val">{{ number_format($pengaduan_stats['total']) }}</div><div class="lbl">Pengaduan</div></td>
-                <td><div class="val">{{ number_format($survey_stats['total']) }}</div><div class="lbl">Survey</div></td>
+                
             </tr>
         </table>
     </div>
@@ -105,15 +104,6 @@
                 <tr><td>{{ $i+1 }}</td><td>{{ $item->nama_gedung }}</td><td>{{ $item->lokasi }}</td><td>{{ $item->kapasitas }}</td><td>{{ $item->ketersediaan }}</td></tr>
             @endforeach
             </tbody>
-        </table>
-    </div>
-
-    {{-- ══════════ PENGADUAN & SURVEY ══════════ --}}
-    <div class="section">
-        <div class="section-title">📞 Pengaduan & Survey Kepuasan</div>
-        <table class="stats-table">
-            <tr><td><strong>Total Pengaduan:</strong></td><td>{{ $pengaduan_stats['total'] }}</td><td><strong>Baru:</strong></td><td>{{ $pengaduan_stats['baru'] }}</td><td><strong>Diproses:</strong></td><td>{{ $pengaduan_stats['diproses'] }}</td><td><strong>Selesai:</strong></td><td>{{ $pengaduan_stats['selesai'] }}</td></tr>
-            <tr><td><strong>Total Survey:</strong></td><td>{{ $survey_stats['total'] }}</td><td><strong>Rata-rata:</strong></td><td>{{ $survey_stats['rata_rata'] }}/5</td><td></td><td></td><td></td><td></td></tr>
         </table>
     </div>
 

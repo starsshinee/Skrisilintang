@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPANDU - Transaksi Keluar</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <style>
   :root {
     --blue: #4F6FFF;
@@ -175,6 +180,29 @@
   .section-label-inner { background: linear-gradient(135deg,#EEF2FF,#E0E7FF); border-radius: 4px; padding: 4px 10px; }
   .section-label-inner.green { background: linear-gradient(135deg,#ECFDF5,#D1FAE5); color: var(--success); }
   .section-label-inner.red   { background: linear-gradient(135deg,#FEF2F2,#FEE2E2); color: var(--danger); }
+
+  /* Custom Styling Select2 Untuk Persediaan */
+  .select2-container .select2-selection--single {
+      height: 46px !important; 
+      border: 2px solid var(--border) !important;
+      border-radius: 12px !important;
+      background: var(--bg) !important;
+      display: flex;
+      align-items: center;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 44px !important;
+      right: 12px !important;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: var(--text) !important;
+      font-size: 14px !important;
+      font-family: inherit;
+      padding-left: 16px !important;
+  }
+  .select2-container--open {
+      z-index: 9999 !important;
+  }
 
   @media (max-width: 768px) {
     .main { margin-left: 0; }
@@ -357,7 +385,7 @@
         <div class="form-row">
           <div class="form-group" style="grid-column: 1 / -1;">
             <label class="form-label">Pilih Barang Persediaan <span style="color:var(--danger);">*</span></label>
-            <select id="create_select_barang" class="form-select" required onchange="autofillMasterData(this.value)">
+            <select id="create_select_barang" class="form-select" required>
               <option value="">-- Pilih Kode / Nama Barang --</option>
               @foreach($masterPersediaan as $item)
                 <option value="{{ $item['kode_barang'] }}" 
@@ -611,7 +639,6 @@
     document.getElementById(prefix + '_total_display').value = formatRupiah(jumlah * harga);
   }
 
-  // 🔥 FUNGSI AUTOFILL DARI DROP-DOWN DATA MASTER (SUDAH FIX STOK)
   function autofillMasterData(kodeBarang) {
     const select = document.getElementById('create_select_barang');
     const selectedOption = select.options[select.selectedIndex];
@@ -632,7 +659,7 @@
     const kodeKategori = selectedOption.getAttribute('data-kodekat');
     const kategori     = selectedOption.getAttribute('data-kat');
     const hargaSatuan  = selectedOption.getAttribute('data-harga');
-    const stokTersedia = selectedOption.getAttribute('data-stok'); // Membaca data-stok tanpa typo spasi
+    const stokTersedia = selectedOption.getAttribute('data-stok'); 
 
     document.getElementById('create_kode_barang').value = kodeBarang;
     document.getElementById('create_nama_barang').value = namaBarang;
@@ -640,7 +667,6 @@
     document.getElementById('create_kategori').value = kategori;
     document.getElementById('create_harga').value = Math.round(parseFloat(hargaSatuan));
     
-    // 🔥 Validasi Front-End Sisa Stok Aktif Berdasarkan Pilihan Dropdown
     const inputJumlah = document.getElementById('create_jumlah_keluar');
     inputJumlah.max = stokTersedia;
     inputJumlah.placeholder = `Maksimal ${stokTersedia}`;
@@ -664,10 +690,27 @@
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+  // Inisialisasi Select2 Persediaan
+  $(document).ready(function() {
+      $('#create_select_barang').select2({
+          dropdownParent: $('#createModal'), // Mencegah dropdown tertutup overlay modal custom
+          placeholder: "-- Pilih Kode / Nama Barang --",
+          width: '100%'
+      });
+
+      // Hubungkan Select2 dengan fungsi autofill (menggantikan onchange bawaan select tag)
+      $('#create_select_barang').on('change', function() {
+          autofillMasterData(this.value);
+      });
+  });
+
   // Pemicu Klik Tambah Baru
   document.querySelector('[onclick="openModal(\'createModal\')"]').addEventListener('click', () => {
     document.getElementById('createForm').reset();
-    document.getElementById('create_select_barang').value = ''; 
+    
+    // Reset ulang Select2 ke state awal (null)
+    $('#create_select_barang').val(null).trigger('change.select2'); 
+    
     document.getElementById('create_tanggal_input').value = new Date().toISOString().split('T')[0];
     document.getElementById('create_total_display').value = 'Rp 0';
     
@@ -695,7 +738,7 @@
         
     };
 
-    document.getElementById('detailSubtitle').textContent = `Detail Transaksi`; // Ubah subtitle
+    document.getElementById('detailSubtitle').textContent = `Detail Transaksi`; 
     document.getElementById('detailContent').innerHTML = `
       <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px;">
         <div style="padding:8px 14px; background:#EEF2FF; border-radius:8px; font-weight:800; color:var(--blue); font-size:13px;">${d.kode_kategori}</div>

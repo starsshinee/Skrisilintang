@@ -602,7 +602,6 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
                 $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
                 $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
-                $pesanWa .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);

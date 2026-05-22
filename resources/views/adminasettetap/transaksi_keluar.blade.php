@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <style>
         :root {
             --blue: #4F6FFF;
@@ -152,6 +157,29 @@
         }
         .modal .form-control:focus, .modal .form-select:focus { border-color: var(--blue) !important; background: var(--surface) !important; outline: none; box-shadow: 0 0 0 3px rgba(79,111,255,.1) !important; }
         .modal .form-control[readonly] { background: #F1F5F9 !important; color: var(--muted) !important; cursor: not-allowed !important; }
+
+        /* Custom Styling Select2 */
+        .select2-container .select2-selection--single {
+            height: 42px !important;
+            border: 1.5px solid var(--border) !important;
+            border-radius: 10px !important;
+            background: var(--bg) !important;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+            right: 10px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: var(--text) !important;
+            font-size: 13.5px !important;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding-left: 13px !important;
+        }
+        .select2-container--open {
+            z-index: 9999 !important; 
+        }
 
         /* GRID COMPONENTS */
         .detail-section { margin-bottom: 22px; }
@@ -299,12 +327,11 @@
 </main>
 
 {{-- ================================================================
-     MODAL CRUD (STRUKTUR FORM DIPERBAIKI SINKRON DENGAN BOOTSTRAP 5)
+     MODAL CRUD
      ================================================================ --}}
 <div class="modal fade" id="crudModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         
-        {{-- ✅ PERBAIKAN UTAMA: Tag <form> dipindah ke sini untuk membungkus modal-content secara utuh --}}
         <form id="crudForm" method="POST" class="w-100">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
@@ -323,7 +350,6 @@
                                 <div style="font-size:12px; color:var(--muted); margin-top: 2px;">Form mutasi keluar/penghapusan BMN aset tetap</div>
                             </div>
                         </div>
-                        {{-- Atribut data-bs-dismiss dipastikan ada --}}
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="border:1.5px solid var(--border); border-radius:8px; width:30px; height:30px;"></button>
                     </div>
                 </div>
@@ -384,7 +410,6 @@
                     <div style="font-size:12px; color:var(--muted);"><span class="text-danger">*</span> Parameter field wajib dimasukkan.</div>
                     <div style="display:flex; gap:10px;">
                         <button type="button" class="btn-secondary-modal" data-bs-dismiss="modal">Batal</button>
-                        {{-- Tombol submit murni --}}
                         <button type="submit" id="submitBtn" class="btn-danger-modal">
                             <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner" style="width:14px;height:14px;"></span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
@@ -399,7 +424,7 @@
 </div>
 
 {{-- ================================================================
-     MODAL DETAIL VIEW (SCROLLABLE BY DEFAULT)
+     MODAL DETAIL VIEW
      ================================================================ --}}
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -418,8 +443,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" style="border:1.5px solid var(--border); border-radius:8px; width:30px; height:30px;"></button>
                 </div>
             </div>
-            <div class="modal-body" id="detailContent">
-                </div>
+            <div class="modal-body" id="detailContent"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary-modal" data-bs-dismiss="modal">Tutup Dokumen</button>
             </div>
@@ -429,11 +453,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Variabel instance modal global
 let crudModalInstance = null;
 let detailModalInstance = null;
 
-// Validasi & Instansiasi Awal Pengendali Modal Bootstrap 5
 function initModals() {
     if (typeof bootstrap !== 'undefined') {
         if (!crudModalInstance) crudModalInstance = new bootstrap.Modal(document.getElementById('crudModal'));
@@ -459,12 +481,14 @@ window.openCreateModal = function() {
     document.getElementById('tanggal_input').value = new Date().toISOString().split('T')[0];
     clearFields();
     
+    // Reset Select2 saat buka modal Create
+    $('#aset_tetap_id').val(null).trigger('change.select2');
+    
     crudModalInstance.show();
 };
 
-// ✅ PERBAIKAN: Mengatur urutan loading data agar SK tidak ter-overwrite/hilang
 window.openEditModal = function(id) {
-    if (!initModals()) return; // Validasi kesiapan library bootstrap
+    if (!initModals()) return;
 
     document.getElementById('modalTitle').textContent = 'Edit Data Transaksi Keluar';
     document.getElementById('submitText').textContent = 'Perbarui Transaksi';
@@ -472,7 +496,6 @@ window.openEditModal = function(id) {
     document.getElementById('crudForm').action = `/adminasettetap/transaksi-keluar/${id}`;
     document.getElementById('modalId').value = id;
 
-    // 1. Ambil data transaksi terlebih dahulu
     fetch(`/adminasettetap/transaksi-keluar/${id}/edit-json`, {
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -481,14 +504,12 @@ window.openEditModal = function(id) {
     })
     .then(r => r.json())
     .then(data => {
-        // Set nilai id select option aset tetap
         if (data.aset_tetap_id) {
-            document.getElementById('aset_tetap_id').value = data.aset_tetap_id;
+            // Set Select2 ke data aset_tetap_id yang sudah ada
+            $('#aset_tetap_id').val(data.aset_tetap_id).trigger('change.select2');
             
-            // 2. Tampilkan loading pada field read-only
             showLoading(true);
             
-            // 3. Ambil data spesifikasi fisik aset ke server
             fetch(`/adminasettetap/aset-tetap/${data.aset_tetap_id}`, {
                 method: 'GET',
                 headers: {
@@ -498,18 +519,14 @@ window.openEditModal = function(id) {
             })
             .then(res => res.json())
             .then(asetData => {
-                // Isi field read-only dari data spesifikasi aset
                 fillFields(asetData);
                 showLoading(false);
                 
-                // 4. SELESAI CARI DATA ASET, BARU ISI DATA LEGALITAS SK
-                // Langkah ini menjamin nomor SK dan tanggal SK tidak akan terhapus oleh fungsi clearFields()
                 document.getElementById('tanggal_input').value = data.tanggal_input || '';
                 document.getElementById('nomor_sk').value = data.nomor_sk || '';
                 document.getElementById('tanggal_sk').value = data.tanggal_sk || '';
                 document.getElementById('keterangan').value = data.keterangan || '';
                 
-                // Tampilkan modal ke layar
                 crudModalInstance.show();
             })
             .catch(() => {
@@ -521,7 +538,6 @@ window.openEditModal = function(id) {
     .catch(() => alert('Sistem gagal memproses data JSON transaksi.'));
 };
 
-// ✅ ACTION OPEN DETAIL MODAL
 window.openDetailModal = function(id) {
     if (!initModals()) return;
 
@@ -573,7 +589,6 @@ window.openDetailModal = function(id) {
     });
 };
 
-// AJAX Fetching Asynchronous Data aset
 function fetchAsetData(id) {
     showLoading(true);
     fetch(`/adminasettetap/aset-tetap/${id}`, {
@@ -629,13 +644,20 @@ function showLoading(show) {
     });
 }
 
-// Event handler DOM setelah dokumen siap sepenuhnya
+// Inisialisasi Select2 dan Event Listeners saat DOM siap
 document.addEventListener('DOMContentLoaded', function() {
     initModals();
 
-    const asetSelect = document.getElementById('aset_tetap_id');
-    if (asetSelect) {
-        asetSelect.addEventListener('change', function() {
+    // Inisialisasi Select2 di elemen dropdown aset tetap
+    if ($('#aset_tetap_id').length) {
+        $('#aset_tetap_id').select2({
+            dropdownParent: $('#crudModal'), // Agar dropdown muncul di atas Bootstrap Modal
+            placeholder: "-- Pilih Aset Tetap --",
+            width: '100%'
+        });
+
+        // Trigger pencarian data aset melalui JQuery Change (menggantikan eventListener lama)
+        $('#aset_tetap_id').on('change', function() {
             if (!this.value) {
                 clearFields();
                 return;

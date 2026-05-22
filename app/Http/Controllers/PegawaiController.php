@@ -100,6 +100,7 @@ class PegawaiController extends Controller
     {
         $asetTetap = AssetTetap::where('status', 'Tersedia')
             ->where('kondisi', '!=', 'rusak berat')
+            ->where('kategori', '!=', 'Kendaraan')
             ->orderBy('nama_barang', 'asc')
             ->get();
 
@@ -339,7 +340,6 @@ class PegawaiController extends Controller
             'kode_barang' => 'required|string|max:50',
             'jumlah_diminta' => 'required|integer|min:1',
             'tanggal_permintaan' => 'required|date',
-            'tanggal_dibutuhkan' => 'required|date|after_or_equal:tanggal_permintaan',
             'tujuan_penggunaan' => 'required|string|max:1000',
         ]);
 
@@ -359,7 +359,6 @@ class PegawaiController extends Controller
             'user_id' => Auth::id(),
             'jumlah_diminta' => $request->jumlah_diminta,
             'tanggal_permintaan' => $request->tanggal_permintaan,
-            'tanggal_dibutuhkan' => $request->tanggal_dibutuhkan,
             'tujuan_penggunaan' => $request->tujuan_penggunaan,
             'status' => 'pending',
         ]);
@@ -375,7 +374,6 @@ class PegawaiController extends Controller
             $pesan .= "📦 *Barang:* {$persediaan->nama_barang}\n";
             $pesan .= "🔖 *Kode:* {$request->kode_barang}\n";
             $pesan .= "🔢 *Jumlah:* {$request->jumlah_diminta}\n";
-            $pesan .= "📅 *Tgl Dibutuhkan:* {$request->tanggal_dibutuhkan}\n";
             $pesan .= "📝 *Keperluan:* {$request->tujuan_penggunaan}\n\n";
 
             $pesan .= "Silakan login ke sistem untuk melakukan review permintaan.";
@@ -432,7 +430,6 @@ class PegawaiController extends Controller
 
                     // Pengecekan aman agar tidak crash jika tanggal kosong
                     'tanggal_permintaan' => $permintaan->tanggal_permintaan ? \Carbon\Carbon::parse($permintaan->tanggal_permintaan)->format('d M Y') : '-',
-                    'tanggal_dibutuhkan' => $permintaan->tanggal_dibutuhkan ? \Carbon\Carbon::parse($permintaan->tanggal_dibutuhkan)->format('d M Y') : '-',
                     'tujuan_penggunaan' => $permintaan->tujuan_penggunaan,
                     'status' => $permintaan->status,
 
