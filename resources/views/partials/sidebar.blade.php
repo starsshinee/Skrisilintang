@@ -6,7 +6,7 @@
     $roleConfig = [
         'superadmin' => [
             'bgGradient' => 'from-slate-900 to-slate-800',
-            'badgeText' => 'Super Admin',
+            'badgeText' => 'Operator',
             'badgeColor' => 'bg-red-500/20 text-red-300',
             'navItems' => [
                 [

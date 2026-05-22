@@ -572,28 +572,36 @@ class AdminPersediaanController extends Controller
 
     public function reviewPermintaan(Request $request, PermintaanPersediaan $permintaan)
     {
+        // Pastikan hanya permintaan berstatus pending yang bisa direview admin
         if (!in_array($permintaan->status, ['pending'])) {
-            return back()->with('error', 'Permintaan sudah diproses!');
+            return back()->with('error', 'Permintaan sudah diproses sebelumnya!');
         }
 
         $namaPegawai = $permintaan->user->name ?? 'Pegawai';
 
         if ($request->action === 'teruskan') {
-            // --- 1. JIKA DITERUSKAN KE KASUBAG ---
+            
+            // 1. VALIDASI INPUT ADMIN: Pastikan jumlah yang disetujui tidak melebihi stok fisik
+            $request->validate([
+                'jumlah_disetujui' => 'required|integer|min:1|max:' . $permintaan->persediaan->jumlah
+            ], [
+                'jumlah_disetujui.max' => 'Gagal meneruskan! Jumlah yang disetujui tidak boleh melebihi sisa stok fisik (' . $permintaan->persediaan->jumlah . ' unit).'
+            ]);
+
+            // 2. SIMPAN DATA: Status berubah, dan nilai rekomendasi Admin disimpan ke kolom jumlah_disetujui
             $permintaan->update([
                 'status' => 'dalam_review',
                 'reviewed_by_adminpersediaan_id' => Auth::id(),
+                'jumlah_disetujui' => $request->jumlah_disetujui, // <--- Simpan angka revisi Admin
+                'komentar' => $request->komentar // Opsional jika admin ingin memberi catatan ke Kasubag
             ]);
 
-            $pesanFlash = 'Permintaan diteruskan ke Kasubag!';
+            $pesanFlash = 'Permintaan berhasil direvisi dan diteruskan ke Kasubag!';
 
-            // Notifikasi ke Kasubag
+            // 3. NOTIFIKASI WA KE KASUBAG
             $kasubag = User::where('role', 'kasubag')->first();
 
-            // Catatan: Pastikan kolom di database Anda 'nomor_telepon' atau 'no_hp'
-            // Jika sebelumnya pakai nomor_telepon, ganti $kasubag->no_hp jadi $kasubag->nomor_telepon
             if ($kasubag && $kasubag->nomor_telepon) {
-                // Bersihkan format nomor WA
                 $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
 
                 $pesanWa = "*Persetujuan Permintaan Persediaan*\n\n";
@@ -601,23 +609,24 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "Admin Persediaan meneruskan permintaan barang persediaan untuk disetujui:\n\n";
                 $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
                 $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "🔢 *Jumlah Diminta Awal:* {$permintaan->jumlah_diminta} Unit\n";
+                $pesanWa .= "✅ *Rekomendasi Admin:* {$request->jumlah_disetujui} Unit\n\n";
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
+
         } else {
-            // --- 2. JIKA DITOLAK OLEH ADMIN ---
+            // --- JIKA DITOLAK OLEH ADMIN PERSEDIAAN ---
             $permintaan->update([
                 'status' => 'ditolak',
                 'reviewed_by_adminpersediaan_id' => Auth::id(),
-                // Jika ada field komentar penolakan dari admin persediaan, bisa ditambahkan di sini:
-                // 'komentar' => $request->komentar, 
+                'komentar' => $request->komentar, // Wajib jika ditolak, untuk alasan penolakan
             ]);
 
             $pesanFlash = 'Permintaan berhasil ditolak!';
 
-            // Notifikasi Penolakan ke Pegawai
+            // NOTIFIKASI WA PENOLAKAN KE PEGAWAI
             $pegawai = $permintaan->user;
             if ($pegawai && $pegawai->nomor_telepon) {
                 $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
@@ -626,15 +635,14 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "Halo {$pegawai->name},\n";
                 $pesanWa .= "Maaf, pengajuan barang persediaan Anda telah *ditolak* oleh Admin Persediaan.\n\n";
                 $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanWa .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
-                $pesanWa .= "💬 *Catatan:* " . ($request->komentar ?? '-') . "\n\n";
+                $pesanWa .= "🔢 *Jumlah Diminta:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? 'Tidak ada catatan khusus') . "\n\n";
                 $pesanWa .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
 
                 SendFonnteNotification::dispatch($noHpPegawai, $pesanWa);
             }
         }
 
-        // Return dieksekusi paling akhir, setelah WA dikirim
         return back()->with('success', $pesanFlash);
     }
 
@@ -719,8 +727,9 @@ class AdminPersediaanController extends Controller
             'disetujui' => $permintaan->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
         ];
 
-        // 3. Statistik Bulan Ini
-        $bulanIni = $permintaan->filter(fn($item) => $item->created_at->isCurrentMonth());
+        // 3. Statistik Bulan Ini 
+        // 🔥 PERBAIKAN 1: Tambahkan '?->' agar aman dari error tanggal null
+        $bulanIni = $permintaan->filter(fn($item) => $item->created_at?->isCurrentMonth());
         $statsBulanIni = [
             'total' => $bulanIni->count(),
             'disetujui' => $bulanIni->whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
@@ -730,13 +739,17 @@ class AdminPersediaanController extends Controller
 
         // 4. Perhitungan Lanjutan (Rata-rata & Persentase)
         $approvalRate = $stats['total'] > 0 ? round(($stats['disetujui'] / $stats['total']) * 100) : 0;
-        $avgItems = $stats['total'] > 0 ? round($permintaan->avg('jumlah_diminta')) : 0;
+        
+        // 🔥 PERBAIKAN 2: Hindari method ->avg() yang sering error pada Collection. 
+        // Gunakan ->sum() dibagi total agar 100% aman dan akurat.
+        $avgItems = $stats['total'] > 0 ? round($permintaan->sum('jumlah_diminta') / $stats['total']) : 0;
 
         // 5. Data Grafik Bulanan (Januari - Desember Tahun Ini)
         $monthlyData = [];
         $maxMonth = 1; // Untuk rasio tinggi diagram batang
         for ($i = 1; $i <= 12; $i++) {
-            $count = $permintaan->filter(fn($item) => $item->created_at->month == $i && $item->created_at->year == date('Y'))->count();
+            // 🔥 PERBAIKAN 3: Tambahkan '?->' pada pencarian bulan
+            $count = $permintaan->filter(fn($item) => $item->created_at?->month == $i && $item->created_at?->year == date('Y'))->count();
             $monthlyData[$i] = $count;
             if ($count > $maxMonth) $maxMonth = $count;
         }

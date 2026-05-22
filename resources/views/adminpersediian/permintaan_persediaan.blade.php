@@ -338,30 +338,35 @@ tr:hover { background: #f8faff; }
                     </button>
 
                     @if($item->status === 'pending')
-                      {{-- Tombol Teruskan --}}
+                     {{-- Tombol Teruskan --}}
                       <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;">
                         @csrf
-                        <input type="hidden" name="action" value="teruskan">
-                        <button type="submit" class="btn-outline btn-teruskan">
-                          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                          </svg>
-                          <span>Teruskan</span>
-                        </button>
-                      </form>
-                      
-                      {{-- Tombol Tolak --}}
-                      <form action="{{ route('adminpersediaan.review-permintaan', $item->id) }}" method="POST" style="margin:0;" onclick="return confirm('Yakin menolak permintaan ini?')">
-                        @csrf
-                        <input type="hidden" name="action" value="tolak">
-                        <button type="submit" class="btn-outline btn-tolak">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
-                          <span>Tolak</span>
-                        </button>
+                        <div class="form-group">
+                            <label>Jumlah Diminta Pegawai:</label>
+                            <input type="text" class="form-control" value="{{ $item->jumlah_diminta }}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Jumlah Disetujui (Revisi Admin): <span class="text-danger">*</span></label>
+                            <input type="number" name="jumlah_disetujui" class="form-control" 
+                                  value="{{ old('jumlah_disetujui', $item->jumlah_diminta) }}" 
+                                  min="1" max="{{ $item->persediaan->jumlah ?? 0 }}" required>
+                            <small class="text-muted">Stok fisik tersedia: {{ $item->persediaan->jumlah ?? 0 }}</small>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label>Catatan / Alasan (Opsional):</label>
+                            <textarea name="komentar" class="form-control" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+                        </div>
+
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button type="submit" name="action" value="teruskan" class="btn btn-primary style-btn">
+                                <i class="fas fa-paper-plane"></i> Teruskan ke Kasubag
+                            </button>
+                            <button type="submit" name="action" value="tolak" class="btn btn-danger style-btn">
+                                <i class="fas fa-times"></i> Tolak
+                            </button>
+                        </div>
                       </form>
 
                     @elseif(in_array($item->status, ['dalam_review', 'disetujui_kasubag', 'disetujui']))

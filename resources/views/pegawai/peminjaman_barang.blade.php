@@ -578,8 +578,6 @@
       border-top: 1px solid #eef1ff;
     }
 
-    .meta-item {}
-
     .meta-label {
       font-size: 10px;
       text-transform: uppercase;
@@ -660,203 +658,6 @@
       color: var(--text-secondary);
     }
 
-    /* FACILITY GRID PAGE */
-    .fac-section {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      margin-bottom: 28px;
-      overflow: hidden;
-    }
-
-    .fac-section-header {
-      padding: 22px 28px 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .fac-section-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .fac-section-title i {
-      color: var(--primary);
-    }
-
-    .fac-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 20px 28px;
-    }
-
-    .fac-card {
-      border-radius: 13px;
-      overflow: hidden;
-      border: 1.5px solid var(--border);
-      transition: all .2s;
-      cursor: pointer;
-    }
-
-    .fac-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-      border-color: transparent;
-    }
-
-    .fac-card-top {
-      padding: 18px 16px 14px;
-      color: #fff;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .fac-card-top::after {
-      content: '';
-      position: absolute;
-      right: -15px;
-      bottom: -15px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .fac-card-top i {
-      font-size: 26px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .fac-card-name {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .fac-card-desc {
-      font-size: 11px;
-      opacity: .8;
-      margin-top: 3px;
-      line-height: 1.4;
-    }
-
-    .fac-card-bottom {
-      padding: 12px 16px;
-    }
-
-    .fac-card-price {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .fac-card-cap {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    .fac-card-select {
-      width: 100%;
-      margin-top: 10px;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1.5px solid var(--border);
-      background: var(--primary);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      transition: all .2s;
-    }
-
-    .fac-card-select:hover {
-      background: #1d4ed8;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .animate {
-      animation: fadeUp .5s ease both;
-    }
-
-    .d1 {
-      animation-delay: .05s;
-    }
-
-    .d2 {
-      animation-delay: .1s;
-    }
-
-    .d3 {
-      animation-delay: .15s;
-    }
-
-    .d4 {
-      animation-delay: .2s;
-    }
-
-    .d5 {
-      animation-delay: .25s;
-    }
-
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 10px;
-    }
-
-    /* TOAST NOTIFICATION */
-    #toast {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: #0f172a;
-      color: #fff;
-      padding: 14px 20px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all .35s cubic-bezier(.4, 0, .2, 1);
-      z-index: 9999;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-      pointer-events: none;
-    }
-
-    /* ==================== RESPONSIVE DESIGN ==================== */
-
-    /* TABLET - 1024px ke bawah */
     @media (max-width: 1024px) {
       .content-grid {
         grid-template-columns: 1fr;
@@ -868,10 +669,6 @@
         top: auto;
       }
 
-      .fac-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
       .main {
         padding: 0 24px 40px;
         margin-left: 260px;
@@ -879,7 +676,6 @@
       }
     }
 
-    /* TABLET PORTRAIT - 768px ke bawah */
     @media (max-width: 768px) {
       .sidebar {
         width: 200px;
@@ -956,27 +752,8 @@
         padding: 4px 10px;
         flex: 1;
       }
-
-      .fac-grid {
-        grid-template-columns: 1fr;
-        padding: 16px 20px;
-        gap: 12px;
-      }
-
-      .fac-section-header {
-        padding: 18px 20px;
-      }
-
-      .meta-label {
-        font-size: 9px;
-      }
-
-      .meta-value {
-        font-size: 11px;
-      }
     }
 
-    /* MOBILE - 480px ke bawah */
     @media (max-width: 480px) {
       body {
         flex-direction: column;
@@ -1165,67 +942,6 @@
         padding: 8px;
       }
 
-      .fac-section {
-        border-radius: 12px;
-        margin-bottom: 20px;
-      }
-
-      .fac-section-header {
-        padding: 16px;
-      }
-
-      .fac-section-title {
-        font-size: 15px;
-      }
-
-      .fac-grid {
-        grid-template-columns: 1fr;
-        padding: 12px;
-        gap: 12px;
-      }
-
-      .fac-card-top {
-        padding: 16px 14px 12px;
-      }
-
-      .fac-card-name {
-        font-size: 12px;
-      }
-
-      .fac-card-desc {
-        font-size: 10px;
-      }
-
-      .fac-card-bottom {
-        padding: 10px 14px;
-      }
-
-      .fac-card-price {
-        font-size: 12px;
-      }
-
-      .fac-card-cap {
-        font-size: 10px;
-      }
-
-      .empty-state {
-        padding: 40px 16px;
-      }
-
-      .empty-icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-      }
-
-      .empty-text {
-        font-size: 14px;
-        margin-bottom: 4px;
-      }
-
-      .empty-sub {
-        font-size: 12px;
-      }
-
       #toast {
         bottom: 16px;
         right: 16px;
@@ -1235,7 +951,6 @@
       }
     }
 
-    /* LARGE DESKTOP - 1440px ke atas */
     @media (min-width: 1440px) {
       .main {
         padding: 0 48px 40px;
@@ -1243,428 +958,6 @@
 
       .content-grid {
         gap: 32px;
-      }
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      display: flex;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .main {
-      margin-left: 260px;
-      flex: 1;
-      padding: 0 32px 40px;
-      width: calc(100% - 260px);
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: var(--bg);
-      border-bottom: 1px solid transparent;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .breadcrumb {
-      font-size: 13px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .breadcrumb span {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .topbar-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 28px;
-    }
-
-    .form-card,
-    .history-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .form-card {
-      position: sticky;
-      top: 90px;
-      height: fit-content;
-    }
-
-    .form-header {
-      padding: 24px 28px 20px;
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      position: relative;
-      overflow: hidden;
-      color: #fff;
-    }
-
-    .form-header-icon {
-      width: 46px;
-      height: 46px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      font-size: 20px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .form-header-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .form-header-sub {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.75);
-      margin-top: 4px;
-    }
-
-    .form-body {
-      padding: 24px 28px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      margin-bottom: 8px;
-    }
-
-    .form-label i {
-      color: var(--primary);
-      font-size: 11px;
-    }
-
-    .form-label .req {
-      color: var(--danger);
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: var(--text-primary);
-      outline: none;
-      transition: .2s;
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    .form-textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    .input-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, var(--primary), #3b82f6);
-      color: #fff;
-      border: none;
-      border-radius: 11px;
-      font-size: 14px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: .2s;
-      margin-top: 8px;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-    }
-
-    /* Preview Styling */
-    .facility-preview {
-      display: none;
-      margin-top: 8px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: #eff4ff;
-      border: 1px solid #c7d7ff;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .fp-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      background: var(--primary);
-      display: grid;
-      place-items: center;
-      color: #fff;
-      font-size: 15px;
-    }
-
-    .fp-name {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .fp-details {
-      display: flex;
-      gap: 10px;
-      margin-top: 3px;
-    }
-
-    .fp-tag {
-      font-size: 10px;
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--primary);
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-weight: 600;
-    }
-
-    /* History Cards */
-    .history-header {
-      padding: 22px 28px 18px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .history-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .req-list {
-      padding: 20px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .req-card {
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      transition: .2s;
-    }
-
-    .req-card:hover {
-      box-shadow: var(--shadow);
-      transform: translateY(-1px);
-    }
-
-    .req-card-top {
-      padding: 16px 18px;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .req-card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
-      background: rgba(37, 99, 235, 0.1);
-      color: #2563eb;
-      display: grid;
-      place-items: center;
-      font-size: 17px;
-    }
-
-    .req-card-name {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .status-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 11px;
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .status-badge.pending {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-    }
-
-    .status-badge.approved {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .status-badge.rejected {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .req-card-meta {
-      padding: 12px 18px;
-      background: #f8faff;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      border-top: 1px solid #eef1ff;
-    }
-
-    .meta-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      color: #94a3b8;
-      font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    .meta-value {
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .req-card-footer {
-      padding: 12px 18px;
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid #eef1ff;
-    }
-
-    .card-btn {
-      flex: 1;
-      padding: 9px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: .2s;
-    }
-
-    .card-btn.detail {
-      background: rgba(37, 99, 235, 0.08);
-      color: var(--primary);
-    }
-
-    .card-btn.detail:hover {
-      background: rgba(37, 99, 235, 0.15);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-
-    .empty-icon {
-      font-size: 56px;
-      color: #dde5f9;
-      margin-bottom: 14px;
-    }
-
-    @media (max-width: 1024px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .form-card {
-        position: static;
-      }
-
-      .main {
-        margin-left: 260px;
-        width: calc(100% - 260px);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .main {
-        margin-left: 200px;
-        width: calc(100% - 200px);
-        padding: 0 20px 40px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .main {
-        margin-left: 0;
-        width: 100%;
-        padding: 60px 16px 40px;
-      }
-
-      .input-row {
-        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -1675,7 +968,6 @@
   @include('partials.sidebar')
 
   <main class="main">
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
         <div>
@@ -1690,7 +982,6 @@
     </div>
 
     <div class="content-grid">
-      <!-- FORM PEMINJAMAN -->
       <div class="form-card">
         <div class="form-header">
           <div class="form-header-icon"><i class="fas fa-box"></i></div>
@@ -1702,7 +993,6 @@
           @csrf
           <div class="form-body">
 
-            <!-- Menampilkan Pesan Sukses/Error -->
             @if(session('success'))
             <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(16,185,129,0.2);">
               <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -1710,13 +1000,16 @@
             @endif
             @if($errors->any())
             <div style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(239,68,68,0.2);">
-              <i class="fas fa-exclamation-triangle"></i> Gagal menyimpan permintaan. Mohon periksa kembali form Anda.
+              <i class="fas fa-exclamation-triangle"></i> {{ $errors->first() }}
             </div>
             @endif
 
+            <div style="font-size: 12px; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(239, 68, 68, 0.2); font-weight: 500;">
+              <i class="fas fa-info-circle"></i> <b>Perhatian:</b> Pengajuan peminjaman barang wajib dilakukan maksimal H-1. Anda tidak bisa memilih tanggal hari ini.
+            </div>
+
             <div class="form-group">
               <div class="form-label"><i class="fas fa-search"></i> Pilih Aset <span class="req">*</span></div>
-              <!-- Menggunakan data-attributes untuk menangkap nup & kategori -->
               <select class="form-select" name="kode_barang" id="asetSelect" required onchange="updateDetailAset()">
                 <option value="">-- Pilih Barang yang Tersedia --</option>
                 @foreach($asetTetap as $aset)
@@ -1732,7 +1025,6 @@
               </select>
             </div>
 
-            <!-- Preview Barang Muncul Otomatis -->
             <div class="facility-preview" id="previewBarang">
               <div class="fp-icon"><i class="fas fa-box-open"></i></div>
               <div>
@@ -1744,7 +1036,6 @@
               </div>
             </div>
 
-            <!-- BARIS BARU: KATEGORI & NUP OTOMATIS (READ ONLY) -->
             <div class="input-row" style="margin-top: 14px;">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-tags"></i> Kategori Barang</div>
@@ -1764,11 +1055,11 @@
             <div class="input-row">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span class="req">*</span></div>
-                <input type="date" class="form-input" name="tanggal_peminjaman" min="{{ date('Y-m-d') }}" required>
+                <input type="date" class="form-input" name="tanggal_peminjaman" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" required>
               </div>
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span class="req">*</span></div>
-                <input type="date" class="form-input" name="tanggal_pengembalian" min="{{ date('Y-m-d') }}" required>
+                <input type="date" class="form-input" name="tanggal_pengembalian" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" required>
               </div>
             </div>
 
@@ -1784,7 +1075,6 @@
         </form>
       </div>
 
-      <!-- RIWAYAT -->
       <div>
         <div class="history-card">
           <div class="history-header">
@@ -1839,14 +1129,12 @@
                   <i class="fas fa-eye"></i> Detail
                 </button>
 
-                <!-- Tombol Cancel (Hanya muncul jika status masih 'pending') -->
                 @if($item->status == 'pending')
                 <button class="card-btn cancel" onclick="cancelPeminjaman({{ $item->id }}, this)">
                   <i class="fas fa-xmark"></i> Batalkan
                 </button>
                 @endif
 
-                <!-- TOMBOL UNDUH BAST JIKA TERSEDIA -->
                 @if(!empty($item->surat_bast_path))
                 <a href="{{ asset('storage/' . $item->surat_bast_path) }}" target="_blank" class="card-btn" style="background: rgba(16,185,129,0.1); color: var(--success); text-decoration: none;">
                   <i class="fas fa-file-contract"></i> Unduh BAST
@@ -1866,7 +1154,6 @@
         </div>
       </div>
 
-      <!-- MODAL DETAIL PEMINJAMAN -->
       <div class="modal-overlay" id="detailModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
         <div class="modal-content" style="background: #fff; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
           <div style="padding: 20px 24px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center;">
@@ -1874,12 +1161,10 @@
             <i class="fas fa-times" style="cursor: pointer;" onclick="document.getElementById('detailModal').style.display='none'"></i>
           </div>
           <div style="padding: 24px;" id="detailBody">
-            <!-- Loading Spinner -->
             <div id="detailLoading" style="text-align: center; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin fa-2x"></i>
               <p>Memuat...</p>
             </div>
 
-            <!-- Konten Detail (Disembunyikan awalnya) -->
             <div id="detailContent" style="display: none;">
               <table style="width: 100%; font-size: 13px; line-height: 2;">
                 <tr>
@@ -1922,27 +1207,22 @@
   </main>
 
   <script>
-    // JS Untuk Preview & Autofill Barang Saat Select Option Berubah
     function updateDetailAset() {
       const select = document.getElementById('asetSelect');
       const selected = select.options[select.selectedIndex];
       const previewBox = document.getElementById('previewBarang');
       const inputJumlah = document.getElementById('inputJumlah');
 
-      // Field Autofill
       const kategoriInput = document.getElementById('kategoriInput');
       const nupInput = document.getElementById('nupInput');
 
       if (select.value !== "") {
-        // 1. Tampilkan Box Info Kecil
         document.getElementById('previewNama').innerText = selected.getAttribute('data-nama');
         document.getElementById('previewMerek').innerText = "Merek: " + (selected.getAttribute('data-merek') || '-');
         document.getElementById('previewStok').innerText = "Stok Tersedia: " + selected.getAttribute('data-stok');
 
-        // 2. Set max jumlah sesuai stok asli di DB
         inputJumlah.max = selected.getAttribute('data-stok');
 
-        // 3. AUTO FILL NUP dan Kategori!
         kategoriInput.value = selected.getAttribute('data-kategori') || 'Umum';
         nupInput.value = selected.getAttribute('data-nup') || '-';
 
@@ -1955,7 +1235,6 @@
       }
     }
 
-    // Pencegahan double submit agar UX lebih smooth
     document.getElementById('peminjamanForm').addEventListener('submit', function() {
       const btn = document.getElementById('btnSubmit');
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
@@ -1963,7 +1242,6 @@
       btn.disabled = true;
     });
 
-    // Fungsi Menampilkan Modal Detail via AJAX
     function showDetail(id) {
       const modal = document.getElementById('detailModal');
       const loading = document.getElementById('detailLoading');
@@ -2000,7 +1278,6 @@
         });
     }
 
-    // Fungsi Membatalkan Peminjaman via AJAX
     function cancelPeminjaman(id, btnElement) {
       if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman barang ini? Data akan dihapus.')) return;
 
@@ -2019,12 +1296,10 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // Hapus Card dari layar dengan efek fade
             const card = btnElement.closest('.req-card');
             card.style.opacity = '0.5';
             setTimeout(() => card.remove(), 500);
 
-            // Tampilkan toast notifikasi bawaan kamu (jika ada fungsi showToast)
             if (typeof showToast === 'function') showToast('Peminjaman berhasil dibatalkan!', 'success');
             else alert('Peminjaman berhasil dibatalkan!');
           } else {

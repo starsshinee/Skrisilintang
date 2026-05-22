@@ -284,12 +284,18 @@
 
               <div class="req-card-meta">
                 <div class="meta-item">
-                  <div class="meta-label">Jumlah</div>
+                  <div class="meta-label">Jumlah Diminta</div>
                   <div class="meta-value">{{ $item->jumlah_diminta }} unit</div>
                 </div>
+                @if($item->jumlah_disetujui !== null)
                 <div class="meta-item">
-                  <div class="meta-label">Dibutuhkan</div>
-                  <div class="meta-value">{{ $item->tanggal_dibutuhkan->format('d M Y') }}</div>
+                    <div class="meta-label" style="color: var(--success);">Jumlah Disetujui Admin</div>
+                    <div class="meta-value" style="color: var(--success); font-weight: 800;">{{ $item->jumlah_disetujui }} Unit</div>
+                </div>
+                @endif
+                <div class="meta-item">
+                  <div class="meta-label">Tanggal Permintaan</div>
+                  <div class="meta-value">{{ $item->tanggal_permintaan->format('d M Y') }}</div>
                 </div>
                 <div class="meta-item">
                   <div class="meta-label">Status</div>

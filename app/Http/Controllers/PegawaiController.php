@@ -114,13 +114,36 @@ class PegawaiController extends Controller
 
     public function storePeminjamanBarang(Request $request)
     {
-        $request->validate([
+       $request->validate([
             'kode_barang' => 'required|exists:aset_tetap,kode_barang',
             'jumlah' => 'required|integer|min:1',
-            'tanggal_peminjaman' => 'required|date|after_or_equal:today',
+            'tanggal_peminjaman' => 'required|date|after:today', // 👈 Ubah menjadi after:today
             'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
             'deskripsi_peruntukan' => 'required|string',
+        ], [
+            // 👈 Tambahkan pesan error kustom agar pegawai tidak bingung
+            'tanggal_peminjaman.after' => 'Pengajuan peminjaman barang wajib dilakukan maksimal H-1. Anda tidak bisa meminjam untuk hari ini.'
         ]);
+
+        // 1. CEK BENTROK JADWAL BARANG (Karena barang memiliki NUP spesifik / fisik 1)
+        $jadwalBentrok = PeminjamanBarang::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', ['pending', 'diteruskan_kasubag', 'disetujui', 'disetujui_admin'])
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
+                      ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
+                      ->orWhere(function ($q) use ($request) {
+                          $q->where('tanggal_peminjaman', '<=', $request->tanggal_peminjaman)
+                            ->where('tanggal_pengembalian', '>=', $request->tanggal_pengembalian);
+                      });
+            })
+            ->exists();
+
+        // Jika bernilai true (ada jadwal yang bersinggungan)
+        if ($jadwalBentrok) {
+            return back()->withErrors([
+                'kode_barang' => 'Maaf, barang ini sudah diajukan atau dipinjam oleh pegawai lain pada rentang tanggal tersebut.'
+            ])->withInput();
+        }
 
         // Ambil detail aset dari database berdasarkan kode_barang yang dipilih
         $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();
@@ -336,26 +359,44 @@ class PegawaiController extends Controller
     public function storePermintaanPersediaan(Request $request)
     {
         $request->validate([
-
             'kode_barang' => 'required|string|max:50',
             'jumlah_diminta' => 'required|integer|min:1',
             'tanggal_permintaan' => 'required|date',
             'tujuan_penggunaan' => 'required|string|max:1000',
         ]);
 
-        // ✅ CEK STOK BERDASARKAN KODE BARANG
+        // Ambil data master persediaan
         $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
 
-        if (!$persediaan || $persediaan->jumlah < $request->jumlah_diminta) {
+        if (!$persediaan) {
             return back()->withErrors([
-                'kode_barang' => 'Stok tidak mencukupi atau barang tidak ditemukan!'
+                'kode_barang' => 'Barang tidak ditemukan!'
             ])->withInput();
         }
 
+        // ========================================================
+        // LOGIKA ANTI BENTROK (REAL AVAILABLE STOCK)
+        // ========================================================
+        // Hitung total barang ini yang sedang diajukan (belum diputuskan Kasubag)
+        $jumlahSedangDiproses = PermintaanPersediaan::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', ['pending', 'dalam_review'])
+            ->sum('jumlah_diminta');
+
+        // Sisa stok riil = Stok fisik di gudang - Stok yang sedang diantrekan
+        $sisaStokRiil = $persediaan->jumlah - $jumlahSedangDiproses;
+
+        // Cek apakah jumlah yang diminta melebihi sisa stok riil
+        if ($request->jumlah_diminta > $sisaStokRiil) {
+            return back()->withErrors([
+                'kode_barang' => "Maaf, sisa stok yang bisa diminta saat ini hanya {$sisaStokRiil} unit. (Terdapat {$jumlahSedangDiproses} unit yang sedang dalam antrean pengajuan oleh pegawai lain)."
+            ])->withInput();
+        }
+        // ========================================================
+
         PermintaanPersediaan::create([
-            'kode_barang' => $request->kode_barang,           // ✅ GUNAKAN INI
+            'kode_barang' => $request->kode_barang,           
             'nama_barang' => $persediaan->nama_barang,
-            'persediaan_id' => $persediaan->id,               // ✅ AMBIL ID
+            'persediaan_id' => $persediaan->id,               
             'user_id' => Auth::id(),
             'jumlah_diminta' => $request->jumlah_diminta,
             'tanggal_permintaan' => $request->tanggal_permintaan,
@@ -508,13 +549,37 @@ class PegawaiController extends Controller
 
     public function storePeminjamanKendaraan(Request $request)
     {
+
         $request->validate([
-            'kode_barang' => 'required',
-            'jumlah' => 'required|integer|min:1',
-            'tanggal_peminjaman' => 'required|date',
-            'tanggal_pengembalian' => 'required|date',
-            'deskripsi_peruntukan' => 'required|string',
+        'kode_barang' => 'required',
+        'jumlah' => 'required|integer|min:1',
+        'tanggal_peminjaman' => 'required|date|after:today', // 👈 Ubah menjadi after:today
+        'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+        'deskripsi_peruntukan' => 'required|string',
+        ], [
+            // 👈 Tambahkan pesan error kustom
+            'tanggal_peminjaman.after' => 'Pengajuan peminjaman kendaraan dinas wajib dilakukan maksimal H-1. Anda tidak bisa meminjam untuk hari ini.'
         ]);
+
+        // 1. CEK BENTROK JADWAL KENDARAAN (Mencegah overlapping tanggal)
+        $jadwalBentrok = PeminjamanKendaraan::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', ['pending', 'dalam_review', 'disetujui']) // Cek yang masih aktif
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
+                      ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
+                      ->orWhere(function ($q) use ($request) {
+                          $q->where('tanggal_peminjaman', '<=', $request->tanggal_peminjaman)
+                            ->where('tanggal_pengembalian', '>=', $request->tanggal_pengembalian);
+                      });
+            })
+            ->exists();
+
+        // Jika bernilai true (ada jadwal yang bersinggungan)
+        if ($jadwalBentrok) {
+            return back()->withErrors([
+                'kode_barang' => 'Maaf, kendaraan dinas ini sudah diajukan atau dipinjam oleh pegawai lain pada rentang tanggal tersebut.'
+            ])->withInput();
+        }
 
         // Ambil detail aset dari database berdasarkan kode_barang yang dipilih
         $aset = AssetTetap::where('kode_barang', $request->kode_barang)->first();

@@ -106,7 +106,6 @@
   @include('partials.sidebar')
 
   <main class="main">
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
         <div>
@@ -121,7 +120,6 @@
     </div>
 
     <div class="content-grid">
-      <!-- FORM PEMINJAMAN -->
       <div class="form-card">
         <div class="form-header">
           <div class="form-header-icon"><i class="fas fa-car-side"></i></div>
@@ -133,7 +131,6 @@
           @csrf
           <div class="form-body">
 
-            <!-- Menampilkan Pesan Sukses/Error -->
             @if(session('success'))
             <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(16,185,129,0.2);">
               <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -141,9 +138,13 @@
             @endif
             @if($errors->any())
             <div style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(239,68,68,0.2);">
-              <i class="fas fa-exclamation-triangle"></i> Gagal menyimpan permintaan. Mohon periksa kembali form Anda.
+              <i class="fas fa-exclamation-triangle"></i> {{ $errors->first() }}
             </div>
             @endif
+
+            <div style="font-size: 12px; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(239, 68, 68, 0.2); font-weight: 500;">
+              <i class="fas fa-info-circle"></i> <b>Perhatian:</b> Pengajuan peminjaman kendaraan wajib dilakukan maksimal H-1. Anda tidak bisa memilih tanggal hari ini.
+            </div>
 
             <div class="form-group">
               <div class="form-label"><i class="fas fa-search"></i> Pilih Kendaraan <span class="req">*</span></div>
@@ -160,7 +161,6 @@
               </select>
             </div>
 
-            <!-- Preview Barang Muncul Otomatis -->
             <div class="facility-preview" id="previewKendaraan">
               <div class="fp-icon"><i class="fas fa-car"></i></div>
               <div>
@@ -171,7 +171,6 @@
               </div>
             </div>
 
-            <!-- KATEGORI & NUP OTOMATIS (READ ONLY) -->
             <div class="input-row" style="margin-top: 14px;">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-tags"></i> Merek Kendaraan</div>
@@ -191,11 +190,11 @@
             <div class="input-row">
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span class="req">*</span></div>
-                <input type="date" class="form-input" name="tanggal_peminjaman" id="tglPinjam" min="{{ date('Y-m-d') }}" required>
+                <input type="date" class="form-input" name="tanggal_peminjaman" id="tglPinjam" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" required>
               </div>
               <div class="form-group">
                 <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span class="req">*</span></div>
-                <input type="date" class="form-input" name="tanggal_pengembalian" id="tglKembali" min="{{ date('Y-m-d') }}" required>
+                <input type="date" class="form-input" name="tanggal_pengembalian" id="tglKembali" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" required>
               </div>
             </div>
 
@@ -211,7 +210,6 @@
         </form>
       </div>
 
-      <!-- RIWAYAT -->
       <div>
         <div class="history-card">
           <div class="history-header">
@@ -267,14 +265,12 @@
                   <i class="fas fa-eye"></i> Detail
                 </button>
 
-                <!-- Tombol Cancel (Hanya muncul jika status masih 'pending') -->
                 @if($item->status == 'pending')
                 <button class="card-btn cancel" onclick="cancelPeminjaman({{ $item->id }}, this)">
                   <i class="fas fa-xmark"></i> Batalkan
                 </button>
                 @endif
 
-                <!-- TOMBOL UNDUH BAST JIKA TERSEDIA -->
                 @if(!empty($item->surat_bast_path))
                 <a href="{{ asset('storage/' . $item->surat_bast_path) }}" target="_blank" class="card-btn" style="background: rgba(16,185,129,0.1); color: var(--success);">
                   <i class="fas fa-file-contract"></i> Unduh BAST
@@ -294,7 +290,6 @@
         </div>
       </div>
 
-      <!-- MODAL DETAIL PEMINJAMAN -->
       <div class="modal-overlay" id="detailModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
         <div class="modal-content" style="background: #fff; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
           <div style="padding: 20px 24px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center;">
@@ -302,12 +297,10 @@
             <i class="fas fa-times" style="cursor: pointer;" onclick="document.getElementById('detailModal').style.display='none'"></i>
           </div>
           <div style="padding: 24px;" id="detailBody">
-            <!-- Loading Spinner -->
             <div id="detailLoading" style="text-align: center; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin fa-2x"></i>
               <p style="margin-top:10px; font-size:13px;">Memuat...</p>
             </div>
 
-            <!-- Konten Detail -->
             <div id="detailContent" style="display: none;">
               <table style="width: 100%; font-size: 13px; line-height: 2;">
                 <tr>
@@ -350,7 +343,6 @@
   </main>
 
   <script>
-    // JS Untuk Preview & Autofill Kendaraan Saat Select Option Berubah
     function updateDetailKendaraan() {
       const select = document.getElementById('kendaraanSelect');
       const selected = select.options[select.selectedIndex];
@@ -373,7 +365,6 @@
       }
     }
 
-    // Pencegahan double submit agar UX lebih smooth
     document.getElementById('peminjamanForm').addEventListener('submit', function() {
       const btn = document.getElementById('btnSubmit');
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
@@ -381,14 +372,16 @@
       btn.disabled = true;
     });
 
-    // Validasi Tanggal minimal Hari Ini di form input (jika tglPinjam tersedia)
+    // SINKRONISASI JAVASCRIPT VALIDASI TANGGAL MINIMAL BESOK (H-1)
     document.addEventListener('DOMContentLoaded', function() {
-      const today = new Date().toISOString().split('T')[0];
-      if (document.getElementById('tglPinjam')) document.getElementById('tglPinjam').min = today;
-      if (document.getElementById('tglKembali')) document.getElementById('tglKembali').min = today;
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const minDate = tomorrow.toISOString().split('T')[0];
+      
+      if (document.getElementById('tglPinjam')) document.getElementById('tglPinjam').min = minDate;
+      if (document.getElementById('tglKembali')) document.getElementById('tglKembali').min = minDate;
     });
 
-    // Fungsi Menampilkan Modal Detail via AJAX
     function showDetail(id) {
       const modal = document.getElementById('detailModal');
       const loading = document.getElementById('detailLoading');
@@ -398,7 +391,6 @@
       loading.style.display = 'block';
       content.style.display = 'none';
 
-      // Pastikan endpoint fetch ini sesuai dengan rute show/detail Anda
       fetch(`/pegawai/peminjaman-kendaraan/${id}/show`)
         .then(response => response.json())
         .then(res => {
@@ -408,7 +400,6 @@
             document.getElementById('detKode').innerText = data.kode_barang + ' / ' + (data.nup || '-');
             document.getElementById('detMerek').innerText = data.merek || '-';
             
-            // Atur agar bisa membaca properti "jumlah" bawaan
             let jml = data.jumlah ? data.jumlah : '1';
             document.getElementById('detJumlah').innerText = jml + ' Unit';
 
@@ -429,7 +420,6 @@
         });
     }
 
-    // Fungsi Membatalkan Peminjaman via AJAX
     function cancelPeminjaman(id, btnElement) {
       if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman kendaraan ini? Data akan dihapus.')) return;
 
@@ -450,7 +440,6 @@
           throw new Error('Network response was not ok.');
         })
         .then(data => {
-          // Beberapa logic Laravel mengirim reload aja atau data.success
           if (data.success || data.message) {
             const card = btnElement.closest('.req-card');
             card.style.opacity = '0.5';
@@ -458,11 +447,10 @@
             
             if (typeof showToast === 'function') showToast('Peminjaman dibatalkan!', 'success');
           } else {
-             location.reload(); // Jika tidak ada return JSON spesifik, reload saja
+             location.reload();
           }
         })
         .catch(error => {
-          // Jika backend Anda me-return redirect setelah delete, fetch mungkin masuk ke .catch. Gunakan reload fallback.
           location.reload(); 
         });
     }
