@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\{
@@ -124,12 +125,38 @@ class TamuController extends Controller
             'surat_path' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120'
         ]);
 
+        // ====================================================================
+        // LOGIKA ANTI-BENTROK JADWAL (OVERLAPPING DATE & TIME VALIDATION)
+        // ====================================================================
+        $isBentrok = \App\Models\PeminjamanGedung::where('gedung_id', $validated['gedung_id'])
+            ->whereNotIn('status', ['ditolak', 'dibatalkan']) // Abaikan yang sudah ditolak/batal
+            ->where(function ($query) use ($validated) {
+                // Cek apakah rentang tanggal beririsan
+                $query->where('tanggal_pinjam', '<=', $validated['tanggal_kembali'])
+                      ->where('tanggal_kembali', '>=', $validated['tanggal_pinjam']);
+            })
+            ->where(function ($query) use ($validated) {
+                // Cek apakah rentang jam juga beririsan (di hari yang sama)
+                $query->where('jam_mulai', '<', $validated['jam_selesai'])
+                      ->where('jam_selesai', '>', $validated['jam_mulai']);
+            })
+            ->exists();
+
+        if ($isBentrok) {
+            // Karena pakai AJAX/Fetch, kita kembalikan response JSON Error 400
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal! Gedung atau fasilitas ini sudah dibooking pada rentang tanggal dan jam tersebut. Silakan pilih waktu atau fasilitas lain.'
+            ], 400); 
+        }
+        // ====================================================================
+
         // Ambil data gedung
-        $gedung = Gedung::findOrFail($validated['gedung_id']);
+        $gedung = \App\Models\Gedung::findOrFail($validated['gedung_id']);
 
         // Hitung durasi dan total pembayaran
-        $start = Carbon::parse($validated['tanggal_pinjam']);
-        $end = Carbon::parse($validated['tanggal_kembali']);
+        $start = \Carbon\Carbon::parse($validated['tanggal_pinjam']);
+        $end = \Carbon\Carbon::parse($validated['tanggal_kembali']);
         $lamaPeminjaman = $start->diffInDays($end) + 1;
         $totalPembayaran = $gedung->tarif_sewa * $lamaPeminjaman;
 
@@ -140,7 +167,7 @@ class TamuController extends Controller
         }
 
         // Buat peminjaman
-        $peminjaman = PeminjamanGedung::create([
+        $peminjaman = \App\Models\PeminjamanGedung::create([
             'user_id' => auth('web')->id(),
             'gedung_id' => $gedung->id,
             'nama_lengkap' => $validated['nama_lengkap'],
@@ -167,14 +194,14 @@ class TamuController extends Controller
         ]);
 
         // --- NOTIFIKASI KE ADMIN SARPRAS ---
-        $adminSarpras = User::where('role', 'adminsarpras')->first();
+        $adminSarpras = \App\Models\User::where('role', 'adminsarpras')->first();
         if ($adminSarpras && $adminSarpras->nomor_telepon) {
             // Membersihkan format nomor telepon tujuan
             $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
 
             $pesanAdmin = "*Permintaan Peminjaman GEDUNG Baru*\n\n";
             $pesanAdmin .= "Halo Admin Sarpras,\n";
-            $pesanAdmin .= "Terdapat pengajuan peminjaman gedung/fasilitas baru dengan detail sebagai berikut:\n\n";
+            $pesanAdmin .= "Terdapat pengajuan peminjaman fasilitas baru dari Tamu:\n\n";
 
             $pesanAdmin .= "👤 *Pemohon:* {$validated['nama_lengkap']} ({$validated['instansi_lembaga']})\n";
             $pesanAdmin .= "🏫 *Fasilitas:* {$gedung->nama_gedung}\n";
@@ -186,7 +213,7 @@ class TamuController extends Controller
 
             $pesanAdmin .= "Silakan login ke sistem untuk melakukan review pengajuan ini.";
 
-            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+            \App\Jobs\SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 
         return response()->json([

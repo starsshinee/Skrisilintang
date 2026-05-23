@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PeminjamanGedung extends Model
 {
@@ -47,6 +48,12 @@ class PeminjamanGedung extends Model
     public function gedung()
     {
         return $this->belongsTo(Gedung::class);
+    }
+
+    // Di model User
+    public function peminjamanGedung(): HasMany
+    {
+        return $this->hasMany(PeminjamanGedung::class, 'user_id');
     }
 
     // Relationships (sama seperti sebelumnya)
