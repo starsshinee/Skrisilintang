@@ -523,7 +523,7 @@ class KasubagController extends Controller
         return view('kasubag.persetujuan_permintaan_persediaan', compact('permintaan', 'stats'));
     }
 
-    // 🔥 METHOD YANG DIPERBAIKI UNTUK OTOMATISASI STOK 🔥
+    // 🔥 METHOD YANG DIPERBAIKI UNTUK OTOMATISASI STOK DAN NOTIFIKASI QTY 🔥
     public function approvePermintaan(Request $request, PermintaanPersediaan $permintaan)
     {
         if (!in_array($permintaan->status, ['dalam_review', 'disetujui_kasubag'])) {
@@ -533,12 +533,13 @@ class KasubagController extends Controller
         if ($request->action === 'setuju') {
             
             // ==========================================
-            // JARING PENGAMAN: Cek ulang stok fisik sebelum dipotong
+            // JARING PENGAMAN: Cek ulang stok fisik berdasarkan JUMLAH DISETUJUI ADMIN
             // ==========================================
             $persediaan = Persediaan::find($permintaan->persediaan_id);
             
-            if (!$persediaan || $persediaan->jumlah < $permintaan->jumlah_diminta) {
-                return back()->with('error', 'Gagal! Stok fisik persediaan saat ini tidak mencukupi untuk memenuhi permintaan ini (Sisa stok: ' . ($persediaan->jumlah ?? 0) . ' unit).');
+            // ✅ PERBAIKAN: Validasi menggunakan $permintaan->jumlah_disetujui, BUKAN jumlah_diminta
+            if (!$persediaan || $persediaan->jumlah < $permintaan->jumlah_disetujui) {
+                return back()->with('error', 'Gagal! Stok fisik persediaan saat ini tidak mencukupi untuk memenuhi jumlah yang disetujui (Sisa stok: ' . ($persediaan->jumlah ?? 0) . ' unit).');
             }
 
             $permintaan->update([
@@ -549,13 +550,11 @@ class KasubagController extends Controller
             // ==========================================
             // TRIGGER OTOMATIS: POTONG STOK & CATAT TRANSAKSI KELUAR
             // ==========================================
-            $persediaan = Persediaan::find($permintaan->persediaan_id);
-            
             if ($persediaan) {
-                // 1. Kurangi stok di Master Persediaan
-                $persediaan->decrement('jumlah', $permintaan->jumlah_diminta);
+                // ✅ PERBAIKAN: 1. Kurangi stok Master sebesar JUMLAH DISETUJUI
+                $persediaan->decrement('jumlah', $permintaan->jumlah_disetujui);
 
-                // 2. Otomatis catat di Riwayat Transaksi Keluar
+                // ✅ PERBAIKAN: 2. Otomatis catat di Riwayat dengan kalkulasi Total yang benar
                 TransaksiKeluarPersediaan::create([
                     'tanggal_input' => now(),
                     'kode_kategori' => $persediaan->kode_kategori,
@@ -564,7 +563,7 @@ class KasubagController extends Controller
                     'nama_barang'   => $persediaan->nama_barang,
                     'jumlah_keluar' => $permintaan->jumlah_disetujui,
                     'harga'         => $persediaan->harga_satuan,
-                    'total'         => $persediaan->harga_satuan * $permintaan->jumlah_diminta,
+                    'total'         => $persediaan->harga_satuan * $permintaan->jumlah_disetujui, // Kalkulasi dibenarkan
                     'keterangan'    => 'Disetujui otomatis dari Permintaan Pegawai: ' . ($permintaan->user->name ?? 'Pegawai')
                 ]);
             }
@@ -582,19 +581,20 @@ class KasubagController extends Controller
             $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
 
             if ($request->action === 'setuju') {
+                // ✅ PERBAIKAN NOTIFIKASI PEGAWAI: Menampilkan Komparasi Diminta vs Disetujui
                 $pesanPegawai = "*Permintaan Persediaan DISETUJUI*\n\n";
                 $pesanPegawai .= "Halo {$pegawai->name},\n";
                 $pesanPegawai .= "Permintaan barang persediaan Anda telah disetujui Kasubag:\n\n";
                 $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
-                $pesanPegawai .= "📅 *Tgl Dibutuhkan:* {$permintaan->tanggal_dibutuhkan}\n\n";
-                $pesanPegawai .= "Silakan hubungi Admin Persediaan untuk pengambilan barang.";
+                $pesanPegawai .= "📝 *Diminta:* {$permintaan->jumlah_diminta} Unit\n";
+                $pesanPegawai .= "✅ *Disetujui:* {$permintaan->jumlah_disetujui} Unit\n";
+                $pesanPegawai .= "Silakan hubungi Admin Persediaan untuk pengambilan barang atau unduh Surat BAST jika sudah diunggah.";
             } else {
                 $pesanPegawai = "*Permintaan Persediaan DITOLAK*\n\n";
                 $pesanPegawai .= "Halo {$pegawai->name},\n";
                 $pesanPegawai .= "Maaf, permintaan barang persediaan Anda ditolak oleh Kasubag:\n\n";
                 $pesanPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanPegawai .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n";
+                $pesanPegawai .= "📝 *Diminta:* {$permintaan->jumlah_diminta} Unit\n";
                 $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanPegawai .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
             }
@@ -608,12 +608,14 @@ class KasubagController extends Controller
             $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
 
             if ($request->action === 'setuju') {
+                // ✅ PERBAIKAN NOTIFIKASI ADMIN: Menampilkan instruksi spesifik QTY Disetujui
                 $pesanAdmin = "*Info Persetujuan Kasubag (Persediaan)*\n\n";
                 $pesanAdmin .= "Halo Admin Persediaan,\n";
                 $pesanAdmin .= "Kasubag telah *MENYETUJUI* permintaan barang persediaan dari {$namaPegawai}:\n\n";
                 $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanAdmin .= "🔢 *Jumlah:* {$permintaan->jumlah_diminta}\n\n";
-                $pesanAdmin .= "Silakan siapkan barang tersebut untuk diserahkan ke pegawai terkait.";
+                $pesanAdmin .= "📝 *Diminta:* {$permintaan->jumlah_diminta} Unit\n";
+                $pesanAdmin .= "✅ *Jumlah Dikeluarkan:* {$permintaan->jumlah_disetujui} Unit\n\n";
+                $pesanAdmin .= "Sistem telah memotong stok secara otomatis. Silakan siapkan barang fisik sejumlah tersebut dan unggah Surat BAST ke dalam sistem.";
             } else {
                 $pesanAdmin = "*Info Penolakan Kasubag (Persediaan)*\n\n";
                 $pesanAdmin .= "Halo Admin Persediaan,\n";
@@ -621,7 +623,6 @@ class KasubagController extends Controller
                 $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
                 $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
             }
-            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
             SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
         }
 

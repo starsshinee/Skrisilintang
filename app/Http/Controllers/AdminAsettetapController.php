@@ -963,7 +963,7 @@ class AdminAsettetapController extends Controller
             $peminjaman->save(); // Simpan paksa ke database
 
             $pesan = 'Peminjaman diteruskan ke Kasubag untuk persetujuan.';
-
+            // --- 1. NOTIFIKASI KE KASUBAG 
             $kasubag = User::where('role', 'kasubag')->first();
             if ($kasubag && $kasubag->nomor_telepon) {
                 $namaPegawai = $peminjaman->user->name ?? 'Pegawai';
@@ -981,6 +981,19 @@ class AdminAsettetapController extends Controller
 
                 $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
+            }
+            // --- 2.  NOTIFIKASI INFO KE PEGAWAI ---
+            $pegawai = $peminjaman->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+                $pesanWaPegawai = "*Status Peminjaman Barang*\n\n";
+                $pesanWaPegawai .= "Halo {$pegawai->name},\n";
+                $pesanWaPegawai .= "Pengajuan peminjaman barang Anda telah diverifikasi oleh Admin dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
+                $pesanWaPegawai .= "📦 *Barang:* {$peminjaman->nama_barang}\n";
+                $pesanWaPegawai .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
+
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWaPegawai);
             }
         } elseif ($request->action == 'tolak') {
             // 🔥 CARA MANUAL UNTUK TOLAK
@@ -1205,7 +1218,7 @@ class AdminAsettetapController extends Controller
             $peminjaman->diteruskan_ke_kasubag_date = now();
             $peminjaman->save();
             $msg = 'Permintaan diteruskan ke Kasubag.';
-
+            // --- 1. NOTIFIKASI KE KASUBAG
             $kasubag = User::where('role', 'kasubag')->first();
             if ($kasubag && $kasubag->nomor_telepon) {
                 $namaPegawai = $peminjaman->user->name ?? 'Pegawai';
@@ -1222,6 +1235,19 @@ class AdminAsettetapController extends Controller
 
                 $noHpKasubag = preg_replace('/[^0-9]/', '', $kasubag->nomor_telepon);
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
+            }
+            // --- 2. TAMBAHKAN KODE INI: NOTIFIKASI INFO KE PEGAWAI ---
+            $pegawai = $peminjaman->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+                $pesanWaPegawai = "*Status Peminjaman Kendaraan*\n\n";
+                $pesanWaPegawai .= "Halo {$pegawai->name},\n";
+                $pesanWaPegawai .= "Pengajuan peminjaman kendaraan dinas Anda telah diverifikasi oleh Admin dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
+                $pesanWaPegawai .= "🚗 *Kendaraan:* {$peminjaman->nama_barang}\n";
+                $pesanWaPegawai .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
+
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWaPegawai);
             }
         } else {
             $peminjaman->status = 'ditolak';

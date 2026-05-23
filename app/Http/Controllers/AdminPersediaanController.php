@@ -616,6 +616,21 @@ class AdminPersediaanController extends Controller
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
 
+            // --- 2. TNOTIFIKASI INFO KE PEGAWAI ---
+            $pegawai = $permintaan->user;
+            if ($pegawai && $pegawai->nomor_telepon) {
+                $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
+
+                $pesanWaPegawai = "*Status Permintaan Persediaan*\n\n";
+                $pesanWaPegawai .= "Halo {$pegawai->name},\n";
+                $pesanWaPegawai .= "Permintaan barang persediaan Anda telah diverifikasi oleh Admin dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
+                $pesanWaPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
+                $pesanWaPegawai .= "✅ *Disetujui Admin:* {$request->jumlah_disetujui} Unit\n\n"; //  menampilkan hasil QTY rekomendasi admin
+                $pesanWaPegawai .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
+
+                SendFonnteNotification::dispatch($noHpPegawai, $pesanWaPegawai);
+            }
+
         } else {
             // --- JIKA DITOLAK OLEH ADMIN PERSEDIAAN ---
             $permintaan->update([

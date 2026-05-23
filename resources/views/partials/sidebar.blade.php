@@ -268,7 +268,7 @@
                 ],
 
                 [
-                    'label' => 'Manajemen Peminjaman',
+                    'label' => 'Manajemen Permintaan Persediaan',
                     'icon' => 'fas fa-exchange-alt',
                     'route' => 'NONE',
                     'children' => [
