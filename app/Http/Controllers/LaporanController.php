@@ -13,7 +13,6 @@ use App\Models\PeminjamanBarang;
 use App\Models\PengembalianBarang;
 use App\Models\PeminjamanKendaraan;
 use App\Models\PengembalianKendaraan;
-use App\Models\Pengaduan;
 use App\Models\SurveyKepuasan;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -59,25 +58,25 @@ class LaporanController extends Controller
             'peminjaman_barang_aktif' => PeminjamanBarang::where('status', '!=', 'dikembalikan')->count(),
             'peminjaman_kendaraan_aktif' => PeminjamanKendaraan::where('status', '!=', 'dikembalikan')->count(),
             
-            // 📞 PENGADUAN - UPDATED sesuai migration
-            'pengaduan_baru' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
-                                        ->where('status', 'baru')
-                                        ->count(),
-            'pengaduan_diproses' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
-                                            ->where('status', 'diproses')
-                                            ->count(),
-            'pengaduan_selesai' => Pengaduan::where('status', 'selesai')->count(),
-            'total_pengaduan' => Pengaduan::count(),
+            // // 📞 PENGADUAN - UPDATED sesuai migration
+            // 'pengaduan_baru' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
+            //                             ->where('status', 'baru')
+            //                             ->count(),
+            // 'pengaduan_diproses' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
+            //                                 ->where('status', 'diproses')
+            //                                 ->count(),
+            // 'pengaduan_selesai' => Pengaduan::where('status', 'selesai')->count(),
+            // 'total_pengaduan' => Pengaduan::count(),
             
-            // 📊 SURVEY KEPUASAN - UPDATED sesuai migration
-            'total_survey' => SurveyKepuasan::count(),
-            'survey_bulan_ini' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
-            'survey_rata_rata' => $this->calculateSurveyAverage(),
-            'survey_puas' => SurveyKepuasan::whereIn('kepuasan', ['sangat_puas', 'puas'])->count(),
+            // // 📊 SURVEY KEPUASAN - UPDATED sesuai migration
+            // 'total_survey' => SurveyKepuasan::count(),
+            // 'survey_bulan_ini' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
+            // 'survey_rata_rata' => $this->calculateSurveyAverage(),
+            // 'survey_puas' => SurveyKepuasan::whereIn('kepuasan', ['sangat_puas', 'puas'])->count(),
             
             // 📊 TREND
             'growth_asset' => $this->calculateGrowth(AssetTetap::class, 'created_at'),
-            'growth_pengaduan' => $this->calculateGrowth(Pengaduan::class, 'created_at'),
+            // 'growth_pengaduan' => $this->calculateGrowth(Pengaduan::class, 'created_at'),
         ];
     }
 
@@ -103,19 +102,19 @@ class LaporanController extends Controller
                 ->orderBy('date')
                 ->get(),
                 
-            // 📞 Pengaduan Chart - Per Status
-            'pengaduan_chart' => Pengaduan::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get(),
+            // // 📞 Pengaduan Chart - Per Status
+            // 'pengaduan_chart' => Pengaduan::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            //     ->whereBetween('created_at', [$startDate, $endDate])
+            //     ->groupBy('date')
+            //     ->orderBy('date')
+            //     ->get(),
                 
-            // 📊 Survey Chart
-            'survey_chart' => SurveyKepuasan::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get(),
+            // // 📊 Survey Chart
+            // 'survey_chart' => SurveyKepuasan::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            //     ->whereBetween('created_at', [$startDate, $endDate])
+            //     ->groupBy('date')
+            //     ->orderBy('date')
+            //     ->get(),
                 
             // 🚗 Peminjaman Kendaraan
             'peminjaman_kendaraan_chart' => PeminjamanKendaraan::selectRaw('DATE(tanggal_peminjaman) as date, COUNT(*) as count')
@@ -197,30 +196,30 @@ class LaporanController extends Controller
         );
 
         // ✅ Survey Kepuasan - BARU
-        $activities = $activities->merge(
-            SurveyKepuasan::where('created_at', '>=', $startDate)
-                ->latest()
-                ->limit(2)
-                ->get(['id', 'created_at', 'nama', 'kepuasan'])
-                ->map(function($item) {
-                    $kepuasanColor = [
-                        'sangat_puas' => 'success',
-                        'puas' => 'info',
-                        'cukup' => 'warning',
-                        'kurang_puas' => 'danger',
-                        'tidak_puas' => 'dark'
-                    ];
+        // $activities = $activities->merge(
+        //     SurveyKepuasan::where('created_at', '>=', $startDate)
+        //         ->latest()
+        //         ->limit(2)
+        //         ->get(['id', 'created_at', 'nama', 'kepuasan'])
+        //         ->map(function($item) {
+        //             $kepuasanColor = [
+        //                 'sangat_puas' => 'success',
+        //                 'puas' => 'info',
+        //                 'cukup' => 'warning',
+        //                 'kurang_puas' => 'danger',
+        //                 'tidak_puas' => 'dark'
+        //             ];
                     
-                    return [
-                        'type' => 'survey',
-                        'title' => 'Survey Kepuasan',
-                        'date' => $item->created_at,
-                        'desc' => $item->nama . ' - ' . ucwords(str_replace('_', ' ', $item->kepuasan)),
-                        'icon' => 'fas fa-star',
-                        'color' => $kepuasanColor[$item->kepuasan] ?? 'secondary'
-                    ];
-                })
-        );
+        //             return [
+        //                 'type' => 'survey',
+        //                 'title' => 'Survey Kepuasan',
+        //                 'date' => $item->created_at,
+        //                 'desc' => $item->nama . ' - ' . ucwords(str_replace('_', ' ', $item->kepuasan)),
+        //                 'icon' => 'fas fa-star',
+        //                 'color' => $kepuasanColor[$item->kepuasan] ?? 'secondary'
+        //             ];
+                // })
+        // );
 
         return $activities
             ->sortByDesc('date')
@@ -247,60 +246,60 @@ class LaporanController extends Controller
                 ->limit(5)
                 ->get(),
             
-            // 📞 Pengaduan per Kategori
-            'pengaduan_kategori' => Pengaduan::selectRaw('kategori, COUNT(*) as count')
-                ->groupBy('kategori')
-                ->orderByDesc('count')
-                ->get(),
+            // // 📞 Pengaduan per Kategori
+            // 'pengaduan_kategori' => Pengaduan::selectRaw('kategori, COUNT(*) as count')
+            //     ->groupBy('kategori')
+            //     ->orderByDesc('count')
+            //     ->get(),
                 
-            'pengaduan_status' => Pengaduan::selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
-                ->pluck('count', 'status'),
+            // 'pengaduan_status' => Pengaduan::selectRaw('status, COUNT(*) as count')
+            //     ->groupBy('status')
+            //     ->pluck('count', 'status'),
             
-            // 📊 Survey Kepuasan Distribution
-            'survey_distribution' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
-                ->groupBy('kepuasan')
-                ->orderBy('kepuasan')
-                ->get(),
+            // // 📊 Survey Kepuasan Distribution
+            // 'survey_distribution' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
+            //     ->groupBy('kepuasan')
+            //     ->orderBy('kepuasan')
+            //     ->get(),
                 
-            'status_peminjaman' => [
-                'peminjaman_barang' => PeminjamanBarang::selectRaw('status, COUNT(*) as count')
-                    ->groupBy('status')
-                    ->pluck('count', 'status'),
-                'peminjaman_kendaraan' => PeminjamanKendaraan::selectRaw('status, COUNT(*) as count')
-                    ->groupBy('status')
-                    ->pluck('count', 'status'),
-            ],
+            // 'status_peminjaman' => [
+            //     'peminjaman_barang' => PeminjamanBarang::selectRaw('status, COUNT(*) as count')
+            //         ->groupBy('status')
+            //         ->pluck('count', 'status'),
+            //     'peminjaman_kendaraan' => PeminjamanKendaraan::selectRaw('status, COUNT(*) as count')
+            //         ->groupBy('status')
+            //         ->pluck('count', 'status'),
+            // ],
         ];
     }
 
-    /**
-     * 📊 Calculate Survey Average Score
-     */
-    private function calculateSurveyAverage()
-    {
-        $scores = [
-            'sangat_puas' => 5,
-            'puas' => 4,
-            'cukup' => 3,
-            'kurang_puas' => 2,
-            'tidak_puas' => 1
-        ];
+    // /**
+    //  * 📊 Calculate Survey Average Score
+    //  */
+    // private function calculateSurveyAverage()
+    // {
+    //     $scores = [
+    //         'sangat_puas' => 5,
+    //         'puas' => 4,
+    //         'cukup' => 3,
+    //         'kurang_puas' => 2,
+    //         'tidak_puas' => 1
+    //     ];
 
-        $totalSurvey = SurveyKepuasan::count();
-        if ($totalSurvey === 0) return 0;
+    //     $totalSurvey = SurveyKepuasan::count();
+    //     if ($totalSurvey === 0) return 0;
 
-        $totalScore = SurveyKepuasan::selectRaw('SUM(CASE 
-            WHEN kepuasan="sangat_puas" THEN 5 
-            WHEN kepuasan="puas" THEN 4 
-            WHEN kepuasan="cukup" THEN 3 
-            WHEN kepuasan="kurang_puas" THEN 2 
-            WHEN kepuasan="tidak_puas" THEN 1 
-            END) as total_score')
-            ->value('total_score') ?? 0;
+    //     $totalScore = SurveyKepuasan::selectRaw('SUM(CASE 
+    //         WHEN kepuasan="sangat_puas" THEN 5 
+    //         WHEN kepuasan="puas" THEN 4 
+    //         WHEN kepuasan="cukup" THEN 3 
+    //         WHEN kepuasan="kurang_puas" THEN 2 
+    //         WHEN kepuasan="tidak_puas" THEN 1 
+    //         END) as total_score')
+    //         ->value('total_score') ?? 0;
 
-        return round($totalScore / $totalSurvey, 1);
-    }
+    //     return round($totalScore / $totalSurvey, 1);
+    // }
 
     /**
      * 📈 Calculate Growth Percentage
@@ -332,16 +331,16 @@ class LaporanController extends Controller
     /**
      * 📊 Get Survey Analytics
      */
-    public function surveyAnalytics(Request $request)
-    {
-        return response()->json([
-            'distribution' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
-                ->groupBy('kepuasan')
-                ->pluck('count', 'kepuasan'),
-            'average' => $this->calculateSurveyAverage(),
-            'total' => SurveyKepuasan::count(),
-        ]);
-    }
+    // public function surveyAnalytics(Request $request)
+    // {
+    //     return response()->json([
+    //         'distribution' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
+    //             ->groupBy('kepuasan')
+    //             ->pluck('count', 'kepuasan'),
+    //         'average' => $this->calculateSurveyAverage(),
+    //         'total' => SurveyKepuasan::count(),
+    //     ]);
+    // }
 
     /**
      * 📄 Export Laporan
@@ -354,8 +353,8 @@ class LaporanController extends Controller
         $data = [
             'periode' => "{$startDate->format('d/m/Y')} - {$endDate->format('d/m/Y')}",
             'stats' => $this->getDashboardStats($request),
-            'pengaduan' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->get(),
-            'survey' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->get(),
+            // 'pengaduan' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->get(),
+            // 'survey' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->get(),
         ];
 
         // TODO: Implement Excel/PDF export
@@ -425,75 +424,75 @@ class LaporanController extends Controller
     /**
      * 📞 DOWNLOAD LAPORAN PENGADUAN (Excel & PDF)
      */
-    public function downloadPengaduan(Request $request)
-    {
-        $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
-        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+    // public function downloadPengaduan(Request $request)
+    // {
+    //     $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+    //     $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
 
-        $data = [
-            'title' => 'Laporan Pengaduan',
-            'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
-            'pengaduan' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
-                ->orderBy('created_at', 'desc')
-                ->get(),
-            'stats' => [
-                'total' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->count(),
-                'kategori' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
-                    ->selectRaw('kategori, COUNT(*) as count')
-                    ->groupBy('kategori')
-                    ->get(),
-                'status' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
-                    ->selectRaw('status, COUNT(*) as count')
-                    ->groupBy('status')
-                    ->pluck('count', 'status')
-            ],
-            'generated_at' => now()
-        ];
+    //     $data = [
+    //         'title' => 'Laporan Pengaduan',
+    //         'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
+    //         'pengaduan' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
+    //             ->orderBy('created_at', 'desc')
+    //             ->get(),
+    //         'stats' => [
+    //             'total' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->count(),
+    //             'kategori' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
+    //                 ->selectRaw('kategori, COUNT(*) as count')
+    //                 ->groupBy('kategori')
+    //                 ->get(),
+    //             'status' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])
+    //                 ->selectRaw('status, COUNT(*) as count')
+    //                 ->groupBy('status')
+    //                 ->pluck('count', 'status')
+    //         ],
+    //         'generated_at' => now()
+    //     ];
 
-        $format = $request->format ?? 'pdf';
+    //     $format = $request->format ?? 'pdf';
 
-        if ($format === 'excel') {
-            return Excel::download(new LaporanExport($data), 'laporan-pengaduan-' . now()->format('Y-m-d') . '.xlsx');
-        }
+    //     if ($format === 'excel') {
+    //         return Excel::download(new LaporanExport($data), 'laporan-pengaduan-' . now()->format('Y-m-d') . '.xlsx');
+    //     }
 
-        $pdf = Pdf::loadView('adminasettetap.laporan.exports.pengaduan', $data);
-        return $pdf->download('Laporan-Pengaduan-' . now()->format('Y-m-d') . '.pdf');
-    }
+    //     $pdf = Pdf::loadView('adminasettetap.laporan.exports.pengaduan', $data);
+    //     return $pdf->download('Laporan-Pengaduan-' . now()->format('Y-m-d') . '.pdf');
+    // }
 
     /**
      * 📊 DOWNLOAD LAPORAN SURVEY KEPUASAN (Excel & PDF)
      */
-    public function downloadSurvey(Request $request)
-    {
-        $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
-        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+    // public function downloadSurvey(Request $request)
+    // {
+    //     $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+    //     $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
 
-        $data = [
-            'title' => 'Laporan Survey Kepuasan',
-            'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
-            'survey' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])
-                ->orderBy('created_at', 'desc')
-                ->get(),
-            'stats' => [
-                'total' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
-                'average' => $this->calculateSurveyAverage(),
-                'distribution' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])
-                    ->selectRaw('kepuasan, COUNT(*) as count')
-                    ->groupBy('kepuasan')
-                    ->get()
-            ],
-            'generated_at' => now()
-        ];
+    //     $data = [
+    //         'title' => 'Laporan Survey Kepuasan',
+    //         'periode' => "{$startDate->format('d/m/Y')} s/d {$endDate->format('d/m/Y')}",
+    //         'survey' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])
+    //             ->orderBy('created_at', 'desc')
+    //             ->get(),
+    //         'stats' => [
+    //             'total' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
+    //             'average' => $this->calculateSurveyAverage(),
+    //             'distribution' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])
+    //                 ->selectRaw('kepuasan, COUNT(*) as count')
+    //                 ->groupBy('kepuasan')
+    //                 ->get()
+    //         ],
+    //         'generated_at' => now()
+    //     ];
 
-        $format = $request->format ?? 'pdf';
+    //     $format = $request->format ?? 'pdf';
 
-        if ($format === 'excel') {
-            return Excel::download(new LaporanExport($data), 'laporan-survey-kepuasan-' . now()->format('Y-m-d') . '.xlsx');
-        }
+    //     if ($format === 'excel') {
+    //         return Excel::download(new LaporanExport($data), 'laporan-survey-kepuasan-' . now()->format('Y-m-d') . '.xlsx');
+    //     }
 
-        $pdf = Pdf::loadView('adminasettetap.laporan.exports.survey', $data);
-        return $pdf->download('Laporan-Survey-Kepuasan-' . now()->format('Y-m-d') . '.pdf');
-    }
+    //     $pdf = Pdf::loadView('adminasettetap.laporan.exports.survey', $data);
+    //     return $pdf->download('Laporan-Survey-Kepuasan-' . now()->format('Y-m-d') . '.pdf');
+    // }
 
     /**
      * 📋 DOWNLOAD LAPORAN PEMINJAMAN (Excel & PDF)
@@ -704,7 +703,7 @@ class LaporanController extends Controller
 
 
     private function prepareTransaksiKeluarData($request) { /* ... */ return []; }
-    private function preparePengaduanData($request) { /* ... */ return []; }
-    private function prepareSurveyData($request) { /* ... */ return []; }
+    // private function preparePengaduanData($request) { /* ... */ return []; }
+    // private function prepareSurveyData($request) { /* ... */ return []; }
     private function preparePeminjamanData($request) { /* ... */ return []; }
 }

@@ -21,8 +21,6 @@ use App\Models\{
     MutasiBarang,
     Persediaan,
     PermintaanPersediaan,
-    Pengaduan,
-    SurveyKepuasan,
     PeminjamanBarang,
     PengembalianBarang,
     PeminjamanKendaraan,
@@ -1604,212 +1602,96 @@ class AdminAsettetapController extends Controller
         $asetBaik = AssetTetap::where('kondisi', 'Baik')->count();
         $persentaseKondisiBaik = $totalAset > 0 ? round(($asetBaik / $totalAset) * 100, 1) : 0;
 
-        // Data pengaduan untuk live tracking (dari langkah sebelumnya)
-        $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
+        // // Data pengaduan untuk live tracking (dari langkah sebelumnya)
+        // $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
 
         return view('welcome', compact(
-            'pengaduans',
+            // 'pengaduans',
             'totalItemBMN',
             'formattedNilaiAset',
             'totalTransaksiBulanIni',
             'persentaseKondisiBaik'
         ));
     }
-    public function index()
-    {
-        // Mengambil 6 pengaduan terbaru dari database
-        $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
-
-        // Passing variabel $pengaduans ke file blade landing page Anda
-        return view('welcome', compact('pengaduans'));
-    }
-    public function pengaduan(Request $request)
-    {
-        $query = Pengaduan::query()
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $q->search($request->search);
-            })
-            ->when($request->filled('status'), function ($q) use ($request) {
-                $q->status($request->status);
-            })
-            ->orderBy('created_at', 'desc');
-
-        $pengaduan = $query->paginate(15)->withQueryString();
-
-        return view('adminasettetap.pengaduan', compact('pengaduan'));
-    }
-
-    public function pengaduanShow(Pengaduan $pengaduan)
-    {
-        return view('adminasettetap.pengaduan_show', compact('pengaduan'));
-    }
-
-    public function pengaduanDestroy(Pengaduan $pengaduan)  // ✅ Changed name
-    {
-        $pengaduan->delete();
-        return redirect()->route('adminasettetap.pengaduan')
-            ->with('success', 'Pengaduan berhasil dihapus!');
-    }
-
-    public function pengaduanUpdate(Request $request, Pengaduan $pengaduan)  // ✅ Changed name
-    {
-        $validated = $request->validate([
-            'status' => 'required|in:baru,diproses,selesai,ditolak',
-            'catatan_admin' => 'nullable|string|max:2000',
-        ]);
-
-        $pengaduan->update($validated);
-
-        return redirect()->route('adminasettetap.pengaduan')
-            ->with('success', 'Status pengaduan #' . $pengaduan->id . ' berhasil diupdate!');
-    }
-
-    //=======PENGADUAN STORE FRONDEND-=====
-    public function pengaduanStore(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'telepon' => 'required|string|max:20',
-            'kategori' => 'required|in:peminjaman_barang,pengembalian_barang,peminjaman_kendaraan,pengembalian_kendaraan,peminjaman_gedung,pengembalian_gedung,persediaan,sistem,layanan,lainnya',
-            'deskripsi' => 'required|string|max:5000',
-            'setuju_kebijakan' => 'required|accepted',
-        ], [
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi',
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'telepon.required' => 'Nomor telepon wajib diisi',
-            'kategori.required' => 'Pilih kategori pengaduan',
-            'deskripsi.required' => 'Deskripsi pengaduan wajib diisi',
-            'setuju_kebijakan.accepted' => 'Anda harus menyetujui kebijakan privasi',
-        ]);
-
-        try {
-            Pengaduan::create($validated);
-
-            return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
-        } catch (\Exception $e) {
-            // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
-            return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
-        }
-    }
-
-    // ========== SURVEY KEPUASAN ==========
-    public function surveyKepuasan(Request $request)
-    {
-        $query = SurveyKepuasan::query()
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $q->search($request->search);
-            })
-            ->when($request->filled('kepuasan'), function ($q) use ($request) {
-                $q->kepuasan($request->kepuasan);
-            })
-            ->orderBy('created_at', 'desc');
-
-        $surveys = $query->paginate(15)->withQueryString();
-
-        return view('adminasettetap.survey_kepuasan', compact('surveys'));
-    }
-
-    public function surveyShow(SurveyKepuasan $survey)
-    {
-        return view('adminasettetap.survey_show', compact('survey'));
-    }
-
-    public function surveyDestroy(SurveyKepuasan $survey)
-    {
-        $survey->delete();
-
-        return redirect()->route('adminasettetap.survey-kepuasan')
-            ->with('success', 'Survey kepuasan berhasil dihapus!');
-    }
-
-    // ========== FRONTEND SURVEY STORE ==========
-    public function surveyStore(Request $request)
-    {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'kepuasan' => 'required|in:sangat_puas,puas,cukup,kurang_puas,tidak_puas',
-            'aspek_memuaskan' => 'nullable|string|max:2000',
-            'saran' => 'nullable|string|max:2000',
-        ], [
-            'nama.required' => 'Nama wajib diisi',
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'kepuasan.required' => 'Rating kepuasan wajib dipilih',
-        ]);
-
-        try {
-            SurveyKepuasan::create([
-                'nama' => $validated['nama'],
-                'email' => $validated['email'],
-                'kepuasan' => $validated['kepuasan'],
-                'aspek_memuaskan' => $validated['aspek_memuaskan'],
-                'saran' => $validated['saran'],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
-
-            return redirect()->back()->with('success', 'Terima kasih atas feedback Anda! Survey berhasil dikirim.');
-        } catch (\Exception $e) {
-            // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
-            return redirect()->back()->with('error', 'Gagal menyimpan survey. Silakan coba lagi.')->withInput();
-        }
-    }
-
-    public function getSurveyStats()
-    {
-        $totalSurvey = SurveyKepuasan::count();
-
-        // Rating mapping
-        $ratings = [
-            'sangat_puas' => 5,
-            'puas' => 4,
-            'cukup' => 3,
-            'kurang_puas' => 2,
-            'tidak_puas' => 1
-        ];
-
-        // Breakdown per tingkat
-        $surveyStats = [];
-        foreach ($ratings as $label => $score) {
-            $surveyStats[$label] = SurveyKepuasan::where('kepuasan', $label)->count();
-        }
-
-        // Rata-rata rating
-        $rataRataRating = SurveyKepuasan::avg(DB::raw("
-        CASE 
-            WHEN kepuasan = 'sangat_puas' THEN 5
-            WHEN kepuasan = 'puas' THEN 4
-            WHEN kepuasan = 'cukup' THEN 3
-            WHEN kepuasan = 'kurang_puas' THEN 2
-            WHEN kepuasan = 'tidak_puas' THEN 1
-            ELSE 0 
-        END
-    "));
-
-        // Quote terbaik (sangat puas)
-        $quoteTerbaik = SurveyKepuasan::where('kepuasan', 'sangat_puas')
-            ->whereNotNull('aspek_memuaskan')
-            ->orderBy('created_at', 'desc')
-            ->first(['aspek_memuaskan', 'nama']);
-
-        // Trend bulan ini (contoh)
-        $trendBulanIni = '+12%';
-
-        return compact(
-            'totalSurvey',
-            'surveyStats',
-            'rataRataRating',
-            'quoteTerbaik',
-            'trendBulanIni'
-        );
-    }
-
-    // public function exportExcel(Request $request)
+    // public function index()
     // {
-    // return Excel::download(new SurveyExport($request), 'survey.excel-export' . now()->format('d-m-Y') . '.xlsx');
+    //     // Mengambil 6 pengaduan terbaru dari database
+    //     $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
+
+    //     // Passing variabel $pengaduans ke file blade landing page Anda
+    //     return view('welcome', compact('pengaduans'));
     // }
+    // public function pengaduan(Request $request)
+    // {
+    //     $query = Pengaduan::query()
+    //         ->when($request->filled('search'), function ($q) use ($request) {
+    //             $q->search($request->search);
+    //         })
+    //         ->when($request->filled('status'), function ($q) use ($request) {
+    //             $q->status($request->status);
+    //         })
+    //         ->orderBy('created_at', 'desc');
+
+    //     $pengaduan = $query->paginate(15)->withQueryString();
+
+    //     return view('adminasettetap.pengaduan', compact('pengaduan'));
+    // }
+
+    // public function pengaduanShow(Pengaduan $pengaduan)
+    // {
+    //     return view('adminasettetap.pengaduan_show', compact('pengaduan'));
+    // }
+
+    // public function pengaduanDestroy(Pengaduan $pengaduan)  // ✅ Changed name
+    // {
+    //     $pengaduan->delete();
+    //     return redirect()->route('adminasettetap.pengaduan')
+    //         ->with('success', 'Pengaduan berhasil dihapus!');
+    // }
+
+    // public function pengaduanUpdate(Request $request, Pengaduan $pengaduan)  // ✅ Changed name
+    // {
+    //     $validated = $request->validate([
+    //         'status' => 'required|in:baru,diproses,selesai,ditolak',
+    //         'catatan_admin' => 'nullable|string|max:2000',
+    //     ]);
+
+    //     $pengaduan->update($validated);
+
+    //     return redirect()->route('adminasettetap.pengaduan')
+    //         ->with('success', 'Status pengaduan #' . $pengaduan->id . ' berhasil diupdate!');
+    // }
+
+    // //=======PENGADUAN STORE FRONDEND-=====
+    // public function pengaduanStore(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'nama_lengkap' => 'required|string|max:255',
+    //         'email' => 'required|email|max:255',
+    //         'telepon' => 'required|string|max:20',
+    //         'kategori' => 'required|in:peminjaman_barang,pengembalian_barang,peminjaman_kendaraan,pengembalian_kendaraan,peminjaman_gedung,pengembalian_gedung,persediaan,sistem,layanan,lainnya',
+    //         'deskripsi' => 'required|string|max:5000',
+    //         'setuju_kebijakan' => 'required|accepted',
+    //     ], [
+    //         'nama_lengkap.required' => 'Nama lengkap wajib diisi',
+    //         'email.required' => 'Email wajib diisi',
+    //         'email.email' => 'Format email tidak valid',
+    //         'telepon.required' => 'Nomor telepon wajib diisi',
+    //         'kategori.required' => 'Pilih kategori pengaduan',
+    //         'deskripsi.required' => 'Deskripsi pengaduan wajib diisi',
+    //         'setuju_kebijakan.accepted' => 'Anda harus menyetujui kebijakan privasi',
+    //     ]);
+
+    //     try {
+    //         Pengaduan::create($validated);
+
+    //         return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
+    //     } catch (\Exception $e) {
+    //         // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
+    //         return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
+    //     }
+    // }
+
+    
 
 }

@@ -1,4 +1,4 @@
-@extends('adminasettetap.laporan.exports.layout')
+{{-- @extends('adminasettetap.laporan.exports.layout')
 
 @section('content')
 <table class="data-table">
@@ -27,4 +27,4 @@
         @endforelse
     </tbody>
 </table>
-@endsection
+@endsection --}}
