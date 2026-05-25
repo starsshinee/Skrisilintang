@@ -781,7 +781,6 @@
             gap: 8px;
             border-top: 1px solid #eef1ff;
             flex-wrap: wrap;
-            /* Memastikan tombol tidak bertumpuk berantakan */
         }
 
         .card-btn {
@@ -1049,21 +1048,24 @@
                         @csrf
                         @if(session('success'))
                         <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(16,185,129,0.2);">
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
+                            <i class="fas fa-check-circle"></i> {{ session('success') }}
                         </div>
                         @endif
                         @if($errors->any())
                         <div style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(239,68,68,0.2);">
-                        <i class="fas fa-exclamation-triangle"></i> {{ $errors->first() }}
+                            <i class="fas fa-exclamation-triangle"></i> {{ $errors->first() }}
                         </div>
                         @endif
 
-                        <div style="font-size: 12px; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(239, 68, 68, 0.2); font-weight: 500;">
-                        <i class="fas fa-info-circle"></i> <b>Perhatian:</b> Pengajuan peminjaman barang wajib dilakukan maksimal H-2. Anda tidak bisa memilih tanggal hari ini.
+                        <div style="background: rgba(245, 158, 11, 0.08); color: #d97706; padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; font-size: 13px; border: 1px solid rgba(245, 158, 11, 0.2); display: flex; gap: 12px; align-items: flex-start;">
+                            <i class="fas fa-circle-exclamation" style="font-size: 16px; margin-top: 2px;"></i>
+                            <div>
+                                <strong style="display: block; margin-bottom: 4px; font-size: 14px; color: #b45309;">Aturan Peminjaman</strong>
+                                Pengajuan peminjaman gedung wajib dilakukan <b>maksimal H-2</b> (2 hari sebelum hari H). Tanggal di kalender akan otomatis terkunci.
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-body">
+
                     <div class="form-group">
                         <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap <span class="req">*</span>
                         </div>
@@ -1149,13 +1151,12 @@
                         <div class="form-group">
                             <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span
                                     class="req">*</span></div>
-                            <input type="date" name="tanggal_pinjam" id="tanggal_pinjam" min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}">
-                        </div>
+                            <input type="date" class="form-input" id="tglPinjam" min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}">
                         </div>
                         <div class="form-group">
                             <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span
                                     class="req">*</span></div>
-                            <input type="date" class="form-input" id="tglKembali">
+                            <input type="date" class="form-input" id="tglKembali" min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}">
                         </div>
                     </div>
 
@@ -1644,7 +1645,22 @@
                 submitForm();
             });
 
-            $('#tglPinjam, #tglKembali').on('change', calculateTotal);
+            // LOGIKA TANGGAL H-2 DITAMBAHKAN DI SINI
+            $('#tglPinjam').on('change', function() {
+                const minReturnDate = $(this).val();
+                
+                // Set batas minimal tanggal kembali mengikuti tanggal pinjam
+                $('#tglKembali').attr('min', minReturnDate);
+                
+                // Jika tanggal kembali yang sudah terisi lebih kecil dari tanggal pinjam, reset nilainya
+                if ($('#tglKembali').val() && $('#tglKembali').val() < minReturnDate) {
+                    $('#tglKembali').val(minReturnDate);
+                }
+                
+                calculateTotal();
+            });
+
+            $('#tglKembali').on('change', calculateTotal);
 
             $('#suratFile').on('change', handleFileUpload);
 
@@ -1733,20 +1749,14 @@
                             }
 
                             // ✅ Logika Tampil Dokumen
-
-                            // 1. Surat Permohonan (Tamu)
-                            if (d.surat_permohonan_url || d
-                                .surat_url) { // Handle variable if mapping is slightly different
-                                $('#btnSuratPermohonan').attr('href', d.surat_permohonan_url || d
-                                    .surat_url);
+                            if (d.surat_permohonan_url || d.surat_url) { 
+                                $('#btnSuratPermohonan').attr('href', d.surat_permohonan_url || d.surat_url);
                                 $('#wrapSuratPermohonan').show();
                             } else {
                                 $('#wrapSuratPermohonan').hide();
                             }
 
-                            // 2. Surat Perjanjian Final (Admin Sarpras)
-                            if (d.surat_perjanjian_url && (d.status === 'disetujui' || d.status ===
-                                    'disetujui_kasubag')) {
+                            if (d.surat_perjanjian_url && (d.status === 'disetujui' || d.status === 'disetujui_kasubag')) {
                                 $('#btnSuratPerjanjian').attr('href', d.surat_perjanjian_url);
                                 $('#wrapSuratPerjanjian').show();
                             } else {
@@ -1850,13 +1860,8 @@
                         .ketersediaan);
 
                     if (gedung.foto_url) {
-                        // Cek apakah foto_url sudah berupa link lengkap atau hanya path relatif
                         let urlFoto = gedung.foto_url.startsWith('http') ? gedung.foto_url : '/storage/' + gedung
                             .foto_url;
-
-                        // Khusus jika di path databasenya sudah mengandung kata 'public/' (contoh: public/gedung/foto.jpg)
-                        // urlFoto = urlFoto.replace('/storage/public/', '/storage/');
-
                         $('#fpFoto').attr('src', urlFoto).show();
                     } else {
                         $('#fpFoto').hide();

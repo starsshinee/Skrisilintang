@@ -113,7 +113,7 @@ class TamuController extends Controller
             'instansi_lembaga' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:100',
             'gedung_id' => 'required|exists:gedung,id',
-            'tanggal_pinjam' => 'required|date|after_or_equal:' . $minimalTanggal,
+            'tanggal_pinjam' => 'required|date|after_or_equal:' . now()->addDays(2)->format('Y-m-d'), // Minimal H-2
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
