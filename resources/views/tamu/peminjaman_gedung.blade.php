@@ -1046,6 +1046,25 @@
                 </div>
                 <div class="form-body">
                     <div class="form-group">
+                        @csrf
+                        @if(session('success'))
+                        <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(16,185,129,0.2);">
+                        <i class="fas fa-check-circle"></i> {{ session('success') }}
+                        </div>
+                        @endif
+                        @if($errors->any())
+                        <div style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; border: 1px solid rgba(239,68,68,0.2);">
+                        <i class="fas fa-exclamation-triangle"></i> {{ $errors->first() }}
+                        </div>
+                        @endif
+
+                        <div style="font-size: 12px; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(239, 68, 68, 0.2); font-weight: 500;">
+                        <i class="fas fa-info-circle"></i> <b>Perhatian:</b> Pengajuan peminjaman barang wajib dilakukan maksimal H-2. Anda tidak bisa memilih tanggal hari ini.
+                        </div>
+                    </div>
+                </div>
+                <div class="form-body">
+                    <div class="form-group">
                         <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap <span class="req">*</span>
                         </div>
                         <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda"
@@ -1130,7 +1149,8 @@
                         <div class="form-group">
                             <div class="form-label"><i class="fas fa-calendar"></i> Tgl Pinjam <span
                                     class="req">*</span></div>
-                            <input type="date" class="form-input" id="tglPinjam">
+                            <input type="date" name="tanggal_pinjam" id="tanggal_pinjam" min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}">
+                        </div>
                         </div>
                         <div class="form-group">
                             <div class="form-label"><i class="fas fa-calendar-check"></i> Tgl Kembali <span

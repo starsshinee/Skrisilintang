@@ -55,6 +55,10 @@
     .stat-icon.amber { background: rgba(245,158,11,0.1); color: var(--warning); }
     .stat-icon.purple { background: rgba(139,92,246,0.1); color: var(--accent2); }
     .stat-icon.green { background: rgba(16,185,129,0.1); color: var(--success); }
+    .stat-icon.teal { color: #14b8a6; background-color: rgba(20, 184, 166, 0.1); }
+    .stat-icon.rose { color: #f43f5e; background-color: rgba(244, 63, 94, 0.1); }
+    .stat-num.teal { color: #14b8a6; }
+    .stat-num.rose { color: #f43f5e; }
     .stat-num { font-size: 24px; font-weight: 700; line-height: 1; margin-top: 4px;}
     .stat-num.blue  { color: var(--primary); }
     .stat-num.amber { color: var(--warning); }
@@ -70,6 +74,11 @@
     .qa-amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
     .qa-purple { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
     .qa-green { background: linear-gradient(135deg, #10b981, #34d399); }
+    /* --- WARNA UNTUK QUICK ACTIONS (TOMBOL AKSES CEPAT) --- */
+    .qa-btn.qa-teal {background-color: #14b8a6; color: #ffffff !important;border: none;}
+    .qa-btn.qa-teal:hover {background-color: #0d9488;color: #ffffff !important;}
+    .qa-btn.qa-rose { background-color: #f43f5e; /* Warna Merah Muda/Rose */ color: #ffffff !important; border: none;}
+    .qa-btn.qa-rose:hover {background-color: #e11d48;color: #ffffff !important;}
 
     /* ===== BOTTOM ROW ===== */
     .bottom-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
@@ -162,35 +171,46 @@
 
     <!-- STAT CARDS -->
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon blue"><i class="fas fa-box"></i></div>
-        <div>
-          <div class="stat-label">Peminjaman Barang</div>
-          <div class="stat-num blue">{{ $statBarang ?? 0 }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon amber"><i class="fas fa-car"></i></div>
-        <div>
-          <div class="stat-label">Peminjaman Kendaraan</div>
-          <div class="stat-num amber">{{ $statKendaraan ?? 0 }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon purple"><i class="fas fa-building"></i></div>
-        <div>
-          <div class="stat-label">Peminjaman Gedung/Ruang</div>
-          <div class="stat-num purple">{{ $statGedung ?? 0 }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon green"><i class="fas fa-cubes"></i></div>
-        <div>
-          <div class="stat-label">Permintaan Persediaan</div>
-          <div class="stat-num green">{{ $statPersediaan ?? 0 }}</div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-box"></i></div>
+      <div>
+        <div class="stat-label">Peminjaman Barang</div>
+        <div class="stat-num blue">{{ $statBarang ?? 0 }}</div>
       </div>
     </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="fas fa-car"></i></div>
+      <div>
+        <div class="stat-label">Peminjaman Kendaraan</div>
+        <div class="stat-num amber">{{ $statKendaraan ?? 0 }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-cubes"></i></div>
+      <div>
+        <div class="stat-label">Permintaan Persediaan</div>
+        <div class="stat-num green">{{ $statPersediaan ?? 0 }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon teal"><i class="fas fa-undo"></i></div>
+      <div>
+        <div class="stat-label">Pengembalian Barang</div>
+        <div class="stat-num teal">{{ $statKembaliBarang ?? 0 }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon rose"><i class="fas fa-sync-alt"></i></div>
+      <div>
+        <div class="stat-label">Pengembalian Kendaraan</div>
+        <div class="stat-num rose">{{ $statKembaliKendaraan ?? 0 }}</div>
+      </div>
+    </div>
+  </div>
 
     <!-- QUICK ACTIONS -->
     <div style="margin-bottom: 28px;">
@@ -204,11 +224,14 @@
         <a href="{{ route('pegawai.peminjaman-kendaraan') }}" class="qa-btn qa-amber">
           <i class="fas fa-car"></i> Peminjaman Kendaraan
         </a>
-        <a href="#" class="qa-btn qa-purple">
-          <i class="fas fa-building"></i> Peminjaman Ruangan
-        </a>
-        <a href="#" class="qa-btn qa-green">
+        <a href="{{ route('pegawai.permintaan-persediaan') }}" class="qa-btn qa-green">
           <i class="fas fa-cubes"></i> Permintaan Persediaan
+        </a>
+        <a href="{{ route('pegawai.pengembalian-barang') }}" class="qa-btn qa-teal">
+          <i class="fas fa-undo"></i> Pengembalian Barang
+        </a>
+        <a href="{{ route('pegawai.pengembalian-kendaraan') }}" class="qa-btn qa-rose">
+          <i class="fas fa-sync-alt"></i> Pengembalian Kendaraan
         </a>
       </div>
     </div>

@@ -113,7 +113,7 @@ class TamuController extends Controller
             'instansi_lembaga' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:100',
             'gedung_id' => 'required|exists:gedung,id',
-            'tanggal_pinjam' => 'required|date|after_or_equal:today',
+            'tanggal_pinjam' => 'required|date|after_or_equal:' . $minimalTanggal,
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
@@ -122,6 +122,9 @@ class TamuController extends Controller
             'tujuan_penggunaan' => 'required|string|max:1000',
             'nomor_kontak' => 'required|string|max:20',
             'surat_path' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120'
+        ], [
+            // Tambahkan pesan custom agar tamu paham kenapa error
+            'tanggal_pinjam.after_or_equal' => 'Peminjaman gedung harus dilakukan minimal H-2 (2 hari sebelum hari H).'
         ]);
 
         // ====================================================================
