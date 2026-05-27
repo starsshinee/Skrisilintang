@@ -160,27 +160,27 @@
                     <div class="stat-label">Total Gedung</div>
                 </div>
             </div>
-            <div class="stat-card">
+            {{-- < class="stat-card">
                 <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);"><i class="fas fa-exclamation-triangle"></i></div>
-                <div class="stat-details">
+                {{-- <div class="stat-details">
                     <div class="stat-value">{{ $totalPengaduan }}</div>
                     <div class="stat-label">Total Pengaduan</div>
-                </div>
-            </div>
-            <div class="stat-card">
+                </div> --}}
+            
+            {{-- < class="stat-card">
                 <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-star"></i></div>
-                <div class="stat-details">
+                {{-- <div class="stat-details">
                     <div class="stat-value">{{ $totalSurvey }}</div>
                     <div class="stat-label">Total Survey</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);"><i class="fas fa-chart-line"></i></div>
+                </div> --}}
+            
+            {{-- <div class="stat-card"> --}}
+                {{-- <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);"><i class="fas fa-chart-line"></i></div>
                 <div class="stat-details">
                     <div class="stat-value">{{ $surveyRataRata }}/5</div>
                     <div class="stat-label">Rata-rata Kepuasan</div>
-                </div>
-            </div>
+                </div> --}}
+            {{-- </div> --}}
         </div>
 
         <div class="dashboard-grid columns-2">

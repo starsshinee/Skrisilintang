@@ -57,11 +57,11 @@ class KepalaBPMPController extends Controller
             + PeminjamanKendaraan::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->count()
             + PeminjamanGedung::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->count();
 
-        // Pengaduan & Survey
-        $totalPengaduan = Pengaduan::count();
-        $pengaduanBaru = Pengaduan::where('status', 'baru')->count();
-        $totalSurvey = SurveyKepuasan::count();
-        $surveyRataRata = $this->calculateSurveyAverage();
+        // // Pengaduan & Survey
+        // $totalPengaduan = Pengaduan::count();
+        // $pengaduanBaru = Pengaduan::where('status', 'baru')->count();
+        // $totalSurvey = SurveyKepuasan::count();
+        // $surveyRataRata = $this->calculateSurveyAverage();
 
         // 📈 CHART DATA - Tren Permintaan 6 bulan terakhir
         $chartLabels = [];
@@ -103,19 +103,19 @@ class KepalaBPMPController extends Controller
                 'color' => '#2563eb',
             ])
         );
-        $activities = $activities->merge(
-            Pengaduan::latest()->limit(2)->get()->map(fn($i) => [
-                'text' => 'Pengaduan baru dari ' . $i->nama_lengkap,
-                'time' => $i->created_at,
-                'icon' => 'fas fa-exclamation-triangle',
-                'color' => '#f59e0b',
-            ])
-        );
+        // $activities = $activities->merge(
+        //     Pengaduan::latest()->limit(2)->get()->map(fn($i) => [
+        //         'text' => 'Pengaduan baru dari ' . $i->nama_lengkap,
+        //         'time' => $i->created_at,
+        //         'icon' => 'fas fa-exclamation-triangle',
+        //         'color' => '#f59e0b',
+        //     ])
+        // );
         $recentActivities = $activities->sortByDesc('time')->take(5)->values();
 
         return view('kepalabpmp.dashbord', compact(
             'totalAset', 'totalPengguna', 'totalGedung', 'permintaanBulanIni', 'menungguApproval',
-            'totalPengaduan', 'pengaduanBaru', 'totalSurvey', 'surveyRataRata',
+            // 'totalPengaduan', 'pengaduanBaru', 'totalSurvey', 'surveyRataRata',
             'chartLabels', 'chartPermintaan', 'chartPeminjaman', 'distribusiAset',
             'recentActivities'
         ));
@@ -183,24 +183,24 @@ class KepalaBPMPController extends Controller
             'recent_kerusakan' => Kerusakan::latest()->limit(5)->get(),
         ];
 
-        // ══════════════════════════════════════════════════
-        // 📞 DATA PENGADUAN & SURVEY
-        // ══════════════════════════════════════════════════
-        $pengaduan = [
-            'total' => Pengaduan::count(),
-            'baru' => Pengaduan::where('status', 'baru')->count(),
-            'diproses' => Pengaduan::where('status', 'diproses')->count(),
-            'selesai' => Pengaduan::where('status', 'selesai')->count(),
-            'periode' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->count(),
-        ];
+        // // ══════════════════════════════════════════════════
+        // // 📞 DATA PENGADUAN & SURVEY
+        // // ══════════════════════════════════════════════════
+        // $pengaduan = [
+        //     'total' => Pengaduan::count(),
+        //     'baru' => Pengaduan::where('status', 'baru')->count(),
+        //     'diproses' => Pengaduan::where('status', 'diproses')->count(),
+        //     'selesai' => Pengaduan::where('status', 'selesai')->count(),
+        //     'periode' => Pengaduan::whereBetween('created_at', [$startDate, $endDate])->count(),
+        // ];
 
-        $survey = [
-            'total' => SurveyKepuasan::count(),
-            'periode' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
-            'rata_rata' => $this->calculateSurveyAverage(),
-            'distribusi' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
-                ->groupBy('kepuasan')->pluck('count', 'kepuasan'),
-        ];
+        // $survey = [
+        //     'total' => SurveyKepuasan::count(),
+        //     'periode' => SurveyKepuasan::whereBetween('created_at', [$startDate, $endDate])->count(),
+        //     'rata_rata' => $this->calculateSurveyAverage(),
+        //     'distribusi' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
+        //         ->groupBy('kepuasan')->pluck('count', 'kepuasan'),
+        // ];
 
         // ══════════════════════════════════════════════════
         // 📈 DATA CHART - Tren Bulanan (12 bulan terakhir)
@@ -238,7 +238,7 @@ class KepalaBPMPController extends Controller
         ];
 
         return view('kepalabpmp.laporan', compact(
-            'persediaan', 'asetTetap', 'sarpras', 'pengaduan', 'survey', 'charts',
+            'persediaan', 'asetTetap', 'sarpras', 'charts',
             'startDate', 'endDate'
         ));
     }
@@ -387,17 +387,17 @@ class KepalaBPMPController extends Controller
                 'peminjaman_gedung' => PeminjamanGedung::whereBetween('created_at', [$startDate, $endDate])->count(),
             ],
 
-            // Pengaduan & Survey
-            'pengaduan_stats' => [
-                'total' => Pengaduan::count(),
-                'baru' => Pengaduan::where('status', 'baru')->count(),
-                'diproses' => Pengaduan::where('status', 'diproses')->count(),
-                'selesai' => Pengaduan::where('status', 'selesai')->count(),
-            ],
-            'survey_stats' => [
-                'total' => SurveyKepuasan::count(),
-                'rata_rata' => $this->calculateSurveyAverage(),
-            ],
+            // // Pengaduan & Survey
+            // 'pengaduan_stats' => [
+            //     'total' => Pengaduan::count(),
+            //     'baru' => Pengaduan::where('status', 'baru')->count(),
+            //     'diproses' => Pengaduan::where('status', 'diproses')->count(),
+            //     'selesai' => Pengaduan::where('status', 'selesai')->count(),
+            // ],
+            // 'survey_stats' => [
+            //     'total' => SurveyKepuasan::count(),
+            //     'rata_rata' => $this->calculateSurveyAverage(),
+            // ],
 
             // Data Detail
             'persediaan_list' => Persediaan::orderBy('kategori')->limit(50)->get(),
@@ -412,22 +412,22 @@ class KepalaBPMPController extends Controller
     /**
      * Helper: Hitung rata-rata survey kepuasan
      */
-    private function calculateSurveyAverage()
-    {
-        $totalSurvey = SurveyKepuasan::count();
-        if ($totalSurvey === 0) return 0;
+    // private function calculateSurveyAverage()
+    // {
+    //     $totalSurvey = SurveyKepuasan::count();
+    //     if ($totalSurvey === 0) return 0;
 
-        $totalScore = SurveyKepuasan::selectRaw('SUM(CASE 
-            WHEN kepuasan="sangat_puas" THEN 5 
-            WHEN kepuasan="puas" THEN 4 
-            WHEN kepuasan="cukup" THEN 3 
-            WHEN kepuasan="kurang_puas" THEN 2 
-            WHEN kepuasan="tidak_puas" THEN 1 
-            END) as total_score')
-            ->value('total_score') ?? 0;
+    //     $totalScore = SurveyKepuasan::selectRaw('SUM(CASE 
+    //         WHEN kepuasan="sangat_puas" THEN 5 
+    //         WHEN kepuasan="puas" THEN 4 
+    //         WHEN kepuasan="cukup" THEN 3 
+    //         WHEN kepuasan="kurang_puas" THEN 2 
+    //         WHEN kepuasan="tidak_puas" THEN 1 
+    //         END) as total_score')
+    //         ->value('total_score') ?? 0;
 
-        return round($totalScore / $totalSurvey, 1);
-    }
+    //     return round($totalScore / $totalSurvey, 1);
+    // }
 
     public function kelolaPengguna()
     {
