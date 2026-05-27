@@ -34,15 +34,21 @@ use App\Models\User;
 
 class KepalaBPMPController extends Controller
 {
-    public function dashboard()
+   public function dashboard()
     {
         $bulanIni = now()->month;
         $tahunIni = now()->year;
 
-        // 📊 STATISTIK UTAMA
-        $totalAset = AssetTetap::count() + Persediaan::count();
+        // 📊 STATISTIK UTAMA (Pisah Aset & Persediaan, Tambah Mutasi & Peminjaman)
+        $totalAsetTetap = AssetTetap::count();
+        $totalPersediaan = Persediaan::count();
         $totalPengguna = User::count();
         $totalGedung = Gedung::count();
+        
+        // Tambahan Baru
+        $totalMutasi = MutasiBarang::count();
+        $totalPeminjaman = PeminjamanBarang::count() + PeminjamanKendaraan::count() + PeminjamanGedung::count();
+        $totalKerusakan = Kerusakan::count();
 
         // Permintaan & Peminjaman menunggu approval
         $permintaanPending = PermintaanPersediaan::whereIn('status', ['pending', 'dalam_review'])->count();
@@ -56,12 +62,6 @@ class KepalaBPMPController extends Controller
             + PeminjamanBarang::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->count()
             + PeminjamanKendaraan::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->count()
             + PeminjamanGedung::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->count();
-
-        // // Pengaduan & Survey
-        // $totalPengaduan = Pengaduan::count();
-        // $pengaduanBaru = Pengaduan::where('status', 'baru')->count();
-        // $totalSurvey = SurveyKepuasan::count();
-        // $surveyRataRata = $this->calculateSurveyAverage();
 
         // 📈 CHART DATA - Tren Permintaan 6 bulan terakhir
         $chartLabels = [];
@@ -86,7 +86,6 @@ class KepalaBPMPController extends Controller
 
         // ⏰ AKTIVITAS TERBARU
         $activities = collect();
-
         $activities = $activities->merge(
             PeminjamanGedung::latest()->limit(2)->get()->map(fn($i) => [
                 'text' => 'Peminjaman gedung oleh ' . $i->nama_lengkap,
@@ -103,19 +102,12 @@ class KepalaBPMPController extends Controller
                 'color' => '#2563eb',
             ])
         );
-        // $activities = $activities->merge(
-        //     Pengaduan::latest()->limit(2)->get()->map(fn($i) => [
-        //         'text' => 'Pengaduan baru dari ' . $i->nama_lengkap,
-        //         'time' => $i->created_at,
-        //         'icon' => 'fas fa-exclamation-triangle',
-        //         'color' => '#f59e0b',
-        //     ])
-        // );
         $recentActivities = $activities->sortByDesc('time')->take(5)->values();
 
+        // Mengirimkan semua variabel ke view dashbord
         return view('kepalabpmp.dashbord', compact(
-            'totalAset', 'totalPengguna', 'totalGedung', 'permintaanBulanIni', 'menungguApproval',
-            // 'totalPengaduan', 'pengaduanBaru', 'totalSurvey', 'surveyRataRata',
+            'totalAsetTetap', 'totalPersediaan', 'totalPengguna', 'totalGedung',
+            'totalMutasi', 'totalPeminjaman', 'permintaanBulanIni', 'menungguApproval', 'totalKerusakan',
             'chartLabels', 'chartPermintaan', 'chartPeminjaman', 'distribusiAset',
             'recentActivities'
         ));
@@ -145,6 +137,7 @@ class KepalaBPMPController extends Controller
             'permintaan_ditolak' => PermintaanPersediaan::whereIn('status', ['ditolak', 'ditolak_kasubag'])->count(),
             'recent_masuk' => TransaksiMasukPersediaan::latest('tanggal_input')->limit(5)->get(),
             'recent_keluar' => TransaksiKeluarPersediaan::latest('tanggal_input')->limit(5)->get(),
+            'recent_permintaan' => PermintaanPersediaan::with(['user', 'persediaan'])->latest()->limit(5)->get(),
         ];
 
         // ══════════════════════════════════════════════════
@@ -163,6 +156,8 @@ class KepalaBPMPController extends Controller
             'kondisi_aset' => AssetTetap::selectRaw('kondisi, COUNT(*) as count')->groupBy('kondisi')->pluck('count', 'kondisi'),
             'recent_masuk' => TransaksiMasukAssetTetap::latest('tanggal_perolehan')->limit(5)->get(),
             'recent_keluar' => TransaksiKeluarAssetTetap::latest('tanggal_input')->limit(5)->get(),
+            'recent_mutasi' => MutasiBarang::with('barang')->latest('tanggal_mutasi')->limit(5)->get(), // BARU DITAMBAHKAN
+            'recent_peminjaman' => PeminjamanBarang::with(['user'])->latest()->limit(5)->get(), // BARU DITAMBAHKAN
         ];
 
         // ══════════════════════════════════════════════════
@@ -181,6 +176,7 @@ class KepalaBPMPController extends Controller
             'kerusakan_kondisi' => Kerusakan::selectRaw('kondisi, COUNT(*) as count')->groupBy('kondisi')->pluck('count', 'kondisi'),
             'recent_peminjaman' => PeminjamanGedung::with('gedung')->latest()->limit(5)->get(),
             'recent_kerusakan' => Kerusakan::latest()->limit(5)->get(),
+            'gedung_list' => Gedung::all(),
         ];
 
         // // ══════════════════════════════════════════════════
@@ -299,6 +295,8 @@ class KepalaBPMPController extends Controller
                 ->orderBy('tanggal_mutasi', 'desc')->get(),
             'peminjaman_barang' => PeminjamanBarang::whereBetween('created_at', [$startDate, $endDate])->get(),
             'peminjaman_kendaraan' => PeminjamanKendaraan::whereBetween('tanggal_peminjaman', [$startDate, $endDate])->get(),
+            'pengembalian_barang' => PengembalianBarang::whereBetween('created_at', [$startDate, $endDate])->get(),
+            'pengembalian_kendaraan' => PengembalianKendaraan::whereBetween('created_at', [$startDate, $endDate])->get(),
             'stats' => [
                 'total_aset' => AssetTetap::count(),
                 'total_nilai' => AssetTetap::sum('nilai_perolehan'),

@@ -17,6 +17,7 @@
         td{padding:5px 8px;border-bottom:1px solid #e2e8f0;font-size:10px}
         tr:nth-child(even) td{background:#f8fafc}
         .footer{margin-top:20px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;text-align:center}
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
@@ -80,7 +81,28 @@
                     <td>Rp {{ number_format($item->nilai_perolehan ?? 0,0,',','.') }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5" style="text-align:center">Tidak ada data</td></tr>
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Transaksi Keluar Aset Tetap</div>
+        <table>
+            <thead><tr><th>No</th><th>Tanggal Input</th><th>Nama Barang</th><th>Kategori</th><th>Keterangan</th></tr></thead>
+            <tbody>
+            @forelse($transaksi_keluar as $i => $item)
+                <tr>
+                    <td>{{ $i+1 }}</td>
+                    <td>{{ $item->tanggal_input ? \Carbon\Carbon::parse($item->tanggal_input)->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->nama_barang }}</td>
+                    <td>{{ $item->kondisi ?? '-' }}</td>
+                    <td>{{ $item->kategori ?? '-' }}</td>
+                    <td>{{ $item->keterangan ?? '-' }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="5" class="text-center">Tidak ada data</td></tr>
             @endforelse
             </tbody>
         </table>
@@ -101,7 +123,91 @@
                     <td>{{ $item->keterangan ?? '-' }}</td>
                 </tr>
             @empty
-                <tr><td colspan="6" style="text-align:center">Tidak ada data</td></tr>
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Peminjaman Barang</div>
+        <table>
+            <thead><tr><th>No</th><th>Tanggal Pinjam</th><th>Peminjam</th><th>Nama Barang</th><th>Jumlah</th><th>Status</th></tr></thead>
+            <tbody>
+            @forelse($peminjaman_barang as $i => $item)
+                <tr>
+                    <td>{{ $i+1 }}</td>
+                    <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->user->name ?? $item->nama_lengkap ?? '-' }}</td>
+                    <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->jumlah_pinjam ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Pengembalian Barang</div>
+        <table>
+            <thead><tr><th>No</th><th>Tanggal Kembali</th><th>Peminjam</th><th>Nama Barang</th><th>Kondisi</th><th>Status</th></tr></thead>
+            <tbody>
+            @forelse($pengembalian_barang ?? [] as $i => $item)
+                <tr>
+                    <td>{{ $i+1 }}</td>
+                    <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->peminjaman->user->name ?? '-' }}</td>
+                    <td>{{ $item->peminjaman->barang->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->kondisi ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Peminjaman Kendaraan</div>
+        <table>
+            <thead><tr><th>No</th><th>Tanggal Pinjam</th><th>Peminjam</th><th>Kendaraan</th><th>Tujuan</th><th>Status</th></tr></thead>
+            <tbody>
+            @forelse($peminjaman_kendaraan as $i => $item)
+                <tr>
+                    <td>{{ $i+1 }}</td>
+                    <td>{{ $item->tanggal_peminjaman ? \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->user->name ?? $item->nama_lengkap ?? '-' }}</td>
+                    <td>{{ $item->kendaraan->nama_barang ?? $item->nama_kendaraan ?? '-' }}</td>
+                    <td>{{ $item->tujuan ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Pengembalian Kendaraan</div>
+        <table>
+            <thead><tr><th>No</th><th>Tanggal Kembali</th><th>Peminjam</th><th>Kendaraan</th><th>Kondisi</th><th>Status</th></tr></thead>
+            <tbody>
+            @forelse($pengembalian_kendaraan ?? [] as $i => $item)
+                <tr>
+                    <td>{{ $i+1 }}</td>
+                    <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->peminjaman->user->name ?? '-' }}</td>
+                    <td>{{ $item->peminjaman->kendaraan->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->kondisi ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
             @endforelse
             </tbody>
         </table>
