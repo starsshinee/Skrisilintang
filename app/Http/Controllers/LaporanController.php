@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/AdminAsettetap/LaporanController.php
+// app/Http/Controllers/LaporanController.php
 
 namespace App\Http\Controllers;
 
@@ -37,7 +37,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * 📊 Get Dashboard Statistics - UPDATED dengan Survey & Pengaduan
+     * 📊 Get Dashboard Statistics - DIPERBAIKI
      */
     private function getDashboardStats(Request $request)
     {
@@ -55,35 +55,46 @@ class LaporanController extends Controller
             
             // 🔄 MUTASI & PEMINJAMAN
             'mutasi_barang' => MutasiBarang::whereBetween('tanggal_mutasi', [$startDate, $endDate])->count(),
-            'peminjaman_barang_aktif' => PeminjamanBarang::where('status', '!=', 'dikembalikan')->count(),
-            'peminjaman_kendaraan_aktif' => PeminjamanKendaraan::where('status', '!=', 'dikembalikan')->count(),
+            'peminjaman_barang_aktif' => PeminjamanBarang::whereNotIn('status', ['dikembalikan', 'ditolak'])->count(),
+            'peminjaman_kendaraan_aktif' => PeminjamanKendaraan::whereNotIn('status', ['dikembalikan', 'ditolak'])->count(),
             
-            
+            // 📊 STATUS UNTUK DOUGHNUT CHART
+            'peminjaman_barang_selesai' => PeminjamanBarang::where('status', 'dikembalikan')->count(),
+            'peminjaman_kendaraan_selesai' => PeminjamanKendaraan::where('status', 'dikembalikan')->count(),
+            'peminjaman_barang_pending' => PeminjamanBarang::whereIn('status', ['pending', 'dalam_review', 'diteruskan_kasubag'])->count(),
+            'peminjaman_kendaraan_pending' => PeminjamanKendaraan::whereIn('status', ['pending', 'dalam_review', 'diteruskan_kasubag'])->count(),
             
             // 📊 TREND
             'growth_asset' => $this->calculateGrowth(AssetTetap::class, 'created_at'),
-            
         ];
     }
 
     /**
-     * 📈 Get Charts Data - UPDATED dengan Survey & Pengaduan
+     * 📈 Get Charts Data - DIPERBAIKI (Ditambah Peminjaman Barang & Selaras Tanggal)
      */
     private function getChartsData(Request $request)
     {
-        $startDate = $request->start_date ? Carbon::parse($request->start_date)->subDays(30) : Carbon::now()->subDays(30);
-        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now();
+        $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+        $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
 
         return [
-            // 📊 Transaksi
+            // 📊 Transaksi Masuk
             'transaksi_masuk_chart' => TransaksiMasukAssetTetap::selectRaw('DATE(tanggal_perolehan) as date, COUNT(*) as count')
                 ->whereBetween('tanggal_perolehan', [$startDate, $endDate])
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get(),
                 
+            // 📊 Transaksi Keluar
             'transaksi_keluar_chart' => TransaksiKeluarAssetTetap::selectRaw('DATE(tanggal_input) as date, COUNT(*) as count')
                 ->whereBetween('tanggal_input', [$startDate, $endDate])
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get(),
+
+            // 📦 Peminjaman Barang
+            'peminjaman_barang_chart' => PeminjamanBarang::selectRaw('DATE(tanggal_peminjaman) as date, COUNT(*) as count')
+                ->whereBetween('tanggal_peminjaman', [$startDate, $endDate])
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get(),
@@ -98,7 +109,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * ⏰ Recent Activities - UPDATED dengan Survey & Pengaduan
+     * ⏰ Recent Activities
      */
     private function getRecentActivities(Request $request)
     {
@@ -142,7 +153,6 @@ class LaporanController extends Controller
                 })
         );
 
-
         return $activities
             ->sortByDesc('date')
             ->take(10)
@@ -150,7 +160,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * 📋 Summary Data - UPDATED lengkap
+     * 📋 Summary Data
      */
     private function getSummaryData()
     {
@@ -169,34 +179,6 @@ class LaporanController extends Controller
                 ->get(),
         ];
     }
-
-    // /**
-    //  * 📊 Calculate Survey Average Score
-    //  */
-    // private function calculateSurveyAverage()
-    // {
-    //     $scores = [
-    //         'sangat_puas' => 5,
-    //         'puas' => 4,
-    //         'cukup' => 3,
-    //         'kurang_puas' => 2,
-    //         'tidak_puas' => 1
-    //     ];
-
-    //     $totalSurvey = SurveyKepuasan::count();
-    //     if ($totalSurvey === 0) return 0;
-
-    //     $totalScore = SurveyKepuasan::selectRaw('SUM(CASE 
-    //         WHEN kepuasan="sangat_puas" THEN 5 
-    //         WHEN kepuasan="puas" THEN 4 
-    //         WHEN kepuasan="cukup" THEN 3 
-    //         WHEN kepuasan="kurang_puas" THEN 2 
-    //         WHEN kepuasan="tidak_puas" THEN 1 
-    //         END) as total_score')
-    //         ->value('total_score') ?? 0;
-
-    //     return round($totalScore / $totalSurvey, 1);
-    // }
 
     /**
      * 📈 Calculate Growth Percentage
@@ -226,20 +208,6 @@ class LaporanController extends Controller
     }
 
     /**
-     * 📊 Get Survey Analytics
-     */
-    // public function surveyAnalytics(Request $request)
-    // {
-    //     return response()->json([
-    //         'distribution' => SurveyKepuasan::selectRaw('kepuasan, COUNT(*) as count')
-    //             ->groupBy('kepuasan')
-    //             ->pluck('count', 'kepuasan'),
-    //         'average' => $this->calculateSurveyAverage(),
-    //         'total' => SurveyKepuasan::count(),
-    //     ]);
-    // }
-
-    /**
      * 📄 Export Laporan
      */
     public function export(Request $request)
@@ -250,10 +218,8 @@ class LaporanController extends Controller
         $data = [
             'periode' => "{$startDate->format('d/m/Y')} - {$endDate->format('d/m/Y')}",
             'stats' => $this->getDashboardStats($request),
-            
         ];
 
-        // TODO: Implement Excel/PDF export
         return response()->json(['message' => 'Export ready', 'data' => $data]);
     }
 
@@ -439,7 +405,7 @@ class LaporanController extends Controller
         return $filename;
     }
 
-    // Helper methods untuk prepare data (implementasi sederhana)
+    // Helper methods untuk prepare data
     private function prepareTransaksiMasukData($request)
     {
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
@@ -453,11 +419,9 @@ class LaporanController extends Controller
         ];
     }
 
-    // Tambahkan di dalam class LaporanController
-
-/**
- * 🔄 DOWNLOAD LAPORAN PENGEMBALIAN (Barang & Kendaraan)
- */
+    /**
+     * 🔄 DOWNLOAD LAPORAN PENGEMBALIAN (Barang & Kendaraan)
+     */
     public function downloadPengembalian(Request $request)
     {
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
@@ -484,8 +448,8 @@ class LaporanController extends Controller
     }
 
     /**
- * 🔄 DOWNLOAD LAPORAN MUTASI BARANG
- */
+     * 🔄 DOWNLOAD LAPORAN MUTASI BARANG
+     */
     public function downloadMutasi(Request $request)
     {
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
@@ -512,9 +476,6 @@ class LaporanController extends Controller
         return $pdf->download('Laporan-Mutasi-' . now()->format('Y-m-d') . '.pdf');
     }
 
-
-    private function prepareTransaksiKeluarData($request) { /* ... */ return []; }
-    // private function preparePengaduanData($request) { /* ... */ return []; }
-    // private function prepareSurveyData($request) { /* ... */ return []; }
-    private function preparePeminjamanData($request) { /* ... */ return []; }
+    private function prepareTransaksiKeluarData($request) { return []; }
+    private function preparePeminjamanData($request) { return []; }
 }

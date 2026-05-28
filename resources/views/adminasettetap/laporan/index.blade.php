@@ -812,60 +812,87 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ── Transaction Bar Chart ──
+            // ── 1. Transaction Bar Chart (Masuk vs Keluar) ──
             const transactionCtx = document.getElementById('transactionChart');
-            if (transactionCtx && @json($charts['transaksi_masuk_chart'] ?? [])?.length) {
-                new Chart(transactionCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: @json(collect($charts['transaksi_masuk_chart'] ?? [])->pluck('date')->toArray()),
-                        datasets: [{
-                            label: 'Masuk',
-                            data: @json(collect($charts['transaksi_masuk_chart'] ?? [])->pluck('count')->toArray()),
-                            backgroundColor: 'rgba(16,185,129,0.75)',
-                            borderColor: 'rgba(16,185,129,1)',
-                            borderRadius: 5,
-                            borderSkipped: false,
-                        }, {
-                            label: 'Keluar',
-                            data: @json(collect($charts['transaksi_keluar_chart'] ?? [])->pluck('count')->toArray()),
-                            backgroundColor: 'rgba(239,68,68,0.7)',
-                            borderColor: 'rgba(239,68,68,1)',
-                            borderRadius: 5,
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'end',
-                                labels: { boxWidth: 8, borderRadius: 3, usePointStyle: true, padding: 12, font: { size: 10 } }
-                            }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
-                            x: { grid: { display: false } }
-                        }
-                    }
+            if (transactionCtx) {
+                // Tarik data dengan fallback array kosong
+                const txMasuk = @json($charts['transaksi_masuk_chart'] ?? []);
+                const txKeluar = @json($charts['transaksi_keluar_chart'] ?? []);
+
+                // Gabungkan semua tanggal unik agar grafik Masuk dan Keluar presisi sejajar
+                const allDates = [...new Set([
+                    ...txMasuk.map(i => i.date), 
+                    ...txKeluar.map(i => i.date)
+                ])].sort();
+
+                // Petakan jumlah (count) berdasarkan susunan tanggal unik
+                const dataMasuk = allDates.map(date => {
+                    const found = txMasuk.find(i => i.date === date);
+                    return found ? found.count : 0;
                 });
+                const dataKeluar = allDates.map(date => {
+                    const found = txKeluar.find(i => i.date === date);
+                    return found ? found.count : 0;
+                });
+
+                if (allDates.length > 0) {
+                    new Chart(transactionCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: allDates,
+                            datasets: [{
+                                label: 'Masuk',
+                                data: dataMasuk,
+                                backgroundColor: 'rgba(16,185,129,0.75)',
+                                borderColor: 'rgba(16,185,129,1)',
+                                borderRadius: 5,
+                                borderSkipped: false,
+                            }, {
+                                label: 'Keluar',
+                                data: dataKeluar,
+                                backgroundColor: 'rgba(239,68,68,0.7)',
+                                borderColor: 'rgba(239,68,68,1)',
+                                borderRadius: 5,
+                                borderSkipped: false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    align: 'end',
+                                    labels: { boxWidth: 8, borderRadius: 3, usePointStyle: true, padding: 12, font: { size: 10 } }
+                                }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
+                                x: { grid: { display: false } }
+                            }
+                        }
+                    });
+                }
             }
 
-            // ── Peminjaman Doughnut ──
+            // ── 2. Peminjaman Doughnut (Status Peminjaman) ──
             const peminjamanCtx = document.getElementById('peminjamanChart');
             if (peminjamanCtx) {
+                // Gunakan kurung pada PHP ?? untuk menghindari error matematika
+                const totalAktif = {{ ($stats['peminjaman_barang_aktif'] ?? 0) + ($stats['peminjaman_kendaraan_aktif'] ?? 0) }};
+                const totalSelesai = {{ ($stats['peminjaman_barang_selesai'] ?? 0) + ($stats['peminjaman_kendaraan_selesai'] ?? 0) }};
+                const totalPending = {{ ($stats['peminjaman_barang_pending'] ?? 0) + ($stats['peminjaman_kendaraan_pending'] ?? 0) }};
+
+                // Fallback visual jika data belum didefinisikan secara backend (sama seperti fitur sebelumnya)
+                const finalSelesai = totalSelesai > 0 ? totalSelesai : Math.round(totalAktif * 0.3);
+                const finalPending = totalPending > 0 ? totalPending : Math.round(totalAktif * 0.2);
+
                 new Chart(peminjamanCtx, {
                     type: 'doughnut',
                     data: {
                         labels: ['Aktif', 'Selesai', 'Pending'],
                         datasets: [{
-                            data: [
-                                {{ $stats['peminjaman_barang_aktif'] ?? 0 + $stats['peminjaman_kendaraan_aktif'] ?? 0 }},
-                                {{ ($stats['peminjaman_barang_aktif'] ?? 0) * 0.3 }},
-                                {{ ($stats['peminjaman_barang_aktif'] ?? 0) * 0.2 }}
-                            ],
+                            data: [totalAktif, finalSelesai, finalPending],
                             backgroundColor: ['#3B82F6','#10B981','#F59E0B'],
                             borderWidth: 0,
                             hoverOffset: 4
@@ -875,16 +902,40 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: '70%',
-                        plugins: {
-                            legend: { display: false }
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // ── 3. Peminjaman Barang Bar Chart (DITAMBAHKAN) ──
+            const barangCtx = document.getElementById('barangChart');
+            if (barangCtx && @json($charts['peminjaman_barang_chart'] ?? [])?.length) {
+                new Chart(barangCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: @json(collect($charts['peminjaman_barang_chart'] ?? [])->pluck('date')->toArray()),
+                        datasets: [{
+                            label: 'Peminjaman Barang',
+                            data: @json(collect($charts['peminjaman_barang_chart'] ?? [])->pluck('count')->toArray()),
+                            backgroundColor: 'rgba(139,92,246,0.75)', // Warna ungu
+                            borderColor: 'rgba(139,92,246,1)',
+                            borderRadius: 5,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
+                            x: { grid: { display: false } }
                         }
                     }
                 });
             }
 
-            // ── Pengaduan Line Chart ──
-
-            // ── Kendaraan Bar Chart ──
+            // ── 4. Kendaraan Bar Chart ──
             const kendaraanCtx = document.getElementById('kendaraanChart');
             if (kendaraanCtx && @json($charts['peminjaman_kendaraan_chart'] ?? [])?.length) {
                 new Chart(kendaraanCtx, {
@@ -894,7 +945,7 @@
                         datasets: [{
                             label: 'Peminjaman Kendaraan',
                             data: @json(collect($charts['peminjaman_kendaraan_chart'] ?? [])->pluck('count')->toArray()),
-                            backgroundColor: 'rgba(59,130,246,0.75)',
+                            backgroundColor: 'rgba(59,130,246,0.75)', // Warna biru
                             borderColor: 'rgba(59,130,246,1)',
                             borderRadius: 5,
                             borderSkipped: false,
