@@ -449,7 +449,7 @@
                         <div>
                             <p class="section-title" style="color:rgba(148,163,184,.8); margin-bottom:6px">Unduh Laporan</p>
                             <h2 class="text-2xl font-bold text-white leading-tight">Download Laporan</h2>
-                            <p class="text-blue-200 text-sm mt-1">Format PDF &amp; Excel · Filter tanggal otomatis diterapkan</p>
+                            <p class="text-blue-200 text-sm mt-1">Format PDF · Filter tanggal otomatis diterapkan</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="px-3 py-1.5 rounded-full text-xs font-semibold" style="background:rgba(255,255,255,0.12);color:#BAE6FD">
@@ -467,7 +467,7 @@
                             </div>
                             <h4 class="font-bold text-sm text-gray-800 mb-0.5">Transaksi Masuk</h4>
                             <p class="text-xs text-gray-400 mb-3">{{ number_format($stats['transaksi_masuk'] ?? 0) }} data</p>
-                            <span class="dl-badge" style="background:#DCFCE7;color:#15803D">PDF/Excel</span>
+                            <span class="dl-badge" style="background:#DCFCE7;color:#15803D">PDF</span>
                         </a>
 
                         <!-- Transaksi Keluar -->
@@ -477,7 +477,7 @@
                             </div>
                             <h4 class="font-bold text-sm text-gray-800 mb-0.5">Transaksi Keluar</h4>
                             <p class="text-xs text-gray-400 mb-3">{{ number_format($stats['transaksi_keluar'] ?? 0) }} data</p>
-                            <span class="dl-badge" style="background:#FEE2E2;color:#B91C1C">PDF/Excel</span>
+                            <span class="dl-badge" style="background:#FEE2E2;color:#B91C1C">PDF</span>
                         </a>
 
                         <!-- Mutasi Barang (BARU) -->
@@ -489,12 +489,12 @@
                             <p class="text-xs text-gray-400 mb-3">{{ number_format($stats['mutasi_barang'] ?? 0) }} data</p>
                             <div class="flex justify-center gap-1">
                                 <a href="{{ route('adminasettetap.mutasi.download', array_merge(request()->query(), ['format' => 'pdf'])) }}" class="px-2 py-1 bg-red-50 text-[9px] font-bold text-red-600 rounded hover:bg-red-500 hover:text-white transition-colors">PDF</a>
-                                <a href="{{ route('adminasettetap.mutasi.download', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-2 py-1 bg-green-50 text-[9px] font-bold text-green-600 rounded hover:bg-green-500 hover:text-white transition-colors">EXCEL</a>
+                                
                             </div>
                         </div>
 
                         <!-- Pengaduan -->
-                        <a href="{{ route('adminasettetap.pengaduan.download', request()->query()) }}" class="dl-card orange" target="_blank">
+                        {{-- <a href="{{ route('adminasettetap.pengaduan.download', request()->query()) }}" class="dl-card orange" target="_blank">
                             <div class="dl-icon" style="background:#FEF3C7">
                                 <i class="fas fa-exclamation-triangle" style="color:#D97706"></i>
                             </div>
@@ -511,7 +511,7 @@
                             <h4 class="font-bold text-sm text-gray-800 mb-0.5">Survey Kepuasan</h4>
                             <p class="text-xs text-gray-400 mb-3">{{ number_format($stats['total_survey'] ?? 0) }} responden</p>
                             <span class="dl-badge" style="background:#D1FAE5;color:#065F46">PDF/Excel</span>
-                        </a>
+                        </a> --}}
 
                         <!-- Peminjaman -->
                         <a href="{{ route('adminasettetap.peminjaman.download', request()->query()) }}" class="dl-card purple" target="_blank">
@@ -520,7 +520,7 @@
                             </div>
                             <h4 class="font-bold text-sm text-gray-800 mb-0.5">Peminjaman</h4>
                             <p class="text-xs text-gray-400 mb-3">{{ number_format(($stats['peminjaman_barang_aktif'] ?? 0) + ($stats['peminjaman_kendaraan_aktif'] ?? 0)) }} aktif</p>
-                            <span class="dl-badge" style="background:#EDE9FE;color:#5B21B6">PDF/Excel</span>
+                            <span class="dl-badge" style="background:#EDE9FE;color:#5B21B6">PDF</span>
                         </a>
 
                         <!-- Pengembalian (BARU) -->
@@ -532,7 +532,7 @@
                             <p class="text-xs text-gray-400 mb-3">Barang & Kendaraan</p>
                             <div class="flex justify-center gap-1">
                                 <a href="{{ route('adminasettetap.pengembalian.download', array_merge(request()->query(), ['format' => 'pdf'])) }}" class="px-2 py-1 bg-red-50 text-[9px] font-bold text-red-600 rounded hover:bg-red-500 hover:text-white transition-colors">PDF</a>
-                                <a href="{{ route('adminasettetap.pengembalian.download', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-2 py-1 bg-green-50 text-[9px] font-bold text-green-600 rounded hover:bg-green-500 hover:text-white transition-colors">EXCEL</a>
+                                {{-- <a href="{{ route('adminasettetap.pengembalian.download', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-2 py-1 bg-green-50 text-[9px] font-bold text-green-600 rounded hover:bg-green-500 hover:text-white transition-colors">EXCEL</a> --}}
                             </div>
                         </div>
 
@@ -611,27 +611,6 @@
                         <p class="text-xs mt-1.5 text-purple-400 font-semibold">Barang + Kendaraan</p>
                     </div>
 
-                    <div class="kpi-card orange xl:col-span-1">
-                        <div class="flex items-start justify-between mb-3">
-                            <p class="kpi-label">Pengaduan Baru</p>
-                            <div class="kpi-icon" style="background:#FFF7ED">
-                                <i class="fas fa-exclamation-triangle" style="color:#F97316"></i>
-                            </div>
-                        </div>
-                        <p class="kpi-value" style="color:#EA580C">{{ number_format($stats['pengaduan_baru'] ?? 0) }}</p>
-                        <p class="text-xs mt-1.5 text-orange-400 font-semibold pulse">Perlu ditangani</p>
-                    </div>
-
-                    <div class="kpi-card emerald xl:col-span-1">
-                        <div class="flex items-start justify-between mb-3">
-                            <p class="kpi-label">Survey Rata-rata</p>
-                            <div class="kpi-icon" style="background:#ECFDF5">
-                                <i class="fas fa-star" style="color:#059669"></i>
-                            </div>
-                        </div>
-                        <p class="kpi-value" style="color:#047857">{{ number_format($stats['survey_rata_rata'] ?? 0, 1) }}<span style="font-size:14px;font-weight:500;color:#6EE7B7">/5</span></p>
-                        <p class="text-xs mt-1.5 text-emerald-400 font-semibold">{{ number_format($stats['total_survey'] ?? 0) }} responden</p>
-                    </div>
 
                 </div>
             </div>
@@ -721,25 +700,25 @@
                         </div>
                     </div>
 
-                    <!-- 3. Trend Pengaduan -->
+                     <!-- 4. Peminjaman barang -->
                     <div class="chart-card">
                         <div class="chart-header">
                             <div class="chart-header-left">
-                                <div class="chart-icon-sm" style="background:#FFFBEB">
-                                    <i class="fas fa-chart-line" style="color:#D97706;font-size:11px"></i>
+                                <div class="chart-icon-sm" style="background:#EFF6FF">
+                                    <i class="fas fa-car" style="color:#2563EB;font-size:11px"></i>
                                 </div>
                                 <div>
-                                    <div class="chart-title-text">Trend Pengaduan</div>
-                                    <div class="chart-subtitle-text">Pergerakan dalam periode</div>
+                                    <div class="chart-title-text">Peminjaman Barang</div>
+                                    <div class="chart-subtitle-text">Volume per periode</div>
                                 </div>
                             </div>
-                            <span class="chart-stat-pill" style="background:#FFFBEB;color:#92400E">
-                                <i class="fas fa-exclamation-circle" style="font-size:9px"></i>
-                                {{ number_format($stats['total_pengaduan'] ?? 0) }} total
+                            <span class="chart-stat-pill" style="background:#EFF6FF;color:#1E40AF">
+                                <i class="fas fa-car" style="font-size:9px"></i>
+                                {{ number_format($stats['peminjaman_barang_aktif'] ?? 0) }} aktif
                             </span>
                         </div>
                         <div class="chart-body">
-                            <canvas id="pengaduanChart"></canvas>
+                            <canvas id="barangChart"></canvas>
                         </div>
                     </div>
 
@@ -904,36 +883,6 @@
             }
 
             // ── Pengaduan Line Chart ──
-            const pengaduanCtx = document.getElementById('pengaduanChart');
-            if (pengaduanCtx && @json($charts['pengaduan_chart'] ?? [])?.length) {
-                new Chart(pengaduanCtx, {
-                    type: 'line',
-                    data: {
-                        labels: @json(collect($charts['pengaduan_chart'] ?? [])->pluck('date')->toArray()),
-                        datasets: [{
-                            label: 'Pengaduan',
-                            data: @json(collect($charts['pengaduan_chart'] ?? [])->pluck('count')->toArray()),
-                            borderColor: '#F59E0B',
-                            backgroundColor: 'rgba(245,158,11,0.07)',
-                            tension: 0.45,
-                            fill: true,
-                            pointBackgroundColor: '#F59E0B',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, grid: { color: '#F1F5F9' }, border: { dash: [3,3] }, ticks: { maxTicksLimit: 4 } },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
 
             // ── Kendaraan Bar Chart ──
             const kendaraanCtx = document.getElementById('kendaraanChart');
