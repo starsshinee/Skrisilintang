@@ -102,7 +102,7 @@
   <div class="topbar">
     <div>
       <div class="page-title">Manajemen Unit Kerja</div>
-      <div class="page-sub">Super Admin — BPMP Provinsi Gorontalo</div>
+      <div class="page-sub">Operator — BPMP Provinsi Gorontalo</div>
     </div>
     <div class="topbar-right">
       <div class="avatar-top">{{ substr(Auth::user()->name ?? 'SA', 0, 2) }}</div>

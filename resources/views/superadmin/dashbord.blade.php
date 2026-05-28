@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SIPANDU - Dashboard Super Admin</title>
+  <title>SIPANDU - Dashboard Operator</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -62,7 +62,7 @@
 <div class="main">
   <div class="topbar">
     <div>
-      <div class="page-title">Halo, Super Admin! 👋</div>
+      <div class="page-title">Halo, Operator! 👋</div>
       <div class="page-sub">Selamat datang di Pusat Kontrol SIPANDU BPMP Provinsi Gorontalo</div>
     </div>
     <div>

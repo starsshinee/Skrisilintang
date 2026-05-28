@@ -38,24 +38,24 @@ class UserSeeder extends Seeder
 
             // ── Kepala BPMP ──────────────────────────────────────────────
             [
-                'name'     => 'Dr. Ahmad Fauzi, M.Pd.',
+                'name'     => 'Rudi Syaifullah, S.Si., M.M.',
                 'username' => 'kepalabpmp',
                 'email'    => 'kepalabpmp@bpmpgorontalo.id',
                 'password' => Hash::make('kepala123'),
                 'role'     => 'kepalabpmp',
-                'nip'      => '197003151995031002',
+                'nip'      => '197606272003121002',
                 'jabatan'  => 'Kepala BPMP Provinsi Gorontalo',
                 'is_active' => true,
             ],
 
             // ── Kasubag TU ───────────────────────────────────────────────
             [
-                'name'     => 'Hj. Siti Rahmawati, S.E.',
+                'name'     => 'Ardin, S.E., M.E',
                 'username' => 'kasubag',
                 'email'    => 'kasubag@bpmpgorontalo.id',
                 'password' => Hash::make('kasubag123'),
                 'role'     => 'kasubag',
-                'nip'      => '198205102005022001',
+                'nip'      => '197810242002121001',
                 'jabatan'  => 'Kepala Sub Bagian Tata Usaha',
                 'is_active' => true,
             ],

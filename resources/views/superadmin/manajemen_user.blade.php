@@ -129,7 +129,7 @@
   <div class="topbar">
     <div>
       <div class="page-title">Manajemen User & Hak Akses</div>
-      <div class="page-sub">Super Admin — BPMP Provinsi Gorontalo</div>
+      <div class="page-sub">Operator — BPMP Provinsi Gorontalo</div>
     </div>
     <div class="topbar-right">
       <div class="avatar-top">{{ substr(Auth::user()->name ?? 'SA', 0, 2) }}</div>
@@ -186,7 +186,7 @@
             <td>
               <span class="role-badge role-{{ $user->role }}">
                 {{ match($user->role) {
-                  'superadmin' => 'Super Admin', 'kepalabpmp' => 'Kepala BPMP', 'kasubag' => 'Kasubag Umum',
+                  'superadmin' => 'Operator', 'kepalabpmp' => 'Kepala BPMP', 'kasubag' => 'Kasubag Umum',
                   'adminpersediaan' => 'Admin Persediaan', 'adminsarpras' => 'Admin Sarpras',
                   'adminasettetap' => 'Admin Aset Tetap', 'pegawai' => 'Pegawai', 'tamu' => 'Tamu',
                   default => $user->role
@@ -279,7 +279,7 @@
           <label>Role Akses <span style="color:red">*</span></label>
           <select name="role" id="fieldRole" required>
             <option value="">-- Pilih Role --</option>
-            <option value="superadmin">Super Admin</option>
+            <option value="superadmin">Operator</option>
             <option value="kepalabpmp">Kepala BPMP</option>
             <option value="kasubag">Kasubag TU</option>
             <option value="adminpersediaan">Admin Persediaan</option>
