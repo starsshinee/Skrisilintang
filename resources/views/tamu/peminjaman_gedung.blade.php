@@ -1181,13 +1181,6 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="form-label"><i class="fas fa-screwdriver-wrench"></i> Alat Penunjang Yang di
-                            butuhkan <span class="req">*</span></div>
-                        <input type="text" class="form-input" id="alatPenunjangInput"
-                            placeholder="Contoh: Proyektor, Sound System, dll">
-                    </div>
-
-                    <div class="form-group">
                         <div class="form-label"><i class="fas fa-sack-dollar"></i> Total Pembayaran <span
                                 class="req">*</span></div>
                         <input type="text" class="form-input" placeholder="Rp 0" id="totalPembayaran" readonly>
@@ -1197,12 +1190,6 @@
                         <div class="form-label"><i class="fas fa-bullseye"></i> Tujuan Penggunaan <span
                                 class="req">*</span></div>
                         <textarea class="form-textarea" placeholder="Jelaskan tujuan peminjaman secara singkat dan jelas..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="form-label"><i class="fas fa-phone"></i> Nomor Kontak <span
-                                class="req">*</span></div>
-                        <input type="tel" class="form-input" placeholder="Contoh: 081234567890">
                     </div>
 
                     <div class="form-group">
@@ -1451,14 +1438,6 @@
                                         Peserta</div>
                                     <div id="detailPeserta"
                                         style="font-size:13px;font-weight:700;color:var(--primary);margin-top:2px;">
-                                    </div>
-                                </div>
-                                <div>
-                                    <div
-                                        style="font-size:10px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">
-                                        Alat Penunjang</div>
-                                    <div id="detailAlat"
-                                        style="font-size:12px;font-weight:500;color:var(--text-primary);margin-top:2px;">
                                     </div>
                                 </div>
                             </div>
@@ -1726,7 +1705,7 @@
                             $('#detailLokasi').text(d.lokasi);
 
                             $('#detailPeserta').text((d.jumlah_peserta || 0) + ' Orang');
-                            $('#detailAlat').text(d.alat_penunjang || '-');
+                            
 
                             $('#detailTglPinjam').text(d.tanggal_pinjam);
                             $('#detailTglKembali').text(d.tanggal_kembali);
@@ -1738,7 +1717,6 @@
                             $('#detailCaraBayar').text(d.cara_pembayaran);
 
                             $('#detailTujuan').text(d.tujuan_penggunaan);
-                            $('#detailKontak').text(d.nomor_kontak);
                             $('#detailCreatedAt').text(d.created_at);
 
                             if (d.komentar) {
@@ -1900,7 +1878,7 @@
             function submitForm() {
                 const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput',
                     '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput',
-                    '#jumlahPesertaInput', '#alatPenunjangInput', 'textarea', 'input[type="tel"]'
+                    '#jumlahPesertaInput', 'textarea', 'input[type="tel"]'
                 ];
                 let valid = true;
 
@@ -1934,9 +1912,8 @@
                 formData.append('jam_mulai', $('#jamMulaiInput').val());
                 formData.append('jam_selesai', $('#jamSelesaiInput').val());
                 formData.append('jumlah_peserta', $('#jumlahPesertaInput').val());
-                formData.append('alat_penunjang', $('#alatPenunjangInput').val().trim());
                 formData.append('tujuan_penggunaan', $('textarea').val().trim());
-                formData.append('nomor_kontak', $('input[type="tel"]').val().trim());
+               
 
                 if ($('#suratFile')[0].files[0]) {
                     formData.append('surat_path', $('#suratFile')[0].files[0]);

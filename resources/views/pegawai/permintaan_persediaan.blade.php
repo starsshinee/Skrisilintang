@@ -7,10 +7,21 @@
 <title>SIPANDU - Permintaan Persediaan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <style>
   :root { --primary: #2563eb; --primary-light: #3b82f6; --accent: #06b6d4; --accent2: #8b5cf6; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --bg: #f0f4ff; --sidebar-bg: #0f172a; --sidebar-text: #94a3b8; --card-bg: #ffffff; --text-primary: #0f172a; --text-secondary: #64748b; --border: #e2e8f0; --radius: 16px; --radius-sm: 10px; --shadow: 0 4px 24px rgba(37,99,235,0.08); --shadow-lg: 0 8px 40px rgba(37,99,235,0.14); }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+  /* Kustomisasi Select2 Tema SIPANDU */
+  .select2-container .select2-selection--single { height: 42px !important; border: 1.5px solid var(--border) !important; border-radius: 10px !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 13px !important; display: flex; align-items: center; transition: all .2s; }
+  .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--text-primary) !important; padding-left: 14px !important; line-height: normal !important; }
+  .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; right: 10px !important; }
+  .select2-dropdown { border: 1.5px solid var(--primary) !important; border-radius: 10px !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 13px !important; box-shadow: var(--shadow-lg) !important; }
+  .select2-container--default.select2-container--focus .select2-selection--single { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important; }
+  .select2-container--default .select2-search--dropdown .select2-search__field { border-radius: 6px !important; border: 1px solid var(--border) !important; padding: 8px 12px !important; }
 
   /* RESPONSIVE */
   @media (max-width: 1024px) { .main { margin-left: 0 !important; padding: 16px; } .content-grid { grid-template-columns: 1fr !important; gap: 20px; } }
@@ -42,7 +53,7 @@
   .form-label i { color: var(--primary); font-size: 11px; }
   .form-label .req { color: var(--danger); }
   .form-input, .form-select, .form-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); background: #fff; transition: all .2s; outline: none; }
-  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .form-input:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
   .form-input::placeholder, .form-textarea::placeholder { color: #b0bcd4; }
   .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
   .form-textarea { resize: vertical; min-height: 90px; }
@@ -60,7 +71,7 @@
   .submit-btn:active { transform: translateY(0); }
   .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-  /* RIWAYAT CARD & STATUS BADGES (DIPERBARUI) */
+  /* RIWAYAT CARD & STATUS BADGES */
   .history-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
   .history-header { padding: 22px 28px 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
   .history-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
@@ -77,7 +88,6 @@
   .req-card-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
   .req-card-code { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
   
-  /* CSS STATUS BADGE TERBARU */
   .status-badge { font-size: 11.5px; font-weight: 700; padding: 5px 12px; border-radius: 8px; letter-spacing: .3px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .status-badge.pending, .status-badge.review { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
   .status-badge.approved { background: rgba(16,185,129,0.12); color: var(--success); border: 1px solid rgba(16,185,129,0.25); }
@@ -147,18 +157,19 @@
       <form method="POST" action="{{ route('pegawai.permintaan-persediaan.store') }}" id="permintaanForm">
         @csrf
         <div class="form-body">
+          
           <div class="form-group">
             <div class="form-label"><i class="fas fa-box"></i> Pilih Barang <span class="req">*</span></div>
+            
             <select class="form-select @error('kode_barang') border-red-500 @enderror" 
                     name="kode_barang" id="persediaanSelect" required>
-              <option value="">📦 Pilih barang dari persediaan...</option>
+              <option value="">📦 Ketik untuk mencari barang persediaan...</option>
               @foreach($persediaan as $item)
                 <option value="{{ $item->kode_barang }}" 
                         data-nama="{{ $item->nama_barang }}" 
                         data-kategori="{{ $item->kategori ?? 'Umum' }}"
                         data-stok="{{ $item->jumlah }}">
-                  {{ $item->kode_barang }} - {{ $item->nama_barang }} 
-                  <span style="opacity:0.7;font-size:12px">(Stok: {{ number_format($item->jumlah) }})</span>
+                  {{ $item->kode_barang }} - {{ $item->nama_barang }} (Stok: {{ number_format($item->jumlah) }})
                 </option>
               @endforeach
             </select>
@@ -186,7 +197,7 @@
                    id="jumlah_diminta" 
                    min="1" 
                    max="999999"
-                   value="{{ old('jumlah_diminta') }}" 
+                   value="{{ old('jumlah_diminta', 1) }}" 
                    placeholder="1" 
                    required>
             
@@ -289,21 +300,13 @@
                 </div>
                 @if($item->jumlah_disetujui !== null)
                 <div class="meta-item">
-                    <div class="meta-label" style="color: var(--success);">Jumlah Disetujui Admin</div>
+                    <div class="meta-label" style="color: var(--success);">Jumlah Disetujui</div>
                     <div class="meta-value" style="color: var(--success); font-weight: 800;">{{ $item->jumlah_disetujui }} Unit</div>
                 </div>
                 @endif
                 <div class="meta-item">
                   <div class="meta-label">Tanggal Permintaan</div>
-                  <div class="meta-value">{{ $item->tanggal_permintaan->format('d M Y') }}</div>
-                </div>
-                <div class="meta-item">
-                  <div class="meta-label">Status</div>
-                  <div class="meta-value">
-                     <span style="color: {{ $badgeClass == 'approved' ? 'var(--success)' : ($badgeClass == 'rejected' ? 'var(--danger)' : ($badgeClass == 'review' ? 'var(--warning)' : ($badgeClass == 'cancelled' ? 'var(--text-secondary)' : 'var(--warning)'))) }}; font-weight: 700;">
-                        {{ $statusText }}
-                     </span>
-                  </div>
+                  <div class="meta-value">{{ \Carbon\Carbon::parse($item->tanggal_permintaan)->format('d M Y') }}</div>
                 </div>
                 <div class="meta-item">
                   <div class="meta-label">Tujuan</div>
@@ -344,20 +347,12 @@
 
 <div id="detailModal">
   <div class="modal-content">
-    <div style="
-      padding: 24px 28px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: white; position: relative; overflow: hidden;
-    ">
-      <div style="position: absolute; right: 28px; top: 24px; cursor: pointer; font-size: 20px; opacity: 0.8;"
-           onclick="closeModal()">
+    <div style="padding: 24px 28px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; position: relative; overflow: hidden;">
+      <div style="position: absolute; right: 28px; top: 24px; cursor: pointer; font-size: 20px; opacity: 0.8;" onclick="closeModal()">
         <i class="fas fa-times"></i>
       </div>
       <div style="display: flex; align-items: center; gap: 16px;">
-        <div style="
-          width: 52px; height: 52px; background: rgba(255,255,255,0.2); 
-          border-radius: 14px; display: grid; place-items: center; font-size: 22px;
-          backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
-        ">
+        <div style="width: 52px; height: 52px; background: rgba(255,255,255,0.2); border-radius: 14px; display: grid; place-items: center; font-size: 22px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
           <i class="fas fa-boxes-stacked"></i>
         </div>
         <div>
@@ -366,37 +361,20 @@
         </div>
       </div>
       
-      <div id="detailStatusBadge" style="
-        position: absolute; top: 28px; right: 28px; padding: 8px 16px; 
-        border-radius: 10px; font-size: 12px; font-weight: 700; 
-        letter-spacing: .5px; display: flex; align-items: center; gap: 6px;
-        background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-      ">
+      <div id="detailStatusBadge" style="position: absolute; top: 28px; right: 28px; padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; letter-spacing: .5px; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
         <i class="fas fa-circle-notch fa-spin"></i> Memuat...
       </div>
     </div>
 
-    <div id="detailLoading" style="
-      padding: 60px 28px; text-align: center; display: block;
-    ">
-      <div style="
-        width: 56px; height: 56px; border: 3px solid rgba(37,99,235,0.1); 
-        border-top: 3px solid var(--primary); border-radius: 50%; 
-        margin: 0 auto 20px; animation: spin 1s linear infinite;
-      "></div>
+    <div id="detailLoading" style="padding: 60px 28px; text-align: center; display: block;">
+      <div style="width: 56px; height: 56px; border: 3px solid rgba(37,99,235,0.1); border-top: 3px solid var(--primary); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
       <div style="color: var(--text-secondary); font-size: 14px;">Memuat detail permintaan...</div>
     </div>
 
     <div id="detailContent" style="display: none; padding: 0;">
       <div style="padding: 28px 28px 0;">
-        <div style="
-          font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-          text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-          display: flex; align-items: center; gap: 6px;
-        ">
-          <i class="fas fa-user" style="color: var(--primary); font-size: 11px;"></i>
-          Informasi Peminta
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+          <i class="fas fa-user" style="color: var(--primary); font-size: 11px;"></i> Informasi Peminta
         </div>
         <div style="background: #f8faff; padding: 20px; border-radius: 12px; border: 1px solid #eef1ff;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -413,13 +391,8 @@
       </div>
 
       <div style="padding: 24px 28px 0;">
-        <div style="
-          font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-          text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-          display: flex; align-items: center; gap: 6px;
-        ">
-          <i class="fas fa-box" style="color: var(--primary); font-size: 11px;"></i>
-          Detail Persediaan
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+          <i class="fas fa-box" style="color: var(--primary); font-size: 11px;"></i> Detail Persediaan
         </div>
         <div style="background: #f8faff; padding: 20px; border-radius: 12px; border: 1px solid #eef1ff;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -446,13 +419,8 @@
       <div style="padding: 24px 28px 24px;">
         <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px;">
           <div>
-            <div style="
-              font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-              text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-              display: flex; align-items: center; gap: 6px;
-            ">
-              <i class="fas fa-calendar" style="color: var(--primary); font-size: 11px;"></i>
-              Jadwal Permintaan
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-calendar" style="color: var(--primary); font-size: 11px;"></i> Jadwal Permintaan
             </div>
             <div style="background: #f8faff; padding: 20px; border-radius: 12px; border: 1px solid #eef1ff;">
               <div style="display: flex; gap: 20px;">
@@ -465,13 +433,8 @@
           </div>
 
           <div>
-            <div style="
-              font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-              text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-              display: flex; align-items: center; gap: 6px;
-            ">
-              <i class="fas fa-bullseye" style="color: var(--primary); font-size: 11px;"></i>
-              Tujuan Penggunaan
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-bullseye" style="color: var(--primary); font-size: 11px;"></i> Tujuan Penggunaan
             </div>
             <div style="background: #f8faff; padding: 20px; border-radius: 12px; border: 1px solid #eef1ff; min-height: 100%;">
               <div id="detailTujuan" style="font-size: 14px; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap;">-</div>
@@ -482,13 +445,8 @@
 
       <div style="padding: 0 28px 28px;">
         <div id="detailReviewedWrap" style="display: none; margin-bottom: 16px;">
-          <div style="
-            font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-            text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 6px;
-          ">
-            <i class="fas fa-user-check" style="color: var(--success); font-size: 11px;"></i>
-            Reviewer
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-user-check" style="color: var(--success); font-size: 11px;"></i> Reviewer
           </div>
           <div style="background: rgba(16,185,129,0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.15);">
             <div id="detailReviewedBy" style="font-size: 14px; color: var(--success); font-weight: 600;">-</div>
@@ -496,13 +454,8 @@
         </div>
 
         <div id="detailApprovedWrap" style="display: none; margin-bottom: 16px;">
-          <div style="
-            font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-            text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 6px;
-          ">
-            <i class="fas fa-user-tie" style="color: #06b6d4; font-size: 11px;"></i>
-            Approved Kasubag
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-user-tie" style="color: #06b6d4; font-size: 11px;"></i> Approved Kasubag
           </div>
           <div style="background: rgba(6,182,212,0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.15);">
             <div id="detailApprovedBy" style="font-size: 14px; color: #06b6d4; font-weight: 600;">-</div>
@@ -510,13 +463,8 @@
         </div>
 
         <div id="detailKomentarWrap" style="display: none;">
-          <div style="
-            font-size: 12px; font-weight: 700; color: var(--text-secondary); 
-            text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 6px;
-          ">
-            <i class="fas fa-comment" style="color: var(--warning); font-size: 11px;"></i>
-            Komentar Admin
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-comment" style="color: var(--warning); font-size: 11px;"></i> Komentar Admin
           </div>
           <div style="background: rgba(245,158,11,0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(245,158,11,0.15);">
             <div id="detailKomentar" style="font-size: 14px; color: var(--text-primary); line-height: 1.6;">-</div>
@@ -524,30 +472,16 @@
         </div>
       </div>
 
-      <div style="
-        padding: 20px 28px 28px; border-top: 1px solid var(--border); 
-        display: flex; gap: 12px; justify-content: space-between;
-      ">
+      <div style="padding: 20px 28px 28px; border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: space-between;">
         <div style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
           <i class="fas fa-clock" style="font-size: 10px;"></i>
           <span id="detailCreatedAt">-</span>
         </div>
         <div style="display: flex; gap: 8px;">
-          <a id="detailSuratLink" href="#" style="
-            display: none; padding: 10px 20px; background: rgba(16,185,129,0.08); 
-            color: var(--success); border: 1px solid rgba(16,185,129,0.2); 
-            border-radius: 8px; font-size: 13px; font-weight: 600; 
-            text-decoration: none; align-items: center; gap: 6px;
-            transition: all .2s;
-          " target="_blank">
+          <a id="detailSuratLink" href="#" style="display: none; padding: 10px 20px; background: rgba(16,185,129,0.08); color: var(--success); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; align-items: center; gap: 6px; transition: all .2s;" target="_blank">
             <i class="fas fa-file-contract"></i> Lihat Surat BAST
           </a>
-          <button onclick="closeModal()" style="
-            padding: 10px 20px; background: transparent; 
-            color: var(--text-secondary); border: 1px solid var(--border); 
-            border-radius: 8px; font-size: 13px; font-weight: 600; 
-            cursor: pointer; transition: all .2s;
-          ">
+          <button onclick="closeModal()" style="padding: 10px 20px; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;">
             <i class="fas fa-times"></i> Tutup
           </button>
         </div>
@@ -561,6 +495,9 @@
   <span id="toastMsg">Permintaan berhasil dikirim!</span>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
 class PermintaanController {
   constructor() {
@@ -569,13 +506,26 @@ class PermintaanController {
   }
 
   init() {
+    this.initSelect2();
     this.bindEvents();
   }
 
-  bindEvents() {
-    const persediaanSelect = document.getElementById('persediaanSelect');
-    if (persediaanSelect) persediaanSelect.addEventListener('change', (e) => this.handleBarangChange(e));
+  initSelect2() {
+    // Inisialisasi Select2
+    $('#persediaanSelect').select2({
+      placeholder: "-- Ketik untuk mencari barang persediaan... --",
+      allowClear: true,
+      width: '100%'
+    });
 
+    // Menghubungkan Select2 dengan fungsi perubahan barang
+    $('#persediaanSelect').on('select2:select select2:clear', (e) => {
+        // e.target adalah element select asli
+        this.handleBarangChange({ target: document.getElementById('persediaanSelect') });
+    });
+  }
+
+  bindEvents() {
     const jumlahInput = document.getElementById('jumlah_diminta');
     if (jumlahInput) jumlahInput.addEventListener('input', () => this.validateJumlah());
 
@@ -586,13 +536,20 @@ class PermintaanController {
   }
 
   handleBarangChange(e) {
-    const selectedOption = e.target.options[e.target.selectedIndex];
+    const select = e.target;
+    // Karena bisa menggunakan select2:clear dimana tidak ada option yg terpilih
+    if (select.selectedIndex === -1) {
+       this.resetForm();
+       return;
+    }
+    
+    const selectedOption = select.options[select.selectedIndex];
     const preview = document.getElementById('facilityPreview');
     const jumlahInput = document.getElementById('jumlah_diminta');
     const stokInfo = document.getElementById('stok-info');
     const peringatan = document.getElementById('peringatan-stok');
 
-    if (selectedOption.value) {
+    if (selectedOption && selectedOption.value) {
       this.currentStok = parseInt(selectedOption.getAttribute('data-stok')) || 0;
       
       document.getElementById('fpName').textContent = selectedOption.dataset.nama || 'N/A';
@@ -615,16 +572,25 @@ class PermintaanController {
       this.validateJumlah();
       
     } else {
-      preview.classList.remove('show');
+      this.resetForm();
+    }
+  }
+
+  resetForm() {
+      const preview = document.getElementById('facilityPreview');
+      const jumlahInput = document.getElementById('jumlah_diminta');
+      const stokInfo = document.getElementById('stok-info');
+      const peringatan = document.getElementById('peringatan-stok');
+
+      if(preview) preview.classList.remove('show');
       this.currentStok = 0;
       if (jumlahInput) {
         jumlahInput.max = 999999;
         jumlahInput.title = '';
-        jumlahInput.value = '';
+        jumlahInput.value = '1';
       }
       if (stokInfo) stokInfo.textContent = '';
       if (peringatan) peringatan.style.display = 'none';
-    }
   }
 
   validateJumlah() {
@@ -655,7 +621,8 @@ class PermintaanController {
     if (!persediaanSelect?.value) {
       e.preventDefault();
       this.showToast('❌ Silakan pilih barang terlebih dahulu!', 'error');
-      persediaanSelect?.focus();
+      // Fokus ke search box Select2
+      $('#persediaanSelect').select2('open');
       return false;
     }
     
@@ -729,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        this.populateDetailModal(data.data);
+        window.populateDetailModal(data.data);
       } else {
         showToast('❌ Gagal memuat detail: ' + (data.message || 'Unknown error'), 'error');
       }
@@ -815,7 +782,6 @@ document.addEventListener('DOMContentLoaded', () => {
     statusBadge.style.color = status.color;
     statusBadge.style.borderColor = status.color + '20';
     
-    // DEFINISI VARIABEL YANG DITAMBAHKAN AGAR DATA TAMPIL
     const fallbackName = "{!! auth()->user()->nama_lengkap ?? auth()->user()->name ?? '-' !!}";
     const fallbackNip = "{!! auth()->user()->nip ?? auth()->user()->nik ?? '-' !!}";
     

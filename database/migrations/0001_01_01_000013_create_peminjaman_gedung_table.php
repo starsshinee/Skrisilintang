@@ -39,9 +39,7 @@ return new class extends Migration
             
             // Lainnya
             $table->text('tujuan_penggunaan');
-            $table->string('nomor_kontak');
             $table->integer('jumlah_peserta')->nullable();
-            $table->string('alat_penunjang')->nullable();
             $table->string('surat_path')->nullable();
             $table->string('surat_perjanjian_path')->nullable();
             

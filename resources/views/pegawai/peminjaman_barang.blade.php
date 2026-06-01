@@ -8,6 +8,9 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
   <style>
     :root {
       --primary: #2563eb;
@@ -43,6 +46,43 @@
       display: flex;
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* Kustomisasi Select2 agar sesuai dengan tema SIPANDU */
+    .select2-container .select2-selection--single {
+      height: 42px !important;
+      border: 1.5px solid var(--border) !important;
+      border-radius: 10px !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 13px !important;
+      display: flex;
+      align-items: center;
+      transition: all .2s;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: var(--text-primary) !important;
+      padding-left: 14px !important;
+      line-height: normal !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 40px !important;
+      right: 10px !important;
+    }
+    .select2-dropdown {
+      border: 1.5px solid var(--primary) !important;
+      border-radius: 10px !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 13px !important;
+      box-shadow: var(--shadow-lg) !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      border-radius: 6px !important;
+      border: 1px solid var(--border) !important;
+      padding: 8px 12px !important;
     }
 
     /* SIDEBAR */
@@ -312,7 +352,6 @@
     }
 
     .form-input:focus,
-    .form-select:focus,
     .form-textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -1010,8 +1049,8 @@
 
             <div class="form-group">
               <div class="form-label"><i class="fas fa-search"></i> Pilih Aset <span class="req">*</span></div>
-              <select class="form-select" name="kode_barang" id="asetSelect" required onchange="updateDetailAset()">
-                <option value="">-- Pilih Barang yang Tersedia --</option>
+              <select class="form-select" name="kode_barang" id="asetSelect" required>
+                <option value="">-- Ketik untuk mencari barang... --</option>
                 @foreach($asetTetap as $aset)
                 <option value="{{ $aset->kode_barang }}"
                   data-nama="{{ $aset->nama_barang }}"
@@ -1206,7 +1245,24 @@
     </div>
   </main>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  
   <script>
+    $(document).ready(function() {
+      // Inisialisasi Select2
+      $('#asetSelect').select2({
+        placeholder: "-- Ketik untuk mencari barang... --",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Menghubungkan Select2 dengan fungsi update detail bawaan Anda
+      $('#asetSelect').on('select2:select select2:clear', function (e) {
+        updateDetailAset();
+      });
+    });
+
     function updateDetailAset() {
       const select = document.getElementById('asetSelect');
       const selected = select.options[select.selectedIndex];

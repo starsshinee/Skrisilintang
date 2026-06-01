@@ -8,6 +8,9 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
   <style>
     :root { --primary: #2563eb; --primary-light: #3b82f6; --accent: #06b6d4; --accent2: #8b5cf6; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --bg: #f0f4ff; --sidebar-bg: #0f172a; --sidebar-text: #94a3b8; --card-bg: #ffffff; --text-primary: #0f172a; --text-secondary: #64748b; --border: #e2e8f0; --radius: 16px; --radius-sm: 10px; --shadow: 0 4px 24px rgba(37, 99, 235, 0.08); --shadow-lg: 0 8px 40px rgba(37, 99, 235, 0.14); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,7 +51,7 @@
     .form-label i { color: var(--primary); font-size: 11px; }
     .form-label .req { color: var(--danger); }
     .form-input, .form-select, .form-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); background: #fff; transition: all .2s; outline: none; }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .form-input:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
     .form-input::placeholder, .form-textarea::placeholder { color: #b0bcd4; }
     .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
     .form-textarea { resize: vertical; min-height: 90px; }
@@ -62,6 +65,14 @@
     .submit-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .2s; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35); margin-top: 8px; }
     .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
     .submit-btn:active { transform: translateY(0); }
+    
+    /* Kustomisasi Select2 Tema SIPANDU */
+    .select2-container .select2-selection--single { height: 42px !important; border: 1.5px solid var(--border) !important; border-radius: 10px !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 13px !important; display: flex; align-items: center; transition: all .2s; }
+    .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--text-primary) !important; padding-left: 14px !important; line-height: normal !important; }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; right: 10px !important; }
+    .select2-dropdown { border: 1.5px solid var(--primary) !important; border-radius: 10px !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 13px !important; box-shadow: var(--shadow-lg) !important; }
+    .select2-container--default.select2-container--focus .select2-selection--single { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important; }
+    .select2-container--default .select2-search--dropdown .select2-search__field { border-radius: 6px !important; border: 1px solid var(--border) !important; padding: 8px 12px !important; }
     
     /* RIWAYAT CARD & LIST */
     .history-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
@@ -148,8 +159,8 @@
 
             <div class="form-group">
               <div class="form-label"><i class="fas fa-search"></i> Pilih Kendaraan <span class="req">*</span></div>
-              <select class="form-select" name="kode_barang" id="kendaraanSelect" required onchange="updateDetailKendaraan()">
-                <option value="">-- Pilih Kendaraan yang Tersedia --</option>
+              <select class="form-select" name="kode_barang" id="kendaraanSelect" required>
+                <option value="">-- Ketik untuk mencari kendaraan... --</option>
                 @foreach($kendaraan as $k)
                 <option value="{{ $k->kode_barang }}"
                   data-nama="{{ $k->nama_barang }}"
@@ -342,7 +353,24 @@
     </div>
   </main>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
   <script>
+    $(document).ready(function() {
+      // Inisialisasi Select2
+      $('#kendaraanSelect').select2({
+        placeholder: "-- Ketik untuk mencari kendaraan... --",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Sinkronisasi Select2 dengan fungsi update detail
+      $('#kendaraanSelect').on('select2:select select2:clear', function (e) {
+        updateDetailKendaraan();
+      });
+    });
+
     function updateDetailKendaraan() {
       const select = document.getElementById('kendaraanSelect');
       const selected = select.options[select.selectedIndex];

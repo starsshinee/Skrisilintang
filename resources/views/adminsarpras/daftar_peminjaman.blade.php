@@ -238,7 +238,6 @@
                     <div style="margin-bottom:4px;"><b>Tujuan:</b> {{ Str::limit($item->tujuan_penggunaan, 30) }}</div>
                     <div style="font-size: 11px; color: var(--text-secondary);">
                         <div>👥 Peserta: <b>{{ $item->jumlah_peserta ?? 0 }} Orang</b></div>
-                        <div>🔧 Alat: <b>{{ Str::limit($item->alat_penunjang ?? '-', 20) }}</b></div>
                     </div>
                 </td>
             <td>Rp {{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
@@ -569,7 +568,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('dtNama').innerText = item.nama_lengkap || '-';
         document.getElementById('dtNik').innerText = item.nip_nik || '-';
         document.getElementById('dtInstansi').innerText = item.instansi_lembaga || '-';
-        document.getElementById('dtKontak').innerText = item.nomor_kontak || '-';
         document.getElementById('dtFasilitas').innerText = item.nama_fasilitas || item.fasilitas || '-';
         
         document.getElementById('dtTglPinjam').innerText = item.tanggal_pinjam ? item.tanggal_pinjam.substring(0, 10) : '-';
