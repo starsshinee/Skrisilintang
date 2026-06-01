@@ -856,7 +856,7 @@
       <div class="grid md:grid-cols-4 gap-8 mb-10">
         <div class="md:col-span-2">
           <div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#3355ff"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#3355ff"/></svg></div><div><span class="font-bold text-lg">SIPANDU</span><span class="text-blue-300 text-xs block">BPMP Gorontalo</span></div></div>
-          <p class="text-blue-200/70 text-sm leading-relaxed max-w-md">Sistem Informasi Pendataan Barang Milik Negara Terpadu Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo. Mendukung tata kelola aset yang transparan dan akuntabel.</p>
+          <p class="text-blue-200/70 text-sm leading-relaxed max-w-md">Sistem Informasi Pendataan Barang Milik Negara Terpadu Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo. Mendukung tata kelola aset yang transparan dan akuntabel.</p>
         </div>
         <div>
           <h4 class="font-semibold mb-4 text-sm">Menu</h4>
