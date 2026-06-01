@@ -16,9 +16,8 @@ class PeminjamanGedung extends Model
         'user_id', 'gedung_id', 'nama_lengkap', 'nip_nik', 'instansi_lembaga', 'kabupaten_kota',
         'fasilitas', 'nama_fasilitas', 'tarif_per_hari',
         'tanggal_pinjam', 'tanggal_kembali', 'jam_mulai', 'jam_selesai', 
-        'lama_peminjaman_hari','jumlah_peserta', 
-        'alat_penunjang', 'total_pembayaran',
-        'tujuan_penggunaan', 'nomor_kontak', 'surat_path', 'surat_perjanjian_path',
+        'lama_peminjaman_hari','jumlah_peserta', 'total_pembayaran',
+        'tujuan_penggunaan', 'surat_path', 'surat_perjanjian_path',
         'status', 'komentar','status_pembayaran', 'cara_pembayaran',
         'created_at', 'updated_at', 'reviewed_by_admin_id', 'tanggal_approval',
         'approved_by_kasubag_id', 'approved_by_kasubag_date', 'diteruskan_ke_kasubag_date'

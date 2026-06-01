@@ -189,11 +189,6 @@
             <td>{{ $peminjaman->instansi_lembaga ?? '-' }}</td>
         </tr>
         <tr>
-            <td style="padding-left: 13px;">Nomor Kontak</td>
-            <td class="td-titikdua">:</td>
-            <td>{{ $peminjaman->nomor_kontak ?? '-' }}</td>
-        </tr>
-        <tr>
             <td colspan="3" class="text-justify" style="padding-top: 5px;">
                 Dalam hal ini bertindak untuk dan atas nama pribadi / instansi yang bersangkutan, yang selanjutnya disebut sebagai <b>PIHAK KEDUA</b>.
             </td>
@@ -227,10 +222,6 @@
         <tr>
             <td><b>Jumlah Peserta</b></td>
             <td>{{ $peminjaman->jumlah_peserta ?? 0 }} Orang</td>
-        </tr>
-        <tr>
-            <td><b>Alat Penunjang Tambahan</b></td>
-            <td>{{ $peminjaman->alat_penunjang ?? 'Tidak Ada' }}</td>
         </tr>
         <tr>
             <td><b>Total Biaya Sewa / PNBP</b></td>

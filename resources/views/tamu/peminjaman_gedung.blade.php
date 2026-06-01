@@ -1878,7 +1878,7 @@
             function submitForm() {
                 const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput',
                     '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput',
-                    '#jumlahPesertaInput', 'textarea', 'input[type="tel"]'
+                    '#jumlahPesertaInput', 'textarea', 'input'
                 ];
                 let valid = true;
 

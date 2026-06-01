@@ -206,7 +206,7 @@ class TamuController extends Controller
             $pesanAdmin .= "⏰ *Waktu:* {$validated['jam_mulai']} - {$validated['jam_selesai']}\n";
             $pesanAdmin .= "👥 *Peserta:* {$validated['jumlah_peserta']} Orang\n";
             $pesanAdmin .= "📝 *Kegiatan:* {$validated['tujuan_penggunaan']}\n";
-            $pesanAdmin .= "📞 *Kontak:* {$validated['nomor_kontak']}\n\n";
+            // $pesanAdmin .= "📞 *Kontak:* {$validated['nomor_kontak']}\n\n";
 
             $pesanAdmin .= "Silakan login ke sistem untuk melakukan review pengajuan ini.";
 
