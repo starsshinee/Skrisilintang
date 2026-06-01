@@ -100,7 +100,7 @@ class PegawaiController extends Controller
     {
         $asetTetap = AssetTetap::where('status', 'Tersedia')
             ->where('kondisi', '!=', 'rusak berat')
-            ->where('kategori', '!=', 'Kendaraan')
+            ->where('kategori', '!=', 'Kendaraan', 'ALAT ANGKUTAN BERMOTOR')
             ->orderBy('nama_barang', 'asc')
             ->get();
 
@@ -536,7 +536,7 @@ class PegawaiController extends Controller
     public function peminjamanKendaraan()
     {
         // Ambil data kendaraan dari aset tetap (Kategori Kendaraan)
-        $kendaraan = AssetTetap::where('kategori', 'Kendaraan')
+        $kendaraan = AssetTetap::where('kategori', ['Kendaraan', 'ALAT ANGKUTAN BERMOTOR'])
             ->where('status', 'Tersedia')
             ->get();
 
