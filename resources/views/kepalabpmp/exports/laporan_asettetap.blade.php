@@ -31,22 +31,22 @@
         <div class="section-title">Ringkasan Statistik</div>
         <table>
             <tr>
-                <td><strong>Total Aset:</strong></td><td>{{ number_format($stats['total_aset']) }}</td>
-                <td><strong>Nilai Aset:</strong></td><td>Rp {{ number_format($stats['total_nilai'],0,',','.') }}</td>
+                <td><strong>Total Aset:</strong></td><td>{{ number_format($stats['total_aset'] ?? 0) }}</td>
+                <td><strong>Nilai Aset:</strong></td><td>Rp {{ number_format($stats['total_nilai'] ?? 0, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td><strong>Transaksi Masuk:</strong></td><td>{{ $stats['total_masuk'] }}</td>
-                <td><strong>Transaksi Keluar:</strong></td><td>{{ $stats['total_keluar'] }}</td>
+                <td><strong>Transaksi Masuk:</strong></td><td>{{ $stats['total_masuk'] ?? 0 }}</td>
+                <td><strong>Transaksi Keluar:</strong></td><td>{{ $stats['total_keluar'] ?? 0 }}</td>
             </tr>
             <tr>
-                <td><strong>Total Mutasi:</strong></td><td>{{ $stats['total_mutasi'] }}</td>
+                <td><strong>Total Mutasi:</strong></td><td>{{ $stats['total_mutasi'] ?? 0 }}</td>
                 <td></td><td></td>
             </tr>
         </table>
     </div>
 
     <div class="section">
-        <div class="section-title">Data Aset Tetap</div>
+        <div class="section-title">Data Aset Tetap (Penambahan/Pembaruan Periode Ini)</div>
         <table>
             <thead><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Kategori</th><th>Kondisi</th><th>Lokasi</th><th>Jumlah</th><th>Nilai</th></tr></thead>
             <tbody>
@@ -59,7 +59,7 @@
                     <td>{{ $item->kondisi }}</td>
                     <td>{{ $item->lokasi }}</td>
                     <td>{{ $item->jumlah }}</td>
-                    <td>Rp {{ number_format($item->nilai_perolehan ?? 0,0,',','.') }}</td>
+                    <td>Rp {{ number_format($item->nilai_perolehan ?? 0, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -78,7 +78,7 @@
                     <td>{{ $item->nama_barang }}</td>
                     <td>{{ $item->kondisi ?? '-' }}</td>
                     <td>{{ $item->kategori ?? '-' }}</td>
-                    <td>Rp {{ number_format($item->nilai_perolehan ?? 0,0,',','.') }}</td>
+                    <td>Rp {{ number_format($item->nilai_perolehan ?? 0, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
@@ -117,9 +117,9 @@
                 <tr>
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->tanggal_mutasi ? \Carbon\Carbon::parse($item->tanggal_mutasi)->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $item->barang->nama_barang ?? '-' }}</td>
-                    <td>{{ $item->lokasi_asal ?? '-' }}</td>
-                    <td>{{ $item->lokasi_tujuan ?? '-' }}</td>
+                    <td>{{ $item->nama_barang ?? $item->asetTetap?->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->lokasi_awal ?? '-' }}</td>
+                    <td>{{ $item->lokasi_akhir ?? '-' }}</td>
                     <td>{{ $item->keterangan ?? '-' }}</td>
                 </tr>
             @empty
@@ -138,10 +138,10 @@
                 <tr>
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $item->user->name ?? $item->nama_lengkap ?? '-' }}</td>
-                    <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
-                    <td>{{ $item->jumlah_pinjam ?? '-' }}</td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                    <td>{{ $item->user?->name ?? '-' }}</td>
+                    <td>{{ $item->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->jumlah ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status ?? '-')) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
@@ -159,10 +159,10 @@
                 <tr>
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $item->peminjaman->user->name ?? '-' }}</td>
-                    <td>{{ $item->peminjaman->barang->nama_barang ?? '-' }}</td>
-                    <td>{{ $item->kondisi ?? '-' }}</td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                    <td>{{ $item->peminjamanBarang?->user?->name ?? '-' }}</td>
+                    <td>{{ $item->peminjamanBarang?->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->kondisi_barang ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status_pengembalian ?? '-')) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
@@ -180,10 +180,10 @@
                 <tr>
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->tanggal_peminjaman ? \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $item->user->name ?? $item->nama_lengkap ?? '-' }}</td>
-                    <td>{{ $item->kendaraan->nama_barang ?? $item->nama_kendaraan ?? '-' }}</td>
+                    <td>{{ $item->user?->name ?? '-' }}</td>
+                    <td>{{ $item->nama_kendaraan ?? $item->nama_barang ?? '-' }}</td>
                     <td>{{ $item->tujuan ?? '-' }}</td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status ?? '-')) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>
@@ -201,10 +201,10 @@
                 <tr>
                     <td>{{ $i+1 }}</td>
                     <td>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $item->peminjaman->user->name ?? '-' }}</td>
-                    <td>{{ $item->peminjaman->kendaraan->nama_barang ?? '-' }}</td>
-                    <td>{{ $item->kondisi ?? '-' }}</td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $item->status)) }}</td>
+                    <td>{{ $item->peminjamanKendaraan?->user?->name ?? '-' }}</td>
+                    <td>{{ $item->peminjamanKendaraan?->nama_kendaraan ?? $item->peminjamanKendaraan?->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->kondisi_kendaraan ?? '-' }}</td>
+                    <td>{{ ucfirst(str_replace('_', ' ', $item->status_pengembalian ?? '-')) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="text-center">Tidak ada data</td></tr>

@@ -278,6 +278,9 @@ class KepalaBPMPController extends Controller
      */
     public function downloadLaporanAsetTetap(Request $request)
     {
+        ini_set('max_execution_time', 600); // Waktu eksekusi diperpanjang jadi 10 menit
+        ini_set('memory_limit', '-1');      // Unlimited Memory Limit!
+
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
         $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
 
@@ -286,20 +289,26 @@ class KepalaBPMPController extends Controller
             'periode' => $startDate->format('d/m/Y') . ' s/d ' . $endDate->format('d/m/Y'),
             'generated_at' => now(),
             'generated_by' => auth()->user()->name,
-            'aset' => AssetTetap::orderBy('kategori')->get(),
+            'aset' => AssetTetap::whereBetween('created_at', [$startDate, $endDate])
+                ->orderBy('kategori')->get(),
             'transaksi_masuk' => TransaksiMasukAssetTetap::whereBetween('tanggal_perolehan', [$startDate, $endDate])
                 ->orderBy('tanggal_perolehan', 'desc')->get(),
             'transaksi_keluar' => TransaksiKeluarAssetTetap::whereBetween('tanggal_input', [$startDate, $endDate])
                 ->orderBy('tanggal_input', 'desc')->get(),
-            'mutasi' => MutasiBarang::with('barang')->whereBetween('tanggal_mutasi', [$startDate, $endDate])
+            
+            // ✅ PERBAIKAN: Relasi MutasiBarang adalah asetTetap, bukan barang
+            'mutasi' => MutasiBarang::with(['user', 'asetTetap'])->whereBetween('tanggal_mutasi', [$startDate, $endDate])
                 ->orderBy('tanggal_mutasi', 'desc')->get(),
-            'peminjaman_barang' => PeminjamanBarang::whereBetween('created_at', [$startDate, $endDate])->get(),
-            'peminjaman_kendaraan' => PeminjamanKendaraan::whereBetween('tanggal_peminjaman', [$startDate, $endDate])->get(),
-            'pengembalian_barang' => PengembalianBarang::whereBetween('created_at', [$startDate, $endDate])->get(),
-            'pengembalian_kendaraan' => PengembalianKendaraan::whereBetween('created_at', [$startDate, $endDate])->get(),
+            
+            // ✅ PERBAIKAN: Eager Loading yang disesuaikan dengan Model
+            'peminjaman_barang' => PeminjamanBarang::with(['user'])->whereBetween('created_at', [$startDate, $endDate])->get(),
+            'peminjaman_kendaraan' => PeminjamanKendaraan::with(['user'])->whereBetween('tanggal_peminjaman', [$startDate, $endDate])->get(),
+            'pengembalian_barang' => PengembalianBarang::with(['peminjamanBarang.user'])->whereBetween('created_at', [$startDate, $endDate])->get(),
+            'pengembalian_kendaraan' => PengembalianKendaraan::with(['peminjamanKendaraan.user'])->whereBetween('created_at', [$startDate, $endDate])->get(),
+            
             'stats' => [
                 'total_aset' => AssetTetap::count(),
-                'total_nilai' => AssetTetap::sum('nilai_perolehan'),
+                'total_nilai' => AssetTetap::sum('nilai_perolehan') ?? 0,
                 'total_masuk' => TransaksiMasukAssetTetap::whereBetween('tanggal_perolehan', [$startDate, $endDate])->count(),
                 'total_keluar' => TransaksiKeluarAssetTetap::whereBetween('tanggal_input', [$startDate, $endDate])->count(),
                 'total_mutasi' => MutasiBarang::whereBetween('tanggal_mutasi', [$startDate, $endDate])->count(),

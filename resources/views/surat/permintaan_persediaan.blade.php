@@ -227,14 +227,14 @@
         <tr>
             <td colspan="2" style="padding-top: 15px;">
                 <div>Mengetahui,</div>
-                <div class="font-bold">Kuasa Pengguna Barang</div>
+                <div class="font-bold">Kapala Sub Bagian Umum</div>
                 <div class="ttd-img-container">
-                    @if(!empty($ttdKepala))
-                        <img src="{{ $ttdKepala }}" alt="TTD Kepala">
+                    @if(!empty($ttdKasubag))
+                        <img src="{{ $ttdKasubag }}" alt="TTD Kasubag">
                     @endif
                 </div>
-                <div class="ttd-nama">{{ $kepala->nama_lengkap ?? $kepala->name ?? 'Kepala BPMP' }}</div>
-                <div>NIP. {{ $kepala->nip ?? '-' }}</div>
+                <div class="ttd-nama">{{ $kasubag->nama_lengkap ?? $kasubag->name ?? 'Kasubag Umum' }}</div>
+                <div>NIP. {{ $kasubag->nip ?? '-' }}</div>
             </td>
         </tr>
     </table>

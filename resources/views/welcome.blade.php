@@ -290,7 +290,7 @@
           <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">BPMP GORONTALO</span>
         </h1>
         <p class="text-blue-200 text-base md:text-lg max-w-xl mb-8 leading-relaxed anim-fade-up delay-3">
-          Kelola dan monitoring BMN (Barang Milik Negara) pada Badan Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
+          Kelola dan monitoring BMN (Barang Milik Negara) pada Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start anim-fade-up delay-4">
           <a href="{{ route('login') }}" class="btn-primary text-white font-semibold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 text-base">

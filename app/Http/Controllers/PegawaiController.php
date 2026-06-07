@@ -713,7 +713,7 @@ class PegawaiController extends Controller
 
         // ✅ UBAH STATUS PEMINJAMAN
         // Agar kendaraan hilang dari opsi dropdown "Pilih Kendaraan yang Dikembalikan"
-        $peminjaman->update(['status' => 'proses_pengembalian']);
+        // $peminjaman->update(['status' => 'proses_pengembalian']);
 
         $adminAset = User::where('role', 'adminasettetap')->first();
         if ($adminAset && $adminAset->nomor_telepon) {
