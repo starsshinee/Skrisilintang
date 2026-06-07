@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LaporanAsetTetapExport;
 
 // Models - Admin Persediaan
 use App\Models\Persediaan;
@@ -315,8 +317,9 @@ class KepalaBPMPController extends Controller
             ],
         ];
 
-        $pdf = Pdf::loadView('kepalabpmp.exports.laporan_asettetap', $data)->setPaper('a4', 'landscape');
-        return $pdf->download('Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.pdf');
+        // $pdf = Pdf::loadView('kepalabpmp.exports.laporan_asettetap', $data)->setPaper('a4', 'landscape');
+        // return $pdf->download('Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.pdf');
+        return Excel::download(new LaporanAsetTetapExport($data), 'Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.xlsx');
     }
 
     /**

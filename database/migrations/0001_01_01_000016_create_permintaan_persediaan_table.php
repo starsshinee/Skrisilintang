@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('persediaan_id')->constrained('persediaan')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('jumlah_diminta');
+            $table->string('satuan', 50)->nullable();
             $table->integer('jumlah_disetujui')->nullable();
             $table->date('tanggal_permintaan');
             

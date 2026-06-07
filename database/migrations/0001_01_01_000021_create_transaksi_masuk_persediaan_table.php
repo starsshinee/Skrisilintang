@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('kode_barang', 50); // Kode Barang
             $table->string('nama_barang', 200); // Nama Barang
             $table->integer('jumlah_masuk'); // Jumlah Masuk
+            $table->string('satuan', 50)->nullable();
             $table->decimal('harga_satuan', 15, 2); // Harga Satuan
             $table->decimal('total', 15, 2); // Total
             

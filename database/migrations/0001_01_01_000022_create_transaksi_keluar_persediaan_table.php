@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('jumlah_keluar');        // Jumlah Keluar
             $table->decimal('harga', 15, 2);         // Harga
             $table->decimal('total', 15, 2);         // Total
+            $table->string('satuan', 50)->nullable();
             
             // Relasi (opsional, bisa dihapus jika tidak digunakan)
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');

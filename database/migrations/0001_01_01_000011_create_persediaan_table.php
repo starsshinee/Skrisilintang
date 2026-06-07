@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('kategori', 100);
             $table->string('kode_barang', 50);
             $table->string('nama_barang', 200);
+            $table->string('satuan', 50)->nullable();
             $table->date('tanggal_masuk');
             $table->decimal('harga_satuan', 15, 2);
             $table->decimal('harga_total', 15, 2);
