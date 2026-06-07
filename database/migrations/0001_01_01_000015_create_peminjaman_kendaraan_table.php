@@ -30,7 +30,7 @@ Schema::create('peminjaman_kendaraan', function (Blueprint $table) {
     $table->foreignId('reviewed_by_adminasettetap_id')->nullable()->constrained('users');
     $table->foreignId('approved_by_adminasettetap_id')->nullable()->constrained('users');
     $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
-    $table->enum('status', ['pending', 'dalam_review', 'disetujui_admin', 'disetujui', 'ditolak'])->default('pending');
+    $table->enum('status', ['pending', 'dalam_review', 'disetujui_admin', 'disetujui', 'ditolak', 'proses_pengembalian', 'selesai', 'diterima'])->default('pending');
     $table->dateTime('diteruskan_ke_kasubag_date')->nullable();
     $table->dateTime('approved_by_kasubag_date')->nullable();
     
