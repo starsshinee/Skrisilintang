@@ -33,6 +33,7 @@ class PersediaanImport implements ToModel, WithHeadingRow
                     'tanggal_masuk' => $tanggalMasuk,
                     'harga_satuan'  => $hargaSatuan,
                     'jumlah'        => $jumlah, // Anda bisa ubah ke $persediaan->jumlah + $jumlah jika ingin sistem akumulasi
+                    'satuan'        => $row['satuan'] ?? $persediaan->satuan,
                     'harga_total'   => $hargaTotal,
                 ]);
                 return null;
@@ -47,6 +48,7 @@ class PersediaanImport implements ToModel, WithHeadingRow
                 'tanggal_masuk' => $tanggalMasuk,
                 'harga_satuan'  => $hargaSatuan,
                 'jumlah'        => $jumlah,
+                'satuan'        => $row['satuan'] ?? '-',
                 'harga_total'   => $hargaTotal,
             ]);
         } catch (\Exception $e) {

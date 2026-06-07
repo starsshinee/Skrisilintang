@@ -19,6 +19,7 @@ class TransaksiMasukPersediaan extends Model
         'kode_barang',
         'nama_barang',
         'jumlah_masuk',
+        'satuan',
         'harga_satuan',
         'total',
         'user_id',

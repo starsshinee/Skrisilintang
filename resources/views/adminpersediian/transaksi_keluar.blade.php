@@ -294,6 +294,7 @@
             <th>Kode Barang</th>
             <th>Nama Barang</th>
             <th>Jumlah Keluar</th>
+            <th>Satuan</th>
             <th>Harga</th>
             <th>Total</th>
             <th>Aksi</th>
@@ -308,6 +309,7 @@
               data-kode_barang="{{ $item->kode_barang }}"
               data-nama_barang="{{ $item->nama_barang }}"
               data-jumlah_keluar="{{ $item->jumlah_keluar }}"
+              data-satuan="{{ $item->satuan }}"
               data-harga="{{ $item->harga }}"
               data-total="{{ $item->total }}">
               <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
@@ -317,6 +319,7 @@
               <td><strong>{{ $item->kode_barang }}</strong></td>
               <td>{{ Str::limit($item->nama_barang, 25) }}</td>
               <td><strong class="text-lg text-red-600">{{ number_format($item->jumlah_keluar) }}</strong></td>
+              <td>{{ $item->satuan }}</td>
               <td class="font-mono">{{ isset($item->harga_format) ? $item->harga_format : 'Rp ' . number_format($item->harga) }}</td>
               <td class="font-mono font-semibold text-red-600">{{ isset($item->total_format) ? $item->total_format : 'Rp ' . number_format($item->total) }}</td>
               <td>
@@ -392,6 +395,7 @@
                         data-nama="{{ $item['nama_barang'] }}"
                         data-kodekat="{{ $item['kode_kategori'] }}"
                         data-kat="{{ $item['kategori'] }}"
+                        data-satuan="{{ $item['satuan'] }}"
                         data-harga="{{ $item['harga_satuan'] }}"
                         data-stok="{{ $item['stok_tersedia'] ?? 0 }}">
                   {{ $item['kode_barang'] }} - {{ $item['nama_barang'] }} (Stok: {{ $item['stok_tersedia'] ?? 0 }})
@@ -442,6 +446,10 @@
           <div class="form-group">
             <label class="form-label">Jumlah Keluar <span style="color:var(--danger);">*</span></label>
             <input type="number" name="jumlah_keluar" id="create_jumlah_keluar" class="form-input" min="1" placeholder="0" required oninput="calculateTotal('create')">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satuan</label>
+            <input type="text" name="satuan" id="create_satuan" class="form-input" readonly style="background: #F1F5F9; color: #64748B;" placeholder="Otomatis">
           </div>
           <div class="form-group">
             <label class="form-label">Harga Satuan (Rp)</label>
@@ -576,6 +584,10 @@
             <input type="number" name="jumlah_keluar" id="edit_jumlah_keluar" class="form-input" min="1" required oninput="calculateTotal('edit')">
           </div>
           <div class="form-group">
+            <label class="form-label">Satuan <span style="color:var(--danger);">*</span></label>
+            <input type="text" name="satuan" id="edit_satuan" class="form-input" required>
+          </div>
+          <div class="form-group">
             <label class="form-label">Harga Satuan (Rp) <span style="color:var(--danger);">*</span></label>
             <div style="display:flex; align-items:center; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg);">
               <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--muted); border-right:2px solid var(--border); background:#F8FAFF; white-space:nowrap;">Rp</span>
@@ -651,6 +663,7 @@
       document.getElementById('create_harga').value = 0;
       document.getElementById('create_jumlah_keluar').max = '';
       document.getElementById('create_jumlah_keluar').placeholder = '0';
+      document.getElementById('create_satuan').value = '';
       calculateTotal('create');
       return;
     }
@@ -660,11 +673,14 @@
     const kategori     = selectedOption.getAttribute('data-kat');
     const hargaSatuan  = selectedOption.getAttribute('data-harga');
     const stokTersedia = selectedOption.getAttribute('data-stok'); 
+    const satuan       = selectedOption.getAttribute('data-satuan');
+
 
     document.getElementById('create_kode_barang').value = kodeBarang;
     document.getElementById('create_nama_barang').value = namaBarang;
     document.getElementById('create_kode_kategori').value = kodeKategori;
     document.getElementById('create_kategori').value = kategori;
+    document.getElementById('create_satuan').value = satuan;
     document.getElementById('create_harga').value = Math.round(parseFloat(hargaSatuan));
     
     const inputJumlah = document.getElementById('create_jumlah_keluar');
@@ -720,6 +736,7 @@
     document.getElementById('create_kategori').value = '';
     document.getElementById('create_jumlah_keluar').placeholder = '0';
     document.getElementById('create_jumlah_keluar').max = '';
+    document.getElementById('create_satuan').value = '';
   });
 
   // ——— DETAIL ———
@@ -735,7 +752,7 @@
         jumlah: parseInt(row.dataset.jumlah_keluar) || 0,
         harga: parseFloat(row.dataset.harga) || 0,
         total: parseFloat(row.dataset.total) || 0,
-        
+        satuan: row.dataset.satuan,
     };
 
     document.getElementById('detailSubtitle').textContent = `Detail Transaksi`; 
@@ -760,6 +777,10 @@
         <div style="background:var(--bg); border-radius:10px; padding:16px;">
           <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Jumlah Keluar</div>
           <div style="font-size:20px; font-weight:800; color:var(--danger);">${d.jumlah.toLocaleString('id-ID')}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Satuan</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text);">${d.satuan}</div>
         </div>
         <div style="background:var(--bg); border-radius:10px; padding:16px;">
           <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Harga Satuan</div>
@@ -788,7 +809,7 @@
         nama_barang: row.dataset.nama_barang,
         jumlah_keluar: row.dataset.jumlah_keluar,
         harga: Math.round(parseFloat(row.dataset.harga) || 0),
-       
+        satuan: row.dataset.satuan,
     };
 
     document.getElementById('edit_id').value = d.id;
@@ -799,7 +820,7 @@
     document.getElementById('edit_nama_barang').value = d.nama_barang;
     document.getElementById('edit_jumlah_keluar').value = d.jumlah_keluar;
     document.getElementById('edit_harga').value = d.harga;
-    
+    document.getElementById('edit_satuan').value = d.satuan;
     
     document.getElementById('editSubtitle').textContent = `Kode Barang: ${d.kode_barang}`;
     document.getElementById('editForm').action = `{{ route('adminpersediaan.transaksi-keluar.update', ':id') }}`.replace(':id', d.id);

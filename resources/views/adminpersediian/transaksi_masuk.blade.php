@@ -326,6 +326,7 @@
             <th>Kode Barang</th>
             <th>Nama Barang</th>
             <th>Jumlah Masuk</th>
+            <th>Satuan</th>
             <th>Harga Satuan</th>
             <th>Total</th>
             <th>Aksi</th>
@@ -341,6 +342,7 @@
               data-kode-barang="{{ $item->kode_barang }}"
               data-nama-barang="{{ $item->nama_barang }}"
               data-jumlah-masuk="{{ $item->jumlah_masuk }}"
+              data-satuan="{{ $item->satuan }}"
               data-harga-satuan="{{ $item->getRawOriginal('harga_satuan') ?? $item->harga_satuan }}"
               data-total="{{ $item->getRawOriginal('total') ?? $item->total }}">
               <td><strong>{{ $transaksi->firstItem() + $loop->index }}</strong></td>
@@ -350,6 +352,7 @@
               <td><strong>{{ $item->kode_barang }}</strong></td>
               <td>{{ Str::limit($item->nama_barang, 30) }}</td>
               <td><strong class="text-lg">{{ number_format($item->jumlah_masuk) }}</strong></td>
+              <td class="font-mono">{{ $item->satuan }}</td>
               <td class="font-mono">{{ $item->harga_satuan_format }}</td>
               <td class="font-mono font-semibold text-green-600">{{ $item->total_format }}</td>
               <td>
@@ -456,6 +459,25 @@
             <label class="form-label">Jumlah Masuk *</label>
             <input type="number" name="jumlah_masuk" id="create_jumlah_masuk" class="form-input" min="1" placeholder="1" required oninput="calculateTotal('create')">
           </div>
+          <div class="form-group">
+            <label class="form-label">Satuan *</label>
+            <select name="satuan" id="create_satuan" class="form-select" required>
+              <option value="">Pilih satuan</option>
+              <option value="lusin">Lusin</option>
+              <option value="rim">Rim</option>
+              <option value="buah">Buah</option>
+              <option value="dos">Dos</option>
+              <option value="paket">Paket</option>
+              <option value="pak">Pak</option>
+              <option value="unit">Unit</option>
+              <option value="set">Set</option>
+              <option value="karton">Karton</option>
+              <option value="box">Box</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label">Total</label>
             <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
@@ -582,6 +604,22 @@
             <input type="number" name="jumlah_masuk" id="edit_jumlah_masuk" class="form-input" min="1" required oninput="calculateTotal('edit')">
           </div>
           <div class="form-group">
+            <label class="form-label">Satuan *</label>
+            <select name="satuan" id="edit_satuan" class="form-select" required>
+              <option value="">Pilih satuan</option>
+              <option value="lusin">Lusin</option>
+              <option value="rim">Rim</option>
+              <option value="buah">Buah</option>
+              <option value="dos">Dos</option>
+              <option value="paket">Paket</option>
+              <option value="pak">Pak</option>
+              <option value="unit">Unit</option>
+              <option value="set">Set</option>
+              <option value="karton">Karton</option>
+              <option value="box">Box</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label">Total</label>
             <div style="display:flex; align-items:center; border:2px solid #A7F3D0; border-radius:12px; overflow:hidden; background:#F0FDF4;">
               <span style="padding:12px 14px; font-size:13px; font-weight:700; color:var(--success); border-right:2px solid #A7F3D0; background:#ECFDF5; white-space:nowrap;">Rp</span>
@@ -688,6 +726,7 @@
       kode_barang:   row.dataset.kodeBarang,
       nama_barang:   row.dataset.namaBarang,
       jumlah_masuk:  parseInt(row.dataset.jumlahMasuk) || 0,
+      satuan:        row.dataset.satuan || '',
       harga_satuan:  parseFloat(row.dataset.hargaSatuan) || 0,
       total:         parseFloat(row.dataset.total) || 0,
     };
@@ -715,6 +754,10 @@
         <div style="background:var(--bg); border-radius:10px; padding:16px;">
           <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Jumlah Masuk</div>
           <div style="font-size:20px; font-weight:800; color:var(--success);">${d.jumlah_masuk.toLocaleString('id-ID')}</div>
+        </div>
+        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+          <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Satuan</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text);">${d.satuan}</div>
         </div>
         <div style="background:var(--bg); border-radius:10px; padding:16px;">
           <div style="font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">Harga Satuan</div>
@@ -747,7 +790,7 @@
     
     // 🔥 FIX UTAMA DI JS: Membaca dataset berupa nilai numerik mentah database asli (75000), lalu diubah visualnya jadi format rupiah "75.000" di input form edit
     document.getElementById('edit_harga_satuan').value   = formatRupiah(parseFloat(row.dataset.hargaSatuan) || 0);
-    
+    document.getElementById('edit_satuan').value         = row.dataset.satuan || '';
     document.getElementById('editSubtitle').textContent  = `Kode Barang: ${row.dataset.kodeBarang}`;
 
     refreshCsrfToken();

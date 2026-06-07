@@ -17,6 +17,7 @@ class Persediaan extends Model
         'kategori',
         'kode_barang',
         'nama_barang',
+        'satuan',
         'tanggal_masuk',
         'harga_satuan',
         'harga_total',

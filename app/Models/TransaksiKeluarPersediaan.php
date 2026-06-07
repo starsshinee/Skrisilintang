@@ -21,6 +21,7 @@ class TransaksiKeluarPersediaan extends Model
         'jumlah_keluar',     // ✅ Sesuai "Jumlah Keluar"
         'harga',             // ✅ Sesuai "Harga"
         'total',             // ✅ Sesuai "Total"
+        'satuan',
         'user_id',
     ];
 

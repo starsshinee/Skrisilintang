@@ -116,6 +116,7 @@ class AdminPersediaanController extends Controller
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50|unique:persediaan,kode_barang',
             'nama_barang' => 'required|string|max:200',
+            'satuan' => 'required|string|max:50', // VALIDASI SATUAN
             'tanggal_masuk' => 'required|date',
             'harga_satuan' => 'required|numeric|min:0',
             'jumlah' => 'required|integer|min:1',
@@ -156,6 +157,7 @@ class AdminPersediaanController extends Controller
             'kategori' => 'required|string|max:100',
             'kode_barang' => ['required', 'string', 'max:50', Rule::unique('persediaan')->ignore($persediaan)],
             'nama_barang' => 'required|string|max:200',
+            'satuan' => 'required|string|max:50', // VALIDASI SATUAN
             'tanggal_masuk' => 'required|date',
             'harga_satuan' => 'required|numeric|min:0',
             'jumlah' => 'required|integer|min:1',
@@ -207,19 +209,20 @@ class AdminPersediaanController extends Controller
         $transaksi = $query->latest('tanggal_input')->paginate(10);
 
         // 🔥 AMBIL DATA MASTER PERSEDIAAN UNTUK DROPDOWN DI MODAL INDEX
-    // Menggunakan getRawOriginal() agar harga_satuan murni berupa nominal numerik asli database (tanpa embel-embel string "Rp")
-    $masterPersediaan = \App\Models\Persediaan::orderBy('nama_barang')->get()->map(function($item) {
-        return [
-            'kode_barang'   => $item->kode_barang,
-            'nama_barang'   => $item->nama_barang,
-            'kode_kategori' => $item->kode_kategori,
-            'kategori'      => $item->kategori,
-            'harga_satuan'  => (float) $item->getRawOriginal('harga_satuan'),
-            'stok_tersedia' => (int) $item->jumlah
-        ];
-    });
-    
-    return view('adminpersediian.transaksi_keluar', compact('transaksi', 'masterPersediaan'));
+        // Menggunakan getRawOriginal() agar harga_satuan murni berupa nominal numerik asli database (tanpa embel-embel string "Rp")
+        $masterPersediaan = \App\Models\Persediaan::orderBy('nama_barang')->get()->map(function($item) {
+            return [
+                'kode_barang'   => $item->kode_barang,
+                'nama_barang'   => $item->nama_barang,
+                'kode_kategori' => $item->kode_kategori,
+                'kategori'      => $item->kategori,
+                'satuan'        => $item->satuan, // MAP DATA SATUAN KE FRONTEND
+                'harga_satuan'  => (float) $item->getRawOriginal('harga_satuan'),
+                'stok_tersedia' => (int) $item->jumlah
+            ];
+        });
+        
+        return view('adminpersediian.transaksi_keluar', compact('transaksi', 'masterPersediaan'));
 
     }
 
@@ -242,6 +245,7 @@ class AdminPersediaanController extends Controller
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50',
             'nama_barang' => 'required|string|max:200',
+            'satuan' => 'required|string|max:50', // VALIDASI SATUAN
             'jumlah_keluar' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
         ]);
@@ -320,6 +324,7 @@ class AdminPersediaanController extends Controller
             'kategori' => 'required|string|max:100',
             'kode_barang' => 'required|string|max:50',
             'nama_barang' => 'required|string|max:200',
+            'satuan' => 'required|string|max:50', // VALIDASI SATUAN
             'jumlah_keluar' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
             'keterangan' => 'nullable|string',
@@ -443,6 +448,7 @@ class AdminPersediaanController extends Controller
             'kategori'      => 'required|string|max:100',
             'kode_barang'   => 'required|string|max:50',
             'nama_barang'   => 'required|string|max:200',
+            'satuan'        => 'required|string|max:50', // VALIDASI SATUAN
             'jumlah_masuk'  => 'required|integer|min:1',
             'harga_satuan'  => 'required|numeric|min:0',
         ]);
@@ -453,8 +459,6 @@ class AdminPersediaanController extends Controller
         \App\Models\TransaksiMasukPersediaan::create($request->all() + [
             'total' => $total
         ]);
-
-        // Tambahkan logika update/increment stok ke master data persediaan di sini jika diperlukan
 
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil disimpan!');
@@ -501,14 +505,13 @@ class AdminPersediaanController extends Controller
             'kategori'      => 'required|string|max:100',
             'kode_barang'   => 'required|string|max:50',
             'nama_barang'   => 'required|string|max:200',
+            'satuan'        => 'required|string|max:50', // VALIDASI SATUAN
             'jumlah_masuk'  => 'required|integer|min:1',
             'harga_satuan'  => 'required|numeric|min:0',
         ]);
 
         // 7. Hitung ulang total
         $total = $request->harga_satuan * $request->jumlah_masuk;
-
-        // Tambahkan logika adjustment stok ke master persediaan di sini jika diperlukan
 
         // 8. Update ke database
         $transaksiMasuk->update($request->all() + [
@@ -578,6 +581,7 @@ class AdminPersediaanController extends Controller
         }
 
         $namaPegawai = $permintaan->user->name ?? 'Pegawai';
+        $satuan = $permintaan->satuan ?? 'Unit'; // AMBIL DATA SATUAN DINAMIS
 
         if ($request->action === 'teruskan') {
             
@@ -609,14 +613,14 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "Admin Persediaan meneruskan permintaan barang persediaan untuk disetujui:\n\n";
                 $pesanWa .= "👤 *Pemohon:* {$namaPegawai}\n";
                 $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanWa .= "🔢 *Jumlah Diminta Awal:* {$permintaan->jumlah_diminta} Unit\n";
-                $pesanWa .= "✅ *Rekomendasi Admin:* {$request->jumlah_disetujui} Unit\n\n";
+                $pesanWa .= "🔢 *Jumlah Diminta Awal:* {$permintaan->jumlah_diminta} {$satuan}\n"; // PAKAI SATUAN DINAMIS
+                $pesanWa .= "✅ *Rekomendasi Admin:* {$request->jumlah_disetujui} {$satuan}\n\n"; // PAKAI SATUAN DINAMIS
                 $pesanWa .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanWa);
             }
 
-            // --- 2. TNOTIFIKASI INFO KE PEGAWAI ---
+            // --- 2. NOTIFIKASI INFO KE PEGAWAI ---
             $pegawai = $permintaan->user;
             if ($pegawai && $pegawai->nomor_telepon) {
                 $noHpPegawai = preg_replace('/[^0-9]/', '', $pegawai->nomor_telepon);
@@ -625,7 +629,7 @@ class AdminPersediaanController extends Controller
                 $pesanWaPegawai .= "Halo {$pegawai->name},\n";
                 $pesanWaPegawai .= "Permintaan barang persediaan Anda telah diverifikasi oleh Admin dan *sedang diteruskan ke Kasubag* untuk proses persetujuan akhir.\n\n";
                 $pesanWaPegawai .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanWaPegawai .= "✅ *Disetujui Admin:* {$request->jumlah_disetujui} Unit\n\n"; //  menampilkan hasil QTY rekomendasi admin
+                $pesanWaPegawai .= "✅ *Disetujui Admin:* {$request->jumlah_disetujui} {$satuan}\n\n"; // PAKAI SATUAN DINAMIS
                 $pesanWaPegawai .= "Kami akan mengabari Anda kembali setelah ada keputusan dari Kasubag. Terima kasih.";
 
                 SendFonnteNotification::dispatch($noHpPegawai, $pesanWaPegawai);
@@ -650,7 +654,7 @@ class AdminPersediaanController extends Controller
                 $pesanWa .= "Halo {$pegawai->name},\n";
                 $pesanWa .= "Maaf, pengajuan barang persediaan Anda telah *ditolak* oleh Admin Persediaan.\n\n";
                 $pesanWa .= "📦 *Barang:* {$permintaan->nama_barang}\n";
-                $pesanWa .= "🔢 *Jumlah Diminta:* {$permintaan->jumlah_diminta}\n";
+                $pesanWa .= "🔢 *Jumlah Diminta:* {$permintaan->jumlah_diminta} {$satuan}\n"; // PAKAI SATUAN DINAMIS
                 $pesanWa .= "💬 *Catatan Admin:* " . ($request->komentar ?? 'Tidak ada catatan khusus') . "\n\n";
                 $pesanWa .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
 

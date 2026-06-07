@@ -264,6 +264,7 @@ tr:hover { background: #f8faff; }
               <th width="120">Kode Barang</th>
               <th>Pemohon & Barang</th>
               <th width="100">Jml</th>
+              <th width="100">Satuan</th>
               <th width="130">Tgl Permintaan</th>
               <th width="130">Tgl Dibutuhkan</th>
               <th>Tujuan Penggunaan</th>
@@ -294,6 +295,7 @@ tr:hover { background: #f8faff; }
                   <strong style="color: var(--primary); font-size: 16px;">{{ $item->jumlah_diminta }}</strong>
                   <br><small style="color: var(--text-secondary);">Stok: {{ $item->persediaan->jumlah ?? 0 }}</small>
                 </td>
+                <td>{{ $item->persediaan->satuan }}</td>
                 <td>{{ \Carbon\Carbon::parse($item->tanggal_permintaan)->format('d M Y') }}</td>
                 <td>
                   <strong style="color: var(--warning);">{{ \Carbon\Carbon::parse($item->tanggal_dibutuhkan)->format('d M Y') }}</strong>

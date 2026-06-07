@@ -353,6 +353,7 @@
             <th>Harga Satuan</th>
             <th>Harga Total</th>
             <th>Jumlah</th>
+            <th>Satuan</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -366,7 +367,8 @@
             data-tanggal-masuk="{{ $item->tanggal_masuk->format('Y-m-d') }}" {{-- Format standar input date --}}
             data-harga-satuan="{{ $item->harga_satuan }}" {{-- Nilai mentah: 10000 --}}
             data-harga-total="{{ $item->harga_satuan * $item->jumlah }}" {{-- Nilai mentah total --}}
-            data-jumlah="{{ $item->jumlah }}">
+            data-jumlah="{{ $item->jumlah }}"
+            data-satuan="{{ $item->satuan }}">
             <td><strong>{{ $persediaan->firstItem() + $loop->index }}</strong></td>
             <td><strong>{{ $item->kode_kategori }}</strong></td>
             <td>{{ $item->kategori }}</td>
@@ -376,6 +378,7 @@
             <td class="font-mono">{{ $item->harga_satuan_format }}</td>
           <td class="font-mono font-semibold text-green-600">{{ $item->harga_total_format }}</td>
             <td><strong class="text-lg">{{ number_format($item->jumlah) }}</strong></td>
+            <td>{{ $item->satuan }}</td>
             <td>
               <a href="#" onclick="openDetail({{ $item->id }})" class="action-btn" title="Detail">
                 <svg viewBox="0 0 24 24" fill="#4F6FFF">
@@ -494,6 +497,26 @@
             <input type="number" name="jumlah" min="1" class="form-input" placeholder="1" required onchange="calculateTotal()">
             @error('jumlah') <span class="error-text">{{ $message }}</span> @enderror
           </div>
+          <div class="form-group">
+            <label class="form-label">Satuan <span style="color:var(--danger);">*</span></label>
+            <select name="satuan" class="form-select" required>
+              <option value="">Pilih satuan</option>
+              <option value="lusin">Lusin</option>
+              <option value="rim">Rim</option>
+              <option value="buah">Buah</option>
+              <option value="dos">Dos</option>
+              <option value="paket">Paket</option>
+              <option value="pak">Pak</option>
+              <option value="unit">Unit</option>
+              <option value="set">Set</option>
+              <option value="karton">Karton</option>
+              <option value="box">Box</option>
+            </select>
+            @error('satuan') <span class="error-text">{{ $message }}</span> @enderror
+          </div>
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label">Harga Total</label>
             <div style="display:flex; align-items:center; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg);">
@@ -650,6 +673,22 @@
           <div class="form-group">
             <label class="form-label">Jumlah <span style="color:var(--danger);">*</span></label>
             <input type="number" name="jumlah" id="editJumlah" min="1" class="form-input" placeholder="1" required onchange="calculateTotalEdit()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satuan <span style="color:var(--danger);">*</span></label>
+            <select name="satuan" id="editSatuan" class="form-select" required>
+              <option value="">Pilih satuan</option>
+              <option value="lusin">Lusin</option>
+              <option value="rim">Rim</option>
+              <option value="buah">Buah</option>
+              <option value="dos">Dos</option>
+              <option value="paket">Paket</option>
+              <option value="pak">Pak</option>
+              <option value="unit">Unit</option>
+              <option value="set">Set</option>
+              <option value="karton">Karton</option>
+              <option value="box">Box</option>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label">Harga Total</label>
@@ -814,6 +853,10 @@ function populateDetailModal(data) {
           <div style="font-weight:700; font-size:20px; color:var(--success);">${parseInt(data.jumlah).toLocaleString('id-ID')}</div>
         </div>
         <div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Satuan</div>
+          <div style="font-weight:600; font-size:14px; color:var(--text); text-transform:capitalize;">${data.satuan || '-'}</div>
+        </div>
+        <div>
           <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">Harga Satuan</div>
           <div style="font-weight:600; font-size:15px; color:var(--text);">Rp ${formattedHargaSatuan}</div>
         </div>
@@ -842,6 +885,7 @@ function openDetail(id) {
     harga_satuan: row.dataset.hargaSatuan || row.dataset.harga_satuan || '0',
     harga_total: row.dataset.hargaTotal || row.dataset.harga_total || '0',
     jumlah: row.dataset.jumlah || '0',
+    satuan: row.dataset.satuan || '',
     tanggal_masuk: row.dataset.tanggalMasuk || row.dataset.tanggal_masuk || ''
   };
   
@@ -863,6 +907,7 @@ function openEdit(id) {
     tanggal_masuk: row.dataset.tanggalMasuk || row.dataset.tanggal_masuk || '',
     harga_satuan: row.dataset.hargaSatuan || row.dataset.harga_satuan || '0',
     jumlah: row.dataset.jumlah || '0',
+    satuan: row.dataset.satuan || '',
     harga_total: row.dataset.hargaTotal || row.dataset.harga_total || '0'
   };
 
@@ -902,6 +947,7 @@ function populateEditModal(data) {
   document.getElementById('editTanggalMasuk').value = data.tanggal_masuk;
   document.getElementById('editHargaSatuan').value = formatCurrency(parseDatasetNumber(data.harga_satuan));
   document.getElementById('editJumlah').value = data.jumlah;
+  document.getElementById('editSatuan').value = data.satuan;
   document.getElementById('editHargaTotal').value = formatCurrency(parseDatasetNumber(data.harga_total));
   document.getElementById('editTitle').textContent = `Kode Barang: ${data.kode_barang}`;
   calculateTotalEdit(); 

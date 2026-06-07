@@ -20,6 +20,7 @@ class PermintaanPersediaan extends Model
         'user_id',
         'jumlah_diminta',
         'jumlah_disetujui',
+        'satuan',
         'tanggal_permintaan',
         'tanggal_dibutuhkan',
         'tujuan_penggunaan',

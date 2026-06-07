@@ -20,7 +20,8 @@ class PersediaanTemplateExport implements FromArray, WithHeadings, WithStyles, S
             'nama_barang',
             'tanggal_masuk',
             'harga_satuan',
-            'jumlah'
+            'jumlah',
+            'satuan'
         ];
     }
 
@@ -34,7 +35,8 @@ class PersediaanTemplateExport implements FromArray, WithHeadings, WithStyles, S
                 'Kertas HVS A4 Sidu',
                 date('Y-m-d'),
                 50000,
-                10
+                10,
+                'rim'
             ]
         ];
     }

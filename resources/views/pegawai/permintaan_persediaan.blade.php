@@ -210,7 +210,26 @@
               Jumlah permintaan melebihi stok yang tersedia!
             </div>
           </div>
-
+          <div class="form-group">
+              <div class="form-label"><i class="fas fa-balance-scale"></i> Satuan <span class="req">*</span></div>
+              <select class="form-select @error('satuan') border-red-500 @enderror" name="satuan" required>
+                <option value="" disabled selected>-- Pilih Satuan --</option>
+                <option value="Lusin" {{ old('satuan') == 'Lusin' ? 'selected' : '' }}>Lusin</option>
+                <option value="Rim" {{ old('satuan') == 'Rim' ? 'selected' : '' }}>Rim</option>
+                <option value="Buah" {{ old('satuan') == 'Buah' ? 'selected' : '' }}>Buah</option>
+                <option value="Dos" {{ old('satuan') == 'Dos' ? 'selected' : '' }}>Dos</option>
+                <option value="Paket" {{ old('satuan') == 'Paket' ? 'selected' : '' }}>Paket</option>
+                <option value="Pak" {{ old('satuan') == 'Pak' ? 'selected' : '' }}>Pak</option>
+                <option value="Unit" {{ old('satuan') == 'Unit' ? 'selected' : '' }}>Unit</option>
+                <option value="Karton" {{ old('satuan') == 'Karton' ? 'selected' : '' }}>Karton</option>
+                <option value="Box" {{ old('satuan') == 'Box' ? 'selected' : '' }}>Box</option>
+                <option value="Set" {{ old('satuan') == 'Set' ? 'selected' : '' }}>Set</option>
+              </select>
+              @error('satuan')
+                <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
           <div class="input-row">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-calendar"></i> Tanggal Permintaan <span class="req">*</span></div>
@@ -296,12 +315,12 @@
               <div class="req-card-meta">
                 <div class="meta-item">
                   <div class="meta-label">Jumlah Diminta</div>
-                  <div class="meta-value">{{ $item->jumlah_diminta }} unit</div>
+                  <div class="meta-value">{{ $item->jumlah_diminta }} {{ $item->satuan ?? 'Unit' }}</div>
                 </div>
                 @if($item->jumlah_disetujui !== null)
                 <div class="meta-item">
                     <div class="meta-label" style="color: var(--success);">Jumlah Disetujui</div>
-                    <div class="meta-value" style="color: var(--success); font-weight: 800;">{{ $item->jumlah_disetujui }} Unit</div>
+                    <div class="meta-value" style="color: var(--success); font-weight: 800;">{{ $item->jumlah_disetujui }} {{ $item->satuan ?? 'Unit' }}</div>
                 </div>
                 @endif
                 <div class="meta-item">
@@ -794,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailFasilitas').textContent = data.persediaan?.nama_barang || data.nama_barang || '-';
     document.getElementById('detailKodeBarang').textContent = data.kode_barang || '-';
     document.getElementById('detailKategori').textContent = data.persediaan?.kategori || 'Umum';
-    document.getElementById('detailJumlah').textContent = data.jumlah_diminta + ' unit';
+    document.getElementById('detailJumlah').textContent = data.jumlah_diminta + ' ' + (data.satuan || 'Unit');
     
     document.getElementById('detailTglPermintaan').textContent = data.tanggal_permintaan ? new Date(data.tanggal_permintaan).toLocaleDateString('id-ID') : '-';
     

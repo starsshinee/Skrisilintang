@@ -361,6 +361,7 @@ class PegawaiController extends Controller
         $request->validate([
             'kode_barang' => 'required|string|max:50',
             'jumlah_diminta' => 'required|integer|min:1',
+            'satuan'            => 'required|string|max:50',
             'tanggal_permintaan' => 'required|date',
             'tujuan_penggunaan' => 'required|string|max:1000',
         ]);
@@ -399,6 +400,7 @@ class PegawaiController extends Controller
             'persediaan_id' => $persediaan->id,               
             'user_id' => Auth::id(),
             'jumlah_diminta' => $request->jumlah_diminta,
+            'satuan'=> $request->satuan,
             'tanggal_permintaan' => $request->tanggal_permintaan,
             'tujuan_penggunaan' => $request->tujuan_penggunaan,
             'status' => 'pending',
