@@ -437,7 +437,7 @@
         {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
       </div>
       <div class="notif-btn" onclick="toggleNotifications()">
-        <i class="fas fa-bell"></i>
+        {{-- <i class="fas fa-bell"></i> --}}
         {{-- @if($notifikasi->count() > 0)
           <div class="notif-dot"></div>
         @endif --}}

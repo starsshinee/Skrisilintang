@@ -100,10 +100,10 @@
             </div>
             <div class="topbar-right">
                 <div class="topbar-pill"><i class="fas fa-calendar-day"></i>{{ date('d M Y') }}</div>
-                <div class="notif-btn">
+                {{-- <div class="notif-btn">
                     <i class="fas fa-bell"></i>
                     @if($menungguApproval > 0)<span class="notif-dot"></span>@endif
-                </div>
+                </div> --}}
             </div>
         </div>
 

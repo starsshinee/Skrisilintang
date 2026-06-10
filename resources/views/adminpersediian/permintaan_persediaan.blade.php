@@ -217,10 +217,10 @@ tr:hover { background: #f8faff; }
   <div class="topbar">
     <span class="topbar-title">Manajemen Permintaan</span>
     <div class="topbar-right">
-      <div class="notif-btn">
+      {{-- <div class="notif-btn">
         <i class="fas fa-bell" style="color: var(--text-secondary);"></i>
         <span class="notif-dot"></span>
-      </div>
+      </div> --}}
       <span class="date-text">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, DD MMMM YYYY') }}</span>
       <form method="POST" action="{{ route('logout') }}" style="display:inline">
         @csrf

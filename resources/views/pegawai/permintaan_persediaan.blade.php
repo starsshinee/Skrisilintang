@@ -142,7 +142,7 @@
       </div>
     </div>
     <div class="topbar-right">
-      <div class="notif-btn" onclick="alert('Notifikasi akan datang!')"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      {{-- <div class="notif-btn" onclick="alert('Notifikasi akan datang!')"><i class="fas fa-bell"></i><div class="notif-dot"></div></div> --}}
     </div>
   </div>
 
@@ -212,7 +212,10 @@
               Jumlah permintaan melebihi stok yang tersedia!
             </div>
           </div>
-          <div class="form-group">
+
+          <input type="hidden" name="satuan" id="hiddenSatuan" value="">
+          
+          {{-- <div class="form-group">
               <div class="form-label"><i class="fas fa-balance-scale"></i> Satuan <span class="req">*</span></div>
               <select class="form-select @error('satuan') border-red-500 @enderror" name="satuan" required>
                 <option value="" disabled selected>-- Pilih Satuan --</option>
@@ -230,7 +233,7 @@
               @error('satuan')
                 <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
               @enderror
-            </div>
+            </div> --}}
           <div class="input-row">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-calendar"></i> Tanggal Permintaan <span class="req">*</span></div>

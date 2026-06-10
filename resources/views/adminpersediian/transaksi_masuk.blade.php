@@ -256,11 +256,11 @@
   <div class="topbar">
     <span class="topbar-title">Transaksi Masuk</span>
     <div class="topbar-right">
-      <div class="notif-btn">
+      {{-- <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748B"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         <span class="notif-dot"></span>
-      </div>
-      <span class="date-text">{{ now()->translatedFormat('l, d F Y') }}</span>
+      </div> --}}
+      <span class="date-text">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, DD MMMM YYYY') }}</span>
       <button class="btn-keluar">Keluar</button>
     </div>
   </div>
@@ -458,6 +458,12 @@
           <div class="form-group">
             <label class="form-label">Jumlah Masuk *</label>
             <input type="number" name="jumlah_masuk" id="create_jumlah_masuk" class="form-input" min="1" placeholder="1" required oninput="calculateTotal('create')">
+
+            <small style="color: var(--danger); font-size: 11px; display: block; margin-top: 5px;">
+                <i class="fas fa-exclamation-circle"></i> 
+                <strong>PENTING:</strong> Wajib diinput dalam <u>satuan eceran terkecil kecuali kertas</u>! <br>
+                Contoh: Jika masuk 1 Pak (isi 12 Buah), maka input Jumlah = <strong>12</strong> dan Satuan = <strong>Buah</strong>.
+            </small>
           </div>
           <div class="form-group">
             <label class="form-label">Satuan *</label>
@@ -602,6 +608,12 @@
           <div class="form-group">
             <label class="form-label">Jumlah Masuk *</label>
             <input type="number" name="jumlah_masuk" id="edit_jumlah_masuk" class="form-input" min="1" required oninput="calculateTotal('edit')">
+
+            <small style="color: var(--danger); font-size: 11px; display: block; margin-top: 5px;">
+                <i class="fas fa-exclamation-circle"></i> 
+                <strong>PENTING:</strong> Wajib diinput dalam <u>satuan eceran terkecil kecuali kertas</u>! <br>
+                Contoh: Jika masuk 1 Pak (isi 12 Buah), maka input Jumlah = <strong>12</strong> dan Satuan = <strong>Buah</strong>.
+            </small>
           </div>
           <div class="form-group">
             <label class="form-label">Satuan *</label>

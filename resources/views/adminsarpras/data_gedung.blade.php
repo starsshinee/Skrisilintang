@@ -346,11 +346,11 @@ tbody tr:hover{background:#fafbff;transition:background .15s}
   <div class="topbar">
     <span class="topbar-title">Data Gedung</span>
     <div class="topbar-right">
-      <div class="notif-btn">
+      {{-- <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#64748b"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         <span class="notif-dot"></span>
-      </div>
-      <span class="date-text" id="currentDate"></span>
+      </div> --}}
+     <span class="date-text">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, DD MMMM YYYY') }}</span>
       <button class="btn-keluar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>
         Keluar

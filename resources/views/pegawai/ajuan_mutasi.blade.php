@@ -23,9 +23,9 @@
     <div class="topbar">
         <span class="topbar-title">Ajuan Mutasi</span>
         <div class="topbar-right">
-            <button class="btn" style="background: transparent; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;" title="Notifikasi">
+            {{-- <button class="btn" style="background: transparent; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;" title="Notifikasi">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-            </button>
+            </button> --}}
             <span class="topbar-title" style="font-size: 13px; margin: 0;">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, DD MMMM YYYY') }}</span>
             <button class="btn" style="background: transparent; border: 1px solid var(--border); padding: 6px 14px; font-size: 13px;" onclick="document.location='{{ route('logout') }}'">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 6px;"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zm-5 11H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2z"/></svg>

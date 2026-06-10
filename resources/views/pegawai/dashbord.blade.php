@@ -144,8 +144,8 @@
         {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
       </div>
       <button class="notif-btn">
-        <i class="fas fa-bell"></i>
-        <span class="notif-dot"></span>
+        {{-- <i class="fas fa-bell"></i>
+        <span class="notif-dot"></span> --}}
       </button>
     </div>
   </div>

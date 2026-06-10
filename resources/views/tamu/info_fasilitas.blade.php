@@ -468,7 +468,7 @@
             <div class="page-title">Informasi Fasilitas</div>
         </div>
         <div class="topbar-actions">
-            <a href="#" class="icon-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></a>
+            {{-- <a href="#" class="icon-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></a> --}}
             <a href="{{ route('adminsarpras.data-gedung.store') }}" class="icon-btn" style="width:auto;padding:0 16px;gap:8px;font-size:13px;font-weight:700;color:var(--primary)">
                 <i class="fas fa-plus"></i> Tambah
             </a>

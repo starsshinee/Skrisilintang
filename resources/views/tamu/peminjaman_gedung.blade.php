@@ -1030,9 +1030,9 @@
                 </div>
             </div>
             <div class="topbar-right">
-                <div class="notif-btn"><i class="fas fa-bell"></i>
+                {{-- <div class="notif-btn"><i class="fas fa-bell"></i>
                     <div class="notif-dot"></div>
-                </div>
+                </div> --}}
             </div>
         </div>
 

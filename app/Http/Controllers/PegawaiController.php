@@ -340,7 +340,7 @@ class PegawaiController extends Controller
      */
     public function permintaanPersediaan(Request $request)
     {
-        $persediaan = Persediaan::select('id', 'kode_barang', 'nama_barang', 'jumlah')
+        $persediaan = Persediaan::select('id', 'kode_barang', 'nama_barang', 'jumlah', 'satuan')
             ->where('jumlah', '>', 0) // Hanya barang tersedia
             ->orderBy('nama_barang')
             ->orderBy('nama_barang')
@@ -361,7 +361,7 @@ class PegawaiController extends Controller
         $request->validate([
             'kode_barang' => 'required|string|max:50',
             'jumlah_diminta' => 'required|integer|min:1',
-            'satuan'            => 'required|string|max:50',
+            // 'satuan'            => 'required|string|max:50',
             'tanggal_permintaan' => 'required|date',
             'tujuan_penggunaan' => 'required|string|max:1000',
         ]);
