@@ -168,8 +168,9 @@
                 <option value="{{ $item->kode_barang }}" 
                         data-nama="{{ $item->nama_barang }}" 
                         data-kategori="{{ $item->kategori ?? 'Umum' }}"
+                        data-satuan="{{ $item->satuan }}"
                         data-stok="{{ $item->jumlah }}">
-                  {{ $item->kode_barang }} - {{ $item->nama_barang }} (Stok: {{ number_format($item->jumlah) }})
+                  {{ $item->kode_barang }} - {{ $item->nama_barang }} (Satuan: {{ $item->satuan }}) (Stok: {{ number_format($item->jumlah) }})
                 </option>
               @endforeach
             </select>
@@ -183,6 +184,7 @@
                 <div class="fp-name" id="fpName">-</div>
                 <div class="fp-details">
                   <span class="fp-tag" id="fpKode">-</span>
+                  <span class="fp-tag" id="fpSatuan" style="background:rgba(59,130,246,0.1);color:var(--primary)">-</span>
                   <span class="fp-tag" id="fpStok" style="background:rgba(16,185,129,0.1);color:var(--success)">-</span>
                 </div>
               </div>
@@ -229,7 +231,6 @@
                 <div class="text-danger" style="font-size:11px;margin-top:4px;color:var(--danger)">{{ $message }}</div>
               @enderror
             </div>
-          </div>
           <div class="input-row">
             <div class="form-group">
               <div class="form-label"><i class="fas fa-calendar"></i> Tanggal Permintaan <span class="req">*</span></div>
@@ -548,6 +549,15 @@ class PermintaanController {
     const jumlahInput = document.getElementById('jumlah_diminta');
     if (jumlahInput) jumlahInput.addEventListener('input', () => this.validateJumlah());
 
+    // 🌟 BARU: Listener untuk mendeteksi pegawai mengganti satuan secara manual
+    const satuanSelect = document.getElementById('satuanSelect');
+    if (satuanSelect) {
+      satuanSelect.addEventListener('change', () => {
+        const fpSatuan = document.getElementById('fpSatuan');
+        if (fpSatuan) fpSatuan.textContent = satuanSelect.value || '-';
+      });
+    }
+
     const form = document.getElementById('permintaanForm');
     if (form) form.addEventListener('submit', (e) => this.handleFormSubmit(e));
 
@@ -567,17 +577,40 @@ class PermintaanController {
     const jumlahInput = document.getElementById('jumlah_diminta');
     const stokInfo = document.getElementById('stok-info');
     const peringatan = document.getElementById('peringatan-stok');
+    
+    // 🌟 BARU: Ambil elemen dropdown satuan
+    const satuanSelect = document.getElementById('satuanSelect'); 
 
     if (selectedOption && selectedOption.value) {
       this.currentStok = parseInt(selectedOption.getAttribute('data-stok')) || 0;
       
+      // 🌟 BARU: Ambil satuan dari master data
+      const satuanMaster = selectedOption.getAttribute('data-satuan');
+      
+      // 🌟 BARU: Pilih otomatis dropdown satuan berdasarkan master data
+      if (satuanSelect && satuanMaster) {
+        let isFound = false;
+        Array.from(satuanSelect.options).forEach(opt => {
+          if(opt.value.toLowerCase() === satuanMaster.toLowerCase()) {
+            opt.selected = true;
+            isFound = true;
+          }
+        });
+        if (!isFound) satuanSelect.value = ''; // Kosongkan jika satuan master tidak ada di pilihan dropdown
+      }
+
       document.getElementById('fpName').textContent = selectedOption.dataset.nama || 'N/A';
       document.getElementById('fpKode').textContent = 'Kode: ' + selectedOption.value;
       document.getElementById('fpStok').textContent = 'Stok: ' + this.currentStok.toLocaleString();
+      
+      // 🌟 BARU: Tampilkan satuan yang sedang terpilih ke kotak Preview
+      const fpSatuan = document.getElementById('fpSatuan');
+      if (fpSatuan) fpSatuan.textContent = (satuanSelect && satuanSelect.value) ? satuanSelect.value : (satuanMaster || '-');
+
       preview.classList.add('show');
 
       if (stokInfo) {
-        stokInfo.textContent = `Stok tersedia: ${this.currentStok.toLocaleString()} unit`;
+        stokInfo.textContent = `Stok tersedia: ${this.currentStok.toLocaleString()}`;
         stokInfo.setAttribute('data-stok', this.currentStok);
       }
       
@@ -600,9 +633,16 @@ class PermintaanController {
       const jumlahInput = document.getElementById('jumlah_diminta');
       const stokInfo = document.getElementById('stok-info');
       const peringatan = document.getElementById('peringatan-stok');
+      const satuanSelect = document.getElementById('satuanSelect'); // 🌟 BARU
 
       if(preview) preview.classList.remove('show');
       this.currentStok = 0;
+
+      // 🌟 BARU: Bersihkan preview satuan dan dropdown satuan
+      const fpSatuan = document.getElementById('fpSatuan');
+      if (fpSatuan) fpSatuan.textContent = '-';
+      if (satuanSelect) satuanSelect.value = '';
+
       if (jumlahInput) {
         jumlahInput.max = 999999;
         jumlahInput.title = '';
