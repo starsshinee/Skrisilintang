@@ -121,7 +121,7 @@ class AdminAsettetapController extends Controller
         return view('adminasettetap.data_asettetap_create');
     }
 
-    // ========== STORE DATA ASET TETAP (Method yang hilang) ==========
+    // ========== w2 DATA ASET TETAP (Method yang hilang) ==========
     public function storeDataAsetTetap(Request $request)
     {
         $validated = $request->validate([

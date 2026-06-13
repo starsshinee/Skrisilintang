@@ -953,7 +953,8 @@ const FACILITIES = [
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
-      "{{ asset('storage/fasilitas/kantor_ponuwa.jpeg') }}"
+      "{{ asset('storage/fasilitas/kantor_ponuwa.jpeg') }}",
+      "{{ asset('storage/fasilitas/KANTOR_PONUWA_2.jpeg') }}",
     ]
   },
   { 
@@ -974,27 +975,103 @@ const FACILITIES = [
     ]
   },
   { 
-    name: 'Ruang Kelas BPMP Gorontalo', 
+    name: 'Ruang Kelas Tilango 1 BPMP Gorontalo', 
     category: 'kelas', 
     location: 'BPMP Gorontalo', 
-    capacity: '40 Orang/Kelas', luas: '64 m²', 
-    operasional: 'Senin–Sabtu 07.30–17.00 WITA', kontak: '(0435) 821-555', 
+    capacity: '30 Orang/Kelas', luas: '140 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
     description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
     features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
-    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Kapasitas maksimal tidak boleh dilampaui', 'Menjaga ketenangan'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
     images: [
-      "{{ asset('storage/fasilitas/tinelo_1.jpeg') }}",
-      "{{ asset('storage/fasilitas/tinelo_3.jpeg') }}", 
-      "{{ asset('storage/fasilitas/tinelo_4.jpeg') }}",
       "{{ asset('storage/fasilitas/tilango.jpeg') }}"
     ]
   },
   { 
-    name: 'Mess BPMP Gorontalo', 
+    name: 'Ruang Kelas Tilango 2 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/TILANGO_2.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas Tilango 3 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/TILANGO_3.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas Tinelo 1 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/tinelo_1.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas Tinelo 2 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/TINELO_2.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas Tinelo 3 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/tinelo_3.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Kelas Tinelo 4 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/tinelo_4.jpeg') }}"
+    ]
+  },
+  
+  { 
+    name: 'Mess Bandayo kiki 1 BPMP Gorontalo', 
     category: 'penginapan', 
     location: 'Area Mess Bandayo', 
-    capacity: '2-3 Orang/Kamar', luas: '24 m²', 
-    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: 'Customer Service Mess', 
+    capacity: '4 Orang 2 Kamar', luas: '136.50 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: '0813-1326-6661', 
     description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
     features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
@@ -1007,14 +1084,83 @@ const FACILITIES = [
     ]
   },
   { 
-    name: 'Ruang Asrama BPMP Gorontalo', 
+    name: 'Mess Bandayo kiki 2 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Area Mess Bandayo', 
+    capacity: '4 Orang 2 Kamar', luas: '120,75 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: '0813-1326-6661', 
+    description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
+    rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
+    images: [
+      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Mess Bandayo kiki 3 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Area Mess Bandayo', 
+    capacity: '4 Orang 2 Kamar', luas: '120,75 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: '0813-1326-6661', 
+    description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
+    rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
+    images: [
+      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Mess Bandayo kiki 4 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Area Mess Bandayo', 
+    capacity: '4 Orang 2 Kamar', luas: '120,75 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: '0813-1326-6661', 
+    description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
+    rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
+    images: [
+      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Mess Bandayo Daa BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Area Mess Bandayo', 
+    capacity: '12 Orang 6 Kamar', luas: '211,50 m²', 
+    operasional: '24 Jam (Check-in 14.00, Check-out 12.00)', kontak: '0813-1326-6661', 
+    description: 'Fasilitas penginapan bagi tamu dinas atau peserta diklat dengan suasana asri yang menjamin istirahat berkualitas.',
+    features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
+    rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
+    images: [
+      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+    ]
+  },
+  
+  { 
+    name: 'Ruang Asrama Beledaa 1 BPMP Gorontalo', 
     category: 'penginapan', 
     location: 'Gedung Asrama Bele Daa, Wongkaditi Timur', 
-    capacity: '4 Orang/Kamar', luas: '32 m²', 
-    operasional: '24 Jam', kontak: 'Pengelola Asrama', 
+    capacity: '32 Orang 16 Kamar', luas: '522,00 m²', 
+    operasional: '24 Jam', kontak: '0813-1326-6661', 
     description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
     features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
-    rules: ['Wajib menjaga kebersihan area bersama', 'Batas jam bertamu maksimal pukul 21.00 WITA', 'Dilarang memasak di dalam kamar asrama', 'Mengunci pintu saat bepergian'], 
+    rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
     images: [
        "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
       "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
@@ -1023,17 +1169,78 @@ const FACILITIES = [
     ]
   },
   { 
-    name: 'Ruang Makan BPMP Gorontalo', 
+    name: 'Ruang Asrama Beledaa 2 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Gedung Asrama Bele Daa, Wongkaditi Timur', 
+    capacity: '32 Orang 16 Kamar', luas: '522,00 m²', 
+    operasional: '24 Jam', kontak: '0813-1326-6661', 
+    description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
+    features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
+    rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
+    images: [
+       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
+      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Asrama Beledaa 3 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Gedung Asrama Bele Daa, Wongkaditi Timur', 
+    capacity: '32 Orang 16 Kamar', luas: '522,00 m²', 
+    operasional: '24 Jam', kontak: '0813-1326-6661', 
+    description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
+    features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
+    rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
+    images: [
+       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
+      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Asrama Beledaa 4 BPMP Gorontalo', 
+    category: 'penginapan', 
+    location: 'Gedung Asrama Bele Daa, Wongkaditi Timur', 
+    capacity: '32 Orang 16 Kamar', luas: '522,00 m²', 
+    operasional: '24 Jam', kontak: '0813-1326-6661', 
+    description: 'Akomodasi tipe asrama yang luas untuk menampung peserta kegiatan dalam jumlah banyak dengan fasilitas pendukung yang lengkap.',
+    features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
+    rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
+    images: [
+       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
+      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
+      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
+    ]
+  },
+  { 
+    name: 'Ruang Makan Olamita 1 BPMP Gorontalo', 
     category: 'ruang',  
     location: 'Gedung Olamita, Wongkaditi Timur', 
-    capacity: '150 Orang', luas: '200 m²', 
-    operasional: '06.00–20.00 WITA', kontak: 'Unit Rumah Tangga', 
+    capacity: '160 Orang', luas: '198 m²', 
+    operasional: '07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
     description: 'Area makan bersih dan higienis yang melayani konsumsi peserta diklat maupun tamu umum dengan sistem prasmanan.',
     features: ['Meja & Kursi Makan ', 'Area Cuci Tangan (Wastafel)', 'Gazebo Outdoor Olamita', 'Toilet', 'Ac'], 
     rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
     images: [
       "{{ asset('storage/fasilitas/olamita1_depan.jpeg') }}",
-      "{{ asset('storage/fasilitas/olamita_1.jpeg') }}",
+      "{{ asset('storage/fasilitas/olamita_1.jpeg') }}"
+    ]
+  },
+  
+  { 
+    name: 'Ruang Makan Olamita 2 BPMP Gorontalo', 
+    category: 'ruang',  
+    location: 'Gedung Olamita, Wongkaditi Timur', 
+    capacity: '40 Orang', luas: '198 m²', 
+    operasional: '07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Area makan bersih dan higienis yang melayani konsumsi peserta diklat maupun tamu umum dengan sistem prasmanan.',
+    features: ['Meja & Kursi Makan ', 'Area Cuci Tangan (Wastafel)', 'Gazebo Outdoor Olamita', 'Toilet', 'Ac'], 
+    rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
+    images: [
       "{{ asset('storage/fasilitas/olamita_2.jpeg') }}",
       "{{ asset('storage/fasilitas/gazebo_olamita1.jpeg') }}"
     ]
