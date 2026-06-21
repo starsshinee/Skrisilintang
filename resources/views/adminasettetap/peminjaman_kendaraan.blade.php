@@ -166,6 +166,8 @@
                                 <button class="action-btn upload" onclick="openUploadModal({{ $item->id }})">
                                     <i class="fas fa-upload"></i> Upload Surat
                                 </button>
+                            @elseif($item->status == 'dibatalkan')
+                                <span class="text-xs text-gray-400 italic">Tidak ada aksi</span>
                             @endif
 
                             @if(!empty($item->surat_bast_path))

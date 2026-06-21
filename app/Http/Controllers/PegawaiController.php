@@ -205,24 +205,19 @@ class PegawaiController extends Controller
     // Fungsi Membatalkan Peminjaman Barang
     public function cancelPeminjaman($id)
     {
-        // Cari data berdasarkan ID dan pastikan itu milik User yang sedang Login
         $peminjaman = \App\Models\PeminjamanBarang::where('id', $id)
             ->where('user_id', \Illuminate\Support\Facades\Auth::id())
             ->first();
 
-        if (!$peminjaman) {
-            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
-        }
+        // ✅ PERBAIKAN: Ubah status menjadi dibatalkan, JANGAN dihapus (delete)
+        $peminjaman->update([
+            'status' => 'dibatalkan',
+            'updated_at' => now()
+        ]);
 
-        // Hanya peminjaman yang masih PENDING yang boleh dibatalkan
-        if ($peminjaman->status !== 'pending') {
-            return response()->json(['success' => false, 'message' => 'Permintaan sudah diproses, tidak bisa dibatalkan.'], 400);
-        }
-
-        // Hapus data
-        $peminjaman->delete();
-
-        return response()->json(['success' => true, 'message' => 'Peminjaman berhasil dibatalkan.']);
+        return response()->json([
+            'success' => true, 
+            'message' => 'Peminjaman berhasil dibatalkan.']);
     }
 
     /**
@@ -329,7 +324,10 @@ class PegawaiController extends Controller
         if ($pengembalian->status_verifikasi === 'pending') {
             // Kembalikan status peminjaman
             $pengembalian->peminjamanBarang->update(['status' => 'disetujui']);
-            $pengembalian->delete();
+            $pengembalian->update([
+                'status_verifikasi' => 'dibatalkan',
+                'updated_at' => now()
+            ]);
             return back()->with('success', 'Laporan pengembalian berhasil dibatalkan.');
         }
         return back()->with('error', 'Laporan yang sudah diverifikasi tidak dapat dibatalkan.');
@@ -640,8 +638,13 @@ class PegawaiController extends Controller
             ->where('status', 'pending')
             ->firstOrFail();
 
-        $data->delete();
-        return response()->json(['success' => true]);
+        // ✅ PERBAIKAN: Ubah status menjadi dibatalkan, JANGAN dihapus (delete)
+        $data->update([
+            'status' => 'dibatalkan',
+            'updated_at' => now()
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Peminjaman kendaraan berhasil dibatalkan.']);
     }
 
     /**
@@ -750,7 +753,10 @@ class PegawaiController extends Controller
         $pengembalian = PengembalianKendaraan::findOrFail($id);
         if ($pengembalian->status_pengembalian === 'diproses') {
             $pengembalian->peminjamanKendaraan->update(['status' => 'disetujui']);
-            $pengembalian->delete();
+            $pengembalian->update([
+                'status_verifikasi' => 'dibatalkan',
+                'updated_at' => now()
+            ]);
             return back()->with('success', 'Laporan pengembalian berhasil dibatalkan.');
         }
         return back()->with('error', 'Laporan yang sudah diverifikasi tidak dapat dibatalkan.');

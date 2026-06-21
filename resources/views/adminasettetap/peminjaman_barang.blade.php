@@ -374,6 +374,8 @@
                                             onclick="openUploadModal({{ $item->id }})">
                                             <i class="fas fa-upload"></i> Upload BAST
                                         </button>
+                                    @elseif($item->status == 'dibatalkan')
+                                        <span class="text-xs text-gray-400 italic">Tidak ada aksi</span>
                                     @endif
 
                                     @if (!empty($item->surat_bast_path))

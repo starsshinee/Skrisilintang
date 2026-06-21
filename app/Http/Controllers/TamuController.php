@@ -290,8 +290,11 @@ class TamuController extends Controller
                 ], 400);
             }
 
-            // Hapus data / batalkan
-            $peminjaman->delete();
+            // ✅ PERBAIKAN: Ubah status menjadi dibatalkan, JANGAN dihapus (delete)
+            $peminjaman->update([
+                'status' => 'dibatalkan',
+                'updated_at' => now()
+            ]);
 
             return response()->json([
                 'success' => true,

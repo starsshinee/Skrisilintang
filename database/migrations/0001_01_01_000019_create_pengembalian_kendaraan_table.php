@@ -38,7 +38,8 @@ return new class extends Migration
             $table->enum('status_verifikasi', [
                 'pending',
                 'diterima',
-                'ditolak'
+                'ditolak',
+                'dibatalkan'
             ])->default('pending');
             $table->timestamps();
         });

@@ -43,9 +43,9 @@ return new class extends Migration
                 'diteruskan_kasubag',
                 'disetujui',
                 'ditolak',
-                'dibatalkan',
                 'proses_pengembalian', 
-                'selesai'
+                'selesai',
+                'dibatalkan'
             ])->default('pending');
             $table->string('surat_bast_path')->nullable();
 
