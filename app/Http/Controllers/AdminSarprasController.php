@@ -350,7 +350,7 @@ class AdminSarprasController extends Controller
             ]);
 
             $peminjaman->update([
-                'status' => 'dalam_review',
+                'status' => 'diteruskan_kasubag',
                 'reviewed_by_admin_id' => $adminId,
                 'diteruskan_ke_kasubag_date' => now(),
                 'komentar' => $request->komentar

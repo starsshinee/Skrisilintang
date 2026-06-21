@@ -108,7 +108,7 @@ class KasubagController extends Controller
     public function persetujuanPeminjamanGedung(Request $request)
     {
         $query = PeminjamanGedung::with(['user', 'reviewer'])
-            ->whereIn('status', ['dalam_review', 'disetujui_kasubag'])
+            ->whereIn('status', ['diteruskan_kasubag', 'disetujui_kasubag'])
             ->orderBy('diteruskan_ke_kasubag_date', 'desc');
 
         if ($request->filled('search')) {
@@ -128,10 +128,10 @@ class KasubagController extends Controller
         $request->validate(['komentar' => 'nullable|string|max:1000']);
 
         // Cek apakah masih dalam review
-        if ($peminjaman->status !== 'dalam_review') {
+        if ($peminjaman->status !== 'diteruskan_kasubag') {
             return response()->json([
                 'success' => false,
-                'message' => 'Peminjaman sudah diproses sebelumnya!'
+                'message' => 'Peminjaman belum diteruskan ke Kasubag atau sudah diproses!'
             ], 400);
         }
 
@@ -192,10 +192,10 @@ class KasubagController extends Controller
     {
         $request->validate(['komentar' => 'required|string|max:1000']);
 
-        if ($peminjaman->status !== 'dalam_review') {
+        if ($peminjaman->status !== 'diteruskan_kasubag') {
             return response()->json([
                 'success' => false,
-                'message' => 'Peminjaman sudah diproses sebelumnya!'
+                'message' => 'Peminjaman ditolak Kasubag!'
             ], 400);
         }
 
@@ -404,8 +404,8 @@ class KasubagController extends Controller
     public function persetujuanPeminjamanKendaraan()
     {
         $peminjaman = PeminjamanKendaraan::with('user')
-            ->whereIn('status', ['dalam_review','diteruskan_kasubag', 'disetujui', 'ditolak'])
-            ->orderByRaw("FIELD(status, 'dalam_review', 'disetujui', 'ditolak')")
+            ->whereIn('status', ['diteruskan_kasubag', 'disetujui', 'ditolak'])
+            ->orderByRaw("FIELD(status, 'diteruskan_kasubag', 'disetujui', 'ditolak')")
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -425,6 +425,10 @@ class KasubagController extends Controller
         ]);
 
         $peminjaman = PeminjamanKendaraan::findOrFail($id);
+
+        if ($peminjaman->status !== 'diteruskan_kasubag') {
+            return back()->with('error', 'Peminjaman kendaraan belum diteruskan ke Kasubag atau sudah diproses!');
+        }
 
         if ($request->action === 'setuju') {
             $peminjaman->status = 'disetujui';
@@ -509,7 +513,7 @@ class KasubagController extends Controller
     public function persetujuanPermintaanPersediaan()
     {
         $stats = [
-            'menunggu' => PermintaanPersediaan::where('status', 'dalam_review')->count(),
+            'menunggu' => PermintaanPersediaan::where('status', 'diteruskan_kasubag')->count(),
             'disetujui' => PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag'])->count(),
             'total' => PermintaanPersediaan::whereIn('status', ['disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])->count()
         ];
@@ -526,8 +530,12 @@ class KasubagController extends Controller
     // 🔥 METHOD YANG DIPERBAIKI UNTUK OTOMATISASI STOK DAN NOTIFIKASI QTY 🔥
     public function approvePermintaan(Request $request, PermintaanPersediaan $permintaan)
     {
-        if (!in_array($permintaan->status, ['dalam_review', 'disetujui_kasubag'])) {
+        if (!in_array($permintaan->status, ['diteruskan_kasubag', 'disetujui_kasubag'])) {
             return back()->with('error', 'Permintaan tidak valid untuk diproses!');
+        }
+
+        if ($permintaan->status !== 'diteruskan_kasubag') {
+            return back()->with('error', 'Permintaan belum diteruskan ke Kasubag atau tidak valid untuk diproses!');
         }
 
         if ($request->action === 'setuju') {
