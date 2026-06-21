@@ -40,11 +40,10 @@ return new class extends Migration
             $table->text('komentar')->nullable();
             $table->enum('status', [
                 'pending',
-                'dalam_review',
-                'disetujui_admin',
                 'diteruskan_kasubag',
                 'disetujui',
                 'ditolak',
+                'dibatalkan',
                 'proses_pengembalian', 
                 'selesai'
             ])->default('pending');

@@ -140,7 +140,7 @@
                                 
                                 if($item->status == 'disetujui') { $statusClass = 'status-diterima'; }
                                 elseif($item->status == 'ditolak') { $statusClass = 'status-ditolak'; }
-                                elseif($item->status == 'dalam_review') { $statusClass = 'status-review'; $statusText = 'Review Kasubag'; }
+                                elseif($item->status == 'diteruskan_kasubag') { $statusClass = 'status-review'; $statusText = 'Dalam Review'; }
                             @endphp
                             <span class="status-badge {{ $statusClass }}">{{ str_replace('_', ' ', ucfirst($statusText)) }}</span>
                         </td>
@@ -161,7 +161,7 @@
                                 <button class="action-btn tolak" onclick="openReviewModal({{ $item->id }}, 'tolak')">
                                     <i class="fas fa-times"></i> Tolak
                                 </button>
-                            @elseif(in_array($item->status, ['dalam_review', 'disetujui']))
+                            @elseif(in_array($item->status, ['diteruskan_kasubag', 'disetujui']))
                                 <button class="action-btn upload" onclick="openUploadModal({{ $item->id }})">
                                     <i class="fas fa-upload"></i> Upload Surat
                                 </button>

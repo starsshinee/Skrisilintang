@@ -25,7 +25,11 @@ return new class extends Migration
             // Workflow fields
             $table->foreignId('reviewed_by_adminpersediaan_id')->nullable()->constrained('users');
             $table->foreignId('approved_by_kasubag_id')->nullable()->constrained('users');
-            $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak' , 'dibatalkan'])->default('pending');
+            $table->enum('status', [ 'pending',
+                'diteruskan_kasubag',
+                'disetujui',
+                'ditolak',
+                'dibatalkan',])->default('pending');
             $table->string('surat_bast_path')->nullable();
             $table->timestamps();
         });

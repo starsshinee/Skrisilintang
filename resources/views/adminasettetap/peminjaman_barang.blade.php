@@ -333,7 +333,7 @@
                                             $statusClass = 'status-ditolak';
                                             $statusText = 'Ditolak';
                                         } elseif ($item->status == 'diteruskan_kasubag') {
-                                            $statusText = 'Review Kasubag';
+                                            $statusText = 'Dalam Review';
                                         }
                                     @endphp
                                     <span

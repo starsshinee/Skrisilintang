@@ -290,7 +290,7 @@
           <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">BPMP GORONTALO</span>
         </h1>
         <p class="text-blue-200 text-base md:text-lg max-w-xl mb-8 leading-relaxed anim-fade-up delay-3">
-          Kelola dan monitoring BMN (Barang Milik Negara) pada Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
+          Pendataan dan monitoring BMN (Barang Milik Negara) pada Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo secara digital, transparan, dan akuntabel.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start anim-fade-up delay-4">
           <a href="{{ route('login') }}" class="btn-primary text-white font-semibold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 text-base">
@@ -303,11 +303,20 @@
           </a>
         </div>
         <div class="flex items-center gap-8 mt-10 justify-center lg:justify-start anim-fade-up delay-5">
-          <div class="text-center"><div class="text-2xl font-bold text-white">1,247</div><div class="text-blue-300 text-xs">Total Aset</div></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{{ number_format($totalItemBMN) }}</div>
+            <div class="text-blue-300 text-xs">Total Aset</div>
+          </div>
           <div class="w-px h-10 bg-white/20"></div>
-          <div class="text-center"><div class="text-2xl font-bold text-white">78</div><div class="text-blue-300 text-xs">Pegawai</div></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{{ number_format($totalPegawai) }}</div>
+            <div class="text-blue-300 text-xs">Pegawai</div>
+          </div>
           <div class="w-px h-10 bg-white/20"></div>
-          <div class="text-center"><div class="text-2xl font-bold text-white">12</div><div class="text-blue-300 text-xs">Fasilitas</div></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{{ number_format($totalFasilitas) }}</div>
+            <div class="text-blue-300 text-xs">Fasilitas</div>
+          </div>
         </div>
       </div>
 
@@ -856,7 +865,7 @@
       <div class="grid md:grid-cols-4 gap-8 mb-10">
         <div class="md:col-span-2">
           <div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#3355ff"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#5a82ff"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#3355ff"/></svg></div><div><span class="font-bold text-lg">SIPANDU</span><span class="text-blue-300 text-xs block">BPMP Gorontalo</span></div></div>
-          <p class="text-blue-200/70 text-sm leading-relaxed max-w-md">Sistem Informasi Pendataan Barang Milik Negara Terpadu Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo. Mendukung tata kelola aset yang transparan dan akuntabel.</p>
+          <p class="text-blue-200/70 text-sm leading-relaxed max-w-md">Sistem Informasi Pendataan dan Monitoring Barang Milik Negara pada Balai Penjaminan Mutu Pendidikan Provinsi Gorontalo. Mendukung tata kelola aset yang transparan dan akuntabel.</p>
         </div>
         <div>
           <h4 class="font-semibold mb-4 text-sm">Menu</h4>

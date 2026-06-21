@@ -248,10 +248,10 @@ tr:hover { background: #f8faff; }
           <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">Semua Status</option>
             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="dalam_review" {{ request('status') == 'dalam_review' ? 'selected' : '' }}>Dalam Review</option>
-            <option value="disetujui_kasubag" {{ request('status') == 'disetujui_kasubag' ? 'selected' : '' }}>Disetujui Kasubag</option>
+            <option value="diteruskan_kasubag" {{ request('status') == 'diteruskan_kasubag' ? 'selected' : '' }}>Diteruskan Kasubag</option>
             <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
             <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+            <option value="dibatalkan" {{ request('status') == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
           </select>
         </form>
       </div>
@@ -317,9 +317,9 @@ tr:hover { background: #f8faff; }
                     } elseif(in_array($item->status, ['ditolak', 'ditolak_kasubag'])) {
                         $badgeClass = 'bg-danger';
                         $iconClass = 'fa-times-circle';
-                    } elseif($item->status == 'dalam_review') {
+                    } elseif($item->status == 'diteruskan_kasubag') {
                         $badgeClass = 'bg-review';
-                        $iconClass = 'fa-search';
+                        $iconClass = 'fa-forward';
                     }
                   @endphp
                   <span class="status-badge {{ $badgeClass }}">
@@ -371,7 +371,7 @@ tr:hover { background: #f8faff; }
                         </div>
                       </form>
 
-                    @elseif(in_array($item->status, ['dalam_review', 'disetujui_kasubag', 'disetujui']))
+                    @elseif(in_array($item->status, ['diteruskan_kasubag', 'disetujui_kasubag', 'disetujui']))
                       {{-- Tombol Cetak (Generate) --}}
                       <a href="{{ route('adminpersediaan.surat-permintaan', $item->id) }}" class="btn-outline btn-cetak" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

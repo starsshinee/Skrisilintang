@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log; // ✅ ADD
 use Illuminate\Support\Facades\DB;
 use App\Models\{
     User,
+    Gedung,
     AssetTetap,
     TransaksiMasukAssetTetap,
     TransaksiKeluarAssetTetap,
@@ -51,6 +52,8 @@ class AdminAsettetapController extends Controller
 
         return view('adminasettetap.dashbord', compact('stats', 'recentPengembalian'));
     }
+
+    
 
     // ========== DATA ASET TETAP - INDEX (sudah ada, update query) ==========
     public function dataAsetTetap(Request $request)
@@ -1581,117 +1584,39 @@ class AdminAsettetapController extends Controller
 
     // ========== PENGADUAN ==========
     //====landing page====//
+   //====landing page====//
     public function landingpage()
     {
         // 1. Total Item BMN (Gabungan Aset Tetap dan Master Barang Persediaan)
-        $totalAset = AssetTetap::count();
-        $totalPersediaan = Persediaan::count();
+        $totalAset = \App\Models\AssetTetap::count();
+        $totalPersediaan = \App\Models\Persediaan::count();
         $totalItemBMN = $totalAset + $totalPersediaan;
 
-        // 2. Nilai Aset Terkelola (Menjumlahkan kolom harga_perolehan/nilai pada aset tetap)
-        // Asumsi nama kolomnya adalah 'harga_perolehan'
-        $nilaiAsetTotal = AssetTetap::sum('nilai_perolehan'); // Ganti dengan nama kolom yang sesuai di database Anda
+        // --- Mengambil data Pegawai dan Fasilitas ---
+        $totalPegawai = \App\Models\User::count(); // Ganti dengan User::where('role', 'pegawai')->count() jika hanya role pegawai
+        $totalFasilitas = \App\Models\Gedung::count(); // Pastikan model Gedung di-import atau panggil dengan \App\Models\Gedung
+        // --------------------------------------------
+
+        // 2. Nilai Aset Terkelola (Menjumlahkan kolom nilai_perolehan)
+        $nilaiAsetTotal = \App\Models\AssetTetap::sum('nilai_perolehan'); 
         $formattedNilaiAset = number_format($nilaiAsetTotal / 1000000000, 1); // Konversi ke Milyar (M)
 
-        // 3. Transaksi Bulan Ini (Jumlah Peminjaman + Permintaan Persediaan bulan ini)
-        $transaksiAset = PeminjamanBarang::whereMonth('created_at', Carbon::now()->month)->count();
-        $transaksiPersediaan = PermintaanPersediaan::whereMonth('created_at', Carbon::now()->month)->count();
+        // 3. Transaksi Bulan Ini
+        $transaksiAset = \App\Models\PeminjamanBarang::whereMonth('created_at', \Carbon\Carbon::now()->month)->count();
+        $transaksiPersediaan = \App\Models\PermintaanPersediaan::whereMonth('created_at', \Carbon\Carbon::now()->month)->count();
         $totalTransaksiBulanIni = $transaksiAset + $transaksiPersediaan;
 
-        // 4. Kondisi Baik (Persentase aset tetap yang kondisinya 'Baik')
-        $asetBaik = AssetTetap::where('kondisi', 'Baik')->count();
+        // 4. Kondisi Baik 
+        $asetBaik = \App\Models\AssetTetap::where('kondisi', 'Baik')->count();
         $persentaseKondisiBaik = $totalAset > 0 ? round(($asetBaik / $totalAset) * 100, 1) : 0;
 
-        // // Data pengaduan untuk live tracking (dari langkah sebelumnya)
-        // $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
-
         return view('welcome', compact(
-            // 'pengaduans',
             'totalItemBMN',
             'formattedNilaiAset',
             'totalTransaksiBulanIni',
-            'persentaseKondisiBaik'
+            'persentaseKondisiBaik',
+            'totalPegawai',
+            'totalFasilitas'
         ));
     }
-    // public function index()
-    // {
-    //     // Mengambil 6 pengaduan terbaru dari database
-    //     $pengaduans = Pengaduan::orderBy('created_at', 'desc')->take(6)->get();
-
-    //     // Passing variabel $pengaduans ke file blade landing page Anda
-    //     return view('welcome', compact('pengaduans'));
-    // }
-    // public function pengaduan(Request $request)
-    // {
-    //     $query = Pengaduan::query()
-    //         ->when($request->filled('search'), function ($q) use ($request) {
-    //             $q->search($request->search);
-    //         })
-    //         ->when($request->filled('status'), function ($q) use ($request) {
-    //             $q->status($request->status);
-    //         })
-    //         ->orderBy('created_at', 'desc');
-
-    //     $pengaduan = $query->paginate(15)->withQueryString();
-
-    //     return view('adminasettetap.pengaduan', compact('pengaduan'));
-    // }
-
-    // public function pengaduanShow(Pengaduan $pengaduan)
-    // {
-    //     return view('adminasettetap.pengaduan_show', compact('pengaduan'));
-    // }
-
-    // public function pengaduanDestroy(Pengaduan $pengaduan)  // ✅ Changed name
-    // {
-    //     $pengaduan->delete();
-    //     return redirect()->route('adminasettetap.pengaduan')
-    //         ->with('success', 'Pengaduan berhasil dihapus!');
-    // }
-
-    // public function pengaduanUpdate(Request $request, Pengaduan $pengaduan)  // ✅ Changed name
-    // {
-    //     $validated = $request->validate([
-    //         'status' => 'required|in:baru,diproses,selesai,ditolak',
-    //         'catatan_admin' => 'nullable|string|max:2000',
-    //     ]);
-
-    //     $pengaduan->update($validated);
-
-    //     return redirect()->route('adminasettetap.pengaduan')
-    //         ->with('success', 'Status pengaduan #' . $pengaduan->id . ' berhasil diupdate!');
-    // }
-
-    // //=======PENGADUAN STORE FRONDEND-=====
-    // public function pengaduanStore(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'nama_lengkap' => 'required|string|max:255',
-    //         'email' => 'required|email|max:255',
-    //         'telepon' => 'required|string|max:20',
-    //         'kategori' => 'required|in:peminjaman_barang,pengembalian_barang,peminjaman_kendaraan,pengembalian_kendaraan,peminjaman_gedung,pengembalian_gedung,persediaan,sistem,layanan,lainnya',
-    //         'deskripsi' => 'required|string|max:5000',
-    //         'setuju_kebijakan' => 'required|accepted',
-    //     ], [
-    //         'nama_lengkap.required' => 'Nama lengkap wajib diisi',
-    //         'email.required' => 'Email wajib diisi',
-    //         'email.email' => 'Format email tidak valid',
-    //         'telepon.required' => 'Nomor telepon wajib diisi',
-    //         'kategori.required' => 'Pilih kategori pengaduan',
-    //         'deskripsi.required' => 'Deskripsi pengaduan wajib diisi',
-    //         'setuju_kebijakan.accepted' => 'Anda harus menyetujui kebijakan privasi',
-    //     ]);
-
-    //     try {
-    //         Pengaduan::create($validated);
-
-    //         return redirect()->back()->with('success', 'Pengaduan berhasil dikirim! ');
-    //     } catch (\Exception $e) {
-    //         // Mengubah response JSON menjadi Redirect dengan Session Error dan menyimpan input lama
-    //         return redirect()->back()->with('error', 'Gagal menyimpan pengaduan. Silakan coba lagi.')->withInput();
-    //     }
-    // }
-
-    
-
 }
