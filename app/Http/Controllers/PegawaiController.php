@@ -209,15 +209,21 @@ class PegawaiController extends Controller
             ->where('user_id', \Illuminate\Support\Facades\Auth::id())
             ->first();
 
-        // ✅ PERBAIKAN: Ubah status menjadi dibatalkan, JANGAN dihapus (delete)
-        $peminjaman->update([
-            'status' => 'dibatalkan',
-            'updated_at' => now()
-        ]);
+        if ($peminjaman) {
+            // 🔥 UBAH BAGIAN INI: Tetapkan langsung nilainya untuk melewati proteksi $fillable
+            $peminjaman->status = 'dibatalkan';
+            $peminjaman->save(); // Simpan secara paksa ke database
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Peminjaman berhasil dibatalkan.'
+            ]);
+        }
 
         return response()->json([
-            'success' => true, 
-            'message' => 'Peminjaman berhasil dibatalkan.']);
+            'success' => false, 
+            'message' => 'Data tidak ditemukan.'
+        ], 404);
     }
 
     /**

@@ -1214,7 +1214,7 @@ class AdminAsettetapController extends Controller
         $peminjaman = PeminjamanKendaraan::findOrFail($id);
 
         if ($request->action == 'teruskan') {
-            $peminjaman->status = 'dalam_review';
+            $peminjaman->status = 'diteruskan_kasubag';
             $peminjaman->reviewed_by_adminasettetap_id = auth()->id();
             $peminjaman->diteruskan_ke_kasubag_date = now();
             $peminjaman->save();

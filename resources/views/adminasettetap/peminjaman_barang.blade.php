@@ -344,43 +344,42 @@
                                         class="status-badge {{ $statusClass }}">{{ str_replace('_', ' ', ucfirst($statusText)) }}</span>
                                 </td>
                                 <td>
-                                    <!-- Tombol Detail diubah dengan mengirimkan data via attribute -->
-                                    <button class="action-btn" data-item="{{ json_encode($item) }}"
-                                        data-peminjam="{{ $item->user->name ?? '-' }}"
-                                        data-tglpinjam="{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') }}"
-                                        data-tglkembali="{{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}"
-                                        onclick="openDetailModal(this)">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-
-                                    <a href="{{ route('adminasettetap.peminjaman-barang.print', $item->id) }}"
-                                        target="_blank" class="action-btn" style="color: var(--purple);">
-                                        <i class="fas fa-file-pdf"></i> Cetak
-                                    </a>
-
-                                    @if ($item->status == 'pending')
-                                        <!-- Aksi Awal -->
-                                        <button class="action-btn teruskan"
-                                            onclick="openReviewModal({{ $item->id }}, 'teruskan')">
-                                            <i class="fas fa-paper-plane"></i> Teruskan
+                                    @if($item->status == 'dibatalkan')
+                                        <span style="font-size: 13px; color: var(--muted); font-style: italic;">Tidak ada aksi</span>
+                                    @else
+                                        <button class="action-btn" data-item="{{ json_encode($item) }}"
+                                            data-peminjam="{{ $item->user->name ?? '-' }}"
+                                            data-tglpinjam="{{ \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') }}"
+                                            data-tglkembali="{{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}"
+                                            onclick="openDetailModal(this)">
+                                            <i class="fas fa-eye"></i> Detail
                                         </button>
-                                        <button class="action-btn tolak"
-                                            onclick="openReviewModal({{ $item->id }}, 'tolak')">
-                                            <i class="fas fa-times"></i> Tolak
-                                        </button>
-                                    @elseif(in_array($item->status, ['diteruskan_kasubag', 'disetujui']))
-                                        <!-- Aksi Lanjutan -->
-                                        <button class="action-btn upload"
-                                            onclick="openUploadModal({{ $item->id }})">
-                                            <i class="fas fa-upload"></i> Upload BAST
-                                        </button>
-                                    @elseif($item->status == 'dibatalkan')
-                                        <span class="text-xs text-gray-400 italic">Tidak ada aksi</span>
-                                    @endif
 
-                                    @if (!empty($item->surat_bast_path))
-                                        <i class="fas fa-check-double" style="color: var(--success); margin-left: 4px;"
-                                            title="BAST Terunggah"></i>
+                                        <a href="{{ route('adminasettetap.peminjaman-barang.print', $item->id) }}"
+                                            target="_blank" class="action-btn" style="color: var(--purple);">
+                                            <i class="fas fa-file-pdf"></i> Cetak
+                                        </a>
+
+                                        @if ($item->status == 'pending')
+                                            <button class="action-btn teruskan"
+                                                onclick="openReviewModal({{ $item->id }}, 'teruskan')">
+                                                <i class="fas fa-paper-plane"></i> Teruskan
+                                            </button>
+                                            <button class="action-btn tolak"
+                                                onclick="openReviewModal({{ $item->id }}, 'tolak')">
+                                                <i class="fas fa-times"></i> Tolak
+                                            </button>
+                                        @elseif(in_array($item->status, ['diteruskan_kasubag', 'disetujui']))
+                                            <button class="action-btn upload"
+                                                onclick="openUploadModal({{ $item->id }})">
+                                                <i class="fas fa-upload"></i> Upload BAST
+                                            </button>
+                                        @endif
+
+                                        @if (!empty($item->surat_bast_path))
+                                            <i class="fas fa-check-double" style="color: var(--success); margin-left: 4px;"
+                                                title="BAST Terunggah"></i>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
@@ -531,6 +530,9 @@
             } else if (status === 'diteruskan_kasubag') {
                 statusClass = 'status-pending';
                 statusText = 'Review Kasubag';
+            } else if (status === 'dibatalkan') { 
+                statusClass = 'status-ditolak';
+                statusText = 'Dibatalkan';
             }
 
             statusSpan.className = 'status-badge ' + statusClass;

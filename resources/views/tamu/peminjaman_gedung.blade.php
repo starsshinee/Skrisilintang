@@ -1234,7 +1234,7 @@
                                     'diteruskan_kasubag' => ['pending', 'Diteruskan ke Kasubag'],
                                     'disetujui_kasubag' => ['approved', 'Disetujui Kasubag'],
                                     'disetujui' => ['approved', 'Disetujui'],
-                                    'dibatalkan' => ['cancelled', 'Dibatalkan'],
+                                    'dibatalkan' => ['rejected', 'Dibatalkan'],
                                     'ditolak' => ['rejected', 'Ditolak'],
                                 ];
                                 $status = $statusMap[$item['status']] ?? ['pending', 'Pending'];

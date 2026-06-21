@@ -594,7 +594,7 @@ class AdminPersediaanController extends Controller
 
             // 2. SIMPAN DATA: Status berubah, dan nilai rekomendasi Admin disimpan ke kolom jumlah_disetujui
             $permintaan->update([
-                'status' => 'dalam_review',
+                'status' => 'diteruskan_kasubag',
                 'reviewed_by_adminpersediaan_id' => Auth::id(),
                 'jumlah_disetujui' => $request->jumlah_disetujui, // <--- Simpan angka revisi Admin
                 'komentar' => $request->komentar // Opsional jika admin ingin memberi catatan ke Kasubag

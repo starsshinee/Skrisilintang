@@ -449,13 +449,15 @@
         });
     }
 
-    function cancelPeminjaman(id, btnElement) {
-      if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman kendaraan ini? Data akan dihapus.')) return;
+    function cancelPeminjamanKendaraan(id, btnElement) {
+      // Ubah teks konfirmasi agar tidak menyebutkan penghapusan data
+      if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman kendaraan ini?')) return;
 
       const originalText = btnElement.innerHTML;
       btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Batal...';
       btnElement.disabled = true;
 
+      // Pastikan URL fetch mengarah ke rute kendaraan
       fetch(`/pegawai/peminjaman-kendaraan/${id}/cancel`, {
           method: 'DELETE',
           headers: {
@@ -464,25 +466,37 @@
             'Content-Type': 'application/json'
           }
         })
-        .then(response => {
-          if(response.ok) return response.json();
-          throw new Error('Network response was not ok.');
-        })
+        .then(response => response.json())
         .then(data => {
-          if (data.success || data.message) {
+          if (data.success) {
+            // 1. Cari elemen card dari tombol yang diklik
             const card = btnElement.closest('.req-card');
-            card.style.opacity = '0.5';
-            setTimeout(() => card.remove(), 500);
             
-            if (typeof showToast === 'function') showToast('Peminjaman dibatalkan!', 'success');
+            // 2. Cari elemen badge status, ubah class dan teksnya menjadi Dibatalkan
+            const statusBadge = card.querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.className = 'status-badge rejected'; // Menggunakan class rejected agar berwarna merah
+                statusBadge.innerHTML = '<i class="fas fa-ban"></i> Dibatalkan';
+            }
+
+            // 3. Hapus tombol "Batalkan" agar tidak bisa diklik lagi
+            btnElement.remove();
+
+            // Tampilkan notifikasi sukses
+            if (typeof showToast === 'function') showToast('Peminjaman kendaraan berhasil dibatalkan!', 'success');
+            else alert('Peminjaman kendaraan berhasil dibatalkan!');
           } else {
-             location.reload();
+            alert(data.message || 'Gagal membatalkan peminjaman.');
+            btnElement.innerHTML = originalText;
+            btnElement.disabled = false;
           }
         })
         .catch(error => {
-          location.reload(); 
+          alert('Terjadi kesalahan saat membatalkan peminjaman.');
+          btnElement.innerHTML = originalText;
+          btnElement.disabled = false;
         });
-    }
+    } 
   </script>
 
 </body>

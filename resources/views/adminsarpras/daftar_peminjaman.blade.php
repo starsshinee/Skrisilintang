@@ -266,69 +266,65 @@
                 @endif
             </td>
             <td>
-                
-                <div class="action-btns" style="justify-content: center;">
-                    
-                    <button class="act-btn act-detail" title="👁️ Detail" 
-                            data-item="{{ json_encode($item) }}"
-                            onclick="openDetailModal(this)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                    </button>
-
-                    <button class="act-btn act-edit" title="✏️ Edit" 
-                            data-item="{{ json_encode($item) }}"
-                            onclick="openEditModal(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                    </button>
-
-                    @if($item->status == 'pending')
-                        <button class="act-btn act-forward" title="➡️ Teruskan ke Kasubag" onclick="openForwardModal({{ $item->id }})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                @if($item->status == 'dibatalkan')
+                    <div style="text-align: center;">
+                        <span style="font-size: 13px; color: var(--text-secondary); font-style: italic;">Tidak ada aksi</span>
+                    </div>
+                @else
+                    <div class="action-btns" style="justify-content: center;">
+                        <button class="act-btn act-detail" title="👁️ Detail" 
+                                data-item="{{ json_encode($item) }}"
+                                onclick="openDetailModal(this)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                         </button>
 
-                        <button class="act-btn act-reject" title="❌ Tolak" onclick="openRejectModal({{ $item->id }})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                            </svg>
-                        </button>
-                    @endif
-
-                    @if(in_array($item->status, ['disetujui_kasubag', 'disetujui']))
-                        <a href="{{ route('adminsarpras.peminjaman.generate-surat', $item->id) }}" target="_blank" class="act-btn" style="background: #e0e7ff; color: #4361ee;" title="Generate Surat Perjanjian">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                        </a>
-
-                        <button type="button" class="act-btn" style="background: #dcfce7; color: #10b981;" title="Upload Surat Perjanjian Final" onclick="openUploadModal({{ $item->id }})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                        <button class="act-btn act-edit" title="✏️ Edit" 
+                                data-item="{{ json_encode($item) }}"
+                                onclick="openEditModal(this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                             </svg>
                         </button>
 
-                        @if($item->surat_path)
-                        <a href="{{ asset('storage/' . $item->surat_path) }}" target="_blank" class="act-btn" style="background: #f3e8fd; color: #9333ea;" title="Lihat Dokumen Final">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                        </a>
+                        @if($item->status == 'pending')
+                            <button class="act-btn act-forward" title="➡️ Teruskan ke Kasubag" onclick="openForwardModal({{ $item->id }})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                            </button>
+
+                            <button class="act-btn act-reject" title="❌ Tolak" onclick="openRejectModal({{ $item->id }})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                            </button>
                         @endif
-                    @endif
-                </div>
+
+                        @if(in_array($item->status, ['disetujui_kasubag', 'disetujui']))
+                            <a href="{{ route('adminsarpras.peminjaman.generate-surat', $item->id) }}" target="_blank" class="act-btn" style="background: #e0e7ff; color: #4361ee;" title="Generate Surat Perjanjian">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </a>
+
+                            <button type="button" class="act-btn" style="background: #dcfce7; color: #10b981;" title="Upload Surat Perjanjian Final" onclick="openUploadModal({{ $item->id }})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </button>
+
+                            @if($item->surat_path)
+                            <a href="{{ asset('storage/' . $item->surat_path) }}" target="_blank" class="act-btn" style="background: #f3e8fd; color: #9333ea;" title="Lihat Dokumen Final">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </a>
+                            @endif
+                        @endif
+                    </div>
+                @endif
             </td>
         </tr>
         @empty

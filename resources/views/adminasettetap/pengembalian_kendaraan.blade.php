@@ -334,28 +334,32 @@
                                     <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
                                 </td>
                                 <td>
-                                    <!-- Tombol Detail Modal (Selalu Muncul) -->
-                                    <button class="action-btn" onclick="showDetailModal({{ $item->id }})">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-
-                                    <!-- Jika status masih diproses, tampilkan aksi Terima / Tolak -->
-                                    @if ($item->status_verifikasi == 'pending')
-                                        <button class="action-btn terima"
-                                            onclick="openVerifikasiModal({{ $item->id }}, 'diterima')">
-                                            <i class="fas fa-check"></i> Terima
-                                        </button>
-                                        <button class="action-btn tolak"
-                                            onclick="openVerifikasiModal({{ $item->id }}, 'ditolak')">
-                                            <i class="fas fa-times"></i> Tolak
+                                    @if($item->status_verifikasi == 'dibatalkan')
+                                        <span style="font-size: 13px; color: var(--muted); font-style: italic;">Tidak ada aksi</span>
+                                    @else
+                                        <!-- Tombol Detail Modal (Selalu Muncul) -->
+                                        <button class="action-btn" onclick="showDetailModal({{ $item->id }})">
+                                            <i class="fas fa-eye"></i> Detail
                                         </button>
 
-                                        <!-- Jika status sudah diterima, tampilkan tombol cetak -->
-                                    @elseif($item->status_verifikasi == 'diterima')
-                                        <a href="{{ route('adminasettetap.pengembalian-kendaraan.cetak', $item->id) }}"
-                                            target="_blank" class="action-btn" style="color: var(--purple);">
-                                            <i class="fas fa-file-pdf"></i> Cetak Berita Acara
-                                        </a>
+                                        <!-- Jika status masih diproses, tampilkan aksi Terima / Tolak -->
+                                        @if ($item->status_verifikasi == 'pending')
+                                            <button class="action-btn terima"
+                                                onclick="openVerifikasiModal({{ $item->id }}, 'diterima')">
+                                                <i class="fas fa-check"></i> Terima
+                                            </button>
+                                            <button class="action-btn tolak"
+                                                onclick="openVerifikasiModal({{ $item->id }}, 'ditolak')">
+                                                <i class="fas fa-times"></i> Tolak
+                                            </button>
+
+                                            <!-- Jika status sudah diterima, tampilkan tombol cetak -->
+                                        @elseif($item->status_verifikasi == 'diterima')
+                                            <a href="{{ route('adminasettetap.pengembalian-kendaraan.cetak', $item->id) }}"
+                                                target="_blank" class="action-btn" style="color: var(--purple);">
+                                                <i class="fas fa-file-pdf"></i> Cetak Berita Acara
+                                            </a>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

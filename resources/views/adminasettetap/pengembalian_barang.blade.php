@@ -162,24 +162,28 @@
                             <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
                         </td>
                         <td>
-                            <!-- Tombol Detail Modal -->
-                            <button class="action-btn" onclick="showDetailModal({{ $item->id }})">
-                                <i class="fas fa-eye"></i> Detail
-                            </button>
+                            @if($item->status_verifikasi == 'dibatalkan')
+                                <span style="font-size: 13px; color: var(--muted); font-style: italic;">Tidak ada aksi</span>
+                            @else
+                                <!-- Tombol Detail Modal -->
+                                <button class="action-btn" onclick="showDetailModal({{ $item->id }})">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
 
-                            <!-- Jika status masih pending, tampilkan aksi Terima / Tolak -->
-                            @if($item->status_verifikasi == 'pending')
-                                <button class="action-btn terima" onclick="openVerifikasiModal({{ $item->id }}, 'diterima')">
-                                    <i class="fas fa-check"></i> Terima
-                                </button>
-                                <button class="action-btn tolak" onclick="openVerifikasiModal({{ $item->id }}, 'ditolak')">
-                                    <i class="fas fa-times"></i> Tolak
-                                </button>
-                            @elseif($item->status_verifikasi == 'diterima')
-                                <!-- Jika sudah diterima, tampilkan tombol cetak Tanda Terima -->
-                                <a href="{{ route('adminasettetap.pengembalian-barang.cetak', $item->id) }}" target="_blank" class="action-btn" style="color: var(--purple);">
-                                    <i class="fas fa-file-pdf"></i> Cetak Tanda Terima
-                                </a>
+                                <!-- Jika status masih pending, tampilkan aksi Terima / Tolak -->
+                                @if($item->status_verifikasi == 'pending')
+                                    <button class="action-btn terima" onclick="openVerifikasiModal({{ $item->id }}, 'diterima')">
+                                        <i class="fas fa-check"></i> Terima
+                                    </button>
+                                    <button class="action-btn tolak" onclick="openVerifikasiModal({{ $item->id }}, 'ditolak')">
+                                        <i class="fas fa-times"></i> Tolak
+                                    </button>
+                                @elseif($item->status_verifikasi == 'diterima')
+                                    <!-- Jika sudah diterima, tampilkan tombol cetak Tanda Terima -->
+                                    <a href="{{ route('adminasettetap.pengembalian-barang.cetak', $item->id) }}" target="_blank" class="action-btn" style="color: var(--purple);">
+                                        <i class="fas fa-file-pdf"></i> Cetak Tanda Terima
+                                    </a>
+                                @endif
                             @endif
                         </td>
                     </tr>

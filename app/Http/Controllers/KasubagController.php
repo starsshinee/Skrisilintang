@@ -404,13 +404,13 @@ class KasubagController extends Controller
     public function persetujuanPeminjamanKendaraan()
     {
         $peminjaman = PeminjamanKendaraan::with('user')
-            ->whereIn('status', ['dalam_review', 'disetujui', 'ditolak'])
+            ->whereIn('status', ['dalam_review','diteruskan_kasubag', 'disetujui', 'ditolak'])
             ->orderByRaw("FIELD(status, 'dalam_review', 'disetujui', 'ditolak')")
             ->orderBy('created_at', 'desc')
             ->get();
 
         $stats = [
-            'menunggu' => PeminjamanKendaraan::where('status', 'dalam_review')->count(),
+            'menunggu' => PeminjamanKendaraan::where('status', 'diteruskan_kasubag')->count(),
             'disetujui' => PeminjamanKendaraan::where('status', 'disetujui')->count(),
             'total' => $peminjaman->count(),
         ];

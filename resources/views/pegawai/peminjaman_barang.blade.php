@@ -1139,7 +1139,7 @@
                 if($item->status == 'disetujui' || $item->status == 'disetujui_admin') { $badgeClass = 'approved'; $icon = 'fa-check'; $statusText = 'Disetujui'; }
                 elseif($item->status == 'ditolak') { $badgeClass = 'rejected'; $icon = 'fa-times'; $statusText = 'Ditolak'; }
                 elseif($item->status == 'diteruskan_kasubag') { $badgeClass = 'pending'; $icon = 'fa-eye'; $statusText = 'Di teruskan kekasubag'; }
-                elseif($item->status == 'dibatalkan') { $badgeClass = 'cancelled'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; }
+                elseif($item->status == 'dibatalkan') { $badgeClass = 'rejected'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; }
                 @endphp
 
                 <div class="status-badge {{ $badgeClass }}"><i class="fas {{ $icon }}"></i> {{ $statusText }}</div>
@@ -1336,7 +1336,7 @@
     }
 
     function cancelPeminjaman(id, btnElement) {
-      if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman barang ini? Data akan dihapus.')) return;
+      if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman barang ini?')) return;
 
       const originalText = btnElement.innerHTML;
       btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Batal...';
@@ -1353,10 +1353,20 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
+            // 1. Cari elemen card dari tombol yang diklik
             const card = btnElement.closest('.req-card');
-            card.style.opacity = '0.5';
-            setTimeout(() => card.remove(), 500);
+            
+            // 2. Cari elemen badge status, ubah class dan teksnya menjadi Dibatalkan
+            const statusBadge = card.querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.className = 'status-badge rejected'; // Menggunakan class rejected agar berwarna merah
+                statusBadge.innerHTML = '<i class="fas fa-ban"></i> Dibatalkan';
+            }
 
+            // 3. Hapus tombol "Batalkan" agar tidak bisa diklik lagi
+            btnElement.remove();
+
+            // Tampilkan notifikasi sukses
             if (typeof showToast === 'function') showToast('Peminjaman berhasil dibatalkan!', 'success');
             else alert('Peminjaman berhasil dibatalkan!');
           } else {

@@ -294,7 +294,7 @@
                 } elseif(in_array($rawStatus, ['diteruskan_kasubag', 'dalam_review'])) { 
                     $badgeClass = 'review'; $icon = 'fa-eye'; $statusText = 'Di teruskan kekasubag'; 
                 } elseif(in_array($rawStatus, ['dibatalkan', 'cancelled'])) { 
-                    $badgeClass = 'cancelled'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; 
+                    $badgeClass = 'rejected'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; 
                 }
             @endphp
             
