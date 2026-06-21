@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Override;
 
 class PeminjamanBarang extends Model
 {
@@ -96,6 +96,24 @@ class PeminjamanBarang extends Model
     public function scopeDisetujuiAdmin($query)
     {
         return $query->where('status', 'disetujui_admin');
+    }
+
+    public function getStatusBadgeAttribute(): array
+    {
+        return match($this->status) {
+            'pending' => ['text' => 'Pending', 'color' => 'warning', 'icon' => 'fa-clock'],
+            'dalam_review' => ['text' => 'Dalam Review', 'color' => 'info', 'icon' => 'fa-eye'],
+            'disetujui_kasubag' => ['text' => 'Disetujui Kasubag', 'color' => 'success', 'icon' => 'fa-check-circle'],
+            'disetujui' => ['text' => 'Disetujui', 'color' => 'success', 'icon' => 'fa-thumbs-up'],
+            'ditolak' => ['text' => 'Ditolak', 'color' => 'danger', 'icon' => 'fa-times-circle'],
+            'dibatalkan' => ['text' => 'Dibatalkan', 'color' => 'secondary', 'icon' => 'fa-ban'],
+            default => ['text' => 'Unknown', 'color' => 'secondary']
+        };
+    }
+
+    public function getIsFinalAttribute(): bool
+    {
+        return in_array($this->status, ['disetujui', 'ditolak', 'dibatalkan']);
     }
 
     /**

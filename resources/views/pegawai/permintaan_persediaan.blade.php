@@ -284,7 +284,7 @@
         <div class="req-list" id="riwayatList">
           @forelse($riwayat as $item)
             @php
-                $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Menunggu';
+                $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Menunggu Admin';
                 $rawStatus = strtolower($item->status);
                 
                 if(in_array($rawStatus, ['disetujui', 'disetujui_admin', 'disetujui_kasubag', 'selesai'])) { 
@@ -292,7 +292,7 @@
                 } elseif(in_array($rawStatus, ['ditolak', 'rejected'])) { 
                     $badgeClass = 'rejected'; $icon = 'fa-times-circle'; $statusText = 'Ditolak'; 
                 } elseif(in_array($rawStatus, ['diteruskan_kasubag', 'dalam_review'])) { 
-                    $badgeClass = 'review'; $icon = 'fa-eye'; $statusText = 'Review Kasubag'; 
+                    $badgeClass = 'review'; $icon = 'fa-eye'; $statusText = 'Di teruskan kekasubag'; 
                 } elseif(in_array($rawStatus, ['dibatalkan', 'cancelled'])) { 
                     $badgeClass = 'cancelled'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; 
                 }

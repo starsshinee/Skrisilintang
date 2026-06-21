@@ -44,7 +44,11 @@ return new class extends Migration
             $table->string('surat_perjanjian_path')->nullable();
             
             // Workflow
-            $table->enum('status', ['pending', 'dalam_review', 'disetujui_kasubag', 'disetujui', 'ditolak'])->default('pending');
+            $table->enum('status', ['pending',
+                'diteruskan_kasubag',
+                'disetujui',
+                'ditolak',
+                'dibatalkan',])->default('pending');
             $table->text('komentar')->nullable();
             // $table->unsignedBigInteger('reviewed_by_admin_id')->nullable();
             $table->foreignId('reviewed_by_admin_id')->nullable()->constrained('users')->onDelete('set null');

@@ -26,10 +26,10 @@ class PermintaanPersediaan extends Model
         'tujuan_penggunaan',
         'surat_bast_path',
         
-        // Workflow
+       // Workflow
         'reviewed_by_adminpersediaan_id',
         'approved_by_kasubag_id',
-        'status',
+        'status', 
         
     ];
 

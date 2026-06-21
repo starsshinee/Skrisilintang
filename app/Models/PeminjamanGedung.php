@@ -24,7 +24,7 @@ class PeminjamanGedung extends Model
     ];
 
     protected $casts = [
-        'tanggal_pinjam' => 'date',
+    'tanggal_pinjam' => 'date',
     'tanggal_kembali' => 'date',
     'jam_mulai' => 'datetime:H:i',
     'jam_selesai' => 'datetime:H:i',
@@ -74,7 +74,7 @@ class PeminjamanGedung extends Model
 
     public function scopeWaitingKasubag($query)
     {
-        return $query->whereIn('status', ['dalam_review']);
+        return $query->whereIn('status', ['diteruskan_kasubag', 'dalam_review']);
     }
 
     public function scopeApprovedKasubag($query)
@@ -88,6 +88,7 @@ class PeminjamanGedung extends Model
             'di setujui' => 'approved',
             'pending' => 'pending',
             'di tolak' => 'rejected',
+            'di batalkan' => 'cancelled',
             'dalam_review' => 'in_review',
             'disetujui_kasubag' => 'approved_kasubag',
             default => 'pending'

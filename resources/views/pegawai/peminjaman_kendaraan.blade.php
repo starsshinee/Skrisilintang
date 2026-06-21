@@ -245,8 +245,9 @@
                 $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Menunggu Admin';
                 if($item->status == 'disetujui' || $item->status == 'disetujui_admin') { $badgeClass = 'approved'; $icon = 'fa-check'; $statusText = 'Disetujui'; }
                 elseif($item->status == 'ditolak') { $badgeClass = 'rejected'; $icon = 'fa-times'; $statusText = 'Ditolak'; }
-                elseif($item->status == 'diteruskan_kasubag') { $badgeClass = 'pending'; $icon = 'fa-eye'; $statusText = 'Review Kasubag'; }
-                elseif($item->status == 'pending') { $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Pending'; }
+                elseif($item->status == 'diteruskan_kasubag') { $badgeClass = 'pending'; $icon = 'fa-eye'; $statusText = 'Di teruskan kekasubag'; }
+                elseif($item->status == 'pending') { $badgeClass = 'pending'; $icon = 'fa-clock'; $statusText = 'Menunggu Admin'; }
+                elseif($item->status == 'dibatalkan') { $badgeClass = 'rejected'; $icon = 'fa-ban'; $statusText = 'Dibatalkan'; }
                 @endphp
 
                 <div class="status-badge {{ $badgeClass }}"><i class="fas {{ $icon }}"></i> {{ $statusText }}</div>

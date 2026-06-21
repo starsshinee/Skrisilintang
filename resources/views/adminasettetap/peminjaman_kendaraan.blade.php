@@ -140,7 +140,8 @@
                                 
                                 if($item->status == 'disetujui') { $statusClass = 'status-diterima'; }
                                 elseif($item->status == 'ditolak') { $statusClass = 'status-ditolak'; }
-                                elseif($item->status == 'diteruskan_kasubag') { $statusClass = 'status-review'; $statusText = 'Dalam Review'; }
+                                elseif($item->status == 'diteruskan_kasubag') { $statusClass = 'status-review'; $statusText = 'Di teruskan kekasubag'; }
+                                elseif($item->status == 'dibatalkan') { $statusClass = 'status-ditolak'; $statusText = 'Dibatalkan'; }
                             @endphp
                             <span class="status-badge {{ $statusClass }}">{{ str_replace('_', ' ', ucfirst($statusText)) }}</span>
                         </td>

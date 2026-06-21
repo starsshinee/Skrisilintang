@@ -62,16 +62,16 @@ class PeminjamanKendaraan extends Model
     }
 
     // Status helpers
-    public function getStatusDisplayAttribute()
+    public function getStatusBadgeAttribute(): array
     {
-        return match(strtolower($this->status)) {
-            'pending' => 'Pending',
-            'dalam_review' => 'Dalam Review',
-            'disetujui_admin' => 'Disetujui Admin',
-            'disetujui' => 'Disetujui',
-            'dikembalikan' => 'Dikembalikan',
-            'ditolak' => 'Ditolak',
-            default => ucfirst($this->status)
+        return match($this->status) {
+            'pending' => ['text' => 'Pending', 'color' => 'warning', 'icon' => 'fa-clock'],
+            'dalam_review' => ['text' => 'Dalam Review', 'color' => 'info', 'icon' => 'fa-eye'],
+            'disetujui_kasubag' => ['text' => 'Disetujui Kasubag', 'color' => 'success', 'icon' => 'fa-check-circle'],
+            'disetujui' => ['text' => 'Disetujui', 'color' => 'success', 'icon' => 'fa-thumbs-up'],
+            'ditolak' => ['text' => 'Ditolak', 'color' => 'danger', 'icon' => 'fa-times-circle'],
+            'dibatalkan' => ['text' => 'Dibatalkan', 'color' => 'secondary', 'icon' => 'fa-ban'],
+            default => ['text' => 'Unknown', 'color' => 'secondary']
         };
     }
 

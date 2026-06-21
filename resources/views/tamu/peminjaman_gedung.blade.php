@@ -1219,7 +1219,8 @@
                         <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Permintaan</div>
                         <div class="filter-tabs">
                             <button class="filter-tab active" data-filter="all">Semua</button>
-                            <button class="filter-tab" data-filter="pending">Pending</button>
+                            <button class="filter-tab" data-filter="pending">Menunggu</button>
+                            <button class="filter-tab" data-filter="dalam_review">Diteruskan kekasubag</button>
                             <button class="filter-tab" data-filter="approved">Disetujui</button>
                             <button class="filter-tab" data-filter="rejected">Ditolak</button>
                         </div>
@@ -1229,9 +1230,11 @@
                             @php
                                 $statusMap = [
                                     'pending' => ['pending', 'Menunggu'],
-                                    'dalam_review' => ['pending', 'Dalam Review'],
+                                    'dalam_review' => ['pending', 'Diteruskan kekasubag'],
+                                    'diteruskan_kasubag' => ['pending', 'Diteruskan ke Kasubag'],
                                     'disetujui_kasubag' => ['approved', 'Disetujui Kasubag'],
                                     'disetujui' => ['approved', 'Disetujui'],
+                                    'dibatalkan' => ['cancelled', 'Dibatalkan'],
                                     'ditolak' => ['rejected', 'Ditolak'],
                                 ];
                                 $status = $statusMap[$item['status']] ?? ['pending', 'Pending'];
