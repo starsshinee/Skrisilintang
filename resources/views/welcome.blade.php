@@ -952,9 +952,9 @@
 
 const FACILITIES = [
   { 
-    name: 'Kantor BPMP Gorontalo', 
+    name: 'Kantor Ponuwa 1', 
     category: 'kantor', 
-    location: 'Gedung Utama', 
+    location: 'Gedung Kantor Utama', 
     capacity: '100 Staf', luas: '500 m²', 
     operasional: 'Senin–Jumat 07.30–16.00 WITA', kontak: '(0435) 821-555', 
     description: 'Pusat administrasi dan layanan penjaminan mutu pendidikan Provinsi Gorontalo yang melayani koordinasi antar instansi pendidikan.',
@@ -962,12 +962,24 @@ const FACILITIES = [
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
-      "{{ asset('storage/fasilitas/kantor_ponuwa.jpeg') }}",
-      "{{ asset('storage/fasilitas/KANTOR_PONUWA_2.jpeg') }}",
+      
     ]
   },
   { 
-    name: 'Ruang Pertemuan BPMP Gorontalo', 
+    name: 'Kantor Ponuwa 2', 
+    category: 'kantor', 
+    location: 'Gedung Kantor Utama', 
+    capacity: '100 Staf', luas: '500 m²', 
+    operasional: 'Senin–Jumat 07.30–16.00 WITA', kontak: '(0435) 821-555', 
+    description: 'Pusat administrasi dan layanan penjaminan mutu pendidikan Provinsi Gorontalo yang melayani koordinasi antar instansi pendidikan.',
+    features: ['Ruang Tunggu Nyaman', 'Unit Pelayanan Terpadu (ULT)', 'Ruang Tamu VIP', 'Koneksi Internet ', 'CCTV & Keamanan 24 Jam'], 
+    rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
+    images: [
+      "{{ asset('storage/fasilitas/Kantorponuwa_2.jpeg') }}",
+    ]
+  },
+  { 
+    name: 'Ruang Pertemuan Aula Dulohupa', 
     category: 'ruang', 
     location: 'Gedung Aula Utama', 
     capacity: '200 - 300 Orang', luas: '420 m²', 
@@ -977,8 +989,19 @@ const FACILITIES = [
     rules: ['Pemesanan minimal H-7', 'Dilarang membawa makanan berbau tajam ke dalam ruangan', 'Penyewa bertanggung jawab atas kebersihan', 'Jam operasional sesuai izin penggunaan'], 
     images: [
       "{{ asset('storage/fasilitas/gedung_aula.jpeg') }}",
-      "{{ asset('storage/fasilitas/aula2.jpeg') }}", 
-      "{{ asset('storage/fasilitas/gazebo_aula.jpeg') }}",
+      "{{ asset('storage/fasilitas/aula2.jpg') }}", 
+    ]
+  },
+  { 
+    name: 'Ruang Pertemuan Huyula', 
+    category: 'ruang', 
+    location: 'Gedung Pertemuan Huyula', 
+    capacity: '200 - 300 Orang', luas: '420 m²', 
+    operasional: 'Senin–Minggu (Sesuai Reservasi)', kontak: '(0435) 821-555 ext. 101', 
+    description: 'Aula serbaguna yang luas, ideal untuk seminar, lokakarya, dan pertemuan skala besar dengan fasilitas audio visual lengkap.',
+    features: ['AC', 'Standar Sound System ', 'vidio trond', 'Meja Kursi', 'Toilet Bersih'], 
+    rules: ['Pemesanan minimal H-7', 'Dilarang membawa makanan berbau tajam ke dalam ruangan', 'Penyewa bertanggung jawab atas kebersihan', 'Jam operasional sesuai izin penggunaan'], 
+    images: [
       "{{ asset('storage/fasilitas/gedung_huyula.jpg') }}",
       "{{ asset('storage/fasilitas/ruang_sidang.jpeg') }}"
     ]
@@ -993,7 +1016,7 @@ const FACILITIES = [
     features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
     rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
     images: [
-      "{{ asset('storage/fasilitas/tilango.jpeg') }}"
+      "{{ asset('storage/fasilitas/tilango.jpg') }}"
     ]
   },
   { 
@@ -1074,6 +1097,19 @@ const FACILITIES = [
       "{{ asset('storage/fasilitas/tinelo_4.jpeg') }}"
     ]
   },
+  { 
+    name: 'Ruang Kelas Tinelo 5 BPMP Gorontalo', 
+    category: 'kelas', 
+    location: 'BPMP Gorontalo', 
+    capacity: '30 Orang/Kelas', luas: '68 m²', 
+    operasional: 'Senin–Sabtu 07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
+    description: 'Ruang belajar yang representatif untuk kegiatan pelatihan, bimtek, atau kursus dengan suasana yang tenang dan kondusif.',
+    features: ['AC ', 'Proyektor', 'Papan Tulis Whiteboard', 'meja kursi', 'Sound system'], 
+    rules: ['Dilarang mencoret-coret meja/kursi', 'Matikan alat elektronik setelah selesai digunakan', 'Tidak membawa barang yang terdapat dalm ruangan ke area luar BPMP Gorontalo', 'Tidak merusak barang yang ada dalam ruangan'], 
+    images: [
+      "{{ asset('storage/fasilitas/tinelo_5.jpeg') }}"
+    ]
+  },
   
   { 
     name: 'Mess Bandayo kiki 1 BPMP Gorontalo', 
@@ -1085,11 +1121,9 @@ const FACILITIES = [
     features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
-      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
+      "{{ asset('storage/fasilitas/bandayokiki_1.jpeg') }}", 
+      "{{ asset('storage/fasilitas/dalambandayokiki1.jpeg') }}",
       "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
     ]
   },
   { 
@@ -1102,11 +1136,9 @@ const FACILITIES = [
     features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
-      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
       "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
-      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+      "{{ asset('storage/fasilitas/dalambandayokiki2.jpeg') }}",
+      "{{ asset('storage/fasilitas/kamarbandayokiki2.jpeg') }}"
     ]
   },
   { 
@@ -1120,10 +1152,8 @@ const FACILITIES = [
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
       "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
-      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+      "{{ asset('storage/fasilitas/dalambandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/kamarbandayokiki3.jpeg') }}",
     ]
   },
   { 
@@ -1136,11 +1166,9 @@ const FACILITIES = [
     features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
-      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
-      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}",
+      "{{ asset('storage/fasilitas/dalambandayokiki4.jpeg') }}",
+      "{{ asset('storage/fasilitas/kamarbandayokiki4.jpeg') }}",
     ]
   },
   { 
@@ -1153,11 +1181,9 @@ const FACILITIES = [
     features: [ 'Kamar Mandi Dalam', 'kamar tidur', 'Ruang kumpul Bersama', 'Ac'], 
     rules: ['Dilarang membawa senjata tajam/narkoba', 'Dilarang merokok di dalam kamar', 'Menyerahkan kartu identitas saat check-in', 'Menjaga ketenangan di jam istirahat'], 
     images: [
-      "{{ asset('storage/fasilitas/bandayokiki3.jpeg') }}",
+      "{{ asset('storage/fasilitas/bandayodaa.jpeg') }}",
       "{{ asset('storage/fasilitas/bandayo_daa.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki.jpeg') }}", 
-      "{{ asset('storage/fasilitas/dalam_bandayokiki.jpeg') }}",
-      "{{ asset('storage/fasilitas/bandayokiki4.jpeg') }}"
+      "{{ asset('storage/fasilitas/dalambandayodaa.jpeg') }}",
     ]
   },
   
@@ -1171,10 +1197,7 @@ const FACILITIES = [
     features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
     rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
     images: [
-       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
       "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
-      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
     ]
   },
   { 
@@ -1188,9 +1211,6 @@ const FACILITIES = [
     rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
     images: [
        "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
-      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
     ]
   },
   { 
@@ -1203,10 +1223,7 @@ const FACILITIES = [
     features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
     rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
     images: [
-       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
       "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
-      "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
     ]
   },
   { 
@@ -1219,15 +1236,12 @@ const FACILITIES = [
     features: ['Tempat Tidur',  'Kamar Mandi Dalam', 'Ruang Berkumpul Bersama'], 
     rules: ['Wajib menjaga kebersihan area bersama', 'Tidak merusak barang yang ada dalam ruangan', 'Mengembalikan kunci kepada petugas pada saat Chek Out', 'Tidak membawa pasangan bukan muhrim ke dalam kamar','Mengunci pintu saat bepergian'], 
     images: [
-       "{{ asset('storage/fasilitas/asrama_baledaa.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa1.jpeg') }}",
-      "{{ asset('storage/fasilitas/beledaa3.jpg') }}",
       "{{ asset('storage/fasilitas/beledaa4.jpeg') }}"
     ]
   },
   { 
     name: 'Ruang Makan Olamita 1 BPMP Gorontalo', 
-    category: 'ruang',  
+    category: 'ruang_makan',  
     location: 'Gedung Olamita, Wongkaditi Timur', 
     capacity: '160 Orang', luas: '198 m²', 
     operasional: '07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
@@ -1236,13 +1250,14 @@ const FACILITIES = [
     rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
     images: [
       "{{ asset('storage/fasilitas/olamita1_depan.jpeg') }}",
-      "{{ asset('storage/fasilitas/olamita_1.jpeg') }}"
+      "{{ asset('storage/fasilitas/olamita_1.jpeg') }}",
+      "{{ asset('storage/fasilitas/dalamolamita_1.jpeg') }}"
     ]
   },
   
   { 
     name: 'Ruang Makan Olamita 2 BPMP Gorontalo', 
-    category: 'ruang',  
+    category: 'ruang_makan',  
     location: 'Gedung Olamita, Wongkaditi Timur', 
     capacity: '40 Orang', luas: '198 m²', 
     operasional: '07.30–16.00 WITA', kontak: ' 0813-1326-6661', 
@@ -1251,22 +1266,57 @@ const FACILITIES = [
     rules: ['Budayakan antre', 'Dilarang menyisakan makanan (Zero Waste)', 'Kembalikan peralatan makan ke tempat yang disediakan', 'Dilarang merokok'], 
     images: [
       "{{ asset('storage/fasilitas/olamita_2.jpeg') }}",
-      "{{ asset('storage/fasilitas/gazebo_olamita1.jpeg') }}"
+      "{{ asset('storage/fasilitas/dalamolamita_2.jpeg') }}"
     ]
   },
   { 
-    name: 'Olahraga BPMP Gorontalo', 
+    name: 'Lapangan Tenis BPMP Gorontalo', 
     category: 'outdoor', 
     location: 'Area Sport Center BPMP', 
     capacity: 'Area Terbuka', luas: '800 m²', 
     operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
     description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
-    features: ['Lapangan Tenis Hardcourt', 'Jogging Track', 'Lapangan Voli/Takraw'], 
+    features: ['Lapangan Tenis Hardcourt'], 
     rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
     images: [
       "{{ asset('storage/fasilitas/lapangan_tenis.jpeg') }}",
+    ]
+  },
+  { 
+    name: 'Lapangan Voli/Takraw BPMP Gorontalo', 
+    category: 'outdoor', 
+    location: 'Area Sport Center BPMP', 
+    capacity: 'Area Terbuka', luas: '800 m²', 
+    operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
+    description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
+    features: ['Lapangan Voli/Takraw'], 
+    rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
+    images: [
       "{{ asset('storage/fasilitas/lapangan_olahraga.jpeg') }}", 
+    ]
+  },{ 
+    name: 'Jogging Track BPMP Gorontalo', 
+    category: 'outdoor', 
+    location: 'Area Sport Center BPMP', 
+    capacity: 'Area Terbuka', luas: '800 m²', 
+    operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
+    description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
+    features: [ 'Jogging Track'], 
+    rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
+    images: [
       "{{ asset('storage/fasilitas/jogging_treck.jpeg') }}"
+    ]
+  },{ 
+    name: 'Lapangan Fustal BPMP Gorontalo', 
+    category: 'outdoor', 
+    location: 'Area Sport Center BPMP', 
+    capacity: 'Area Terbuka', luas: '800 m²', 
+    operasional: '06.00–18.00 WITA', kontak: 'Keamanan', 
+    description: 'Fasilitas olahraga luar ruangan untuk menjaga kebugaran, terdiri dari lapangan tenis dan area jogging yang sejuk.',
+    features: [ 'Lapangan Futsal'], 
+    rules: ['Gunakan pakaian dan sepatu olahraga yang sesuai', 'Dilarang merusak fasilitas lapangan', 'Menjaga kebersihan area lapangan', 'Penggunaan malam hari harus seizin pengelola'], 
+    images: [
+      "{{ asset('storage/fasilitas/lapanganfutsal.jpeg') }}"
     ]
   },
   { 
@@ -1297,7 +1347,7 @@ const FACILITIES = [
   },
   { 
     name: 'Lapangan Upacara BPMP Gorontalo', 
-    category: 'outdoor', 
+    category: 'lapangan_Upacara', 
     location: 'Halaman Depan Gedung Utama', 
     capacity: '500 Orang', luas: '1200 m²', 
     operasional: 'Senin–Jumat 07.00–17.00 WITA', kontak: 'Satpam', 
@@ -1338,12 +1388,16 @@ const FACILITIES = [
 
 const FACILITY_CHIPS = [
   { id:'semua', label:'Semua' },
-  { id:'ruang', label:'Ruang & Aula' },
-  { id:'gedung',   label:'Gedung' },
-  { id:'outdoor',   label:'Outdoor' },
   { id:'kantor',   label:'Kantor' },
-  { id:'kelas',   label:'Kelas' },
-  { id:'penginapan',   label:'Penginapan' },
+  { id:'ruang', label:'Ruang Pertemuan' },
+  { id:'kelas',   label:'Ruang Kelas' },
+  { id:'penginapan',   label:'Asrama/mess' },
+  { id:'ruang_makan', label:'Ruang Makan' },
+  { id:'gedung',   label:'Gedung Arsip' },
+  { id:'outdoor',   label:'Fasilitas Olahraga' },
+  
+  { id:'lapangan_Upacara',   label:'Lapangan Upacara' },
+  { id:'sarana_ibadah',   label:'Sarana Ibadah' },
   { id:'kesehatan',   label:'Kesehatan' },
 ];
 

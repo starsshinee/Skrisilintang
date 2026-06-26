@@ -329,6 +329,10 @@ class KasubagController extends Controller
     {
         $peminjaman = PeminjamanBarang::findOrFail($id);
 
+        if ($peminjaman->status !== 'diteruskan_kasubag') {
+            return back()->with('error', 'Data belum diteruskan ke Kasubag atau sudah diproses sebelumnya!');
+        }
+        
         if ($request->action == 'setuju') {
             $peminjaman->status = 'disetujui';
             $peminjaman->approved_by_kasubag_id = auth()->id();
@@ -519,8 +523,8 @@ class KasubagController extends Controller
         ];
 
         $permintaan = PermintaanPersediaan::with(['user', 'persediaan'])
-            ->whereIn('status', ['dalam_review', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
-            ->orderByRaw("CASE WHEN status = 'dalam_review' THEN 1 ELSE 2 END") 
+            ->whereIn('status', ['diteruskan_kasubag', 'disetujui', 'disetujui_kasubag', 'ditolak', 'ditolak_kasubag'])
+            ->orderByRaw("CASE WHEN status = 'diteruskan_kasubag' THEN 1 ELSE 2 END")
             ->latest()
             ->get();
 

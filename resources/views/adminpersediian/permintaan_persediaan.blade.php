@@ -247,7 +247,7 @@ tr:hover { background: #f8faff; }
           
           <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">Semua Status</option>
-            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Validasi</option>
             <option value="diteruskan_kasubag" {{ request('status') == 'diteruskan_kasubag' ? 'selected' : '' }}>Diteruskan Kasubag</option>
             <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
             <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
