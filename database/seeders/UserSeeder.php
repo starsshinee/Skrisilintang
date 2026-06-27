@@ -27,12 +27,12 @@ class UserSeeder extends Seeder
             // ── Super Admin ──────────────────────────────────────────────
             [
                 'name'     => 'Super Administrator',
-                'username' => 'superadmin',
+                'username' => 'Operator',
                 'email'    => 'superadmin@bpmpgorontalo.id',
                 'password' => Hash::make('super123'),
                 'role'     => 'superadmin',
                 'nip'      => '196501011990031001',
-                'jabatan'  => 'Super Administrator Sistem',
+                'jabatan'  => 'Operator Sistem',
                 'is_active' => true,
             ],
 

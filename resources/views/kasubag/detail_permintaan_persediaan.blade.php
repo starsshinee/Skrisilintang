@@ -113,20 +113,21 @@
       </div>
     </div>
 
-    @if($permintaan->status === 'dalam_review')
-    <div class="action-box">
-      <form action="{{ route('kasubag.approve-permintaan', $permintaan->id) }}" method="POST">
-        @csrf
-        <input type="hidden" name="action" value="tolak">
-        <button type="submit" class="btn-action btn-reject" onclick="return confirm('Yakin ingin MENOLAK permintaan ini?')">Tolak Permintaan</button>
-      </form>
-      <form action="{{ route('kasubag.approve-permintaan', $permintaan->id) }}" method="POST">
+  @if($item->status == 'diteruskan_kasubag')
+    <form action="{{ route('kasubag.approve-permintaan', $item->id) }}" method="POST" class="d-inline">
         @csrf
         <input type="hidden" name="action" value="setuju">
-        <button type="submit" class="btn-action btn-approve" onclick="return confirm('Yakin ingin MENYETUJUI permintaan ini?')">Setujui Permintaan</button>
-      </form>
-    </div>
-    @endif
+        <button type="submit" class="btn btn-success btn-sm">Setuju</button>
+    </form>
+    
+    <form action="{{ route('kasubag.approve-permintaan', $item->id) }}" method="POST" class="d-inline">
+        @csrf
+        <input type="hidden" name="action" value="tolak">
+        <button type="submit" class="btn btn-danger btn-sm">Tolak</button>
+    </form>
+    @else
+        <button class="btn btn-secondary btn-sm" disabled>Sudah Diproses</button>
+  @endif
   </div>
 </main>
 

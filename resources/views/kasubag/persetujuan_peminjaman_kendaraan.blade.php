@@ -174,7 +174,7 @@
         <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Lihat Detail
       </button>
 
-      @if($item->status === 'dalam_review')
+      @if($item->status === 'diteruskan_kasubag')
         <form action="{{ route('kasubag.peminjaman-kendaraan.approve', $item->id) }}" method="POST" style="width: 100%;">
           @csrf
           <input type="hidden" name="action" value="setuju">

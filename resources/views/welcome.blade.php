@@ -962,6 +962,13 @@ const FACILITIES = [
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/kantor_utama.jpeg') }}",
+      "{{ asset('storage/fasilitas/ult.jpeg') }}",
+      "{{ asset('storage/fasilitas/ruangtungguult.jpeg') }}",
+      "{{ asset('storage/fasilitas/humas.jpeg') }}",
+      "{{ asset('storage/fasilitas/ruangsubagumum.jpeg') }}",
+      "{{ asset('storage/fasilitas/ruangkeuanganfix.jpg') }}",
+      "{{ asset('storage/fasilitas/ruangsubagumum.jpeg') }}"
+
       
     ]
   },
@@ -976,6 +983,10 @@ const FACILITIES = [
     rules: ['Tamu wajib melapor ke petugas keamanan', 'Berpakaian rapi dan sopan', 'Dilarang merokok di area kerja', 'Menjaga ketertiban selama jam kantor'], 
     images: [
       "{{ asset('storage/fasilitas/Kantorponuwa_2.jpeg') }}",
+      "{{ asset('storage/fasilitas/timkerpaud.jpeg') }}",
+      "{{ asset('storage/fasilitas/timkersd.jpeg') }}",
+      "{{ asset('storage/fasilitas/timkersmp.jpeg') }}",
+      "{{ asset('storage/fasilitas/timkersma2.jpg') }}",
     ]
   },
   { 

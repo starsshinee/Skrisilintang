@@ -491,14 +491,12 @@
                         <span class="tag id">REQ-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</span>
 
                         <!-- Badge Status Dinamis -->
-                        @if ($item->status === 'dalam_review')
-                            <span class="tag pending">Menunggu Review Anda</span>
-                        @elseif(in_array($item->status, ['disetujui', 'disetujui_kasubag']))
-                            <span class="tag success">Disetujui</span>
-                        @elseif(in_array($item->status, ['ditolak', 'ditolak_kasubag']))
-                            <span class="tag danger">Ditolak</span>
-                        @else
-                            <span class="tag id">{{ ucfirst($item->status) }}</span>
+                        @if($item->status == 'diteruskan_kasubag')
+                            <span class="badge bg-warning">Menunggu Persetujuan Kasubag</span>
+                        @elseif($item->status == 'disetujui' || $item->status == 'disetujui_kasubag')
+                            <span class="badge bg-success">Disetujui</span>
+                        @elseif($item->status == 'ditolak' || $item->status == 'ditolak_kasubag')
+                            <span class="badge bg-danger">Ditolak</span>
                         @endif
                     </div>
 
@@ -531,7 +529,7 @@
                     </button>
 
                     <!-- Tampilkan Form Setuju/Tolak HANYA jika status masih 'dalam_review' -->
-                    @if ($item->status === 'dalam_review')
+                    @if ($item->status === 'diteruskan_kasubag')
                         <form action="{{ route('kasubag.approve-permintaan', $item->id) }}" method="POST"
                             style="width: 100%;">
                             @csrf

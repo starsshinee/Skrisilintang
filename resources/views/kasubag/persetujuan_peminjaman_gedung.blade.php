@@ -357,7 +357,7 @@
           </svg> 
           Detail
         </button>
-        @if($item->status == 'dalam_review')
+        @if($item->status == 'diteruskan_kasubag')
         <button class="btn btn-approve" onclick="approvePeminjaman({{ $item->id }})">
           <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 
           Setuju
