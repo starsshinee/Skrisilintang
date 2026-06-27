@@ -224,17 +224,6 @@
                     'icon' => 'fas fa-gear',
                     'route' => 'adminasettetap.pengaturan-akun',
                 ],
-                // [
-                // 'label' => 'Laporan & Statistik',
-                // 'icon' => 'fas fa-chart-bar',
-                // 'route' => 'NONE',
-                // 'children' => [
-                // ['href' => route('adminasettetap.laporan-transaksi-masuk'), 'label' => ' Laporan Transaksi Masuk', 'route' => 'adminasettetap.laporan-transaksi-masuk'],
-                // ['href' => route('adminasettetap.laporan-transaksi-keluar'), 'label' => 'Laporan Transaksi Keluar', 'route' => 'adminasettetap.laporan-transaksi-keluar'],
-                // ['href' => route('adminasettetap.laporan-mutasi-barang'), 'label' => 'Laporan Mutasi Barang', 'route' => 'adminasettetap.laporan-mutasi-barang'],
-                // ['href' => route('adminasettetap.laporan-peminjaman-pengembalian'), 'label' => 'Laporan Peminjaman & Pengembalian', 'route' => 'adminasettetap.laporan-peminjaman-pengembalian'],
-                // ]
-                // ],
             ],
         ],
         'adminpersediaan' => [
