@@ -451,15 +451,42 @@ class AdminPersediaanController extends Controller
             'satuan'        => 'required|string|max:50', // VALIDASI SATUAN
             'jumlah_masuk'  => 'required|integer|min:1',
             'harga_satuan'  => 'required|numeric|min:0',
+            
         ]);
 
         // 6. Simpan transaksi (Pastikan field total dihitung murni secara otomatis)
         $total = $request->harga_satuan * $request->jumlah_masuk;
         
         \App\Models\TransaksiMasukPersediaan::create($request->all() + [
-            'total' => $total
+            
+            'total' => $total,
+            'user_id'       => auth()->id()
         ]);
+        // 7. SINKRONISASI KE MASTER PERSEDIAAN
+        $persediaan = \App\Models\Persediaan::where('kode_barang', $request->kode_barang)->first();
 
+        if ($persediaan) {
+            // Jika barang sudah ada di master, tambahkan stoknya
+            $persediaan->increment('jumlah', $request->jumlah_masuk);
+            
+            // Update harga total di master persediaan menyesuaikan stok baru
+            $persediaan->update([
+                'harga_total' => $persediaan->jumlah * $persediaan->harga_satuan
+            ]);
+        } else {
+            // Jika barang ini barang baru yang belum ada di master, buat data master baru
+            \App\Models\Persediaan::create([
+                'kode_kategori' => $request->kode_kategori,
+                'kategori'      => $request->kategori,
+                'kode_barang'   => $request->kode_barang,
+                'nama_barang'   => $request->nama_barang,
+                'satuan'        => $request->satuan,
+                'tanggal_masuk' => $request->tanggal_input,
+                'harga_satuan'  => $request->harga_satuan,
+                'jumlah'        => $request->jumlah_masuk,
+                'harga_total'   => $total,
+            ]);
+        }
         return redirect()->route('adminpersediaan.transaksi-masuk')
             ->with('success', 'Transaksi masuk berhasil disimpan!');
     }

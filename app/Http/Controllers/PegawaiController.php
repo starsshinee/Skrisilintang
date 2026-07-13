@@ -127,7 +127,7 @@ class PegawaiController extends Controller
 
         // 1. CEK BENTROK JADWAL BARANG (Karena barang memiliki NUP spesifik / fisik 1)
         $jadwalBentrok = PeminjamanBarang::where('kode_barang', $request->kode_barang)
-            ->whereIn('status', ['pending', 'diteruskan_kasubag', 'disetujui', 'disetujui_admin'])
+            ->whereIn('status', ['pending', 'diteruskan_kasubag', 'disetujui','proses_pengembalian', 'disetujui_admin'])
             ->where(function ($query) use ($request) {
                 $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
                       ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
@@ -569,7 +569,7 @@ class PegawaiController extends Controller
 
         // 1. CEK BENTROK JADWAL KENDARAAN (Mencegah overlapping tanggal)
         $jadwalBentrok = PeminjamanKendaraan::where('kode_barang', $request->kode_barang)
-            ->whereIn('status', ['pending', 'dalam_review', 'disetujui']) // Cek yang masih aktif
+            ->whereIn('status', ['pending', 'dalam_review','proses_pengembalian', 'disetujui']) // Cek yang masih aktif
             ->where(function ($query) use ($request) {
                 $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
                       ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])

@@ -94,6 +94,7 @@
                             <th>Lokasi Awal</th>
                             <th>Lokasi Akhir</th>
                             <th>Kondisi</th>
+                            <th>Alasan Perpindahan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -107,6 +108,7 @@
                             <td>{{ $item->lokasi_awal }}</td>
                             <td>{{ $item->lokasi_akhir }}</td>
                             <td>{{ $item->kondisi ?? '-' }}</td>
+                            <td>{{ $item->keterangan ?? '-' }}</td>
                             <td>
                                 <div style="display: flex; gap: 4px;">
                                     <button class="action-btn" onclick="ajuanManager.openDetailModal({{ $item->id }})" title="Lihat Detail">
@@ -331,6 +333,7 @@ class AjuanManager {
             document.getElementById('nama_barang').value = data.nama_barang;
             document.getElementById('kondisi').value = data.kondisi || '';
             document.getElementById('lokasi_awal').value = data.lokasi_sekarang;
+            document.getElementById('keterangan').value = '';
         } catch (error) {
             console.error('Error loading aset data:', error);
         }
