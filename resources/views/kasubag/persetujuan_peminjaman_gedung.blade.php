@@ -370,7 +370,9 @@
           Tolak
         </button>
         @else
-        <span style="font-size: 11.5px; color: var(--green); font-weight: 600;">✓ Disetujui</span>
+        <div style="background: var(--gray-100); color: var(--gray-600); padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; border: 1px dashed var(--gray-200); margin-top: auto; width: 100%;">
+            Telah Diproses
+        </div>
         @endif
       </div>
     </div>

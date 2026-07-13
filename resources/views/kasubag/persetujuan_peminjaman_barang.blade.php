@@ -140,25 +140,38 @@
       </div>
     </div>
     
-    <div class="req-actions">
-      <!-- Tombol Detail (Selalu Muncul) -->
-      <button class="btn btn-detail" onclick="openDetailModal({{ $item->id }})"><i class="fas fa-eye"></i> Detail</button>
-      
-      <!-- Tombol Aksi (Hanya muncul jika status Menunggu) -->
-      @if($item->status == 'diteruskan_kasubag')
-        <div style="display: flex; gap: 8px; width: 100%;">
-          <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" style="flex:1;">
-            @csrf <input type="hidden" name="action" value="setuju">
-            <button type="submit" class="btn btn-approve" onclick="return confirm('Setujui peminjaman ini?')"><i class="fas fa-check"></i> Setuju</button>
-          </form>
-          <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" onsubmit="return submitTolak(this)" style="flex:1;">
-            @csrf <input type="hidden" name="action" value="tolak">
-            <input type="hidden" name="komentar" class="alasanTolak">
-            <button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Tolak</button>
-          </form>
+    <div class="req-actions" style="display: flex; gap: 8px; width: 100%;">
+        <div>
+            <button class="btn btn-detail" style="background: var(--gray-100); color: var(--gray-600); border-radius: 8px; text-align: center; font-size: 11px; font-weight: 700; border: 1px dashed var(--gray-200); padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; height: 35px;" onclick="openDetailModal({{ $item->id }})">
+                <i class="fas fa-eye"></i> Detail
+            </button>
         </div>
-      @endif
-    </div>
+          
+        @if($item->status == 'diteruskan_kasubag')
+            <div style="display: flex; gap: 8px; flex: 1;">
+                <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" style="flex: 1; display: flex;">
+                    @csrf 
+                    <input type="hidden" name="action" value="setuju">
+                    <button type="submit" class="btn btn-approve" style="width: 100%;" onclick="return confirm('Setujui peminjaman ini?')">
+                        <i class="fas fa-check"></i> Setuju
+                    </button>
+                </form>
+                <form action="{{ route('kasubag.peminjaman-barang.approve', $item->id) }}" method="POST" onsubmit="return submitTolak(this)" style="flex: 1; display: flex;">
+                    @csrf 
+                    <input type="hidden" name="action" value="tolak">
+                    <input type="hidden" name="komentar" class="alasanTolak">
+                    <button type="submit" class="btn btn-reject" style="width: 100%;">
+                        <i class="fas fa-times ="></i> Tolak
+                    </button>
+                </form>
+            </div>
+            
+        @else
+            <div style="background: var(--gray-100); color: var(--gray-600); border-radius: 8px; text-align: center; font-size: 11px; font-weight: 700; border: 1px dashed var(--gray-200); padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; height: 35px;">
+                Telah Diproses
+            </div>
+        @endif
+    </div>  
   </div>
   @empty
     <div style="text-align:center; padding: 60px 20px; background: #fff; border: 1px dashed var(--gray-400); border-radius: 14px;">

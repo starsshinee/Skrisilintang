@@ -125,23 +125,34 @@ class PegawaiController extends Controller
             'tanggal_peminjaman.after' => 'Pengajuan peminjaman barang wajib dilakukan maksimal H-1. Anda tidak bisa meminjam untuk hari ini.'
         ]);
 
-        // 1. CEK BENTROK JADWAL BARANG (Karena barang memiliki NUP spesifik / fisik 1)
-        $jadwalBentrok = PeminjamanBarang::where('kode_barang', $request->kode_barang)
-            ->whereIn('status', ['pending', 'diteruskan_kasubag', 'disetujui','proses_pengembalian', 'disetujui_admin'])
+        $statusAktifBarang = ['pending', 'diteruskan_kasubag', 'disetujui', 'disetujui_admin', 'proses_pengembalian'];
+
+        // LAPIS 1: Cek Bentrok Tanggal (Overlapping)
+        $bentrokTanggal = PeminjamanBarang::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', $statusAktifBarang)
             ->where(function ($query) use ($request) {
-                $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
-                      ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
-                      ->orWhere(function ($q) use ($request) {
-                          $q->where('tanggal_peminjaman', '<=', $request->tanggal_peminjaman)
-                            ->where('tanggal_pengembalian', '>=', $request->tanggal_pengembalian);
-                      });
+                // Logika akurat untuk mengecek segala jenis irisan/bentrok tanggal
+                $query->where('tanggal_peminjaman', '<=', $request->tanggal_pengembalian)
+                      ->where('tanggal_pengembalian', '>=', $request->tanggal_peminjaman);
             })
             ->exists();
 
-        // Jika bernilai true (ada jadwal yang bersinggungan)
-        if ($jadwalBentrok) {
+        if ($bentrokTanggal) {
             return back()->withErrors([
-                'kode_barang' => 'Maaf, barang ini sudah diajukan atau dipinjam oleh pegawai lain pada rentang tanggal tersebut.'
+                'kode_barang' => 'Maaf, barang ini sudah dibooking/dipinjam pada rentang tanggal tersebut.'
+            ])->withInput();
+        }
+
+        // LAPIS 2: Cek Barang Belum Dikembalikan (Overdue / Nyangkut)
+        // Mengecek apakah ada transaksi aktif yang tanggal kembalinya SEBELUM tanggal pinjam baru
+        $belumDikembalikan = PeminjamanBarang::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', $statusAktifBarang)
+            ->where('tanggal_pengembalian', '<', $request->tanggal_peminjaman)
+            ->exists();
+
+        if ($belumDikembalikan) {
+            return back()->withErrors([
+                'kode_barang' => 'Tidak bisa dipinjam. Peminjam sebelumnya belum mengembalikan barang ini secara sistem/fisik.'
             ])->withInput();
         }
 
@@ -567,23 +578,33 @@ class PegawaiController extends Controller
             'tanggal_peminjaman.after' => 'Pengajuan peminjaman kendaraan dinas wajib dilakukan maksimal H-1. Anda tidak bisa meminjam untuk hari ini.'
         ]);
 
-        // 1. CEK BENTROK JADWAL KENDARAAN (Mencegah overlapping tanggal)
-        $jadwalBentrok = PeminjamanKendaraan::where('kode_barang', $request->kode_barang)
-            ->whereIn('status', ['pending', 'dalam_review','proses_pengembalian', 'disetujui']) // Cek yang masih aktif
+        $statusAktifKendaraan = ['pending', 'dalam_review', 'disetujui', 'proses_pengembalian'];
+
+        // LAPIS 1: Cek Bentrok Tanggal (Overlapping)
+        $bentrokTanggal = PeminjamanKendaraan::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', $statusAktifKendaraan)
             ->where(function ($query) use ($request) {
-                $query->whereBetween('tanggal_peminjaman', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
-                      ->orWhereBetween('tanggal_pengembalian', [$request->tanggal_peminjaman, $request->tanggal_pengembalian])
-                      ->orWhere(function ($q) use ($request) {
-                          $q->where('tanggal_peminjaman', '<=', $request->tanggal_peminjaman)
-                            ->where('tanggal_pengembalian', '>=', $request->tanggal_pengembalian);
-                      });
+                // Logika akurat untuk mengecek segala jenis irisan/bentrok tanggal
+                $query->where('tanggal_peminjaman', '<=', $request->tanggal_pengembalian)
+                      ->where('tanggal_pengembalian', '>=', $request->tanggal_peminjaman);
             })
             ->exists();
 
-        // Jika bernilai true (ada jadwal yang bersinggungan)
-        if ($jadwalBentrok) {
+        if ($bentrokTanggal) {
             return back()->withErrors([
-                'kode_barang' => 'Maaf, kendaraan dinas ini sudah diajukan atau dipinjam oleh pegawai lain pada rentang tanggal tersebut.'
+                'kode_barang' => 'Maaf, kendaraan ini sudah dibooking/dipinjam pada rentang tanggal tersebut.'
+            ])->withInput();
+        }
+
+        // LAPIS 2: Cek Kendaraan Belum Dikembalikan (Overdue / Nyangkut)
+        $belumDikembalikan = PeminjamanKendaraan::where('kode_barang', $request->kode_barang)
+            ->whereIn('status', $statusAktifKendaraan)
+            ->where('tanggal_pengembalian', '<', $request->tanggal_peminjaman)
+            ->exists();
+
+        if ($belumDikembalikan) {
+            return back()->withErrors([
+                'kode_barang' => 'Tidak bisa dipinjam. Peminjam sebelumnya belum mengembalikan kendaraan ini secara sistem/fisik.'
             ])->withInput();
         }
 

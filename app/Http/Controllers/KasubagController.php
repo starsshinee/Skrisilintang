@@ -108,7 +108,7 @@ class KasubagController extends Controller
     public function persetujuanPeminjamanGedung(Request $request)
     {
         $query = PeminjamanGedung::with(['user', 'reviewer'])
-            ->whereIn('status', ['diteruskan_kasubag', 'disetujui_kasubag'])
+            ->whereIn('status', ['diteruskan_kasubag', 'disetujui', 'ditolak'])
             ->orderBy('diteruskan_ke_kasubag_date', 'desc');
 
         if ($request->filled('search')) {
@@ -125,67 +125,77 @@ class KasubagController extends Controller
 
     public function approveByKasubag(Request $request, PeminjamanGedung $peminjaman)
     {
-        $request->validate(['komentar' => 'nullable|string|max:1000']);
+        try {
+            $request->validate(['komentar' => 'nullable|string|max:1000']);
 
-        // Cek apakah masih dalam review
-        if ($peminjaman->status !== 'diteruskan_kasubag') {
+            // Cek apakah masih dalam review
+            if ($peminjaman->status !== 'diteruskan_kasubag') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Peminjaman belum diteruskan ke Kasubag atau sudah diproses!'
+                ], 400);
+            }
+
+            $peminjaman->update([
+                'status' => 'disetujui',
+                'approved_by_kasubag_id' => auth()->id(),
+                'approved_by_kasubag_date' => now(),
+                'komentar' => $request->komentar
+            ]);
+
+            // Gunakan tanda ? seperti yang saya sarankan sebelumnya
+            $namaGedung = $peminjaman->gedung?->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+
+            $tglPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y');
+            $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y');
+
+            $jamMulai = $peminjaman->jam_mulai ?? '--:--';
+            $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
+
+            // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
+            if ($peminjaman->nomor_kontak) {
+                $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+
+                $pesanTamu = "*Peminjaman Gedung DISETUJUI*\n\n";
+                $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
+                $pesanTamu .= "Pengajuan peminjaman fasilitas Anda telah disetujui oleh Kasubag:\n\n";
+                $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
+                $pesanTamu .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+                $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
+                $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
+
+                \App\Jobs\SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
+            }
+
+            // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
+            $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+            if ($adminSarpras && $adminSarpras->nomor_telepon) {
+                $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
+
+                $pesanAdmin = "*Info Persetujuan Kasubag (Gedung)*\n\n";
+                $pesanAdmin .= "Halo Admin Sarpras,\n";
+                $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman fasilitas dari Tamu:\n\n";
+                $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
+                $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
+                $pesanAdmin .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
+                $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
+                $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
+
+                \App\Jobs\SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman berhasil disetujui!'
+            ]);
+
+        } catch (\Exception $e) {
+            // TANGKAP ERROR DAN TAMPILKAN
             return response()->json([
                 'success' => false,
-                'message' => 'Peminjaman belum diteruskan ke Kasubag atau sudah diproses!'
-            ], 400);
+                'message' => 'ERROR: ' . $e->getMessage() . ' (Baris: ' . $e->getLine() . ')'
+            ], 500);
         }
-
-        $peminjaman->update([
-            'status' => 'disetujui_kasubag',
-            'approved_by_kasubag_id' => auth()->id(),
-            'approved_by_kasubag_date' => now(),
-            'komentar' => $request->komentar
-        ]);
-
-        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
-
-        $tglPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y');
-        $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y');
-
-        $jamMulai = $peminjaman->jam_mulai ?? '--:--';
-        $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
-
-        // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
-        if ($peminjaman->nomor_kontak) {
-            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
-
-            $pesanTamu = "*Peminjaman Gedung DISETUJUI*\n\n";
-            $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
-            $pesanTamu .= "Pengajuan peminjaman fasilitas Anda telah disetujui oleh Kasubag:\n\n";
-            $pesanTamu .= "🏫 *Fasilitas:* {$namaGedung}\n";
-            $pesanTamu .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
-            $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
-            $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
-
-            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
-        }
-
-        // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
-        $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
-        if ($adminSarpras && $adminSarpras->nomor_telepon) {
-            $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
-
-            $pesanAdmin = "*Info Persetujuan Kasubag (Gedung)*\n\n";
-            $pesanAdmin .= "Halo Admin Sarpras,\n";
-            $pesanAdmin .= "Kasubag telah *MENYETUJUI* peminjaman fasilitas dari Tamu:\n\n";
-            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap}\n";
-            $pesanAdmin .= "🏫 *Fasilitas:* {$namaGedung}\n";
-            $pesanAdmin .= "📅 *Tanggal:* {$tglPinjam} s/d {$tglKembali}\n";
-            $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
-            $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
-
-            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Peminjaman berhasil disetujui!'
-        ]);
     }
 
     public function rejectByKasubag(Request $request, PeminjamanGedung $peminjaman)
@@ -206,7 +216,7 @@ class KasubagController extends Controller
             'komentar' => $request->komentar
         ]);
 
-        $namaGedung = $peminjaman->gedung->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
+        $namaGedung = $peminjaman->gedung?->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
 
         // --- 1. NOTIFIKASI KE TAMU (DITOLAK) ---
         if ($peminjaman->nomor_kontak) {
