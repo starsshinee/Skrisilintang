@@ -152,8 +152,11 @@ class KasubagController extends Controller
             $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
 
             // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
-            if ($peminjaman->nomor_kontak) {
-                $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+            $tamu = $peminjaman->user; // Ambil relasi dari tabel users
+
+            if ($tamu && $tamu->nomor_telepon) {
+                // Ambil nomor dari kolom nomor_telepon milik user
+                $noHpTamu = preg_replace('/[^0-9]/', '', $tamu->nomor_telepon);
 
                 $pesanTamu = "*Peminjaman Gedung DISETUJUI*\n\n";
                 $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
@@ -163,7 +166,7 @@ class KasubagController extends Controller
                 $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
                 $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
 
-                // PERBAIKAN 1: Gunakan dispatchSync agar langsung dikirim saat itu juga
+                // Kirim pesan WA
                 \App\Jobs\SendFonnteNotification::dispatchSync($noHpTamu, $pesanTamu);
             }
 
@@ -222,8 +225,10 @@ class KasubagController extends Controller
         $namaGedung = $peminjaman->gedung?->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
 
         // --- 1. NOTIFIKASI KE TAMU (DITOLAK) ---
-        if ($peminjaman->nomor_kontak) {
-            $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
+        $tamu = $peminjaman->user;
+
+        if ($tamu && $tamu->nomor_telepon) {
+            $noHpTamu = preg_replace('/[^0-9]/', '', $tamu->nomor_telepon);
 
             $pesanTamu = "*Peminjaman Gedung DITOLAK*\n\n";
             $pesanTamu .= "Halo {$peminjaman->nama_lengkap},\n";
@@ -233,7 +238,7 @@ class KasubagController extends Controller
             $pesanTamu .= "💬 *Catatan Kasubag:* " . $request->komentar . "\n\n";
             $pesanTamu .= "Silakan hubungi Admin Sarpras untuk informasi lebih lanjut.";
 
-            SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
+            \App\Jobs\SendFonnteNotification::dispatchSync($noHpTamu, $pesanTamu);
         }
 
         // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DITOLAK) ---

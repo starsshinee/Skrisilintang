@@ -449,11 +449,11 @@
                             'label' => 'Laporan Sarpras',
                             'route' => 'kepalabpmp.laporan.download-sarpras',
                         ],
-                        [
-                            'href' => route('kepalabpmp.laporan.download-lengkap'),
-                            'label' => 'Laporan Lengkap',
-                            'route' => 'kepalabpmp.laporan.download-lengkap',
-                        ],
+                        // [
+                        //     'href' => route('kepalabpmp.laporan.download-lengkap'),
+                        //     'label' => 'Laporan Lengkap',
+                        //     'route' => 'kepalabpmp.laporan.download-lengkap',
+                        // ],
                     ],
                 ],
                 [
