@@ -370,8 +370,8 @@ class AdminSarprasController extends Controller
                 $pesanKasubag .= "Admin Sarpras meneruskan permintaan peminjaman gedung dari Tamu untuk disetujui:\n\n";
                 $pesanKasubag .= "👤 *Pemohon:* {$peminjaman->nama_lengkap} {$instansi}\n";
                 $pesanKasubag .= "🏫 *Gedung:* {$namaGedung}\n";
-                $pesanKasubag .= "📅 *Tanggal:* " . ($peminjaman->tanggal_mulai ?? '-') . " s/d " . ($peminjaman->tanggal_selesai ?? '-') . "\n";
-                $pesanKasubag .= "📝 *Kegiatan:* " . ($peminjaman->nama_kegiatan ?? '-') . "\n\n";
+                $pesanKasubag .= "📅 *Tanggal:* " . ($peminjaman->tanggal_pinjam ?? '-') . " s/d " . ($peminjaman->tanggal_kembali ?? '-') . "\n";
+                $pesanKasubag .= "📝 *Tujuan Penggunaan:* " . ($peminjaman->tujuan_penggunaan ?? '-') . "\n\n";
                 $pesanKasubag .= "Silakan login ke sistem untuk memberikan persetujuan akhir.";
 
                 SendFonnteNotification::dispatch($noHpKasubag, $pesanKasubag);

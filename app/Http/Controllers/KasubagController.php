@@ -153,6 +153,14 @@ class KasubagController extends Controller
             $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
 
             // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
+            // HAPUS ATAU KOMENTARI KODE INI SETELAH SELESAI TESTING
+            $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+            dd([
+                'nomor_kontak_tamu_di_db' => $peminjaman->nomor_kontak,
+                'admin_sarpras_ditemukan' => $adminSarpras ? 'YA' : 'TIDAK',
+                'nomor_telepon_admin_di_db' => $adminSarpras ? $adminSarpras->nomor_telepon : 'Kosong',
+                'role_admin_yang_sebenarnya' => $adminSarpras ? $adminSarpras->role : 'Tidak ada data',
+            ]);
             if ($peminjaman->nomor_kontak) {
                 $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
 
