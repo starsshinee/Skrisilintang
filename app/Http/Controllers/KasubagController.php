@@ -143,7 +143,6 @@ class KasubagController extends Controller
                 'komentar' => $request->komentar
             ]);
 
-            // Gunakan tanda ? seperti yang saya sarankan sebelumnya
             $namaGedung = $peminjaman->gedung?->nama_gedung ?? ($peminjaman->nama_fasilitas ?? 'Fasilitas');
 
             $tglPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y');
@@ -153,14 +152,6 @@ class KasubagController extends Controller
             $jamSelesai = $peminjaman->jam_selesai ?? '--:--';
 
             // --- 1. NOTIFIKASI KE TAMU (DISETUJUI) ---
-            // HAPUS ATAU KOMENTARI KODE INI SETELAH SELESAI TESTING
-            $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
-            dd([
-                'nomor_kontak_tamu_di_db' => $peminjaman->nomor_kontak,
-                'admin_sarpras_ditemukan' => $adminSarpras ? 'YA' : 'TIDAK',
-                'nomor_telepon_admin_di_db' => $adminSarpras ? $adminSarpras->nomor_telepon : 'Kosong',
-                'role_admin_yang_sebenarnya' => $adminSarpras ? $adminSarpras->role : 'Tidak ada data',
-            ]);
             if ($peminjaman->nomor_kontak) {
                 $noHpTamu = preg_replace('/[^0-9]/', '', $peminjaman->nomor_kontak);
 
@@ -172,11 +163,14 @@ class KasubagController extends Controller
                 $pesanTamu .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
                 $pesanTamu .= "Silakan tunggu Surat Perjanjian yang akan disiapkan oleh Admin Sarpras. Terima kasih.";
 
-                \App\Jobs\SendFonnteNotification::dispatch($noHpTamu, $pesanTamu);
+                // PERBAIKAN 1: Gunakan dispatchSync agar langsung dikirim saat itu juga
+                \App\Jobs\SendFonnteNotification::dispatchSync($noHpTamu, $pesanTamu);
             }
 
             // --- 2. NOTIFIKASI KE ADMIN SARPRAS (INFO DISETUJUI) ---
-            $adminSarpras = \App\Models\User::where('role', 'admin_sarpras')->first();
+            // PERBAIKAN 2: Menggunakan whereIn untuk menargetkan "admin_sarpras" atau "adminsarpras"
+            $adminSarpras = \App\Models\User::whereIn('role', ['admin_sarpras', 'adminsarpras'])->first();
+            
             if ($adminSarpras && $adminSarpras->nomor_telepon) {
                 $noHpAdmin = preg_replace('/[^0-9]/', '', $adminSarpras->nomor_telepon);
 
@@ -189,7 +183,8 @@ class KasubagController extends Controller
                 $pesanAdmin .= "⏰ *Waktu:* {$jamMulai} - {$jamSelesai} WITA\n\n"; 
                 $pesanAdmin .= "Silakan login ke sistem untuk membuat/mengunggah Surat Perjanjian Peminjaman Gedung.";
 
-                \App\Jobs\SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+                // PERBAIKAN 1: Gunakan dispatchSync agar langsung dikirim saat itu juga
+                \App\Jobs\SendFonnteNotification::dispatchSync($noHpAdmin, $pesanAdmin);
             }
 
             return response()->json([
@@ -198,10 +193,10 @@ class KasubagController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // TANGKAP ERROR DAN TAMPILKAN
+            // Jika menggunakan dispatchSync dan token Fonnte salah, errornya akan ketahuan dan ditangkap disini
             return response()->json([
                 'success' => false,
-                'message' => 'ERROR: ' . $e->getMessage() . ' (Baris: ' . $e->getLine() . ')'
+                'message' => 'ERROR PENGIRIMAN WA: ' . $e->getMessage() . ' (Baris: ' . $e->getLine() . ')'
             ], 500);
         }
     }

@@ -303,7 +303,7 @@
       <div class="stat-label">Menunggu Review</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">{{ $peminjaman->where('status', 'disetujui_kasubag')->count() }}</div>
+      <div class="stat-number">{{ $peminjaman->where('status', 'disetujui')->count() }}</div>
       <div class="stat-label">Disetujui Kasubag</div>
     </div>
     <div class="stat-card">
@@ -328,7 +328,7 @@
         <div class="req-tags">
           <span class="tag id">REQ{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}</span>
           <span class="tag {{ $item->status == 'dalam_review' ? 'pending' : 'review' }}">
-            {{ $item->status == 'dalam_review' ? 'Menunggu' : 'Disetujui Kasubag' }}
+            {{ $item->status == 'dalam_review' ? 'Menunggu' : 'disetujui' }}
           </span>
         </div>
         <div class="req-name">{{ $item->gedung->nama_gedung ?? 'Gedung Tidak Ditemukan' }} 
