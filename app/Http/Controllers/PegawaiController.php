@@ -374,7 +374,7 @@ class PegawaiController extends Controller
     public function storePermintaanPersediaan(Request $request)
     {
         $request->validate([
-            'kode_barang' => 'required|string|max:50',
+            'persediaan_id' => 'required|exists:persediaan,id',
             'jumlah_diminta' => 'required|integer|min:1',
             // 'satuan'            => 'required|string|max:50',
             'tanggal_permintaan' => 'required|date',
@@ -382,11 +382,12 @@ class PegawaiController extends Controller
         ]);
 
         // Ambil data master persediaan
-        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        $persediaan = Persediaan::find($request->persediaan_id);
+        // ->first();
 
         if (!$persediaan) {
             return back()->withErrors([
-                'kode_barang' => 'Barang tidak ditemukan!'
+                'persediaan_id' => 'Barang tidak ditemukan!'
             ])->withInput();
         }
 
@@ -394,7 +395,7 @@ class PegawaiController extends Controller
         // LOGIKA ANTI BENTROK (REAL AVAILABLE STOCK)
         // ========================================================
         // Hitung total barang ini yang sedang diajukan (belum diputuskan Kasubag)
-        $jumlahSedangDiproses = PermintaanPersediaan::where('kode_barang', $request->kode_barang)
+        $jumlahSedangDiproses = PermintaanPersediaan::where('persediaan_id', $persediaan->id)
             ->whereIn('status', ['pending', 'dalam_review'])
             ->sum('jumlah_diminta');
 
@@ -404,13 +405,13 @@ class PegawaiController extends Controller
         // Cek apakah jumlah yang diminta melebihi sisa stok riil
         if ($request->jumlah_diminta > $sisaStokRiil) {
             return back()->withErrors([
-                'kode_barang' => "Maaf, sisa stok yang bisa diminta saat ini hanya {$sisaStokRiil} unit. (Terdapat {$jumlahSedangDiproses} unit yang sedang dalam antrean pengajuan oleh pegawai lain)."
+                'persediaan_id' => "Maaf, sisa stok yang bisa diminta saat ini hanya {$sisaStokRiil} unit. (Terdapat {$jumlahSedangDiproses} unit yang sedang dalam antrean pengajuan oleh pegawai lain)."
             ])->withInput();
         }
         // ========================================================
 
         PermintaanPersediaan::create([
-            'kode_barang' => $request->kode_barang,           
+            'kode_barang' => $persediaan->kode_barang,           
             'nama_barang' => $persediaan->nama_barang,
             'persediaan_id' => $persediaan->id,               
             'user_id' => Auth::id(),

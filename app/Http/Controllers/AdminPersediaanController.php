@@ -251,7 +251,9 @@ class AdminPersediaanController extends Controller
         ]);
 
         // Cek stok persediaan
-        $persediaan = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        $persediaan = Persediaan::where('kode_kategori', $request ->kode_kategori)
+                                 ->where('kode_barang', $request->kode_barang)
+                                 ->first();
         if (!$persediaan || $persediaan->jumlah < $request->jumlah_keluar) {
             return back()->withErrors(['jumlah_keluar' => 'Stok persediaan tidak mencukupi!'])
                 ->withInput();
@@ -331,8 +333,10 @@ class AdminPersediaanController extends Controller
         ]);
 
         // 🔥 VALIDASI STOK: Cek apakah kode barang berubah
-        $persediaanLama = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
-        $persediaanBaru = Persediaan::where('kode_barang', $request->kode_barang)->first();
+        $persediaanLama = Persediaan::where('kode_kategori', $transaksiKeluar->kode_kategori)
+                                      ->where('kode_barang', $transaksiKeluar->kode_barang)->first();
+        $persediaanBaru = Persediaan::where('kode_kategori', $request->kode_kategori)
+                                      ->where('kode_barang', $request->kode_barang)->first();
 
         // Cek stok persediaan BARU
         if (!$persediaanBaru || $persediaanBaru->jumlah < $request->jumlah_keluar) {
@@ -374,7 +378,8 @@ class AdminPersediaanController extends Controller
     public function destroyTransaksiKeluar(TransaksiKeluarPersediaan $transaksiKeluar)
     {
         // Kembalikan stok persediaan
-        $persediaan = Persediaan::where('kode_barang', $transaksiKeluar->kode_barang)->first();
+        $persediaan = Persediaan::where('kode_kategori', $transaksiKeluar->kode_kategori)
+                                  ->where('kode_barang', $transaksiKeluar->kode_barang)->first();
         if ($persediaan) {
             $persediaan->increment('jumlah', $transaksiKeluar->jumlah_keluar);
         }
