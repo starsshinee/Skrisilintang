@@ -118,10 +118,14 @@ class TamuController extends Controller
             'jam_selesai' => 'required|after:jam_mulai',
             'jumlah_peserta' => 'required|integer|min:1',
             'tujuan_penggunaan' => 'required|string|max:1000',
-            'surat_path' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120'
+            'surat_path' => 'required|file|mimes:pdf|max:5120'
         ], [
             // Tambahkan pesan custom agar tamu paham kenapa error
-            'tanggal_pinjam.after_or_equal' => 'Peminjaman gedung harus dilakukan minimal H-2 (2 hari sebelum hari H).'
+            'tanggal_pinjam.after_or_equal' => 'Peminjaman gedung harus dilakukan minimal H-2 (2 hari sebelum hari H).',
+            'surat_permohonan.required' => 'Surat permohonan wajib diunggah!',
+            'surat_permohonan.file' => 'Data harus berupa file.',
+            'surat_permohonan.mimes' => 'Format dokumen ditolak! Surat permohonan wajib berformat PDF.',
+            'surat_permohonan.max' => 'Ukuran file surat permohonan maksimal 2MB.',
         ]);
 
         // ====================================================================
@@ -167,10 +171,10 @@ class TamuController extends Controller
 
         // Buat peminjaman
         $peminjaman = \App\Models\PeminjamanGedung::create([
-            'user_id' => auth('web')->id(),
+            'user_id' => Auth::id(),
             'gedung_id' => $gedung->id,
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'nip_nik' => $validated['nip_nik'],
+            'nama_lengkap' => Auth::user()->name,
+            'nip_nik' => Auth::user()->nip,
             'instansi_lembaga' => $validated['instansi_lembaga'],
             'kabupaten_kota' => $validated['kabupaten_kota'],
             'fasilitas' => $gedung->kategori,

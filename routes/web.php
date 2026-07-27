@@ -126,6 +126,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/unit-kerja', [UnitKerjaController::class, 'store'])->name('unit_kerja.store');
             Route::put('/unit-kerja/{id}', [UnitKerjaController::class, 'update'])->name('unit_kerja.update');
             Route::delete('/unit-kerja/{id}', [UnitKerjaController::class, 'destroy'])->name('unit_kerja.destroy');
+            Route::post('/verifikasi-user/{id}', [SuperadminController::class, 'verifikasiUser'])->name('verifikasi_user');
+            Route::get('/pengaturan-akun', [AuthController::class, 'showProfile'])->name('pengaturan-akun');
         });
 
     // ──────────────────────────────────────────────────────────────────

@@ -193,6 +193,23 @@
               </div>
             </div>
 
+           <!-- Kolom Input Nomor WhatsApp -->
+            <div class="mb-4">
+              <label for="regNomorTelepon" class="block text-sm font-semibold text-navy-800 mb-2">Nomor WhatsApp <span class="text-red-400">*</span></label>
+              <div class="relative">
+                <!-- Ikon Telepon -->
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                
+                <!-- Input Field -->
+                <input id="regNomorTelepon" name="nomor_telepon" type="tel" autocomplete="tel"
+                  value="{{ old('nomor_telepon') }}" required
+                  class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('nomor_telepon') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 placeholder:text-slate-400"
+                  placeholder="Contoh: 081234567890">
+              </div>
+            </div>
+
             <div class="mb-4">
               <label for="regUnitKerja" class="block text-sm font-semibold text-navy-800 mb-2">Unit Kerja <span class="text-red-400">*</span></label>
               <div class="relative">

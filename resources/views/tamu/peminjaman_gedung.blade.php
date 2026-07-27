@@ -1066,7 +1066,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <div class="form-label"><i class="fas fa-user"></i> Nama Lengkap <span class="req">*</span>
                         </div>
                         <input type="text" class="form-input" placeholder="Masukkan nama lengkap Anda"
@@ -1076,7 +1076,7 @@
                         <div class="form-label"><i class="fas fa-id-card"></i> NIP / NIK <span class="req">*</span>
                         </div>
                         <input type="text" class="form-input" placeholder="Masukkan NIP/NIK Anda" id="NIPNIKInput">
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <div class="form-label"><i class="fas fa-building-columns"></i> Instansi / Lembaga <span
                                 class="req">*</span></div>
@@ -1194,15 +1194,15 @@
 
                     <div class="form-group">
                         <div class="form-label"><i class="fas fa-file-upload"></i> Upload Surat <span
-                                style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-secondary)">(opsional)</span>
+                                class="req">*</span>
                         </div>
                         <div class="file-input-wrapper" onclick="document.getElementById('suratFile').click()">
                             <label class="file-input-label">
                                 <input type="file" id="suratFile" name="surat"
-                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileUpload.call(this)">
+                                    accept=".pdf" onchange="handleFileUpload.call(this)">
                                 <i class="fas fa-cloud-arrow-up"></i>
                                 <strong id="fileLabel">Klik untuk unggah file</strong>
-                                <span>PDF, DOC, JPG, PNG (Maks. 5MB)</span>
+                                <span>PDF (Maks. 5MB)</span>
                             </label>
                         </div>
                     </div>

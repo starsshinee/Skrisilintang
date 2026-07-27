@@ -12,7 +12,10 @@ class SuperadminController extends Controller
 {
     public function dashboard()
     {
-        return view('superadmin.dashbord');
+        // Hitung berapa user yang statusnya masih 'pending'
+        $jumlahPending = User::where('status', 'pending')->count();
+        
+        return view('superadmin.dashbord', compact('jumlahPending'));
     }
 
     public function manajemenUser(Request $request) // <-- Pastikan nama fungsi sesuai dengan rute di web.php kamu
@@ -123,5 +126,36 @@ class SuperadminController extends Controller
 
         $statusText = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
         return back()->with('success', "Akun {$user->name} berhasil {$statusText}!");
+    }
+
+    public function verifikasiUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Ubah status menjadi approved
+        $user->update([
+            'status' => 'approved'
+        ]);
+        // 2. Kirim notifikasi WhatsApp ke user yang baru saja disetujui
+        if (!empty($user->nomor_telepon)) {
+            $pesan = "*NOTIFIKASI SIPANDU*\n\n";
+            $pesan .= "Halo {$user->name},\n\n";
+            $pesan .= "Selamat! Akun Anda dengan hak akses *" . strtoupper($user->role) . "* telah *DIVERIFIKASI* oleh Operator.\n\n";
+            $pesan .= "Sekarang Anda sudah bisa login ke dalam sistem SIPANDU menggunakan username dan password yang telah didaftarkan.\n\n";
+            $pesan .= "Terima kasih.";
+
+            // Eksekusi Job pengiriman Fonnte
+            \App\Jobs\SendFonnteNotification::dispatch($user->nomor_telepon, $pesan);
+        }
+
+        return redirect()->back()->with('success', 'Akun pengguna berhasil diverifikasi dan sekarang dapat login.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Data pengguna berhasil dihapus.');
     }
 }

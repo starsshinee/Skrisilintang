@@ -27,6 +27,12 @@
                     'icon' => 'fas fa-building',
                     'route' => 'superadmin.unit_kerja.index',
                 ],
+                [
+                    'href' => route('superadmin.pengaturan-akun'),
+                    'label' => 'Pengaturan Akun',
+                    'icon' => 'fas fa-gear',
+                    'route' => 'superadmin.pengaturan-akun',
+                ],
             ],
         ],
         'pegawai' => [

@@ -75,8 +75,24 @@
     $totalUsers = \App\Models\User::count();
     $activeUsers = \App\Models\User::where('is_active', true)->count();
     $inactiveUsers = \App\Models\User::where('is_active', false)->count();
+    $jumlahPending = \App\Models\User::where('status', 'pending')->count();
   @endphp
-
+  
+  @if($jumlahPending > 0)
+  <div style="background-color: #fffbeb; color: #92400e; padding: 16px 20px; border-radius: 12px; border: 1px solid #fef3c7; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+      <div style="background: var(--warning); color: white; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;">
+          <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div style="font-size: 14px; flex: 1;">
+          <strong style="font-size: 15px;">Perhatian!</strong><br>
+          Terdapat <b>{{ $jumlahPending }}</b> akun pendaftar baru yang menunggu verifikasi Anda. 
+          <a href="{{ route('superadmin.manajemen-user') }}" style="color: #92400e; font-weight: 700; text-decoration: underline; margin-left: 4px;">
+              Tinjau sekarang <i class="fas fa-arrow-right" style="font-size: 12px;"></i>
+          </a>
+      </div>
+  </div>
+  @endif
+  
   <div class="stats-grid">
     <div class="stat-card card-total">
       <div class="stat-icon"><i class="fas fa-users"></i></div>

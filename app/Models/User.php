@@ -31,6 +31,7 @@ class User extends Authenticatable
         'nomor_telepon',
         'password',
         'role',
+        'status',
         'nip',
         'jabatan',
         'is_active',

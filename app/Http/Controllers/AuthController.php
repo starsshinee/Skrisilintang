@@ -82,7 +82,13 @@ class AuthController extends Controller
                 ->withInput($request->only('username'))
                 ->withErrors(['username' => 'Akun tidak aktif. Hubungi admin.']);
         }
-
+        //  (PENGECEKAN STATUS PENDING)
+        // --------------------------------------------------------------------
+        if ($user->status === 'pending') {
+            return back()
+                ->withInput($request->only('username'))
+                ->withErrors(['username' => 'Akun Anda sedang menunggu verifikasi dari Operator.']);
+        }
         RateLimiter::clear($throttleKey);
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
@@ -237,6 +243,7 @@ class AuthController extends Controller
             'jabatan' => $request->jabatan,
             'unit_kerja_id' => $request->unit_kerja_id,
             'is_active' => true,
+            'status' => 'approved',
         ]);
 
         return redirect()->route('login')
@@ -296,4 +303,7 @@ class AuthController extends Controller
 
         return back()->with('error', 'Tidak ada tanda tangan yang dikirim.');
     }
+
+    //Veru
+    
 }

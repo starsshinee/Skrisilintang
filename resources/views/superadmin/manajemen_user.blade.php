@@ -75,6 +75,7 @@
     .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 11px; }
     .status-active { background: #dcfce7; color: #166534; }
     .status-inactive { background: #fee2e2; color: #991b1b; }
+    .status-pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
     
     /* ACTIONS */
     .action-group { display: flex; gap: 6px; align-items: center; }
@@ -195,37 +196,72 @@
             </td>
             <td class="td-user">{{ $user->username }}</td>
             <td>
-              @if($user->is_active)
-                <span class="status-badge status-active"><i class="fas fa-check"></i> Aktif</span>
+              @if($user->status == 'pending')
+                <!-- Badge jika akun masih belum diverifikasi -->
+                <span class="status-badge status-pending" title="Akun ini belum bisa login">
+                    <i class="fas fa-hourglass-half"></i> Menunggu Verifikasi
+                </span>
               @else
-                <span class="status-badge status-inactive"><i class="fas fa-lock"></i> Nonaktif</span>
+                <!-- Badge jika akun sudah diverifikasi (approved) -->
+                @if($user->is_active)
+                  <span class="status-badge status-active"><i class="fas fa-check-double"></i> Aktif</span>
+                @else
+                  <span class="status-badge status-inactive"><i class="fas fa-lock"></i> Nonaktif</span>
+                @endif
               @endif
             </td>
-            <td>
-              <div class="action-group">
-                <button class="btn-action edit" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}', '{{ $user->username }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nip }}', '{{ $user->jabatan }}')">
-                  <i class="fas fa-edit"></i>
-                </button>
-                
-                @if(auth()->id() !== $user->id)
-                  <!-- Form Toggle Status (Aktif/Nonaktif) -->
-                  <form action="{{ route('superadmin.pengguna.toggle-status', $user->id) }}" method="POST" style="margin:0;">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn-action toggle" title="{{ $user->is_active ? 'Nonaktifkan User' : 'Aktifkan User' }}">
-                      <i class="fas {{ $user->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
-                    </button>
+            <td style="white-space: nowrap;">
+              <!-- Wadah Flexbox agar semua tombol sejajar dalam satu baris -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                  
+                  <!-- 1. Tombol Verifikasi / Terverifikasi -->
+                  @if($user->status == 'pending')
+                      <form action="{{ route('superadmin.verifikasi_user', $user->id) }}" method="POST" style="margin: 0;">
+                          @csrf
+                          <button type="submit" 
+                                  onclick="return confirm('Verifikasi akun {{ $user->name }} agar bisa login?')"
+                                  style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; height: 34px; background-color: #10b981; color: white; border: 1px solid #10b981; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);">
+                              <i class="fas fa-check-circle"></i> Verifikasi
+                          </button>
+                      </form>
+                  @elseif($user->status == 'approved')
+                      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; height: 34px; background-color: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: not-allowed;">
+                          <i class="fas fa-check-double"></i> Terverifikasi
+                      </span>
+                  @endif
+
+                  <!-- 2. Tombol Edit -->
+                  <!-- Catatan: Sesuaikan route() di bawah dengan nama route edit milik Anda -->
+                  <a href="{{ url('/superadmin/pengguna/'.$user->id.'/edit') }}"
+                    style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background-color: #ffffff; color: var(--primary, #3b5bdb); border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                    title="Edit Pengguna">
+                      <i class="fas fa-edit"></i>
+                  </a>
+
+                  <!-- 3. Tombol Toggle Status Aktif (Opsional, jika Anda menggunakannya) -->
+                  <form action="{{ url('/superadmin/pengguna/'.$user->id.'/toggle') }}" method="POST" style="margin: 0;">
+                      @csrf
+                      <button type="submit" 
+                              style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background-color: #ffffff; color: {{ $user->is_active ? '#4b5563' : '#9ca3af' }}; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                              title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">
+                          <i class="fas {{ $user->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }} fa-lg"></i>
+                      </button>
                   </form>
 
-                  <!-- Form Hapus -->
-                  <form action="{{ route('superadmin.pengguna.destroy', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Yakin hapus user ini? Data tidak dapat dikembalikan.');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-action delete"><i class="fas fa-trash"></i></button>
+                  <!-- 4. Tombol Hapus -->
+                  <form action="{{ route('superadmin.pengguna.destroy', $user->id) }}" method="POST" style="margin: 0;">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" 
+                              onclick="return confirm('Yakin ingin menghapus pengguna ini?')"
+                              style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background-color: #ffffff; color: var(--danger, #ef4444); border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                              title="Hapus Pengguna">
+                          <i class="fas fa-trash-alt"></i>
+                      </button>
                   </form>
-                @endif
+                  
               </div>
-            </td>
+          </td>
           </tr>
           @empty
           <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--muted);">Tidak ada data user.</td></tr>
