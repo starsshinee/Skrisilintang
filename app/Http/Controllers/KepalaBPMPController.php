@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanAsetTetapExport;
+use App\Exports\LaporanPersediaanExport;
+use App\Exports\LaporanSarprasExport;
 
 // Models - Admin Persediaan
 use App\Models\Persediaan;
@@ -248,6 +251,7 @@ class KepalaBPMPController extends Controller
     {
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
         $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+        $format = $request->input('format');
 
         $data = [
             'title' => 'Laporan Data Persediaan',
@@ -271,10 +275,19 @@ class KepalaBPMPController extends Controller
             ],
         ];
 
-        $pdf = Pdf::loadView('kepalabpmp.exports.laporan_persediaan', $data)->setPaper('a4', 'landscape');
-        return $pdf->download('Laporan-Persediaan-' . now()->format('Y-m-d') . '.pdf');
-    }
 
+            if ($format === 'excel') {
+                return Excel::download(
+                    new LaporanPersediaanExport($startDate, $endDate), 
+                    'Laporan_Persediaan_' . date('Ymd') . '.xlsx'
+                );
+            }
+
+             $pdf = Pdf::loadView('kepalabpmp.exports.laporan_persediaan', $data)->setPaper('a4', 'landscape');
+
+            return $pdf->download('Laporan_Persediaan_' . date('Ymd') . '.pdf');
+        
+    }
     /**
      * 📥 DOWNLOAD LAPORAN ASET TETAP (PDF)
      */
@@ -285,6 +298,7 @@ class KepalaBPMPController extends Controller
 
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
         $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+        $format = $request->input('format');
 
         $data = [
             'title' => 'Laporan Data Aset Tetap',
@@ -317,9 +331,15 @@ class KepalaBPMPController extends Controller
             ],
         ];
 
-        // $pdf = Pdf::loadView('kepalabpmp.exports.laporan_asettetap', $data)->setPaper('a4', 'landscape');
-        // return $pdf->download('Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.pdf');
-        return Excel::download(new LaporanAsetTetapExport($data), 'Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.xlsx');
+        if ($format === 'excel') {
+            return Excel::download(new LaporanAsetTetapExport($data), 'Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.xlsx');
+        }
+
+        // Jalur PDF (Default)
+        $pdf = Pdf::loadView('kepalabpmp.exports.laporan_asettetap', $data)->setPaper('a4', 'landscape');
+        // return $pdf->download('Laporan-Aset-Tetap-' . now()->format('Y-m-d') . '.pdf'); // Set kertas lanskap agar tabel rapi
+
+        return $pdf->download('Laporan_Aset_Tetap_' . date('Ymd') . '.pdf');
     }
 
     /**
@@ -329,6 +349,7 @@ class KepalaBPMPController extends Controller
     {
         $startDate = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
         $endDate = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+        $format = $request->input('format');
 
         $data = [
             'title' => 'Laporan Sarana & Prasarana',
@@ -348,6 +369,13 @@ class KepalaBPMPController extends Controller
                 'total_peminjaman_gedung' => PeminjamanGedung::whereBetween('created_at', [$startDate, $endDate])->count(),
             ],
         ];
+
+        if ($format === 'excel') {
+            return Excel::download(
+                new LaporanSarprasExport($startDate, $endDate), 
+                'Laporan_Sarpras_' . date('Ymd') . '.xlsx'
+            );
+        }
 
         $pdf = Pdf::loadView('kepalabpmp.exports.laporan_sarpras', $data)->setPaper('a4', 'landscape');
         return $pdf->download('Laporan-Sarpras-' . now()->format('Y-m-d') . '.pdf');

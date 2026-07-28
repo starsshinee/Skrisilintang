@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendFonnteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\{
@@ -107,8 +108,8 @@ class TamuController extends Controller
     public function storePeminjamanGedung(Request $request)
     {
         $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'nip_nik' => 'required|string|max:50',
+            // 'nama_lengkap' => 'required|string|max:255',
+            // 'nip_nik' => 'required|string|max:50',
             'instansi_lembaga' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:100',
             'gedung_id' => 'required|exists:gedung,id',
@@ -171,10 +172,10 @@ class TamuController extends Controller
 
         // Buat peminjaman
         $peminjaman = \App\Models\PeminjamanGedung::create([
-            'user_id' => Auth::id(),
+            'user_id' => auth('web')->id(),
             'gedung_id' => $gedung->id,
             'nama_lengkap' => Auth::user()->name,
-            'nip_nik' => Auth::user()->nip,
+            'nip_nik' => Auth::user()->nik ?? Auth::user()->nip ?? '-',
             'instansi_lembaga' => $validated['instansi_lembaga'],
             'kabupaten_kota' => $validated['kabupaten_kota'],
             'fasilitas' => $gedung->kategori,
@@ -204,7 +205,7 @@ class TamuController extends Controller
             $pesanAdmin .= "Halo Admin Sarpras,\n";
             $pesanAdmin .= "Terdapat pengajuan peminjaman fasilitas baru dari Tamu:\n\n";
 
-            $pesanAdmin .= "👤 *Pemohon:* {$validated['nama_lengkap']} ({$validated['instansi_lembaga']})\n";
+            $pesanAdmin .= "👤 *Pemohon:* {$peminjaman->nama_lengkap} ({$validated['instansi_lembaga']})\n";
             $pesanAdmin .= "🏫 *Fasilitas:* {$gedung->nama_gedung}\n";
             $pesanAdmin .= "📅 *Tanggal:* {$validated['tanggal_pinjam']} s/d {$validated['tanggal_kembali']}\n";
             $pesanAdmin .= "⏰ *Waktu:* {$validated['jam_mulai']} - {$validated['jam_selesai']}\n";

@@ -1879,7 +1879,7 @@
             }
 
             function submitForm() {
-                const required = ['#namaInput', '#NIPNIKInput', '#instansiInput', '#kabKotaInput',
+                const required = [ '#instansiInput', '#kabKotaInput',
                     '#fasilitasSelect', '#tglPinjam', '#tglKembali', '#jamMulaiInput', '#jamSelesaiInput',
                     '#jumlahPesertaInput', 'textarea', 'input'
                 ];
@@ -1905,8 +1905,6 @@
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Mengirim...');
 
                 const formData = new FormData();
-                formData.append('nama_lengkap', $('#namaInput').val().trim());
-                formData.append('nip_nik', $('#NIPNIKInput').val().trim());
                 formData.append('instansi_lembaga', $('#instansiInput').val().trim());
                 formData.append('kabupaten_kota', $('#kabKotaInput').val().trim());
                 formData.append('gedung_id', $('#fasilitasSelect').val());
