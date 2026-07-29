@@ -897,7 +897,9 @@ class AdminPersediaanController extends Controller
      */
     public function laporanTransaksiKeluar(Request $request)
     {
-        $query = TransaksiKeluarPersediaan::query();
+        // 1. Tambahkan eager loading 'persediaan' (atau nama relasi master data Anda)
+        // Ini berfungsi agar satuan barang bisa dipanggil di view
+        $query = TransaksiKeluarPersediaan::with('persediaan');
 
         // Filters
         if ($request->filled('search')) {
@@ -918,6 +920,13 @@ class AdminPersediaanController extends Controller
             $query->where('kode_kategori', $request->kode_kategori);
         }
 
+        // 2. Hitung Summary (TOTAL) BERDASARKAN FILTER SEBELUM PAGINATION
+        // Gunakan 'clone' agar kondisi $query (filter) ikut terhitung tapi tidak merusak query utama
+        $totalTransaksi = (clone $query)->count();
+        $totalItem      = (int) (clone $query)->sum('jumlah_keluar');
+        $totalNilai     = (int) (clone $query)->sum('total');
+
+        // 3. Eksekusi Pagination
         $transaksi = $query->latest()->paginate(10);
 
         // 📊 CHART & STATS DATA
@@ -964,15 +973,23 @@ class AdminPersediaanController extends Controller
             ->limit(5)
             ->get();
 
-        // 3. Summary Stats
+        // 3. Summary Stats (Dimasukkan ke chartData jika Anda memakainya di view)
         $chartData['summary'] = [
-            'total_transaksi' => TransaksiKeluarPersediaan::count(),
-            'total_jumlah' => (int)TransaksiKeluarPersediaan::sum('jumlah_keluar'),
-            'total_nilai' => (int)TransaksiKeluarPersediaan::sum('total'),
-            'rata_rata_transaksi' => TransaksiKeluarPersediaan::avg('total'),
+            'total_transaksi'     => $totalTransaksi,
+            'total_jumlah'        => $totalItem,
+            'total_nilai'         => $totalNilai,
+            'rata_rata_transaksi' => $totalTransaksi > 0 ? $totalNilai / $totalTransaksi : 0,
         ];
 
-        return view('adminpersediian.laporan_transaksikeluar', compact('transaksi', 'chartData'));
+        // Pastikan variabel total juga di-passing sebagai variabel terpisah 
+        // agar mudah dipanggil langsung di card Blade Anda
+        return view('adminpersediian.laporan_transaksikeluar', compact(
+            'transaksi', 
+            'chartData',
+            'totalTransaksi',
+            'totalItem',
+            'totalNilai'
+        ));
     }
 
     /**
