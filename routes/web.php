@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminPersediaanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminSaktiController;
 
 
 // ──────────────────────────────────────────────────────────────────────
@@ -23,6 +24,17 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // })->name('home');
+
+// Route APi PEnarikan data
+Route::prefix('admin/sakti')->group(function () {
+    // Halaman View Aset Tetap
+    Route::get('/aset-tetap', [AdminSaktiController::class, 'indexAsetTetap'])->name('admin.sakti.aset_tetap');
+    
+    // Halaman View Persediaan
+    Route::get('/persediaan', [AdminSaktiController::class, 'indexPersediaan'])->name('admin.sakti.persediaan');
+    Route::get('/data', [AdminSaktiController::class, 'index'])->name('admin.sakti.index');
+    Route::post('/sync', [AdminSaktiController::class, 'sync'])->name('admin.sakti.sync');
+});
 
 Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');
 Route::get('/', [AdminAsettetapController::class, 'landingpage'])->name('home');
