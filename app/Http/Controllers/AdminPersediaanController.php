@@ -366,6 +366,7 @@ class AdminPersediaanController extends Controller
             $selisih = $oldJumlahKeluar - $request->jumlah_keluar;
             if ($selisih > 0) {
                 $persediaanBaru->increment('jumlah', $selisih);
+                
             } elseif ($selisih < 0) {
                 $persediaanBaru->decrement('jumlah', abs($selisih));
             }

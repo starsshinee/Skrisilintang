@@ -15,6 +15,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminSaktiController;
+use App\Http\Controllers\Api\SaktiPullController;
 
 
 // ──────────────────────────────────────────────────────────────────────
@@ -26,14 +27,21 @@ use App\Http\Controllers\AdminSaktiController;
 // })->name('home');
 
 // Route APi PEnarikan data
-Route::prefix('admin/sakti')->group(function () {
-    // Halaman View Aset Tetap
-    Route::get('/aset-tetap', [AdminSaktiController::class, 'indexAsetTetap'])->name('admin.sakti.aset_tetap');
+// Route::prefix('admin/sakti')->group(function () {
+//     // Halaman View Aset Tetap
+//     Route::get('/aset-tetap', [AdminSaktiController::class, 'indexAsetTetap'])->name('admin.sakti.aset_tetap');
     
-    // Halaman View Persediaan
-    Route::get('/persediaan', [AdminSaktiController::class, 'indexPersediaan'])->name('admin.sakti.persediaan');
-    Route::get('/data', [AdminSaktiController::class, 'index'])->name('admin.sakti.index');
-    Route::post('/sync', [AdminSaktiController::class, 'sync'])->name('admin.sakti.sync');
+//     // Halaman View Persediaan
+//     Route::get('/persediaan', [AdminSaktiController::class, 'indexPersediaan'])->name('admin.sakti.persediaan');
+//     Route::get('/data', [AdminSaktiController::class, 'index'])->name('admin.sakti.data');
+//     Route::post('/sync', [AdminSaktiController::class, 'sync'])->name('admin.sakti.sync');
+// });
+
+// 2. ENDPOINT UNTUK SIPANDU MENARIK DATA DARI SAKTI (Client/Pull)
+// -------------------------------------------------------------
+Route::prefix('sipandu/pull')->group(function () {
+    Route::get('/aset-tetap', [SaktiPullController::class, 'syncAsetTetap']);
+    Route::get('/persediaan', [SaktiPullController::class, 'syncPersediaan']);
 });
 
 Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');

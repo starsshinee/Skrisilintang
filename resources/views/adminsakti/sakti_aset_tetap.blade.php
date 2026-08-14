@@ -70,7 +70,7 @@
                                 <th>Kondisi</th>
                                 <th>Nilai Perolehan</th>
                                 <th>Nilai Buku</th>
-                                <th>Aksi</th>
+                                {{-- <th>Aksi</th> --}}
                             </tr>
                         </thead>
                         <tbody>
