@@ -3,53 +3,50 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\SaktiApiService;
+use Illuminate\Support\Facades\Http;
+use Exception;
 
 class SaktiPullController extends Controller
 {
-    protected $saktiApi;
-
-    public function __construct(SaktiApiService $saktiApi)
+    public function tarikDataDariSakti()
     {
-        $this->saktiApi = $saktiApi;
-    }
+        try {
+            // Mengecek apakah konfigurasi URL Sakti sudah ada di .env
+            if (!env('SAKTI_ENDPOINT')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'URL API Sakti belum dikonfigurasi di .env',
+                    'data' => null
+                ], 500);
+            }
 
-    public function syncAsetTetap()
-    {
-        $result = $this->saktiApi->pullMasterAsetTetap();
-        
-        if ($result['status']) {
+            // Melakukan request ke API Sakti dengan menyertakan Header X-API-KEY
+            $response = Http::withHeaders([
+                'X-API-KEY' => env('SAKTI_API_KEY')
+            ])->get(env('SAKTI_ENDPOINT'));
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // TODO: Proses penyimpanan data Sakti ke database Sipandu dilakukan di sini
+                
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Berhasil menarik data dari Sakti',
+                    'data' => $data['data']
+                ], 200);
+            }
+
             return response()->json([
-                'status' => 'success',
-                'message' => $result['message'],
-                'data' => $result['data']
-            ], 200);
-        }
+                'status' => 'error',
+                'message' => 'Gagal menarik data dari Sakti. Status: ' . $response->status()
+            ], $response->status());
 
-        return response()->json([
-            'status' => 'error',
-            'message' => $result['message'],
-            'data' => null
-        ], 500);
-    }
-
-    public function syncPersediaan()
-    {
-        $result = $this->saktiApi->pullMasterPersediaan();
-        
-        if ($result['status']) {
+        } catch (Exception $e) {
             return response()->json([
-                'status' => 'success',
-                'message' => $result['message'],
-                'data' => $result['data']
-            ], 200);
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => $result['message'],
-            'data' => null
-        ], 500);
     }
 }

@@ -18,6 +18,9 @@ use App\Http\Controllers\AdminSaktiController;
 use App\Http\Controllers\Api\SaktiPullController;
 use App\Http\Controllers\PenarikanDataController;
 use App\Http\Middleware\VerifyApiKey;
+use App\Http\Controllers\Api\SaktiProviderController;
+use App\Http\Middleware\VerifySaktiApiKey;
+
 
 
 // ──────────────────────────────────────────────────────────────────────
@@ -46,9 +49,14 @@ Route::prefix('sipandu/pull')->group(function () {
     Route::get('/persediaan', [SaktiPullController::class, 'syncPersediaan']);
 });
 
-// Route yang diamankan dengan middleware VerifyApiKey
+// Route yang diamankan dengan middleware VerifyApiKey sipandu penyedia/provider
 Route::middleware([VerifyApiKey::class])->group(function () {
     Route::get('/v1/tarik-data-sakti', [PenarikanDataController::class, 'getData']);
+});
+
+// Route yang diamankan dengan middleware VerifySaktiApiKey sakti penyedia/provider
+Route::middleware([VerifySaktiApiKey::class])->group(function () {
+    Route::get('/v1/sakti/aset', [SaktiProviderController::class, 'getAset']);
 });
 
 Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');
