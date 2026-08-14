@@ -16,6 +16,8 @@ use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminSaktiController;
 use App\Http\Controllers\Api\SaktiPullController;
+use App\Http\Controllers\PenarikanDataController;
+use App\Http\Middleware\VerifyApiKey;
 
 
 // ──────────────────────────────────────────────────────────────────────
@@ -37,11 +39,16 @@ use App\Http\Controllers\Api\SaktiPullController;
 //     Route::post('/sync', [AdminSaktiController::class, 'sync'])->name('admin.sakti.sync');
 // });
 
-// 2. ENDPOINT UNTUK SIPANDU MENARIK DATA DARI SAKTI (Client/Pull)
+// ENDPOINT UNTUK SIPANDU MENARIK DATA DARI SAKTI (Client/Pull)
 // -------------------------------------------------------------
 Route::prefix('sipandu/pull')->group(function () {
     Route::get('/aset-tetap', [SaktiPullController::class, 'syncAsetTetap']);
     Route::get('/persediaan', [SaktiPullController::class, 'syncPersediaan']);
+});
+
+// Route yang diamankan dengan middleware VerifyApiKey
+Route::middleware([VerifyApiKey::class])->group(function () {
+    Route::get('/v1/tarik-data-sakti', [PenarikanDataController::class, 'getData']);
 });
 
 Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');
