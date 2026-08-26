@@ -3,56 +3,142 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use App\Models\Inventaris; // Import Model yang sesuai dengan tabel database Anda
+use Exception;
+
+// Import Model berdasarkan struktur sistem SIPANDU 
+use App\Models\AssetTetap;
+use App\Models\TransaksiMasukAssetTetap;
+use App\Models\TransaksiKeluarAssetTetap;
+use App\Models\Persediaan;
+use App\Models\TransaksiMasukPersediaan;
+use App\Models\TransaksiKeluarPersediaan;
 
 class PenarikanDataController extends Controller
 {
-    /**
-     * Endpoint untuk menarik data ke sistem Sakti.
-     * Fungsi ini HANYA akan tereksekusi jika request sudah lolos dari Middleware VerifyApiKey.
-     */
-    public function getData(Request $request)
+    // ==========================================
+    // BAGIAN 1: ASET TETAP
+    // ==========================================
+
+    public function getMasterAssetTetap(Request $request)
     {
         try {
-            // 1. Lakukan query data dari database
-            // Contoh menggunakan Eloquent ORM:
-            // $data = Inventaris::where('status_validasi', 'valid')->get();
+            $limit = $request->query('limit', 20);
+            
+            $data = AssetTetap::query()
+                ->when($request->query('nama'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                ->when($request->query('nup'), fn($q, $nup) => $q->where('nup', $nup))
+                ->paginate($limit);
 
-            // Sebagai contoh, ini adalah data statis (mock data) yang merepresentasikan
-            // data aset dan status mutasi barang untuk dikirim ke Sakti
-            $dataSipandu = [
-                [
-                    'kode_aset' => 'BMN-2026-001',
-                    'nama_barang' => 'Laptop Asus ExpertBook',
-                    'kategori' => 'Elektronik',
-                    'stok' => 15,
-                    'status_mutasi' => 'Selesai divalidasi',
-                    'lokasi' => 'Ruang Administrasi'
-                ],
-                [
-                    'kode_aset' => 'BMN-2026-002',
-                    'nama_barang' => 'Printer Epson L3210',
-                    'kategori' => 'Elektronik',
-                    'stok' => 5,
-                    'status_mutasi' => 'Proses mutasi',
-                    'lokasi' => 'Gudang Utama'
-                ]
-            ];
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
 
-            // 2. Kembalikan data dalam format JSON beserta HTTP Status Code 200 (OK)
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Data dari Sipandu berhasil diambil',
-                'jumlah_data' => count($dataSipandu),
-                'data' => $dataSipandu
-            ], 200);
+    public function getMasukAssetTetap(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 20);
 
-        } catch (\Exception $e) {
-            // 3. Tangkap error jika terjadi masalah pada server/database
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal memproses penarikan data: ' . $e->getMessage()
-            ], 500);
+            $data = TransaksiMasukAssetTetap::with('assetTetap')
+                // Filter waktu transaksi
+                ->when($request->query('bulan'), fn($q, $bulan) => $q->whereMonth('tanggal_transaksi', $bulan))
+                ->when($request->query('tahun'), fn($q, $tahun) => $q->whereYear('tanggal_transaksi', $tahun))
+                // Filter relasi ke data master
+                ->whereHas('assetTetap', function ($query) use ($request) {
+                    $query->when($request->query('nama'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                          ->when($request->query('nup'), fn($q, $nup) => $q->where('nup', $nup));
+                })
+                ->paginate($limit);
+
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getKeluarAssetTetap(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 20);
+
+            $data = TransaksiKeluarAssetTetap::with('assetTetap')
+                // Filter waktu transaksi
+                ->when($request->query('bulan'), fn($q, $bulan) => $q->whereMonth('tanggal_transaksi', $bulan))
+                ->when($request->query('tahun'), fn($q, $tahun) => $q->whereYear('tanggal_transaksi', $tahun))
+                // Filter relasi ke data master
+                ->whereHas('assetTetap', function ($query) use ($request) {
+                    $query->when($request->query('nama'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                          ->when($request->query('nup'), fn($q, $nup) => $q->where('nup', $nup));
+                })
+                ->paginate($limit);
+
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    // ==========================================
+    // BAGIAN 2: PERSEDIAAN
+    // ==========================================
+
+    public function getMasterPersediaan(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 20);
+
+            $data = Persediaan::query()
+                ->when($request->query('nama_barang'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                ->when($request->query('kode_barang'), fn($q, $kode) => $q->where('kode_barang', $kode))
+                ->when($request->query('kode_kategori'), fn($q, $kategori) => $q->where('kode_kategori', $kategori))
+                ->paginate($limit);
+
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getMasukPersediaan(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 20);
+
+            $data = TransaksiMasukPersediaan::with('persediaan')
+                ->when($request->query('bulan'), fn($q, $bulan) => $q->whereMonth('tanggal_transaksi', $bulan))
+                ->when($request->query('tahun'), fn($q, $tahun) => $q->whereYear('tanggal_transaksi', $tahun))
+                ->whereHas('persediaan', function ($query) use ($request) {
+                    $query->when($request->query('nama_barang'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                          ->when($request->query('kode_barang'), fn($q, $kode) => $q->where('kode_barang', $kode))
+                          ->when($request->query('kode_kategori'), fn($q, $kategori) => $q->where('kode_kategori', $kategori));
+                })
+                ->paginate($limit);
+
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getKeluarPersediaan(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 20);
+
+            $data = TransaksiKeluarPersediaan::with('persediaan')
+                ->when($request->query('bulan'), fn($q, $bulan) => $q->whereMonth('tanggal_transaksi', $bulan))
+                ->when($request->query('tahun'), fn($q, $tahun) => $q->whereYear('tanggal_transaksi', $tahun))
+                ->whereHas('persediaan', function ($query) use ($request) {
+                    $query->when($request->query('nama_barang'), fn($q, $nama) => $q->where('nama_barang', 'like', "%{$nama}%"))
+                          ->when($request->query('kode_barang'), fn($q, $kode) => $q->where('kode_barang', $kode))
+                          ->when($request->query('kode_kategori'), fn($q, $kategori) => $q->where('kode_kategori', $kategori));
+                })
+                ->paginate($limit);
+
+            return response()->json(['status' => 'success', 'data' => $data], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 }
