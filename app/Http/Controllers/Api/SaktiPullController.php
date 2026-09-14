@@ -22,8 +22,10 @@ class SaktiPullController extends Controller
 
             // Melakukan request ke API Sakti dengan menyertakan Header X-API-KEY
             $response = Http::withHeaders([
-                'X-API-KEY' => env('SAKTI_API_KEY')
-            ])->get(env('SAKTI_ENDPOINT'));
+                'X-API-KEY' => config('services.sakti_api_key')
+                ])->timeout(30)
+                ->withOptions(['verify' => true])
+                ->get(config('services.sakti_endpoint'));
 
             if ($response->successful()) {
                 $data = $response->json();

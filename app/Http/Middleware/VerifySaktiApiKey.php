@@ -4,29 +4,28 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VerifySaktiApiKey
 {
     public function handle(Request $request, Closure $next)
     {
-        // Mengekstrak API Key dari header request
         $apiKey = $request->header('X-API-KEY');
-        $envKey = env('API_SECRET_KEY');
+        $validKey = config('services.sakti_api_key');
 
-        return response()->json([
-            'kunci_dari_thunder_client' => $apiKey,
-            'kunci_dari_file_env' => $envKey
-        ]);
-        
-        // Memvalidasi token dengan yang ada di environment
-        if ($apiKey !== $envKey) {
+        if (!$apiKey || !$validKey || !hash_equals($validKey, $apiKey)) {
+            Log::warning('SAKTI API Authentication Failed', [
+                'ip'       => $request->ip(),
+                'endpoint' => $request->path(),
+                'time'     => now()->toIso8601String(),
+            ]);
+
             return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized. API Key Sakti tidak valid atau tidak ditemukan.'
+                'status'  => 'error',
+                'message' => 'Unauthorized. API Key Sakti tidak valid atau tidak ditemukan di Headers.'
             ], 401);
         }
 
-        // Lolos validasi, teruskan request
         return $next($request);
     }
 }

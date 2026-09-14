@@ -44,7 +44,7 @@ use App\Http\Middleware\VerifySaktiApiKey;
 
 // ENDPOINT UNTUK SIPANDU MENARIK DATA DARI SAKTI (Client/Pull)
 // -------------------------------------------------------------
-Route::prefix('sipandu/pull')->group(function () {
+Route::prefix('sipandu/pull')->middleware([VerifyApiKey::class, 'throttle:60,1'])->group(function () {
     Route::get('/aset-tetap', [SaktiPullController::class, 'syncAsetTetap']);
     Route::get('/persediaan', [SaktiPullController::class, 'syncPersediaan']);
 });
@@ -57,6 +57,43 @@ Route::middleware([VerifyApiKey::class])->group(function () {
 // Route yang diamankan dengan middleware VerifySaktiApiKey sakti penyedia/provider
 Route::middleware([VerifySaktiApiKey::class])->group(function () {
     Route::get('/v1/sakti/aset', [SaktiProviderController::class, 'getAset']);
+});
+
+// ──────────────────────────────────────────────────────────────────────
+// HALAMAN DEBUG TEST API (console.log di browser) - HANYA UNTUK PENGEMBANGAN
+// ──────────────────────────────────────────────────────────────────────
+Route::get('/api/test', function () {
+    return view('api-test', [
+        'apiKey'    => config('services.sipandu_api_key'),
+        'endpoints' => [
+            'Aset Tetap - Master'               => '/api/aset-tetap/master',
+            'Aset Tetap - Transaksi Masuk'      => '/api/aset-tetap/transaksi-masuk',
+            'Aset Tetap - Transaksi Keluar'     => '/api/aset-tetap/transaksi-keluar',
+            'Persediaan - Master'               => '/api/persediaan/master',
+            'Persediaan - Transaksi Masuk'      => '/api/persediaan/transaksi-masuk',
+            'Persediaan - Transaksi Keluar'     => '/api/persediaan/transaksi-keluar',
+            'Mutasi Barang'                     => '/api/mutasi-barang',
+            'Peminjaman Barang'                 => '/api/peminjaman-barang',
+            'Peminjaman Kendaraan'              => '/api/peminjaman-kendaraan',
+            'Peminjaman Gedung'                 => '/api/peminjaman-gedung',
+            'Permintaan Persediaan'             => '/api/permintaan-persediaan',
+            'Pengembalian Barang'               => '/api/pengembalian-barang',
+            'Pengembalian Kendaraan'            => '/api/pengembalian-kendaraan',
+            'Kerusakan'                         => '/api/kerusakan',
+        ],
+    ]);
+});
+
+// ──────────────────────────────────────────────────────────────────────
+// MANAJEMEN API KEY (hanya superadmin)
+// ──────────────────────────────────────────────────────────────────────
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin/api-keys')->name('api-keys.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ApiKeyController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\ApiKeyController::class, 'store'])->name('store');
+    Route::put('/{apiKey}', [\App\Http\Controllers\ApiKeyController::class, 'update'])->name('update');
+    Route::delete('/{apiKey}', [\App\Http\Controllers\ApiKeyController::class, 'destroy'])->name('destroy');
+    Route::post('/{apiKey}/rotate', [\App\Http\Controllers\ApiKeyController::class, 'rotate'])->name('rotate');
+    Route::patch('/{apiKey}/toggle', [\App\Http\Controllers\ApiKeyController::class, 'toggle'])->name('toggle');
 });
 
 Route::get('/', [AdminAsettetapController::class, 'index'])->name('home');

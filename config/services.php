@@ -18,6 +18,10 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'sipandu_api_key' => env('API_KEY_SIPANDU'),
+    'sakti_api_key'   => env('SAKTI_API_KEY'),
+    'sakti_endpoint'  => env('SAKTI_ENDPOINT'),
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
