@@ -39,11 +39,12 @@ class RegisterController extends Controller
                 'alpha_dash',
                 Rule::unique('users', 'username'),
             ],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'email'    => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role'     => [
                 'required',
                 Rule::in([
-                    'superadmin', 'kepalabpmp', 'kasubag',
+                    'kepalabpmp', 'kasubag',
                     'adminpersediaan', 'adminsarpras', 'adminasettetap',
                     'pegawai', 'tamu',
                 ]),
@@ -75,6 +76,7 @@ class RegisterController extends Controller
             'name'      => $request->name,
             'nip'       => $request->nip,
             'username'  => $request->username,
+            'email'     => $request->email,
             'password'  => Hash::make($request->password),
             'role'      => $request->role,
             'nomor_telepon' => $request->nomor_telepon,
@@ -104,7 +106,7 @@ class RegisterController extends Controller
                 $pesan .= "Terima kasih.";
 
                 // Dispatch Job Fonnte (pastikan path namespace Job sesuai)
-                \App\Jobs\SendFonnteNotification::dispatch($admin->nomor_telepon, $pesan);
+                \App\Jobs\SendFonnteNotification::dispatch($admin->nomor_telepon, $pesan)->afterCommit();
             }
         }
 

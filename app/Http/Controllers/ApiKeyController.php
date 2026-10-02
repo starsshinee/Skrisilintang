@@ -29,7 +29,7 @@ class ApiKeyController extends Controller
                 'expires_at' => $request->expires_at
                     ? \Carbon\Carbon::parse($request->expires_at)
                     : now()->addDays(90),
-                'scopes'     => $request->scopes ?? ['*'],
+                'scopes'     => $this->resolveScopes($request),
                 'is_active'  => $request->boolean('is_active', true),
                 'created_by' => Auth::id(),
             ]
@@ -45,11 +45,13 @@ class ApiKeyController extends Controller
     {
         $request->validate([
             'label'       => 'required|string|max:100',
+            'scopes.*'    => 'string',
             'is_active'   => 'boolean',
         ]);
 
         $apiKey->update([
             'label'     => $request->label,
+            'scopes'    => $this->resolveScopes($request),
             'is_active' => $request->boolean('is_active', true),
         ]);
 
@@ -95,5 +97,18 @@ class ApiKeyController extends Controller
 
         return redirect()->route('api-keys.index')
             ->with('success', "Key \"{$apiKey->label}\" {$status}");
+    }
+
+    private function resolveScopes(Request $request): array
+    {
+        // Jika centang "Semua endpoint" → wildcard
+        if ($request->has('scope_all')) {
+            return ['*'];
+        }
+
+        // Kalau tidak ada yang dicentang, fallback tetap "*" (aman)
+        return $request->filled('scopes')
+            ? array_values($request->input('scopes'))
+            : ['*'];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne; 
 
@@ -168,6 +169,16 @@ class User extends Authenticatable
             'tamu'            => 'Tamu',
             default           => ucfirst($this->role),
         };
+    }
+
+    /**
+     * Normalisasi email (lowercase + trim)
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value ? strtolower(trim($value)) : null,
+        );
     }
 
     // Di model User

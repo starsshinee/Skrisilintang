@@ -141,13 +141,24 @@
             </div>
 
             <div class="mb-4">
-              <label for="regNIP" class="block text-sm font-semibold text-navy-800 mb-2">NIP/NIK</label>
+              <label for="regNIP" class="block text-sm font-semibold text-navy-800 mb-2">NIP/NIK <span class="text-red-400">*</span></label>
               <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="16" y1="10" y2="10"/><line x1="8" x2="12" y1="14" y2="14"/></svg></span>
-                <input id="regNIP" name="nip" type="text"
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <input id="regNIP" name="nip" type="text" autocomplete="off"
                   value="{{ old('nip') }}"
                   class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('nip') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 placeholder:text-slate-400"
                   placeholder="Nomor Induk Pegawai">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="regEmail" class="block text-sm font-semibold text-navy-800 mb-2">Email <span class="text-red-400">*</span></label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" ry="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+                <input id="regEmail" name="email" type="email" autocomplete="email" required maxlength="255"
+                  value="{{ old('email') }}"
+                  class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('email') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 placeholder:text-slate-400"
+                  placeholder="nama@contoh.go.id">
               </div>
             </div>
 
@@ -161,6 +172,8 @@
                   placeholder="Pilih username unik">
               </div>
             </div>
+
+            
 
             <div class="mb-4">
               <label for="regPassword" class="block text-sm font-semibold text-navy-800 mb-2">Password <span class="text-red-400">*</span></label>

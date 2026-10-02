@@ -145,7 +145,7 @@ Route::middleware('checkrole:superadmin')->group(function () {
     Route::get('/register', function () {
         return view('auth.register');
     })->name('register.show');
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.superadmin');
 });
 
 // Role-specific dashboards
@@ -191,6 +191,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [SuperadminController::class, 'dashboard'])->name('dashboard');
             Route::get('manajemen-user', [SuperadminController::class, 'manajemenUser'])->name('manajemen-user');
             Route::post('/pengguna', [SuperadminController::class, 'storePengguna'])->name('pengguna.store');
+            Route::get('/pengguna/{user}/edit', [SuperadminController::class, 'manajemenUser'])->name('pengguna.edit'); // reuse view or implement
             Route::put('/pengguna/{user}', [SuperadminController::class, 'updatePengguna'])->name('pengguna.update');
             Route::delete('/pengguna/{user}', [SuperadminController::class, 'destroyPengguna'])->name('pengguna.destroy');
             Route::patch('/pengguna/{user}/toggle-status', [SuperadminController::class, 'toggleStatus'])->name('pengguna.toggle-status');

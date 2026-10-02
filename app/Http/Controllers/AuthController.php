@@ -60,6 +60,7 @@ class AuthController extends Controller
         ]);
 
         $throttleKey = Str::lower($request->input('username')) . '|' . $request->ip();
+        $credentialsInput = $request->input('username');
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -68,7 +69,9 @@ class AuthController extends Controller
                 ->withErrors(['username' => "Terlalu banyak percobaan. Coba lagi dalam {$seconds} detik."]);
         }
 
-        $user = User::where('username', $request->input('username'))->first();
+        $user = User::where('username', $request->input('username'))
+            ->orWhere('email', strtolower(trim($request->input('username'))))
+            ->first();
 
         if (!$user || !Hash::check($request->input('password'), $user->password)) {
             RateLimiter::hit($throttleKey, 60);
@@ -225,7 +228,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:100', 'unique:users,username'],
-            'email' => ['nullable', 'email', 'unique:users,email'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', Rule::in(['superadmin','kepalabpmp','kasubag','adminpersediaan','adminsarpras','adminasettetap','pegawai','tamu'])],
             'nip' => ['nullable', 'string', 'max:30'],

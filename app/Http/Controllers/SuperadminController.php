@@ -53,8 +53,8 @@ class SuperadminController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
-            'email'    => 'nullable|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'email'    => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
             'role'     => 'required|in:superadmin,kepalabpmp,kasubag,adminpersediaan,adminsarpras,adminasettetap,pegawai,tamu',
             'nip'      => 'nullable|string|max:30',
             'jabatan'  => 'nullable|string|max:255',
@@ -79,7 +79,7 @@ class SuperadminController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'email'    => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
+            'email'    => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'role'     => 'required|in:superadmin,kepalabpmp,kasubag,adminpersediaan,adminsarpras,adminasettetap,pegawai,tamu',
             'nip'      => 'nullable|string|max:30',
             'jabatan'  => 'nullable|string|max:255',
@@ -88,7 +88,7 @@ class SuperadminController extends Controller
         $updateData = [
             'name'     => $request->name,
             'username' => $request->username,
-            'email'    => $request->email,
+            'email'    => strtolower(trim($request->email)),
             'role'     => $request->role,
             'nip'      => $request->nip,
             'jabatan'  => $request->jabatan,
@@ -145,7 +145,7 @@ class SuperadminController extends Controller
             $pesan .= "Terima kasih.";
 
             // Eksekusi Job pengiriman Fonnte
-            \App\Jobs\SendFonnteNotification::dispatch($user->nomor_telepon, $pesan);
+            \App\Jobs\SendFonnteNotification::dispatch($user->nomor_telepon, $pesan)->afterCommit();
         }
 
         return redirect()->back()->with('success', 'Akun pengguna berhasil diverifikasi dan sekarang dapat login.');

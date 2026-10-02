@@ -173,6 +173,7 @@
             <th>Pegawai / User</th>
             <th>Role Akses</th>
             <th>Username</th>
+            <th>Email</th>
             <th>Status</th>
             <th>Aksi</th>
           </tr>
@@ -195,6 +196,7 @@
               </span>
             </td>
             <td class="td-user">{{ $user->username }}</td>
+            <td>{{ $user->email ?? '-' }}</td>
             <td>
               @if($user->status == 'pending')
                 <!-- Badge jika akun masih belum diverifikasi -->
@@ -232,15 +234,15 @@
 
                   <!-- 2. Tombol Edit -->
                   <!-- Catatan: Sesuaikan route() di bawah dengan nama route edit milik Anda -->
-                  <a href="{{ url('/superadmin/pengguna/'.$user->id.'/edit') }}"
+                  <a href="javascript:void(0)" onclick="openEditModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->username }}', '{{ $user->email ?? '' }}', '{{ $user->role }}', '{{ $user->nip ?? '' }}', '{{ $user->jabatan ?? '' }}')"
                     style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background-color: #ffffff; color: var(--primary, #3b5bdb); border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
                     title="Edit Pengguna">
                       <i class="fas fa-edit"></i>
                   </a>
 
                   <!-- 3. Tombol Toggle Status Aktif (Opsional, jika Anda menggunakannya) -->
-                  <form action="{{ url('/superadmin/pengguna/'.$user->id.'/toggle') }}" method="POST" style="margin: 0;">
-                      @csrf
+                  <form action="{{ route('superadmin.pengguna.toggle-status', $user->id) }}" method="POST" style="margin: 0;">
+                      @csrf @method('PATCH')
                       <button type="submit" 
                               style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background-color: #ffffff; color: {{ $user->is_active ? '#4b5563' : '#9ca3af' }}; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
                               title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">

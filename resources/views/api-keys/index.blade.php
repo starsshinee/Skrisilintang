@@ -97,6 +97,13 @@
     .btn-save { padding: 10px 20px; border: none; border-radius: 8px; background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; font-family: inherit; }
     .btn-cancel { padding: 10px 20px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text); font-weight: 600; cursor: pointer; font-family: inherit; }
 
+    /* SCOPES CHECKBOX */
+    .scope-box { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; max-height: 200px; overflow-y: auto; }
+    .scope-check { display: flex; align-items: center; gap: 8px; padding: 5px 4px; font-size: 13px; cursor: pointer; border-radius: 6px; transition: .15s; }
+    .scope-check:hover { background: #f8f9fc; }
+    .scope-check.all { font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 4px; }
+    .scope-check input { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+
     .hint { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.7; }
     .hint i { color: var(--primary); margin-right: 6px; }
 
@@ -122,9 +129,9 @@
       <div class="page-title">Manajemen API Key</div>
       <div class="page-sub">Autentikasi endpoint provider SIPANDU — BPMP Provinsi Gorontalo</div>
     </div>
-    <div class="topbar-right">
+    {{-- <div class="topbar-right">
       <div class="avatar-top">{{ substr(Auth::user()->name ?? 'SA', 0, 2) }}</div>
-    </div>
+    </div> --}}
   </div>
 
   <div class="content">
@@ -215,6 +222,9 @@
               </td>
               <td>
                 <div class="action-group">
+                  <button class="btn-action rotate" title="Edit label & scope" onclick="openEditModal('{{ $key->id }}', '{{ addslashes($key->label) }}', {{ json_encode($key->scopes ?? ['*']) }}, {{ $key->is_active ? 'true' : 'false' }})">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
                   <form method="POST" action="{{ route('api-keys.rotate', $key) }}" style="display:inline;"
                         onsubmit="return confirm('Rotate key &quot;{{ $key->label }}&quot;? Key lama langsung tidak berlaku.')">
                     @csrf
@@ -254,6 +264,21 @@
 </div>
 
 {{-- Modal Buat Key --}}
+@php
+$scopeOptions = [
+    'aset-tetap'             => 'Aset Tetap (master & transaksi)',
+    'persediaan'             => 'Persediaan (master & transaksi)',
+    'mutasi-barang'          => 'Mutasi Barang',
+    'peminjaman-barang'      => 'Peminjaman Barang',
+    'peminjaman-kendaraan'   => 'Peminjaman Kendaraan',
+    'peminjaman-gedung'      => 'Peminjaman Gedung',
+    'permintaan-persediaan'  => 'Permintaan Persediaan',
+    'pengembalian-barang'    => 'Pengembalian Barang',
+    'pengembalian-kendaraan' => 'Pengembalian Kendaraan',
+    'kerusakan'              => 'Kerusakan',
+];
+@endphp
+
 <div class="modal-overlay" id="modalCreate">
   <div class="modal">
     <div class="modal-title">
@@ -281,9 +306,69 @@
           </select>
         </div>
       </div>
+      <div class="form-group">
+          <label>Hak Akses (Scopes)</label>
+          <div class="scope-box">
+            <label class="scope-check all">
+              <input type="checkbox" name="scope_all" value="1" checked onchange="toggleScopeList()"> Semua Endpoint (*)
+            </label>
+            <div id="scope_list" style="display:none;">
+              @foreach ($scopeOptions as $scope => $name)
+                <label class="scope-check">
+                  <input type="checkbox" name="scopes[]" value="{{ $scope }}"> {{ $name }}
+                </label>
+              @endforeach
+            </div>
+          </div>
+          <span class="help-text">Tidak perlu ubah jika ingin akses semua endpoint.</span>
+        </div>
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
         <button type="submit" class="btn-save"><i class="fas fa-plus"></i> Buat Key</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- Modal Edit Key --}}
+<div class="modal-overlay" id="modalEdit">
+  <div class="modal">
+    <div class="modal-title">
+      Edit API Key
+      <i class="fas fa-times" onclick="closeEditModal()"></i>
+    </div>
+    <form method="POST" action="" id="editForm">
+      @csrf @method('PUT')
+      <div class="form-group">
+        <label>Label / Nama Client</label>
+        <input type="text" name="label" id="editLabel" required maxlength="100">
+      </div>
+      <div class="form-group">
+        <label>Hak Akses (Scopes)</label>
+        <div class="scope-box">
+          <label class="scope-check all">
+            <input type="checkbox" name="scope_all" id="edit_scope_all" value="1" onchange="toggleEditScopeList()"> Semua Endpoint (*)
+          </label>
+          <div id="edit_scope_list" style="display:none;">
+            @foreach ($scopeOptions as $scope => $name)
+              <label class="scope-check">
+                <input type="checkbox" name="scopes[]" value="{{ $scope }}"> {{ $name }}
+              </label>
+            @endforeach
+          </div>
+        </div>
+        <span class="help-text">Centang endpoint mana yang boleh diakses key ini.</span>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="is_active" id="editActive">
+          <option value="1">Aktif</option>
+          <option value="0">Nonaktif</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
+        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Simpan</button>
       </div>
     </form>
   </div>
@@ -294,6 +379,43 @@ function openModal()  { document.getElementById('modalCreate').classList.add('op
 function closeModal() { document.getElementById('modalCreate').classList.remove('open'); }
 document.getElementById('modalCreate').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
+});
+
+function toggleScopeList() {
+  const all = document.getElementById('scope_all');
+  const list = document.getElementById('scope_list');
+  list.style.display = all.checked ? 'none' : 'block';
+  if (all.checked) {
+    list.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
+  }
+}
+
+function openEditModal(id, label, scopes, isActive) {
+  document.getElementById('editForm').action = '/superadmin/api-keys/' + id;
+  document.getElementById('editLabel').value = label;
+  document.getElementById('editActive').value = isActive ? 1 : 0;
+
+  const isAll = scopes.includes('*');
+  document.getElementById('edit_scope_all').checked = isAll;
+  const list = document.getElementById('edit_scope_list');
+  list.style.display = isAll ? 'none' : 'block';
+  list.querySelectorAll('input[type=checkbox]').forEach(c => {
+    c.checked = !isAll && scopes.includes(c.value);
+  });
+
+  document.getElementById('modalEdit').classList.add('open');
+}
+function toggleEditScopeList() {
+  const all = document.getElementById('edit_scope_all');
+  const list = document.getElementById('edit_scope_list');
+  list.style.display = all.checked ? 'none' : 'block';
+  if (all.checked) {
+    list.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
+  }
+}
+function closeEditModal() { document.getElementById('modalEdit').classList.remove('open'); }
+document.getElementById('modalEdit').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeEditModal();
 });
 
 function copyKey() {

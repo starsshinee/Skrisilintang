@@ -161,7 +161,7 @@ class KepalaBPMPController extends Controller
             'kondisi_aset' => AssetTetap::selectRaw('kondisi, COUNT(*) as count')->groupBy('kondisi')->pluck('count', 'kondisi'),
             'recent_masuk' => TransaksiMasukAssetTetap::latest('tanggal_perolehan')->limit(5)->get(),
             'recent_keluar' => TransaksiKeluarAssetTetap::latest('tanggal_input')->limit(5)->get(),
-            'recent_mutasi' => MutasiBarang::with('barang')->latest('tanggal_mutasi')->limit(5)->get(), // BARU DITAMBAHKAN
+            // 'recent_mutasi' => MutasiBarang::with('barang')->latest('tanggal_mutasi')->limit(5)->get(), // BARU DITAMBAHKAN
             'recent_peminjaman' => PeminjamanBarang::with(['user'])->latest()->limit(5)->get(), // BARU DITAMBAHKAN
         ];
 
