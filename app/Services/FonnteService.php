@@ -31,7 +31,7 @@ class FonnteService
 
         try {
             $response = Http::asForm()
-                ->withToken($token)
+                ->withHeaders(['Authorization' => $token])
                 ->acceptJson()
                 ->connectTimeout(10)
                 ->timeout(20)
