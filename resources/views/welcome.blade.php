@@ -880,7 +880,7 @@
           <h4 class="font-semibold mb-4 text-sm">Tautan</h4>
           <div class="space-y-2">
             <a href="#" class="block text-blue-200/70 text-sm hover:text-white transition">Kemendikdasmen</a>
-            <a href="#" class="block text-blue-200/70 text-sm hover:text-white transition">SIMAK-BMN</a>
+            <a href="#" class="block text-blue-200/70 text-sm hover:text-white transition">SIMAN & SAKTI</a>
             <a href="#" class="block text-blue-200/70 text-sm hover:text-white transition">DJKN</a>
           </div>
         </div>

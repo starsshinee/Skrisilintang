@@ -248,11 +248,11 @@
                 <select id="regRole" name="role" class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('role') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 appearance-none cursor-pointer">
                   <option value="">-- Pilih Peran --</option>
                   <option value="pegawai"          {{ old('role') == 'pegawai'          ? 'selected' : '' }}>Pegawai</option>
-                  <option value="adminpersediaan"  {{ old('role') == 'adminpersediaan'  ? 'selected' : '' }}>Admin Persediaan</option>
+                  {{-- <option value="adminpersediaan"  {{ old('role') == 'adminpersediaan'  ? 'selected' : '' }}>Admin Persediaan</option>
                   <option value="adminsarpras"     {{ old('role') == 'adminsarpras'     ? 'selected' : '' }}>Admin Sarana Prasarana</option>
                   <option value="adminasettetap"   {{ old('role') == 'adminasettetap'   ? 'selected' : '' }}>Admin Aset Tetap</option>
                   <option value="kasubag"          {{ old('role') == 'kasubag'          ? 'selected' : '' }}>Kasubag TU</option>
-                  <option value="kepalabpmp"       {{ old('role') == 'kepalabpmp'       ? 'selected' : '' }}>Kepala BPMP</option>
+                  <option value="kepalabpmp"       {{ old('role') == 'kepalabpmp'       ? 'selected' : '' }}>Kepala BPMP</option> --}}
                   <option value="tamu"             {{ old('role') == 'tamu'             ? 'selected' : '' }}>Tamu</option>
                 </select>
                 <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
