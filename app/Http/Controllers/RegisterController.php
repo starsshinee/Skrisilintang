@@ -115,6 +115,6 @@ class RegisterController extends Controller
         // $request->session()->regenerate();
 
         return redirect()->route('login')
-            ->with('success', 'Registrasi berhasil! Akun Anda sedang dalam tahap verifikasi oleh Operator. Silakan cek secara berkala.');
+            ->with('success', 'Registrasi berhasil! Silahkan login menggunakan username dan password yang telah didaftarkan');
     }
 }

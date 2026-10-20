@@ -628,32 +628,32 @@ class KasubagController extends Controller
                 $pesanPegawai .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-') . "\n\n";
                 $pesanPegawai .= "Silakan hubungi Admin Persediaan jika ada pertanyaan lebih lanjut.";
             }
-            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai);
+            SendFonnteNotification::dispatch($noHpPegawai, $pesanPegawai)->afterCommit();
         }
 
         // 2. NOTIFIKASI KE ADMIN PERSEDIAAN
-        $adminPersediaan = \App\Models\User::where('role', 'admin_persediaan')->first();
+        $adminPersediaan = \App\Models\User::where('role', 'adminpersediaan')->first();
         if ($adminPersediaan && $adminPersediaan->nomor_telepon) {
             $noHpAdmin = preg_replace('/[^0-9]/', '', $adminPersediaan->nomor_telepon);
             $namaPegawai = $pegawai ? $pegawai->name : 'Pegawai';
 
             if ($request->action === 'setuju') {
-                // ✅ PERBAIKAN NOTIFIKASI ADMIN: Menampilkan instruksi spesifik QTY Disetujui
+                // ??? PERBAIKAN NOTIFIKASI ADMIN: Menampilkan instruksi spesifik QTY Disetujui
                 $pesanAdmin = "*Info Persetujuan Kasubag (Persediaan)*\n\n";
                 $pesanAdmin .= "Halo Admin Persediaan,\n";
                 $pesanAdmin .= "Kasubag telah *MENYETUJUI* permintaan barang persediaan dari {$namaPegawai}:\n\n";
                 $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
                 $pesanAdmin .= "📝 *Diminta:* {$permintaan->jumlah_diminta} Unit\n";
-                $pesanAdmin .= "✅ *Jumlah Dikeluarkan:* {$permintaan->jumlah_disetujui} Unit\n\n";
+                $pesanAdmin .= "📦 *Jumlah Dikeluarkan:* {$permintaan->jumlah_disetujui} Unit\n\n";
                 $pesanAdmin .= "Sistem telah memotong stok secara otomatis. Silakan siapkan barang fisik sejumlah tersebut dan unggah Surat BAST ke dalam sistem.";
-            } else {
+            } else if ($request->action === 'tolak') {
                 $pesanAdmin = "*Info Penolakan Kasubag (Persediaan)*\n\n";
                 $pesanAdmin .= "Halo Admin Persediaan,\n";
                 $pesanAdmin .= "Kasubag telah *MENOLAK* permintaan persediaan dari {$namaPegawai}:\n\n";
                 $pesanAdmin .= "📦 *Barang:* {$permintaan->nama_barang}\n";
                 $pesanAdmin .= "💬 *Catatan Kasubag:* " . ($request->komentar ?? '-');
             }
-            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin);
+            SendFonnteNotification::dispatch($noHpAdmin, $pesanAdmin)->afterCommit();
         }
 
         return back()->with('success', 'Permintaan berhasil diproses!');

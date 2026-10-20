@@ -269,9 +269,9 @@
                         @forelse($asetTetap['recent_mutasi'] ?? [] as $item)
                             <tr>
                                 <td>{{ $item->tanggal_mutasi ? \Carbon\Carbon::parse($item->tanggal_mutasi)->format('d/m/y') : '-' }}</td>
-                                <td><b>{{ $item->barang->nama_barang ?? '-' }}</b></td>
-                                <td>{{ $item->lokasi_asal ?? '-' }}</td>
-                                <td>{{ $item->lokasi_tujuan ?? '-' }}</td>
+                                <td><b>{{ $item->nama_barang ?? $item->asetTetap->nama_barang ?? '-' }}</b></td>
+                                <td>{{ $item->lokasi_awal ?? '-' }}</td>
+                                <td>{{ $item->lokasi_akhir ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4" class="text-center text-muted" style="padding:20px;">Belum ada data mutasi</td></tr>
