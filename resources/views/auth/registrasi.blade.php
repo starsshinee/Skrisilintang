@@ -223,7 +223,26 @@
               </div>
             </div>
 
-            <div class="mb-4">
+             <div class="mb-6">
+              <label for="regRole" class="block text-sm font-semibold text-navy-800 mb-2">Peran / Role <span class="text-red-400">*</span></label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <select id="regRole" name="role" onchange="toggleUnitKerja()" class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('role') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 appearance-none cursor-pointer">
+                  <option value="">-- Pilih Peran --</option>
+                  <option value="pegawai"          {{ old('role') == 'pegawai'          ? 'selected' : '' }}>Pegawai</option>
+                  {{-- <option value="adminpersediaan"  {{ old('role') == 'adminpersediaan'  ? 'selected' : '' }}>Admin Persediaan</option>
+                  <option value="adminsarpras"     {{ old('role') == 'adminsarpras'     ? 'selected' : '' }}>Admin Sarana Prasarana</option>
+                  <option value="adminasettetap"   {{ old('role') == 'adminasettetap'   ? 'selected' : '' }}>Admin Aset Tetap</option>
+                  <option value="kasubag"          {{ old('role') == 'kasubag'          ? 'selected' : '' }}>Kasubag TU</option>
+                  <option value="kepalabpmp"       {{ old('role') == 'kepalabpmp'       ? 'selected' : '' }}>Kepala BPMP</option> --}}
+                  <option value="tamu"             {{ old('role') == 'tamu'             ? 'selected' : '' }}>Tamu</option>
+                </select>
+                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </div>
+            </div>
+
+            {{-- Unit Kerja: hanya tampil jika role = Pegawai --}}
+            <div class="mb-4 hidden" id="unitKerjaWrapper">
               <label for="regUnitKerja" class="block text-sm font-semibold text-navy-800 mb-2">Unit Kerja <span class="text-red-400">*</span></label>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
@@ -241,23 +260,7 @@
               </div>
             </div>
 
-            <div class="mb-6">
-              <label for="regRole" class="block text-sm font-semibold text-navy-800 mb-2">Peran / Role <span class="text-red-400">*</span></label>
-              <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                <select id="regRole" name="role" class="auth-input w-full pl-9 pr-4 py-3 border {{ $errors->has('role') ? 'border-red-400' : 'border-slate-200' }} rounded-xl text-sm text-navy-900 bg-slate-50 appearance-none cursor-pointer">
-                  <option value="">-- Pilih Peran --</option>
-                  <option value="pegawai"          {{ old('role') == 'pegawai'          ? 'selected' : '' }}>Pegawai</option>
-                  {{-- <option value="adminpersediaan"  {{ old('role') == 'adminpersediaan'  ? 'selected' : '' }}>Admin Persediaan</option>
-                  <option value="adminsarpras"     {{ old('role') == 'adminsarpras'     ? 'selected' : '' }}>Admin Sarana Prasarana</option>
-                  <option value="adminasettetap"   {{ old('role') == 'adminasettetap'   ? 'selected' : '' }}>Admin Aset Tetap</option>
-                  <option value="kasubag"          {{ old('role') == 'kasubag'          ? 'selected' : '' }}>Kasubag TU</option>
-                  <option value="kepalabpmp"       {{ old('role') == 'kepalabpmp'       ? 'selected' : '' }}>Kepala BPMP</option> --}}
-                  <option value="tamu"             {{ old('role') == 'tamu'             ? 'selected' : '' }}>Tamu</option>
-                </select>
-                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </div>
-            </div>
+           
 
             <button type="submit" id="regBtn"
               class="w-full btn-primary text-white font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
@@ -315,6 +318,20 @@
     t.className   = 'text-xs text-slate-400 mt-1';
     t.textContent = 'Masukkan password untuk melihat kekuatan';
   }
+
+  // Tampilkan Unit Kerja hanya untuk role Pegawai; sembunyikan & kosongkan untuk Tamu / belum memilih
+  function toggleUnitKerja() {
+    const role    = document.getElementById('regRole').value;
+    const wrapper = document.getElementById('unitKerjaWrapper');
+    const select  = document.getElementById('regUnitKerja');
+    const show    = role === 'pegawai';
+
+    wrapper.classList.toggle('hidden', !show);
+    select.required = show;
+    select.disabled = !show;   // field disabled tidak ikut terkirim
+    if (!show) select.value = '';
+  }
+  document.addEventListener('DOMContentLoaded', toggleUnitKerja); // juga untuk old('role') setelah validasi gagal
 
   lucide.createIcons();
 </script>

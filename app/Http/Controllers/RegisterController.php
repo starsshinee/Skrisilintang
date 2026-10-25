@@ -50,15 +50,16 @@ class RegisterController extends Controller
                 ]),
             ],
             'nomor_telepon' => ['required', 'string', 'max:14'],
-            'unit_kerja_id' => ['nullable', 'exists:unit_kerjas,id'],
+            'unit_kerja_id' => ['exclude_unless:role,pegawai', 'required', 'exists:unit_kerjas,id'],
         ], [
+            'unit_kerja_id.required' => 'Unit kerja wajib dipilih untuk peran Pegawai.',
             'name.required'     => 'Nama lengkap wajib diisi.',
             'nip.required'      => 'NIP/NIK wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
             'username.unique'   => 'Username sudah digunakan, pilih yang lain.',
             'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal 6 karakter.',
+            'password.min'      => 'Password minimal 8 karakter.',
             'password.confirmed'=> 'Konfirmasi password tidak cocok.',
             'role.required'     => 'Peran wajib dipilih.',
             'role.in'           => 'Peran tidak valid.',
@@ -81,7 +82,7 @@ class RegisterController extends Controller
             'role'      => $request->role,
             'nomor_telepon' => $request->nomor_telepon,
             'status' => $statusAwal,
-            'unit_kerja_id' => $request->unit_kerja_id,
+            'unit_kerja_id' => $request->role === 'pegawai' ? $request->unit_kerja_id : null,
             'is_active' => true,
         ]);
 
